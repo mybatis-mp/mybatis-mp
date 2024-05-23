@@ -93,7 +93,7 @@ public class QueryTest extends BaseTest {
 
         check("函数测试",
                 "SELECT max(id),min(id),count(name),abs(id),avg(id),round(count(id) , 2)," +
-                        "(id - 1),(id - id),(id + 1),(id + id),id * 1,id * id,id / 1,id / id," +
+                        "(id - 1),(id - id),(id + 1),(id + id),(id * 1),(id * id),(id / 1),(id / id)," +
                         "concat(id,1,'2',3),concat(id,id)," +
                         "concat_ws('$',id,1,'2',3),concat_ws('$',id,id)," +
                         "concat(count(id),'abc')," +
