@@ -257,7 +257,7 @@ spring:
         type: com.zaxxer.hikari.HikariDataSource
         url: 加密后的地址
         username: 加密后的username
-        passowrd: 机密后的password
+        passowrd: 加密后的password
         hikari:
           minimum-idle: 1
           maximum-pool-size: 10
