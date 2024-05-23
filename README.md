@@ -1,5 +1,5 @@
 #### 喜欢的朋友加入QQ群：<font color="red">121908790</font> ，群里不仅可以提mybatis-mp框架问题，还可以帮你解决后端的各种问题！
-##### 另外，喜欢的朋友，帮忙关注 和 star（点点小爱心）！
+##### 另外，喜欢的朋友，帮忙关注 和 star（点点小爱心）！官网文档：http://mybatis-mp.cn !!!
 
 
 > <strong style="color:red">特别申明：禁止在非法项目中使用，否则后果自负！</strong>
