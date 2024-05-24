@@ -111,7 +111,7 @@ public class TestDataSource {
         HikariDataSource ds = new HikariDataSource();
         ds.setJdbcUrl("jdbc:sqlserver://localhost:1433;DatabaseName=master;encrypt=false;useUnicode=true;characterEncoding=utf-8;genKeyNameCase=2;serverTimezone=" + TIME_ZONE);
         ds.setUsername("SA");
-        ds.setPassword("AbC@123456");
+        ds.setPassword("AbC@128723");
         ds.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         ds.setAutoCommit(false);
         return ds;

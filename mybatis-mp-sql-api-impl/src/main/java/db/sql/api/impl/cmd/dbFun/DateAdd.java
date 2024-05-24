@@ -41,9 +41,32 @@ public class DateAdd extends BasicFunction<DateAdd> {
             sqlBuilder.append(n);
             sqlBuilder.append(SqlConst.BLANK);
             sqlBuilder.append(timeUnit.name(), 0, timeUnit.name().length() - 1);
-            sqlBuilder.append('\'');
-
-
+            sqlBuilder.append(SqlConst.SINGLE_QUOT);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+            return sqlBuilder;
+        } else if(context.getDbType() == DbType.DM || context.getDbType() == DbType.SQL_SERVER){
+            sqlBuilder.append("DATEADD").append(SqlConst.BRACKET_LEFT);
+            sqlBuilder.append(timeUnit.name(), 0, timeUnit.name().length() - 1);
+            sqlBuilder.append(SqlConst.DELIMITER);
+            sqlBuilder.append(n);
+            sqlBuilder.append(SqlConst.DELIMITER);
+            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+            return sqlBuilder;
+        } else if(context.getDbType() == DbType.ORACLE){
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
+            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append('+');
+            sqlBuilder.append(SqlConst.INTERVAL).append(SqlConst.SINGLE_QUOT).append(this.n).append(SqlConst.SINGLE_QUOT);
+            sqlBuilder.append(timeUnit.name(), 0, timeUnit.name().length() - 1);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+            return sqlBuilder;
+        } else if(context.getDbType() == DbType.DB2){
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
+            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append('+');
+            sqlBuilder.append(this.n).append(SqlConst.BLANK);
+            sqlBuilder.append(timeUnit.name());
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
         }

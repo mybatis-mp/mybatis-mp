@@ -424,13 +424,13 @@ public class FunTest extends BaseTest {
     public void dateTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            LocalDate date = QueryChain.of(sysUserMapper)
+            String date = QueryChain.of(sysUserMapper)
                     .selectWithFun(SysUser::getCreate_time, c -> c.date())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
-                    .returnType(LocalDate.class)
+                    .returnType(String.class)
                     .get();
-            assertEquals(date, LocalDate.parse("2023-10-11"));
+            assertEquals(date, "2023-10-11");
         }
     }
 
