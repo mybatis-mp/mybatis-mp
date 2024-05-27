@@ -26,7 +26,7 @@ public class DateAdd extends BasicFunction<DateAdd> {
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (context.getDbType() == DbType.H2) {
-            sqlBuilder.append("TIMESTAMPADD").append(SqlConst.BRACKET_LEFT);
+            sqlBuilder.append("DATEADD").append(SqlConst.BRACKET_LEFT);
             sqlBuilder.append(timeUnit.name(), 0, timeUnit.name().length() - 1);
             sqlBuilder.append(SqlConst.DELIMITER);
             sqlBuilder.append(n);

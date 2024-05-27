@@ -869,17 +869,6 @@ public class Methods {
     }
 
     /**
-     * 日期减少
-     *
-     * @param key
-     * @return
-     */
-    public static DateSub dateSub(Cmd key, int n, TimeUnit timeUnit) {
-        Objects.requireNonNull(key);
-        return new DateSub(key, n, timeUnit);
-    }
-
-    /**
      * md5
      *
      * @param str

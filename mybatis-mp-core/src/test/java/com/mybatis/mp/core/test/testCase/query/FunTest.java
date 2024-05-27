@@ -9,6 +9,8 @@ import com.mybatis.mp.core.test.DO.SysUserScore;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.mapper.SysUserScoreMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
+import com.mybatis.mp.core.test.testCase.TestDataSource;
+import db.sql.api.DbType;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.DatePattern;
@@ -477,6 +479,20 @@ public class FunTest extends BaseTest {
     }
 
     @Test
+    public void dateSubTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            LocalDateTime date = QueryChain.of(sysUserMapper)
+                    .selectWithFun(SysUser::getCreate_time, c -> c.dateSub(1))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1)
+                    .returnType(LocalDateTime.class)
+                    .get();
+            assertEquals(date, LocalDateTime.parse("2023-10-10 15:16:17", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+    }
+
+    @Test
     public void dateHourAddTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
@@ -502,6 +518,42 @@ public class FunTest extends BaseTest {
                     .returnType(Integer.class)
                     .get();
             assertEquals(length, 6);
+        }
+    }
+
+    @Test
+    public void dateDiff() {
+        if(TestDataSource.DB_TYPE == DbType.ORACLE){
+            //oracle 不支持
+            return;
+        }
+
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            LocalDateTime diff = QueryChain.of(sysUserMapper)
+                    .selectWithFun(SysUser::getCreate_time, c -> c.dateDiff("2023-10-10 18:12:11"))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1)
+                    .returnType(Integer.class)
+                    .get();
+            assertEquals(diff, 1);
+        }
+    }
+
+    @Test
+    public void ifNullTest() {
+
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Integer id = QueryChain.of(sysUserMapper)
+                    .selectWithFun(SysUser::getId, c -> c.ifNull(3))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 2)
+                    .returnType(Integer.class)
+                    .get();
+            assertEquals(id, 2);
         }
     }
 }

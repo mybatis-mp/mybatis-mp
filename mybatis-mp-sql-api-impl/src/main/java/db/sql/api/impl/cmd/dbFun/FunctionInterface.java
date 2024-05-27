@@ -235,8 +235,22 @@ public interface FunctionInterface extends Cmd {
         return Methods.hour(this);
     }
 
+    /**
+     * 返回 日期差（正数）
+     * @param another
+     * @return
+     */
     default DateDiff dateDiff(Cmd another) {
         return Methods.dateDiff(this, another);
+    }
+
+    /**
+     * 返回 日期差（正数）
+     * @param another
+     * @return
+     */
+    default DateDiff dateDiff(Object another) {
+        return Methods.dateDiff(this, Methods.convert(another));
     }
 
     default DateAdd dateAdd(int n) {
@@ -247,12 +261,12 @@ public interface FunctionInterface extends Cmd {
         return Methods.dateAdd(this, n, timeUnit);
     }
 
-    default DateSub dateSub(int n) {
+    default DateAdd dateSub(int n) {
         return this.dateSub(n, TimeUnit.DAYS);
     }
 
-    default DateSub dateSub(int n, TimeUnit timeUnit) {
-        return Methods.dateSub(this, n, timeUnit);
+    default DateAdd dateSub(int n, TimeUnit timeUnit) {
+        return this.dateAdd(n * -1, timeUnit);
     }
 
     default Md5 md5() {

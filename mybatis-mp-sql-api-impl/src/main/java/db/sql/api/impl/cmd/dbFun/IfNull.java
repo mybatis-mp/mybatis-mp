@@ -1,6 +1,7 @@
 package db.sql.api.impl.cmd.dbFun;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.tookit.SqlConst;
@@ -23,7 +24,24 @@ public class IfNull extends BasicFunction<IfNull> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
+        if(context.getDbType() == DbType.H2
+                || context.getDbType() == DbType.MYSQL
+                || context.getDbType() == DbType.MARIA_DB
+                || context.getDbType() == DbType.DB2
+                || context.getDbType() == DbType.DM
+
+        ){
+            sqlBuilder.append(operator);
+        } else if(context.getDbType() == DbType.SQL_SERVER){
+            sqlBuilder.append(" ISNULL");
+        }else if(context.getDbType() == DbType.ORACLE){
+            sqlBuilder.append(" NVL");
+        }else if(context.getDbType() == DbType.PGSQL){
+            sqlBuilder.append(" COALESCE");
+        }else {
+            sqlBuilder.append(" MP_IFNULL");
+        }
+        sqlBuilder.append(SqlConst.BRACKET_LEFT);
         this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
         this.value.sql(module, this, context, sqlBuilder);
