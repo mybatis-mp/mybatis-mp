@@ -5,7 +5,7 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -24,7 +24,7 @@ public class RoutingDataSourceSpringInterceptor implements MethodInterceptor {
     /**
      * 参数名解析器，用于获取参数名
      */
-    private static final ParameterNameDiscoverer localVariableTable = new LocalVariableTableParameterNameDiscoverer();
+    private static final ParameterNameDiscoverer localVariableTable = new DefaultParameterNameDiscoverer();
     private static final ExpressionParser parser = new SpelExpressionParser();
     private final Logger logger = LoggerFactory.getLogger(RoutingDataSourceSpringInterceptor.class);
     @Resource
