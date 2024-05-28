@@ -29,8 +29,8 @@ public class MybatisSQLProvider {
     public static String update(SQLCmdUpdateContext updateContext, ProviderContext providerContext, DbType dbType) {
         updateContext.init(dbType);
         String sql = updateContext.sql(dbType);
-        if (updateContext.getExecution().getWhere() == null || !updateContext.getExecution().getWhere().hasContent()) {
-            throw new RuntimeException("update has on where condition content ");
+        if ((updateContext.getExecution().getWhere() == null || !updateContext.getExecution().getWhere().hasContent()) && (!updateContext.getExecution().getWhere().extConditionChain().hasContent())) {
+            throw new RuntimeException("update has no where condition content ");
         }
         return sql;
     }
@@ -39,7 +39,7 @@ public class MybatisSQLProvider {
         deleteContext.init(dbType);
         String sql = deleteContext.sql(dbType);
         if (deleteContext.getExecution().getWhere() == null || !deleteContext.getExecution().getWhere().hasContent()) {
-            throw new RuntimeException("delete has on where condition content ");
+            throw new RuntimeException("delete has no where condition content ");
         }
         return sql;
     }

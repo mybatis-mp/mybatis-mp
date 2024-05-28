@@ -80,7 +80,7 @@ public class ModelUpdateCmdCreateUtil {
 
         if (!hasIdCondition) {
             if (update.getWhere() == null || !update.getWhere().hasContent()) {
-                throw new RuntimeException("update has on where condition content ");
+                throw new RuntimeException("update has no where condition content ");
             }
         }
         return update;
@@ -99,7 +99,7 @@ public class ModelUpdateCmdCreateUtil {
 
     public static Update create(Model model, Where where, Set<String> forceUpdateFields) {
         if (Objects.isNull(where) || !where.hasContent()) {
-            throw new RuntimeException("update has on where condition content ");
+            throw new RuntimeException("update has no where condition content ");
         }
         ModelInfo modelInfo = Models.get(model.getClass());
         return warp(new Update(where), modelInfo, model, forceUpdateFields);

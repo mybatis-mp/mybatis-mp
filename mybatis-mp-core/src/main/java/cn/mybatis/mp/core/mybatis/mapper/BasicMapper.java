@@ -332,7 +332,7 @@ public interface BasicMapper extends BaseMapper {
      */
     default int delete(Class<?> entityType, Where where) {
         if (!where.hasContent()) {
-            throw new RuntimeException("delete has on where condition content ");
+            throw new RuntimeException("delete has no where condition content ");
         }
         TableInfo tableInfo = Tables.get(entityType);
         if (LogicDeleteUtil.isNeedLogicDelete(tableInfo)) {

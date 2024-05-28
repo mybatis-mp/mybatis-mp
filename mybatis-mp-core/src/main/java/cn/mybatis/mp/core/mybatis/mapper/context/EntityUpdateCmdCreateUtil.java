@@ -84,7 +84,7 @@ public class EntityUpdateCmdCreateUtil {
 
         if (!hasIdCondition) {
             if (update.getWhere() == null || !update.getWhere().hasContent()) {
-                throw new RuntimeException("update has on where condition content ");
+                throw new RuntimeException("update has no where condition content ");
             }
         }
         return update;
@@ -102,7 +102,7 @@ public class EntityUpdateCmdCreateUtil {
 
     public static Update create(Object entity, Where where, Set<String> forceUpdateFields) {
         if (Objects.isNull(where) || !where.hasContent()) {
-            throw new RuntimeException("update has on where condition content ");
+            throw new RuntimeException("update has no where condition content ");
         }
         TableInfo tableInfo = Tables.get(entity.getClass());
         return warp(new Update(where), tableInfo, entity, forceUpdateFields);
