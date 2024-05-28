@@ -58,9 +58,21 @@ public final class DbTypeUtil {
             }
         }
         try (Connection connection = dataSource.getConnection()) {
+            return getJdbcUrl(connection);
+        } catch (Exception e) {
+            throw new RuntimeException("无法解析到 数据库的url");
+        }
+    }
+
+    public static String getJdbcUrl(Connection connection) {
+        try {
             return connection.getMetaData().getURL();
         } catch (Exception e) {
             throw new RuntimeException("无法解析到 数据库的url");
         }
+    }
+
+    public static DbType getDbType(Connection connection) {
+        return getDbType(getJdbcUrl(connection));
     }
 }

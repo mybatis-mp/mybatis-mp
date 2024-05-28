@@ -10,6 +10,7 @@ import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.core.util.WhereUtil;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
+import db.sql.api.cmd.executor.DBRunnable;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
 import org.apache.ibatis.cursor.Cursor;
@@ -19,6 +20,8 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public interface BasicMapper extends BaseMapper {
+
+    void runDBRunner(Consumer<DBRunnable<BasicMapper, BasicMapper>> consumer);
 
     /**
      * 根据ID查询，只返回指定列
