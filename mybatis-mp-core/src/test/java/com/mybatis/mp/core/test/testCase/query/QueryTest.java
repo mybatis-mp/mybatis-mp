@@ -32,6 +32,22 @@ public class QueryTest extends BaseTest {
     public void onDBTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
+
+            sysUserMapper.runDBRunner(runner->{
+                runner.onDB(DbType.H2,basicMapper -> {
+                    sysUserMapper.getById(1);
+                });
+
+                runner.onDB(DbType.MYSQL,basicMapper -> {
+                    sysUserMapper.getById(2);
+                });
+
+                runner.elseDB(basicMapper -> {
+                    sysUserMapper.getById(3);
+                });
+            });
+
             SysUser sysUser = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId)
                     .onDB(DbType.H2, queryChain -> {
