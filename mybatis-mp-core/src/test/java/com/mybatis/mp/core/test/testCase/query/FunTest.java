@@ -531,7 +531,7 @@ public class FunTest extends BaseTest {
 
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            LocalDateTime diff = QueryChain.of(sysUserMapper)
+            Integer diff = QueryChain.of(sysUserMapper)
                     .selectWithFun(SysUser::getCreate_time, c -> c.dateDiff("2023-10-10 18:12:11"))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
@@ -542,18 +542,61 @@ public class FunTest extends BaseTest {
     }
 
     @Test
-    public void ifNullTest() {
-
-
+    public void upper() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            Integer id = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getId, c -> c.ifNull(3))
+            String upper = QueryChain.of(sysUserMapper)
+                    .selectWithFun(SysUser::getUserName, c -> c.upper())
                     .from(SysUser.class)
-                    .eq(SysUser::getId, 2)
-                    .returnType(Integer.class)
+                    .eq(SysUser::getUserName, "admin")
+                    .returnType(String.class)
                     .get();
-            assertEquals(id, 2);
+            assertEquals(upper, "ADMIN");
+        }
+    }
+
+    @Test
+    public void lower() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            String lower = QueryChain.of(sysUserMapper)
+                    .selectWithFun(SysUser::getUserName, c -> c.upper().lower())
+                    .from(SysUser.class)
+                    .eq(SysUser::getUserName, "admin")
+                    .returnType(String.class)
+                    .get();
+            assertEquals(lower, "admin");
+        }
+    }
+
+    @Test
+    public void trim() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            String trim = QueryChain.of(sysUserMapper)
+                    .selectWithFun(SysUser::getUserName, c -> c.concat("ad   ").trim())
+                    .from(SysUser.class)
+                    .eq(SysUser::getUserName, "admin")
+                    .returnType(String.class)
+                    .get();
+            assertEquals(trim, "adminad");
+        }
+    }
+
+    @Test
+    public void left() {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            String left = QueryChain.of(sysUserMapper)
+                    .selectWithFun(SysUser::getUserName, c -> c.left(2))
+                    .from(SysUser.class)
+                    .eq(SysUser::getUserName, "admin")
+                    .returnType(String.class)
+                    .get();
+            assertEquals(left, "ad");
         }
     }
 }

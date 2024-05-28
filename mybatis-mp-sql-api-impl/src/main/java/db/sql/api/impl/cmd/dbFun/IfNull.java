@@ -24,22 +24,14 @@ public class IfNull extends BasicFunction<IfNull> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if(context.getDbType() == DbType.H2
-                || context.getDbType() == DbType.MYSQL
-                || context.getDbType() == DbType.MARIA_DB
-                || context.getDbType() == DbType.DB2
-                || context.getDbType() == DbType.DM
-
-        ){
-            sqlBuilder.append(operator);
-        } else if(context.getDbType() == DbType.SQL_SERVER){
+        if (context.getDbType() == DbType.SQL_SERVER) {
             sqlBuilder.append(" ISNULL");
         }else if(context.getDbType() == DbType.ORACLE){
             sqlBuilder.append(" NVL");
         }else if(context.getDbType() == DbType.PGSQL){
             sqlBuilder.append(" COALESCE");
         }else {
-            sqlBuilder.append(" MP_IFNULL");
+            sqlBuilder.append(operator);
         }
         sqlBuilder.append(SqlConst.BRACKET_LEFT);
         this.key.sql(module, this, context, sqlBuilder);

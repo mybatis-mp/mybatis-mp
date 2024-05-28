@@ -56,7 +56,7 @@ public class DateDiff extends BasicFunction<DateDiff> {
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
-        }else if(context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB){
+        } else {
             sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
             this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.DELIMITER);
@@ -64,12 +64,6 @@ public class DateDiff extends BasicFunction<DateDiff> {
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
         }
-        sqlBuilder.append("MP_DATE_DIFF").append(SqlConst.BRACKET_LEFT);
-        this.key.sql(module, this, context, sqlBuilder);
-        sqlBuilder.append(SqlConst.DELIMITER);
-        this.another.sql(module, this, context, sqlBuilder);
-        sqlBuilder.append(SqlConst.BRACKET_RIGHT);
-        return sqlBuilder;
     }
 
     @Override
