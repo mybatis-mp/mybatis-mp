@@ -79,7 +79,7 @@ https://gitee.com/mybatis-mp/mybatis-mp-spring-boot-demo
         <dependency>
             <groupId>cn.mybatis-mp</groupId>
             <artifactId>mybatis-mp-spring-boot-parent</artifactId>
-            <version>1.5.0</version>
+            <version>1.5.1</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
