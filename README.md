@@ -1,6 +1,6 @@
 # 官网文档：<strong style="color:red">http://mybatis-mp.cn </strong> !!!
 
-# 喜欢的朋友加入QQ群：<font color="red">121908790</font> ，群里不仅可以提mybatis-mp框架问题，还可以帮你解决后端的各种问题！
+## 喜欢的朋友加入QQ群：<font color="red">121908790</font> ，群里不仅可以提mybatis-mp框架问题，还可以帮你解决后端的各种问题！
 ##### 另外，喜欢的朋友，帮忙关注 和 star（点点小爱心）！
 
 
