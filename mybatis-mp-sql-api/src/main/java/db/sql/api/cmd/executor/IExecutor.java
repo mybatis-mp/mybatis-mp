@@ -17,7 +17,7 @@ public interface IExecutor<T extends IExecutor,
         DATASET_FILED extends Cmd
         >
 
-        extends Cmd {
+        extends DBRunnable<T, T>, Cmd {
 
     Map<Class<? extends Cmd>, Integer> cmdSorts();
 
@@ -65,10 +65,12 @@ public interface IExecutor<T extends IExecutor,
 
     @Override
     default StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        this.runOnDB(context.getDbType(), (T) this);
         return this.sql(context, sqlBuilder);
     }
 
     default StringBuilder sql(SqlBuilderContext context, StringBuilder sqlBuilder) {
+        this.runOnDB(context.getDbType(), (T) this);
         List<Cmd> cmdList = cmds();
         if (cmdList == null || cmdList.isEmpty()) {
             return sqlBuilder;
@@ -80,6 +82,6 @@ public interface IExecutor<T extends IExecutor,
         if (sortedCmds == null || sortedCmds.isEmpty()) {
             return sqlBuilder;
         }
-        return CmdUtils.join(null, null, context, sqlBuilder, sortedCmds);
+        return CmdUtils.join(this, this, context, sqlBuilder, sortedCmds);
     }
 }

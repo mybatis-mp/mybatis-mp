@@ -7,8 +7,5 @@ public class SQLCmdDeleteContext extends BaseSQLCmdContext<BaseDelete> {
 
     public SQLCmdDeleteContext(BaseDelete delete) {
         super(delete);
-        if (delete.getWhere() == null || !delete.getWhere().hasContent()) {
-            throw new RuntimeException("delete has on where condition content ");
-        }
     }
 }

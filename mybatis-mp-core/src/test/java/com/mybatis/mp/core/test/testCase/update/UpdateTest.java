@@ -31,6 +31,33 @@ public class UpdateTest extends BaseTest {
     }
 
     @Test
+    public void onDBTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            int cnt = UpdateChain.of(sysUserMapper)
+                    .set(SysUser::getUserName, "xx123")
+                    .onDB(DbType.H2, updateChain -> {
+                        updateChain.eq(SysUser::getId, 3);
+                    })
+                    .onDB(DbType.MYSQL, updateChain -> {
+                        updateChain.eq(SysUser::getId, 2);
+                    })
+                    .elseDB(updateChain -> {
+                        updateChain.eq(SysUser::getId, 1);
+                    })
+                    .execute();
+            assertEquals(cnt, 1);
+            if (TestDataSource.DB_TYPE == DbType.H2) {
+                assertEquals(sysUserMapper.getById(3).getUserName(), "xx123");
+            } else if (TestDataSource.DB_TYPE == DbType.MYSQL) {
+                assertEquals(sysUserMapper.getById(2).getUserName(), "xx123");
+            } else {
+                assertEquals(sysUserMapper.getById(1).getUserName(), "xx123");
+            }
+        }
+    }
+
+    @Test
     public void dbTypeUpdateTest() {
         if (TestDataSource.DB_TYPE == DbType.H2) {
             int updateCnt = -1;

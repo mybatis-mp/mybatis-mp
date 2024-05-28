@@ -29,6 +29,33 @@ import static org.junit.jupiter.api.Assertions.*;
 public class QueryTest extends BaseTest {
 
     @Test
+    public void onDBTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId)
+                    .onDB(DbType.H2, queryChain -> {
+                        queryChain.eq(SysUser::getId, 3);
+                    })
+                    .onDB(DbType.MYSQL, queryChain -> {
+                        queryChain.eq(SysUser::getId, 2);
+                    })
+                    .elseDB(queryChain -> {
+                        queryChain.eq(SysUser::getId, 1);
+                    })
+                    .get();
+            if (TestDataSource.DB_TYPE == DbType.H2) {
+                assertEquals(sysUser.getId(), 3);
+            } else if (TestDataSource.DB_TYPE == DbType.MYSQL) {
+                assertEquals(sysUser.getId(), 2);
+            } else {
+                assertEquals(sysUser.getId(), 1);
+            }
+
+        }
+    }
+
+    @Test
     public void simpleSelect() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);

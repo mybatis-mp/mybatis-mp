@@ -28,12 +28,20 @@ public class MybatisSQLProvider {
 
     public static String update(SQLCmdUpdateContext updateContext, ProviderContext providerContext, DbType dbType) {
         updateContext.init(dbType);
-        return updateContext.sql(dbType);
+        String sql = updateContext.sql(dbType);
+        if (updateContext.getExecution().getWhere() == null || !updateContext.getExecution().getWhere().hasContent()) {
+            throw new RuntimeException("update has on where condition content ");
+        }
+        return sql;
     }
 
     public static String delete(SQLCmdDeleteContext deleteContext, ProviderContext providerContext, DbType dbType) {
         deleteContext.init(dbType);
-        return deleteContext.sql(dbType);
+        String sql = deleteContext.sql(dbType);
+        if (deleteContext.getExecution().getWhere() == null || !deleteContext.getExecution().getWhere().hasContent()) {
+            throw new RuntimeException("delete has on where condition content ");
+        }
+        return sql;
     }
 
     /**
