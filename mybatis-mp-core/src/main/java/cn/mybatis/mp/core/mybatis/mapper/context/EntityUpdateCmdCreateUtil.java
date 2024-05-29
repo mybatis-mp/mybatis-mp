@@ -55,6 +55,9 @@ public class EntityUpdateCmdCreateUtil {
 
                 //乐观锁条件
                 update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), $.value(value));
+
+                //乐观锁回写
+                TableInfoUtil.setValue(tableFieldInfo, t, version);
                 continue;
             }
 
