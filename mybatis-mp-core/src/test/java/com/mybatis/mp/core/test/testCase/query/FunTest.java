@@ -523,7 +523,7 @@ public class FunTest extends BaseTest {
 
     @Test
     public void dateDiff() {
-        if(TestDataSource.DB_TYPE == DbType.ORACLE){
+        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
             //oracle 不支持
             return;
         }

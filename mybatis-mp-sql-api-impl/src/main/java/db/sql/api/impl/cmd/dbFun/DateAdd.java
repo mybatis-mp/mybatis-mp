@@ -44,7 +44,7 @@ public class DateAdd extends BasicFunction<DateAdd> {
             sqlBuilder.append(SqlConst.SINGLE_QUOT);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
-        } else if(context.getDbType() == DbType.DM || context.getDbType() == DbType.SQL_SERVER){
+        } else if (context.getDbType() == DbType.DM || context.getDbType() == DbType.SQL_SERVER) {
             sqlBuilder.append("DATEADD").append(SqlConst.BRACKET_LEFT);
             sqlBuilder.append(timeUnit.name(), 0, timeUnit.name().length() - 1);
             sqlBuilder.append(SqlConst.DELIMITER);
@@ -53,7 +53,7 @@ public class DateAdd extends BasicFunction<DateAdd> {
             this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
-        } else if(context.getDbType() == DbType.ORACLE){
+        } else if (context.getDbType() == DbType.ORACLE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append('+');
@@ -61,7 +61,7 @@ public class DateAdd extends BasicFunction<DateAdd> {
             sqlBuilder.append(timeUnit.name(), 0, timeUnit.name().length() - 1);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
-        } else if(context.getDbType() == DbType.DB2){
+        } else if (context.getDbType() == DbType.DB2) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append('+');

@@ -237,6 +237,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 返回 日期差（正数）
+     *
      * @param another
      * @return
      */
@@ -246,6 +247,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 返回 日期差（正数）
+     *
      * @param another
      * @return
      */

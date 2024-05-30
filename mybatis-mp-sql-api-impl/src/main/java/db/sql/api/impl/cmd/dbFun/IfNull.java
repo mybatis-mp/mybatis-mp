@@ -26,11 +26,11 @@ public class IfNull extends BasicFunction<IfNull> {
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (context.getDbType() == DbType.SQL_SERVER) {
             sqlBuilder.append(" ISNULL");
-        }else if(context.getDbType() == DbType.ORACLE){
+        } else if (context.getDbType() == DbType.ORACLE) {
             sqlBuilder.append(" NVL");
-        }else if(context.getDbType() == DbType.PGSQL){
+        } else if (context.getDbType() == DbType.PGSQL) {
             sqlBuilder.append(" COALESCE");
-        }else {
+        } else {
             sqlBuilder.append(operator);
         }
         sqlBuilder.append(SqlConst.BRACKET_LEFT);

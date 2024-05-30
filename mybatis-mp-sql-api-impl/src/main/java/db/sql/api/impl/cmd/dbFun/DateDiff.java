@@ -18,7 +18,7 @@ public class DateDiff extends BasicFunction<DateDiff> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if(context.getDbType() == DbType.H2 || context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.DM){
+        if (context.getDbType() == DbType.H2 || context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.DM) {
             sqlBuilder.append("ABS(").append(operator).append(SqlConst.BRACKET_LEFT);
             sqlBuilder.append("DAY,");
             this.key.sql(module, this, context, sqlBuilder);
@@ -26,7 +26,7 @@ public class DateDiff extends BasicFunction<DateDiff> {
             this.another.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
-        } else if(context.getDbType() == DbType.PGSQL  ){
+        } else if (context.getDbType() == DbType.PGSQL) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT).append("DATE_PART").append(SqlConst.BRACKET_LEFT);
             sqlBuilder.append("'DAY',");
             this.key.sql(module, this, context, sqlBuilder);
@@ -37,7 +37,7 @@ public class DateDiff extends BasicFunction<DateDiff> {
             this.another.sql(module, this, context, sqlBuilder).append("::DATE ");
             sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
-        }else if(context.getDbType() == DbType.DB2){
+        } else if (context.getDbType() == DbType.DB2) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             sqlBuilder.append("DAYS").append(SqlConst.BRACKET_LEFT);
             this.key.sql(module, this, context, sqlBuilder);
@@ -45,11 +45,11 @@ public class DateDiff extends BasicFunction<DateDiff> {
             sqlBuilder.append('-');
             sqlBuilder.append("DAYS").append(SqlConst.BRACKET_LEFT);
 
-            if(this.another instanceof BasicValue){
+            if (this.another instanceof BasicValue) {
                 sqlBuilder.append("CAST(");
             }
             this.another.sql(module, this, context, sqlBuilder);
-            if(this.another instanceof BasicValue){
+            if (this.another instanceof BasicValue) {
                 sqlBuilder.append(" AS TIMESTAMP )");
             }
 

@@ -34,12 +34,12 @@ public class QueryTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
 
-            sysUserMapper.runDBRunner(runner->{
-                runner.onDB(DbType.H2,basicMapper -> {
+            sysUserMapper.runDBRunner(runner -> {
+                runner.onDB(DbType.H2, basicMapper -> {
                     sysUserMapper.getById(1);
                 });
 
-                runner.onDB(DbType.MYSQL,basicMapper -> {
+                runner.onDB(DbType.MYSQL, basicMapper -> {
                     sysUserMapper.getById(2);
                 });
 
