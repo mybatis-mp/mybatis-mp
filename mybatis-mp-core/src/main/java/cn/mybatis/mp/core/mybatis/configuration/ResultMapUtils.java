@@ -1,6 +1,7 @@
 package cn.mybatis.mp.core.mybatis.configuration;
 
 import cn.mybatis.mp.core.db.reflect.*;
+import cn.mybatis.mp.core.util.FieldUtil;
 import cn.mybatis.mp.core.util.GenericUtil;
 import cn.mybatis.mp.db.annotations.ResultEntity;
 import cn.mybatis.mp.db.annotations.Table;
@@ -8,7 +9,9 @@ import db.sql.api.impl.tookit.SqlUtil;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.UnknownTypeHandler;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,6 +45,9 @@ public final class ResultMapUtils {
             } else if (Map.class.isAssignableFrom(clazz)) {
                 resultMap = new ResultMap.Builder(configuration, id, clazz, Collections.emptyList(), true).build();
                 configuration.addResultMap(resultMap);
+            } else if (Objects.nonNull(clazz.getPackage()) && !clazz.getPackage().getName().toString().startsWith("java")) {
+                resultMap = new ResultMap.Builder(configuration, id, clazz, getNormalResultMappings(configuration, clazz), true).build();
+                configuration.addResultMap(resultMap);
             }
             return resultMap;
         }
@@ -50,6 +56,25 @@ public final class ResultMapUtils {
     private static List<ResultMapping> getEntityResultMappings(MybatisConfiguration configuration, Class entity) {
         TableInfo tableInfo = Tables.get(entity);
         List<ResultMapping> resultMappings = tableInfo.getTableFieldInfos().stream().map(tableFieldInfo -> configuration.buildResultMapping(tableFieldInfo.isTableId(), tableFieldInfo.getField(), tableFieldInfo.getColumnName(), tableFieldInfo.getTableFieldAnnotation().jdbcType(), tableFieldInfo.getTableFieldAnnotation().typeHandler())).collect(Collectors.toList());
+        return Collections.unmodifiableList(resultMappings);
+    }
+
+    /**
+     * 普通对象
+     *
+     * @param configuration
+     * @param clazz
+     * @return
+     */
+    private static List<ResultMapping> getNormalResultMappings(MybatisConfiguration configuration, Class clazz) {
+        List<Field> list = FieldUtil.getResultMappingFields(clazz);
+
+        List<ResultMapping> resultMappings = new ArrayList<>(list.size() * 2);
+        list.stream().forEach(field -> {
+            resultMappings.add(configuration.buildResultMapping(false, field, field.getName(), JdbcType.UNDEFINED, UnknownTypeHandler.class));
+            resultMappings.add(configuration.buildResultMapping(false, field, SqlUtil.getFiledLambdaAsName(field), JdbcType.UNDEFINED, UnknownTypeHandler.class));
+        });
+
         return Collections.unmodifiableList(resultMappings);
     }
 

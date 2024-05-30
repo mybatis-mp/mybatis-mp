@@ -13,6 +13,10 @@ public final class SqlUtil {
         return String.format("%s%s%s", lambdaFieldInfo.getType().getSimpleName(), AS_SPLIT, lambdaFieldInfo.getName());
     }
 
+    public static String getFiledLambdaAsName(Field field) {
+        return String.format("%s%s%s", field.getDeclaringClass().getSimpleName(), AS_SPLIT, field.getName());
+    }
+
     public static String getAsName(Field field) {
         return String.format("%s%s%s", field.getDeclaringClass().getSimpleName(), AS_SPLIT, field.getName());
     }
