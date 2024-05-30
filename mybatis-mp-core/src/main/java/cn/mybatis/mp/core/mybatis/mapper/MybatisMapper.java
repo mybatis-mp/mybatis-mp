@@ -329,7 +329,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param consumer query consumer
      * @return 返回page
      */
-    default Pager<T> pagingWithQueryFun(Pager<T> pager, Consumer<BaseQuery<?>> consumer) {
+    default <R, P extends Pager<R>> P pagingWithQueryFun(P pager, Consumer<BaseQuery<?>> consumer) {
         return getBasicMapper().pagingWithQueryFun(getEntityType(), pager, consumer);
     }
 
@@ -580,7 +580,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param pager 分页参数
      * @return 分页结果
      */
-    default <R> Pager<R> paging(BaseQuery query, Pager<R> pager) {
+    default <R, P extends Pager<R>> P paging(BaseQuery query, P pager) {
         return getBasicMapper().paging(query, pager);
     }
 

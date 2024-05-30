@@ -443,11 +443,11 @@ public interface BasicMapper extends BaseMapper {
      * @param pager    分页参数
      * @return 分页结果
      */
-    default <T> Pager<T> paging(Class<T> entityType, Pager<T> pager, Consumer<Where> consumer) {
+    default <T, P extends Pager<T>> P paging(Class<T> entityType, P pager, Consumer<Where> consumer) {
         return this.paging(entityType, consumer, pager, null);
     }
 
-    default <T> Pager<T> paging(Class<T> entityType, Consumer<Where> consumer, Pager<T> pager, Getter<T>... selectFields) {
+    default <T, P extends Pager<T>> P paging(Class<T> entityType, Consumer<Where> consumer, P pager, Getter<T>... selectFields) {
         pager.setOptimize(false);
         Where where = WhereUtil.create();
         consumer.accept(where);
@@ -465,7 +465,7 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   query consumer
      * @return 返回count数
      */
-    default <T> Pager<T> pagingWithQueryFun(Class<?> entityType, Pager<T> pager, Consumer<BaseQuery<?>> consumer) {
+    default <R, P extends Pager<R>> P pagingWithQueryFun(Class<?> entityType, P pager, Consumer<BaseQuery<?>> consumer) {
         return this.paging(MapperCmdBuilderUtil.buildQuery(entityType, consumer), pager);
     }
 
@@ -478,7 +478,7 @@ public interface BasicMapper extends BaseMapper {
      * @return 一个map
      */
     default <T, K> Map<K, T> mapWithKey(Getter<T> mapKey, Serializable... ids) {
-        if (Objects.isNull(null) || ids.length < 1) {
+        if (Objects.isNull(ids) || ids.length < 1) {
             return Collections.emptyMap();
         }
         return this.mapWithKey(mapKey, Arrays.asList(ids));
@@ -493,7 +493,7 @@ public interface BasicMapper extends BaseMapper {
      * @return 一个map
      */
     default <T, K> Map<K, T> mapWithKey(Getter<T> mapKey, List<Serializable> ids) {
-        if (Objects.isNull(null) || ids.isEmpty()) {
+        if (Objects.isNull(ids) || ids.isEmpty()) {
             return Collections.emptyMap();
         }
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(mapKey);

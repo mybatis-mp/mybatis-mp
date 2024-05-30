@@ -16,22 +16,22 @@ import java.util.Objects;
  */
 public class QueryChain extends BaseQuery<QueryChain> {
 
-    protected final MybatisMapper mapper;
+    protected final MybatisMapper<?> mapper;
 
-    public QueryChain(MybatisMapper mapper) {
+    public QueryChain(MybatisMapper<?> mapper) {
         this.mapper = mapper;
     }
 
-    public QueryChain(MybatisMapper mapper, Where where) {
+    public QueryChain(MybatisMapper<?> mapper, Where where) {
         super(where);
         this.mapper = mapper;
     }
 
-    public static QueryChain of(MybatisMapper mapper) {
+    public static QueryChain of(MybatisMapper<?> mapper) {
         return new QueryChain(mapper);
     }
 
-    public static QueryChain of(MybatisMapper mapper, Where where) {
+    public static QueryChain of(MybatisMapper<?> mapper, Where where) {
         return new QueryChain(mapper, where);
     }
 
@@ -166,7 +166,7 @@ public class QueryChain extends BaseQuery<QueryChain> {
      * @param <R>
      * @return
      */
-    public <R> Pager<R> paging(Pager<R> pager) {
+    public <R, P extends Pager<R>> P paging(P pager) {
         this.setDefault();
         return mapper.paging(this, pager);
     }

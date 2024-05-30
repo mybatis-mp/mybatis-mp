@@ -40,6 +40,17 @@ public class Methods {
      * @param value
      * @return
      */
+    public static BasicValue value(Serializable value) {
+        Objects.requireNonNull(value);
+        return new BasicValue(value);
+    }
+
+    /**
+     * value
+     *
+     * @param value
+     * @return
+     */
     public static Cmd convert(Serializable value) {
         Objects.requireNonNull(value);
         return new BasicValue(value);

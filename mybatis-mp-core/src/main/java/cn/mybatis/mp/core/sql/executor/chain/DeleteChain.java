@@ -9,22 +9,22 @@ import db.sql.api.impl.cmd.struct.Where;
  */
 public class DeleteChain extends BaseDelete<DeleteChain> {
 
-    protected final MybatisMapper mapper;
+    protected final MybatisMapper<?> mapper;
 
-    public DeleteChain(MybatisMapper mapper) {
+    public DeleteChain(MybatisMapper<?> mapper) {
         this.mapper = mapper;
     }
 
-    public DeleteChain(MybatisMapper mapper, Where where) {
+    public DeleteChain(MybatisMapper<?> mapper, Where where) {
         super(where);
         this.mapper = mapper;
     }
 
-    public static DeleteChain of(MybatisMapper mapper) {
+    public static DeleteChain of(MybatisMapper<?> mapper) {
         return new DeleteChain(mapper);
     }
 
-    public static DeleteChain of(MybatisMapper mapper, Where where) {
+    public static DeleteChain of(MybatisMapper<?> mapper, Where where) {
         return new DeleteChain(mapper, where);
     }
 

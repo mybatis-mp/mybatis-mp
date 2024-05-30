@@ -5,13 +5,13 @@ import cn.mybatis.mp.core.sql.executor.BaseInsert;
 
 public class InsertChain extends BaseInsert<InsertChain> {
 
-    protected final MybatisMapper mapper;
+    protected final MybatisMapper<?> mapper;
 
-    public InsertChain(MybatisMapper mapper) {
+    public InsertChain(MybatisMapper<?> mapper) {
         this.mapper = mapper;
     }
 
-    public static InsertChain of(MybatisMapper mapper) {
+    public static InsertChain of(MybatisMapper<?> mapper) {
         return new InsertChain(mapper);
     }
 

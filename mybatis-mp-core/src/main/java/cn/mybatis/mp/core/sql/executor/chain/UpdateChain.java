@@ -11,22 +11,22 @@ import java.util.Objects;
  */
 public class UpdateChain extends BaseUpdate<UpdateChain> {
 
-    protected final MybatisMapper mapper;
+    protected final MybatisMapper<?> mapper;
 
-    public UpdateChain(MybatisMapper mapper) {
+    public UpdateChain(MybatisMapper<?> mapper) {
         this.mapper = mapper;
     }
 
-    public UpdateChain(MybatisMapper mapper, Where where) {
+    public UpdateChain(MybatisMapper<?> mapper, Where where) {
         super(where);
         this.mapper = mapper;
     }
 
-    public static UpdateChain of(MybatisMapper mapper) {
+    public static UpdateChain of(MybatisMapper<?> mapper) {
         return new UpdateChain(mapper);
     }
 
-    public static UpdateChain of(MybatisMapper mapper, Where where) {
+    public static UpdateChain of(MybatisMapper<?> mapper, Where where) {
         return new UpdateChain(mapper, where);
     }
 

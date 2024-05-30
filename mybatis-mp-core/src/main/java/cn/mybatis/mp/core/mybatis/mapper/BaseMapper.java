@@ -235,7 +235,7 @@ public interface BaseMapper extends CommonMapper {
      * @param pager 分页参数
      * @return 分页结果
      */
-    default <R> Pager<R> paging(BaseQuery query, Pager<R> pager) {
+    default <R, P extends Pager<R>> P paging(BaseQuery query, P pager) {
         if (pager.isExecuteCount()) {
             Class returnType = query.getReturnType();
             query.returnType(Integer.TYPE);
