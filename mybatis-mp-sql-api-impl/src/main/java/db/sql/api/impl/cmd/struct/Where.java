@@ -14,7 +14,7 @@ import db.sql.api.tookit.CmdUtils;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class Where implements IWhere<Where, TableField, Cmd, Object, ConditionChain> {
+public class Where<WHERE extends Where<WHERE>> implements IWhere<WHERE, TableField, Cmd, Object, ConditionChain> {
 
     private final ConditionFactory conditionFactory;
 
@@ -54,15 +54,15 @@ public class Where implements IWhere<Where, TableField, Cmd, Object, ConditionCh
     }
 
     @Override
-    public <T> Where and(Getter<T> column, int storey, Function<TableField, ICondition> function) {
+    public <T> WHERE and(Getter<T> column, int storey, Function<TableField, ICondition> function) {
         conditionChain().and(column, storey, function);
-        return this;
+        return (WHERE) this;
     }
 
     @Override
-    public <T> Where or(Getter<T> column, int storey, Function<TableField, ICondition> function) {
+    public <T> WHERE or(Getter<T> column, int storey, Function<TableField, ICondition> function) {
         conditionChain().or(column, storey, function);
-        return this;
+        return (WHERE) this;
     }
 
     @Override
