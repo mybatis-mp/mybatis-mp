@@ -1,13 +1,12 @@
 package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
-import db.sql.api.cmd.basic.Alias;
 
 /**
  * SQL模板类
  * 采用MessageFormat.format格式化模板
  */
-public class CmdTemplate extends BaseTemplate  {
+public class CmdTemplate extends BaseTemplate<CmdTemplate> {
 
     public CmdTemplate(String template, Object... params) {
         super(template, params);

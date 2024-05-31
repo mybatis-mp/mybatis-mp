@@ -12,11 +12,9 @@ import java.util.Objects;
 
 public abstract class BaseTemplate<T> implements Cmd, Alias<T> {
 
-    private String alias;
-
     protected final String template;
-
     protected final Cmd[] params;
+    private String alias;
 
     public BaseTemplate(String template, Object... params) {
         this.template = template;
@@ -45,7 +43,7 @@ public abstract class BaseTemplate<T> implements Cmd, Alias<T> {
     @Override
     public T as(String alias) {
         this.alias = alias;
-        return (T)this;
+        return (T) this;
     }
 
     /**

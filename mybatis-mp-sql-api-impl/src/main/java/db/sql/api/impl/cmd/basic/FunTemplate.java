@@ -6,7 +6,7 @@ import db.sql.api.impl.cmd.dbFun.FunctionInterface;
 /**
  * 函数模板
  */
-public class FunTemplate extends CmdTemplate implements FunctionInterface {
+public class FunTemplate extends BaseTemplate<FunTemplate> implements FunctionInterface {
 
     public FunTemplate(String template, Object... params) {
         super(template, params);
