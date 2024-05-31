@@ -68,6 +68,10 @@ public interface ICmdFactory<TABLE extends DATASET, DATASET, TABLE_FIELD, DATASE
 
     TABLE_FIELD[] fields(GetterColumnField... getterColumnFields);
 
+    default TABLE_FIELD field(Class entity, String filedName){
+        return this.field(entity,filedName,1);
+    }
+
     /**
      * 根据字段名获取TABLE_FIELD
      *
