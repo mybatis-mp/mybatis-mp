@@ -35,8 +35,9 @@ public class Table implements Dataset<Table, TableField> {
         return name;
     }
 
-    public void setName(String name) {
+    public Table setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getName(DbType dbType) {
