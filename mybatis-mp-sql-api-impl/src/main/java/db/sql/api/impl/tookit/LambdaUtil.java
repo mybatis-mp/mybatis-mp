@@ -39,11 +39,6 @@ public final class LambdaUtil {
         return getFieldInfo(getter).getName();
     }
 
-    private static String getLambdaFieldName(SerializedLambda serializedLambda) {
-        String methodName = serializedLambda.getImplMethodName();
-        return PropertyNamer.methodToProperty(methodName);
-    }
-
     private static LambdaFieldInfo getLambdaFieldInfo(SerializedLambda serializedLambda, ClassLoader classLoader) {
         Class type = getClass(serializedLambda, classLoader);
         String methodName = serializedLambda.getImplMethodName();
@@ -52,9 +47,7 @@ public final class LambdaUtil {
     }
 
     public static <T> LambdaFieldInfo getFieldInfo(Getter<T> getter) {
-
         return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), getter.getClass().getClassLoader()));
-
     }
 
     private static SerializedLambda getSerializedLambda(Getter getter) {
