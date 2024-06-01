@@ -30,32 +30,13 @@ public final class LambdaUtil {
 
     private static final Map<String, Class<?>> CLASS_MAP = new ConcurrentHashMap();
 
-    private volatile static boolean CACHE_ENABLE;
-
-    static {
-        CACHE_ENABLE = true;
-        getName(LambdaFieldInfo::getName);
-        getName(LambdaFieldInfo::getName);
-        CACHE_ENABLE = (LAMBDA_GETTER_FIELD_MAP.size() == 1);
-        if (!CACHE_ENABLE) {
-            LAMBDA_GETTER_FIELD_MAP.clear();
-        }
-    }
 
     private LambdaUtil() {
 
     }
 
     public static <T> String getName(Getter<T> getter) {
-        if (CACHE_ENABLE) {
-            return getFieldInfo(getter).getName();
-        } else {
-            return getLambdaFieldName(getter);
-        }
-    }
-
-    public static String getLambdaFieldName(Getter getter) {
-        return getLambdaFieldName(getSerializedLambda(getter));
+        return getFieldInfo(getter).getName();
     }
 
     private static String getLambdaFieldName(SerializedLambda serializedLambda) {
@@ -71,11 +52,9 @@ public final class LambdaUtil {
     }
 
     public static <T> LambdaFieldInfo getFieldInfo(Getter<T> getter) {
-        if (CACHE_ENABLE) {
-            return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), getter.getClass().getClassLoader()));
-        } else {
-            return getLambdaFieldInfo(getSerializedLambda(getter), getter.getClass().getClassLoader());
-        }
+
+        return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), getter.getClass().getClassLoader()));
+
     }
 
     private static SerializedLambda getSerializedLambda(Getter getter) {
@@ -92,7 +71,7 @@ public final class LambdaUtil {
         String classNamePath = getClassNamePath(lambda);
         return (Class<T>) MapUtil.computeIfAbsent(CLASS_MAP, classNamePath, key -> {
             try {
-                return Class.forName(getClassName(key), true, classLoader);
+                return Class.forName(getClassName(key), false, classLoader);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }

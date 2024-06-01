@@ -1,8 +1,10 @@
 package db.sql.api;
 
 import java.io.Serializable;
+import java.util.function.Function;
 
-@FunctionalInterface
-public interface Getter<T> extends Serializable {
-    Object get(T source);
+
+public interface Getter<T> extends Function<T, Object>, Serializable {
+
+
 }
