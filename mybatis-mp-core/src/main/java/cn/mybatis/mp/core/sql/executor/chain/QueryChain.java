@@ -74,7 +74,7 @@ public class QueryChain extends BaseQuery<QueryChain> {
      */
     public <R> R get(boolean optimize) {
         this.setDefault(false);
-        return (R) mapper.get(this, optimize);
+        return mapper.get(this, optimize);
     }
 
     /**
