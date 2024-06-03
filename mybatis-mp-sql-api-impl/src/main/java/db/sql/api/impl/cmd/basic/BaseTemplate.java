@@ -66,7 +66,7 @@ public abstract class BaseTemplate<T> implements Cmd, Alias<T> {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(SqlConst.BLANK).append(SqlConst.BRACKET_LEFT);
+        sqlBuilder.append(SqlConst.BLANK);
         String str = this.template;
         if (Objects.nonNull(params) && params.length > 0) {
             Object[] paramsStr = new Object[params.length];
@@ -75,7 +75,7 @@ public abstract class BaseTemplate<T> implements Cmd, Alias<T> {
             }
             str = MessageFormat.format(this.template, paramsStr);
         }
-        sqlBuilder.append(SqlConst.BLANK).append(str).append(SqlConst.BRACKET_RIGHT);
+        sqlBuilder.append(SqlConst.BLANK).append(str);
         this.appendAlias(module, parent, context, sqlBuilder);
         return sqlBuilder;
     }
