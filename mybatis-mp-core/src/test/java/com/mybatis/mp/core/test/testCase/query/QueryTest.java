@@ -307,7 +307,7 @@ public class QueryTest extends BaseTest {
                     .select(SysUser.class)
                     .from(SysUser.class)
                     .orderBy(SysUser::getId)
-                    .paging(Pager.of(2));
+                    .paging(Pager.of(1,2));
 
             assertEquals(pager.getTotal(), Integer.valueOf(3), "paging Total");
             assertEquals(pager.getResults().size(), 2, "paging Results size");

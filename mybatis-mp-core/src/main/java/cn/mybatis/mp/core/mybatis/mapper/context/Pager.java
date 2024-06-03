@@ -38,7 +38,7 @@ public class Pager<T> {
     }
 
     public static <T> Pager<T> of(int number, int size) {
-        return of(number, size);
+        return new Pager<>(number, size);
     }
 
     public static <T> Pager<T> of(Class<T> type, int number, int size) {
