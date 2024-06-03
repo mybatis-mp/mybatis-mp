@@ -4,7 +4,7 @@ import db.sql.api.Getter;
 import db.sql.api.cmd.executor.IQuery;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 
 public interface IInGetterCompare<RV> {
 
@@ -36,17 +36,17 @@ public interface IInGetterCompare<RV> {
 
     <T> RV in(boolean when, Getter<T> column, int storey, Serializable[] values);
 
-    default <T> RV in(Getter<T> column, List<? extends Serializable> values) {
+    default <T> RV in(Getter<T> column, Collection<? extends Serializable> values) {
         return this.in(true, column, 1, values);
     }
 
-    default <T> RV in(boolean when, Getter<T> column, List<? extends Serializable> values) {
+    default <T> RV in(boolean when, Getter<T> column, Collection<? extends Serializable> values) {
         return this.in(when, column, 1, values);
     }
 
-    default <T> RV in(Getter<T> column, int storey, List<? extends Serializable> values) {
+    default <T> RV in(Getter<T> column, int storey, Collection<? extends Serializable> values) {
         return this.in(true, column, storey, values);
     }
 
-    <T> RV in(boolean when, Getter<T> column, int storey, List<? extends Serializable> values);
+    <T> RV in(boolean when, Getter<T> column, int storey, Collection<? extends Serializable> values);
 }

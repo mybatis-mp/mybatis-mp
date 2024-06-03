@@ -17,6 +17,7 @@ import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -486,7 +487,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
-    public ConditionChain in(Cmd cmd, List<? extends Serializable> values) {
+    public ConditionChain in(Cmd cmd, Collection<? extends Serializable> values) {
         ICondition condition = conditionFactory.in(cmd, values);
         if (condition != null) {
             conditionBlocks().add(new ConditionBlock(this.connector, condition));
@@ -513,7 +514,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
-    public <T> ConditionChain in(boolean when, Getter<T> column, int storey, List<? extends Serializable> values) {
+    public <T> ConditionChain in(boolean when, Getter<T> column, int storey, Collection<? extends Serializable> values) {
         ICondition condition = conditionFactory.in(when, column, storey, values);
         if (condition != null) {
             conditionBlocks().add(new ConditionBlock(this.connector, condition));
@@ -558,7 +559,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
-    public ConditionChain notIn(Cmd cmd, List<? extends Serializable> values) {
+    public ConditionChain notIn(Cmd cmd, Collection<? extends Serializable> values) {
         ICondition condition = conditionFactory.notIn(cmd, values);
         if (condition != null) {
             conditionBlocks().add(new ConditionBlock(this.connector, condition));
@@ -585,7 +586,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
-    public <T> ConditionChain notIn(boolean when, Getter<T> column, int storey, List<? extends Serializable> values) {
+    public <T> ConditionChain notIn(boolean when, Getter<T> column, int storey, Collection<? extends Serializable> values) {
         ICondition condition = conditionFactory.notIn(when, column, storey, values);
         if (condition != null) {
             conditionBlocks().add(new ConditionBlock(this.connector, condition));

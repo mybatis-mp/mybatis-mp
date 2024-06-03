@@ -8,6 +8,7 @@ import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +44,7 @@ public class In extends BaseCondition<Cmd, List<Cmd>> {
         return this;
     }
 
-    public In add(List<? extends Serializable> values) {
+    public In add(Collection<? extends Serializable> values) {
         for (Serializable value : values) {
             if (Objects.isNull(value)) {
                 continue;

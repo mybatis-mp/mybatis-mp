@@ -10,7 +10,7 @@ import db.sql.api.cmd.struct.Nested;
 import db.sql.api.cmd.struct.conditionChain.IConditionChain;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -391,7 +391,7 @@ public interface IConditionMethod<SELF extends IConditionMethod,
     }
 
     @Override
-    default SELF in(COLUMN column, List<? extends Serializable> values) {
+    default SELF in(COLUMN column, Collection<? extends Serializable> values) {
         conditionChain().in(column, values);
         return (SELF) this;
     }
@@ -409,7 +409,7 @@ public interface IConditionMethod<SELF extends IConditionMethod,
     }
 
     @Override
-    default <T> SELF in(boolean when, Getter<T> column, int storey, List<? extends Serializable> values) {
+    default <T> SELF in(boolean when, Getter<T> column, int storey, Collection<? extends Serializable> values) {
         conditionChain().in(when, column, storey, values);
         return (SELF) this;
     }
@@ -439,7 +439,7 @@ public interface IConditionMethod<SELF extends IConditionMethod,
     }
 
     @Override
-    default SELF notIn(COLUMN column, List<? extends Serializable> values) {
+    default SELF notIn(COLUMN column, Collection<? extends Serializable> values) {
         conditionChain().notIn(column, values);
         return (SELF) this;
     }
@@ -457,7 +457,7 @@ public interface IConditionMethod<SELF extends IConditionMethod,
     }
 
     @Override
-    default <T> SELF notIn(boolean when, Getter<T> column, int storey, List<? extends Serializable> values) {
+    default <T> SELF notIn(boolean when, Getter<T> column, int storey, Collection<? extends Serializable> values) {
         conditionChain().notIn(when, column, storey, values);
         return (SELF) this;
     }

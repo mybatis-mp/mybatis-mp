@@ -12,7 +12,7 @@ import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -1339,7 +1339,7 @@ public class Methods {
      *
      * @return
      */
-    public static In in(Cmd key, List<? extends Serializable> values) {
+    public static In in(Cmd key, Collection<? extends Serializable> values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new In(key).add(values);
@@ -1372,7 +1372,7 @@ public class Methods {
      *
      * @return
      */
-    public static NotIn notIn(Cmd key, List<? extends Serializable> values) {
+    public static NotIn notIn(Cmd key, Collection<? extends Serializable> values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new NotIn(key).add(values);

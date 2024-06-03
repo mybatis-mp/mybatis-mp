@@ -4,7 +4,7 @@ import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.cmd.executor.method.condition.compare.INotInGetterCompare;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 
 public interface INotInMethod<RV, COLUMN> extends INotInGetterCompare<RV> {
 
@@ -12,5 +12,5 @@ public interface INotInMethod<RV, COLUMN> extends INotInGetterCompare<RV> {
 
     RV notIn(COLUMN column, Serializable... values);
 
-    RV notIn(COLUMN column, List<? extends Serializable> values);
+    RV notIn(COLUMN column, Collection<? extends Serializable> values);
 }

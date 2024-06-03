@@ -122,7 +122,8 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             } else if (value instanceof Queue) {
                 objectList = new ArrayDeque<>(collection.size());
             } else {
-                throw new RuntimeException("Not supported");
+                //throw new RuntimeException("Not supported");
+                objectList = new LinkedList<>();
             }
             for (Object v : collection) {
                 Object nv = getSingleValue(v);
@@ -540,7 +541,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public ICondition in(Cmd column, List<? extends Serializable> values) {
+    public ICondition in(Cmd column, Collection<? extends Serializable> values) {
         values = (List<Serializable>) checkAndGetValidValue(values);
         if (Objects.isNull(values)) {
             return null;
@@ -570,11 +571,11 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public <T> ICondition in(boolean when, Getter<T> column, int storey, List<? extends Serializable> values) {
+    public <T> ICondition in(boolean when, Getter<T> column, int storey, Collection<? extends Serializable> values) {
         if (!when) {
             return null;
         }
-        values = (List<Serializable>) checkAndGetValidValue(values);
+        values = (Collection<Serializable>) checkAndGetValidValue(values);
         if (Objects.isNull(values)) {
             return null;
         }
@@ -616,7 +617,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public ICondition notIn(Cmd column, List<? extends Serializable> values) {
+    public ICondition notIn(Cmd column, Collection<? extends Serializable> values) {
         values = (List<Serializable>) checkAndGetValidValue(values);
         if (Objects.isNull(values)) {
             return null;
@@ -646,11 +647,11 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public <T> ICondition notIn(boolean when, Getter<T> column, int storey, List<? extends Serializable> values) {
+    public <T> ICondition notIn(boolean when, Getter<T> column, int storey, Collection<? extends Serializable> values) {
         if (!when) {
             return null;
         }
-        values = (List<Serializable>) checkAndGetValidValue(values);
+        values = (Collection<? extends Serializable>) checkAndGetValidValue(values);
         if (Objects.isNull(values)) {
             return null;
         }

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -349,6 +350,7 @@ public class ConditionTest extends BaseTest {
                     .in(SysUser::getId, 1, 2)
                     .in(true, SysUser::getId, 1, 2)
                     .in(SysUser::getId, Arrays.asList(1, 2))
+                    .in(SysUser::getId, Arrays.asList(1, 2).stream().collect(Collectors.toSet()))
                     .in(true, SysUser::getId, Arrays.asList(1, 2))
                     .returnType(Integer.TYPE)
                     .list();
