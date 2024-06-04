@@ -262,7 +262,7 @@ public interface BaseMapper extends CommonMapper {
      * @param <V>    map的value
      * @return
      */
-    default <K, V, G> Map<K, V> mapWithKey(Getter<G> mapKey, BaseQuery<?> query) {
+    default <K, V> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<?> query) {
         return this.mapWithKey(mapKey, query, true);
     }
 
@@ -276,7 +276,7 @@ public interface BaseMapper extends CommonMapper {
      * @param <V>      map的value
      * @return
      */
-    default <K, V, G> Map<K, V> mapWithKey(Getter<G> mapKey, BaseQuery<?> query, boolean optimize) {
+    default <K, V> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<?> query, boolean optimize) {
         return this.mapWithKey(LambdaUtil.getName(mapKey), query, optimize);
     }
 
