@@ -39,11 +39,11 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
         return (QueryChain<E2>) super.setReturnType(returnType);
     }
 
-    public <K, V> QueryChain<Map<K, V>> returnMap(Class<K> kClass, Class<V> vClass) {
-        return (QueryChain<Map<K, V>>) super.setReturnType(returnType);
+    public <V> QueryChain<Map<String, V>> returnMap(Class<V> vClass) {
+        return (QueryChain<Map<String, V>>) super.setReturnType(returnType);
     }
 
-    public <K, V> QueryChain<Map<K, V>> returnMap() {
+    public <V> QueryChain<Map<String, V>> returnMap() {
         return (QueryChain) super.setReturnType(Map.class);
     }
 

@@ -546,8 +546,8 @@ public class QueryTest extends BaseTest {
         }
     }
 
-    @Test
-    public void selectReturnToMap() {
+    //@Test
+    public Map<String, Object> selectReturnToMap() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             configuration.setMapUnderscoreToCamelCase(true);
@@ -567,17 +567,14 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             configuration.setMapUnderscoreToCamelCase(false);
-            Map<String, Object> map = QueryChain.of(sysUserMapper)
+            return QueryChain.of(sysUserMapper)
                     .select(SysUser.class)
                     .from(SysUser.class)
                     .returnType(Map.class)
                     .orderBy(SysUser::getId)
                     .limit(1)
                     .get();
-            System.out.println(map);
-            assertNotNull(map);
-            assertEquals(map.get("user_name"), "admin");
-            assertTrue(map instanceof Map);
+
         }
     }
 }

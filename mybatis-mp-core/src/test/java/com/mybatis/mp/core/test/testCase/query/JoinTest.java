@@ -83,7 +83,7 @@ public class JoinTest extends BaseTest {
             List<Map<String, Object>> maps = QueryChain.of(sysUserMapper)
                     .select(SysUser.class)
                     .from(SysUser.class)
-                    .returnMap(String.class, Object.class)
+                    .returnMap(Object.class)
                     .list();
             assertEquals(3, maps.size());
         }
