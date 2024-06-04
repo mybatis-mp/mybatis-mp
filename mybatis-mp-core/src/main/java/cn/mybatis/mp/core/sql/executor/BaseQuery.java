@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public abstract class BaseQuery<Q extends BaseQuery<Q>> extends AbstractQuery<Q, MybatisCmdFactory> {
+public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQuery<Q, MybatisCmdFactory> {
 
     protected Class returnType;
 
@@ -77,8 +77,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q>> extends AbstractQuery<Q,
         return returnType;
     }
 
-    public Q returnType(Class returnType) {
+    public <E2, Q2 extends BaseQuery<Q2, E2>> BaseQuery<Q2, E2> setReturnType(Class<E2> returnType) {
         this.returnType = returnType;
-        return (Q) this;
+        return (BaseQuery<Q2, E2>) this;
     }
 }

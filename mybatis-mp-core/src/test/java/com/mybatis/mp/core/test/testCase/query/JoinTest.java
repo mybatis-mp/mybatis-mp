@@ -83,7 +83,7 @@ public class JoinTest extends BaseTest {
             List<Map<String, Object>> maps = QueryChain.of(sysUserMapper)
                     .select(SysUser.class)
                     .from(SysUser.class)
-                    .returnType(Map.class)
+                    .returnMap(String.class, Object.class)
                     .list();
             assertEquals(3, maps.size());
         }
@@ -123,8 +123,9 @@ public class JoinTest extends BaseTest {
         Query query = new Query()
                 .selectWithFun(SysUser::getId, FunctionInterface::count)
                 .from(SysUser.class)
-                .join(JoinMode.FULL, SysUser.class, SysRole.class)
-                .returnType(Integer.TYPE);
+                .join(JoinMode.FULL, SysUser.class, SysRole.class);
+
+        query.setReturnType(Integer.TYPE);
         check("fullJoin", "SELECT  COUNT( t.id) FROM t_sys_user t  FULL OUTER JOIN sys_role t2 ON  t2.id =  t.role_id", query);
 
     }

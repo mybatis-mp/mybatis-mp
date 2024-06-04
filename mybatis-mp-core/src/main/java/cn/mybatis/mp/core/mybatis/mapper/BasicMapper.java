@@ -62,18 +62,20 @@ public interface BasicMapper extends BaseMapper {
     default <T> T get(Class<T> entityType, Consumer<Where> consumer) {
         Where where = WhereUtil.create();
         consumer.accept(where);
-        return this.get(MapperCmdBuilderUtil.buildQuery(entityType, where), false);
+
+        BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(entityType, where);
+        return this.get(query, false);
     }
 
 
     /**
      * 单个查询
      *
-     * @param entityType 实体类
+     * @param entityType 实体类Q
      * @param consumer   query consumer
      * @return 当个当前实体
      */
-    default <T> T getWithQueryFun(Class<T> entityType, Consumer<BaseQuery<?>> consumer) {
+    default <T, Q extends BaseQuery<Q, T>> T getWithQueryFun(Class<T> entityType, Consumer<BaseQuery<Q, T>> consumer) {
         return this.get(MapperCmdBuilderUtil.buildQuery(entityType, consumer), false);
     }
 
@@ -101,7 +103,7 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   where consumer
      * @return 是否存在
      */
-    default boolean existsWithQueryFun(Class<?> entityType, Consumer<BaseQuery<?>> consumer) {
+    default <T, Q extends BaseQuery<Q, T>> boolean existsWithQueryFun(Class<T> entityType, Consumer<BaseQuery<Q, T>> consumer) {
         return this.exists(MapperCmdBuilderUtil.buildQuery(entityType, consumer));
     }
 
@@ -352,18 +354,19 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   where consumer
      * @return 当个当前实体
      */
-    default <T> List<T> list(Class<?> entityType, Consumer<Where> consumer) {
+    default <T> List<T> list(Class<T> entityType, Consumer<Where> consumer) {
         Where where = WhereUtil.create();
         consumer.accept(where);
         return this.list(entityType, where, (Getter<T>[]) null);
     }
 
-    default <T> List<T> list(Class<?> entityType, Where where, Getter<T>... selectFields) {
-        return this.list(MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
+    default <T> List<T> list(Class<T> entityType, Where where, Getter<T>... selectFields) {
+        BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
             if (Objects.nonNull(selectFields) && selectFields.length > 0) {
                 baseQuery.select(selectFields);
             }
-        }), false);
+        });
+        return this.list(query, false);
     }
 
     /**
@@ -373,7 +376,7 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   query consumer
      * @return 当个当前实体
      */
-    default <T> List<T> listWithQueryFun(Class<T> entityType, Consumer<BaseQuery<?>> consumer) {
+    default <T, Q extends BaseQuery<Q, T>> List<T> listWithQueryFun(Class<T> entityType, Consumer<BaseQuery<Q, T>> consumer) {
         return this.list(MapperCmdBuilderUtil.buildQuery(entityType, consumer), false);
     }
 
@@ -385,18 +388,19 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   where consumer
      * @return 当个当前实体
      */
-    default <T> Cursor<T> cursor(Class<?> entityType, Consumer<Where> consumer) {
+    default <T> Cursor<T> cursor(Class<T> entityType, Consumer<Where> consumer) {
         Where where = WhereUtil.create();
         consumer.accept(where);
         return this.cursor(entityType, where, (Getter<T>[]) null);
     }
 
-    default <T> Cursor<T> cursor(Class<?> entityType, Where where, Getter<T>... selectFields) {
-        return this.cursor(MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
+    default <T> Cursor<T> cursor(Class<T> entityType, Where where, Getter<T>... selectFields) {
+        BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
             if (Objects.nonNull(selectFields) && selectFields.length > 0) {
                 baseQuery.select(selectFields);
             }
-        }), false);
+        });
+        return this.cursor(query, false);
     }
 
     /**
@@ -406,7 +410,7 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   query consumer
      * @return 当个当前实体
      */
-    default <T> Cursor<T> cursorWithQueryFun(Class<T> entityType, Consumer<BaseQuery<?>> consumer) {
+    default <T, Q extends BaseQuery<Q, T>> Cursor<T> cursorWithQueryFun(Class<T> entityType, Consumer<BaseQuery<Q, T>> consumer) {
         return this.cursor(MapperCmdBuilderUtil.buildQuery(entityType, consumer), false);
     }
 
@@ -432,7 +436,7 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   query consumer
      * @return 返回count数
      */
-    default Integer countWithQueryFun(Class<?> entityType, Consumer<BaseQuery<?>> consumer) {
+    default <T, Q extends BaseQuery<Q, T>> Integer countWithQueryFun(Class<T> entityType, Consumer<BaseQuery<Q, T>> consumer) {
         return this.count(MapperCmdBuilderUtil.buildQuery(entityType, consumer), false);
     }
 
@@ -451,11 +455,14 @@ public interface BasicMapper extends BaseMapper {
         pager.setOptimize(false);
         Where where = WhereUtil.create();
         consumer.accept(where);
-        return this.paging(MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
+
+        BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
             if (Objects.nonNull(selectFields) && selectFields.length > 0) {
                 baseQuery.select(selectFields);
             }
-        }), pager);
+        });
+
+        return this.paging(query, pager);
     }
 
     /**
@@ -465,7 +472,7 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   query consumer
      * @return 返回count数
      */
-    default <R, P extends Pager<R>> P pagingWithQueryFun(Class<?> entityType, P pager, Consumer<BaseQuery<?>> consumer) {
+    default <T, Q extends BaseQuery<Q, T>, P extends Pager<T>> P pagingWithQueryFun(Class<T> entityType, P pager, Consumer<BaseQuery<Q, T>> consumer) {
         return this.paging(MapperCmdBuilderUtil.buildQuery(entityType, consumer), pager);
     }
 

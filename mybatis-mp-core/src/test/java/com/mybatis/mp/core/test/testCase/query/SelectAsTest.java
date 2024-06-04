@@ -81,7 +81,7 @@ public class SelectAsTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
-            QueryChain queryChain = QueryChain.of(sysUserMapper)
+            QueryChain<SysUserVo> queryChain = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId, SysUser::getUserName)
                     .select(SysRole.class)
                     .from(SysUser.class)
@@ -113,7 +113,7 @@ public class SelectAsTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
-            QueryChain queryChain = QueryChain.of(sysUserMapper)
+            QueryChain<SysUserVo> queryChain = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId, SysUser::getUserName)
                     .select(SysRole.class)
                     .from(SysUser.class)
@@ -143,7 +143,7 @@ public class SelectAsTest extends BaseTest {
     public void nestedResultEntity2() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            QueryChain queryChain = QueryChain.of(sysUserMapper)
+            QueryChain<SysUserRoleVo> queryChain = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId, SysUser::getUserName)
                     .select(SysRole.class)
                     .from(SysUser.class)
@@ -198,7 +198,7 @@ public class SelectAsTest extends BaseTest {
     public void nestedResultEntityWithSelectVo() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            QueryChain queryChain = QueryChain.of(sysUserMapper)
+            QueryChain<SysUserRoleAutoSelectVo> queryChain = QueryChain.of(sysUserMapper)
                     .select(SysUserRoleAutoSelectVo.class)
                     .from(SysUser.class)
                     .join(SysUser.class, SysRole.class)

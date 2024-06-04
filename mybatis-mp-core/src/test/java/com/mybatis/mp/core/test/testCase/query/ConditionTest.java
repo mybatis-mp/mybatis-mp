@@ -170,7 +170,6 @@ public class ConditionTest extends BaseTest {
                     .from(SysUser.class)
                     .isNotNull(SysUser::getPassword)
                     .eq(SysUser::getId, 3)
-                    .returnType(Integer.TYPE)
                     .get();
             assertNull(sysUser, "isNotNull");
         }

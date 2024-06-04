@@ -29,7 +29,7 @@ public interface BaseMapper extends CommonMapper {
      * @return 单个当前实体
      */
 
-    default <R> R get(BaseQuery<?> query) {
+    default <T, Q extends BaseQuery<Q, T>> T get(BaseQuery<Q, T> query) {
         return this.get(query, true);
     }
 
@@ -38,10 +38,10 @@ public interface BaseMapper extends CommonMapper {
      *
      * @param query    查询query
      * @param optimize 是否优化
-     * @param <R>      返回的类型
+     * @param <T>      返回的类型
      * @return 返回单个当前实体
      */
-    default <R> R get(BaseQuery<?> query, boolean optimize) {
+    default <T, Q extends BaseQuery<Q, T>> T get(BaseQuery<Q, T> query, boolean optimize) {
         return this.$get(new SQLCmdQueryContext(query, optimize), new RowBounds(0, 2));
     }
 
@@ -51,7 +51,7 @@ public interface BaseMapper extends CommonMapper {
      * @param query
      * @return 是否存在
      */
-    default boolean exists(BaseQuery<?> query) {
+    default boolean exists(BaseQuery<?, ?> query) {
         return this.exists(query, true);
     }
 
@@ -62,13 +62,13 @@ public interface BaseMapper extends CommonMapper {
      * @param optimize 是否优化
      * @return
      */
-    default boolean exists(BaseQuery<?> query, boolean optimize) {
+    default boolean exists(BaseQuery<?, ?> query, boolean optimize) {
         if (Objects.isNull(query.getSelect())) {
             query.select1();
         }
         query.limit(1);
-        query.returnType(Integer.TYPE);
-        Integer obj = this.get(query, optimize);
+        query.setReturnType(Integer.TYPE);
+        Integer obj = (Integer) this.get(query, optimize);
         return Objects.nonNull(obj) && obj >= 1;
     }
 
@@ -168,7 +168,7 @@ public interface BaseMapper extends CommonMapper {
      * @param query 查询query
      * @return 返回结果列表
      */
-    default <R> List<R> list(BaseQuery<?> query) {
+    default <T, Q extends BaseQuery<Q, T>> List<T> list(BaseQuery<Q, T> query) {
         return this.list(query, true);
     }
 
@@ -180,7 +180,7 @@ public interface BaseMapper extends CommonMapper {
      * @param optimize 是否优化
      * @return 返回查询列表
      */
-    default <R> List<R> list(BaseQuery<?> query, boolean optimize) {
+    default <T, Q extends BaseQuery<Q, T>> List<T> list(BaseQuery<Q, T> query, boolean optimize) {
         return this.$list(new SQLCmdQueryContext(query, optimize));
     }
 
@@ -190,7 +190,7 @@ public interface BaseMapper extends CommonMapper {
      * @param query 查询query
      * @return 返回游标
      */
-    default <R> Cursor<R> cursor(BaseQuery<?> query) {
+    default <T, Q extends BaseQuery<Q, T>> Cursor<T> cursor(BaseQuery<Q, T> query) {
         return this.cursor(query, true);
     }
 
@@ -201,7 +201,7 @@ public interface BaseMapper extends CommonMapper {
      * @param optimize 是否优化
      * @return 返回游标
      */
-    default <R> Cursor<R> cursor(BaseQuery query, boolean optimize) {
+    default <T, Q extends BaseQuery<Q, T>> Cursor<T> cursor(BaseQuery<Q, T> query, boolean optimize) {
         return this.$cursor(new SQLCmdQueryContext(query, optimize));
     }
 
@@ -211,7 +211,7 @@ public interface BaseMapper extends CommonMapper {
      * @param query 上下文
      * @return 返回count 数
      */
-    default Integer count(BaseQuery<?> query) {
+    default Integer count(BaseQuery<?, ?> query) {
         return this.count(query, false);
     }
 
@@ -222,8 +222,8 @@ public interface BaseMapper extends CommonMapper {
      * @param optimize 是否优化
      * @return 返回count 数
      */
-    default Integer count(BaseQuery<?> query, boolean optimize) {
-        query.returnType(Integer.TYPE);
+    default Integer count(BaseQuery<?, ?> query, boolean optimize) {
+        query.setReturnType(Integer.TYPE);
         return this.$count(new SQLCmdCountQueryContext(query, optimize));
     }
 
@@ -235,12 +235,12 @@ public interface BaseMapper extends CommonMapper {
      * @param pager 分页参数
      * @return 分页结果
      */
-    default <R, P extends Pager<R>> P paging(BaseQuery query, P pager) {
+    default <T, Q extends BaseQuery<Q, T>, P extends Pager<T>> P paging(BaseQuery<Q, T> query, P pager) {
         if (pager.isExecuteCount()) {
             Class returnType = query.getReturnType();
-            query.returnType(Integer.TYPE);
+            query.setReturnType(Integer.TYPE);
             Integer count = this.$countFromQuery(new SQLCmdCountFromQueryContext(query, pager.isOptimize()));
-            query.returnType(returnType);
+            query.setReturnType(returnType);
 
             pager.setTotal(Optional.of(count).orElse(0));
             if (pager.getTotal() < 1) {
@@ -262,7 +262,7 @@ public interface BaseMapper extends CommonMapper {
      * @param <V>    map的value
      * @return
      */
-    default <K, V> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<?> query) {
+    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<Q, V> query) {
         return this.mapWithKey(mapKey, query, true);
     }
 
@@ -276,7 +276,7 @@ public interface BaseMapper extends CommonMapper {
      * @param <V>      map的value
      * @return
      */
-    default <K, V> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<?> query, boolean optimize) {
+    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<Q, V> query, boolean optimize) {
         return this.mapWithKey(LambdaUtil.getName(mapKey), query, optimize);
     }
 
@@ -290,7 +290,7 @@ public interface BaseMapper extends CommonMapper {
      * @param <V>      map的value
      * @return
      */
-    default <K, V> Map<K, V> mapWithKey(String mapKey, BaseQuery<?> query, boolean optimize) {
+    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(String mapKey, BaseQuery<Q, V> query, boolean optimize) {
         return this.$mapWithKey(new MapKeySQLCmdQueryContext(mapKey, query, optimize));
     }
 

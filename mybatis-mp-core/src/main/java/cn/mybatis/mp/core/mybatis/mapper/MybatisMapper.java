@@ -141,7 +141,7 @@ public interface MybatisMapper<T> extends CommonMapper {
         return getBasicMapper().get(getEntityType(), consumer);
     }
 
-    default T getWithQueryFun(Consumer<BaseQuery<?>> consumer) {
+    default <Q extends BaseQuery<Q, T>> T getWithQueryFun(Consumer<BaseQuery<Q, T>> consumer) {
         return getBasicMapper().getWithQueryFun(getEntityType(), consumer);
     }
 
@@ -156,7 +156,7 @@ public interface MybatisMapper<T> extends CommonMapper {
     }
 
 
-    default boolean existsWithQueryFun(Consumer<BaseQuery<?>> consumer) {
+    default <Q extends BaseQuery<Q, T>> boolean existsWithQueryFun(Consumer<BaseQuery<Q, T>> consumer) {
         return getBasicMapper().existsWithQueryFun(getEntityType(), consumer);
     }
 
@@ -265,7 +265,7 @@ public interface MybatisMapper<T> extends CommonMapper {
         return getBasicMapper().list(getEntityType(), consumer, selectFields);
     }
 
-    default List<T> listWithQueryFun(Consumer<BaseQuery<?>> consumer) {
+    default <Q extends BaseQuery<Q, T>> List<T> listWithQueryFun(Consumer<BaseQuery<Q, T>> consumer) {
         return getBasicMapper().listWithQueryFun(getEntityType(), consumer);
     }
 
@@ -283,7 +283,7 @@ public interface MybatisMapper<T> extends CommonMapper {
         return getBasicMapper().cursor(getEntityType(), consumer, selectFields);
     }
 
-    default Cursor<T> cursorWithQueryFun(Consumer<BaseQuery<?>> consumer) {
+    default <Q extends BaseQuery<Q, T>> Cursor<T> cursorWithQueryFun(Consumer<BaseQuery<Q, T>> consumer) {
         return getBasicMapper().cursorWithQueryFun(getEntityType(), consumer);
     }
 
@@ -303,7 +303,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param consumer query consumer
      * @return 返回count数
      */
-    default Integer countWithQueryFun(Consumer<BaseQuery<?>> consumer) {
+    default <Q extends BaseQuery<Q, T>> Integer countWithQueryFun(Consumer<BaseQuery<Q, T>> consumer) {
         return getBasicMapper().countWithQueryFun(getEntityType(), consumer);
     }
 
@@ -329,7 +329,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param consumer query consumer
      * @return 返回page
      */
-    default <R, P extends Pager<R>> P pagingWithQueryFun(P pager, Consumer<BaseQuery<?>> consumer) {
+    default <Q extends BaseQuery<Q, T>, P extends Pager<T>> P pagingWithQueryFun(P pager, Consumer<BaseQuery<Q, T>> consumer) {
         return getBasicMapper().pagingWithQueryFun(getEntityType(), pager, consumer);
     }
 
@@ -375,13 +375,13 @@ public interface MybatisMapper<T> extends CommonMapper {
     //通用
 
     /**
-     * 动态查询 返回单个当前实体
+     * 动态查询 返回单个对象
      *
      * @param query 查询query
-     * @return 单个当前实体
+     * @param <E>   query设置的返回的类型
+     * @return 单个对象
      */
-
-    default <R> R get(BaseQuery<?> query) {
+    default <E, Q extends BaseQuery<Q, E>> E get(BaseQuery<Q, E> query) {
         return this.get(query, true);
     }
 
@@ -390,10 +390,10 @@ public interface MybatisMapper<T> extends CommonMapper {
      *
      * @param query    查询query
      * @param optimize 是否优化
-     * @param <R>      返回的类型
+     * @param <E>      query设置的返回的类型
      * @return 返回单个当前实体
      */
-    default <R> R get(BaseQuery<?> query, boolean optimize) {
+    default <E, Q extends BaseQuery<Q, E>> E get(BaseQuery<Q, E> query, boolean optimize) {
         return this.getBasicMapper().get(query, optimize);
     }
 
@@ -401,9 +401,10 @@ public interface MybatisMapper<T> extends CommonMapper {
      * 是否存在
      *
      * @param query
+     * @param <E>   query设置的返回的类型
      * @return 是否存在
      */
-    default boolean exists(BaseQuery<?> query) {
+    default <E, Q extends BaseQuery<Q, E>> boolean exists(BaseQuery<Q, E> query) {
         return this.exists(query, true);
     }
 
@@ -412,9 +413,10 @@ public interface MybatisMapper<T> extends CommonMapper {
      *
      * @param query    子查询
      * @param optimize 是否优化
-     * @return
+     * @param <E>      query设置的返回的类型
+     * @return 是否存在
      */
-    default boolean exists(BaseQuery<?> query, boolean optimize) {
+    default <E, Q extends BaseQuery<Q, E>> boolean exists(BaseQuery<Q, E> query, boolean optimize) {
         return this.getBasicMapper().exists(query, optimize);
     }
 
@@ -514,7 +516,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param query 查询query
      * @return 返回结果列表
      */
-    default <R> List<R> list(BaseQuery<?> query) {
+    default <E, Q extends BaseQuery<Q, E>> List<E> list(BaseQuery<Q, E> query) {
         return this.list(query, true);
     }
 
@@ -526,7 +528,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param optimize 是否优化
      * @return 返回查询列表
      */
-    default <R> List<R> list(BaseQuery<?> query, boolean optimize) {
+    default <E, Q extends BaseQuery<Q, E>> List<E> list(BaseQuery<Q, E> query, boolean optimize) {
         return this.getBasicMapper().list(query, optimize);
     }
 
@@ -536,7 +538,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param query 查询query
      * @return 返回游标
      */
-    default <R> Cursor<R> cursor(BaseQuery<?> query) {
+    default <E, Q extends BaseQuery<Q, E>> Cursor<E> cursor(BaseQuery<Q, E> query) {
         return this.cursor(query, true);
     }
 
@@ -547,7 +549,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param optimize 是否优化
      * @return 返回游标
      */
-    default <R> Cursor<R> cursor(BaseQuery query, boolean optimize) {
+    default <E, Q extends BaseQuery<Q, E>> Cursor<E> cursor(BaseQuery<Q, E> query, boolean optimize) {
         return this.getBasicMapper().cursor(query, optimize);
     }
 
@@ -557,7 +559,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param query 上下文
      * @return 返回count 数
      */
-    default Integer count(BaseQuery<?> query) {
+    default <E, Q extends BaseQuery<Q, E>> Integer count(BaseQuery<Q, E> query) {
         return this.count(query, false);
     }
 
@@ -568,7 +570,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param optimize 是否优化
      * @return 返回count 数
      */
-    default Integer count(BaseQuery<?> query, boolean optimize) {
+    default <E, Q extends BaseQuery<Q, E>> Integer count(BaseQuery<Q, E> query, boolean optimize) {
         return this.getBasicMapper().count(query, optimize);
     }
 
@@ -580,7 +582,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param pager 分页参数
      * @return 分页结果
      */
-    default <R, P extends Pager<R>> P paging(BaseQuery query, P pager) {
+    default <E, Q extends BaseQuery<Q, E>, P extends Pager<E>> P paging(BaseQuery<Q, E> query, P pager) {
         return getBasicMapper().paging(query, pager);
     }
 
@@ -593,7 +595,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param <V>    map的value
      * @return
      */
-    default <K, V, G> Map<K, V> mapWithKey(Getter<G> mapKey, BaseQuery<?> query) {
+    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<Q, V> query) {
         return this.mapWithKey(mapKey, query, true);
     }
 
@@ -607,7 +609,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param <V>      map的value
      * @return
      */
-    default <K, V, G> Map<K, V> mapWithKey(Getter<G> mapKey, BaseQuery<?> query, boolean optimize) {
+    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<Q, V> query, boolean optimize) {
         return this.mapWithKey(LambdaUtil.getName(mapKey), query, optimize);
     }
 
@@ -621,7 +623,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param <V>      map的value
      * @return
      */
-    default <K, V> Map<K, V> mapWithKey(String mapKey, BaseQuery<?> query, boolean optimize) {
+    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(String mapKey, BaseQuery<Q, V> query, boolean optimize) {
         return getBasicMapper().mapWithKey(mapKey, query, optimize);
     }
 }

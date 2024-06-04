@@ -26,7 +26,7 @@ public class WithTest extends BaseTest {
                     .orderBy(SysRole::getId)
                     .limit(111)
                     .eq(SysRole::getId, 1);
-            QueryChain queryChain = QueryChain.of(sysUserMapper);
+            QueryChain<SysUser> queryChain = QueryChain.of(sysUserMapper);
             queryChain
                     .with(subQuery)
                     .select(subQuery, SysRole::getId, c -> c.as("xx"))

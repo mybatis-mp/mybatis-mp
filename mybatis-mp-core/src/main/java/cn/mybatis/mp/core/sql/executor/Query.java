@@ -2,7 +2,7 @@ package cn.mybatis.mp.core.sql.executor;
 
 import db.sql.api.impl.cmd.struct.Where;
 
-public class Query extends BaseQuery<Query> {
+public class Query extends BaseQuery<Query, Object> {
 
     public Query() {
         super();
@@ -18,5 +18,9 @@ public class Query extends BaseQuery<Query> {
 
     public static Query create(Where where) {
         return new Query(where);
+    }
+
+    public Query returnType(Class<?> returnType) {
+        return (Query) super.setReturnType(returnType);
     }
 }

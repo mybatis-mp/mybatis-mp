@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 public final class MapperCmdBuilderUtil {
 
-    public static void setDefault(Class<?> entityType, BaseQuery<?> query) {
+    public static void setDefault(Class<?> entityType, BaseQuery<?, ?> query) {
         if (Objects.isNull(query.getSelect()) || query.getSelect().getSelectField().isEmpty()) {
             TableInfo tableInfo = Tables.get(entityType);
             if (tableInfo.isHasIgnoreField()) {
@@ -25,32 +25,32 @@ public final class MapperCmdBuilderUtil {
             query.from(entityType);
         }
         if (Objects.isNull(query.getReturnType())) {
-            query.returnType(entityType);
+            query.setReturnType(entityType);
         }
     }
 
-    public static BaseQuery<?> buildQuery(Consumer<BaseQuery<?>> consumer) {
-        return buildQuery(WhereUtil.create(), consumer);
+    public static <E, Q extends BaseQuery<Q, E>> BaseQuery<Q, E> buildQuery(Consumer<BaseQuery<Q, E>> consumer) {
+        return (BaseQuery<Q, E>) buildQuery(WhereUtil.create(), consumer);
     }
 
-    public static BaseQuery<?> buildQuery(db.sql.api.impl.cmd.struct.Where where, Consumer<BaseQuery<?>> consumer) {
-        Query query = Query.create(where);
+    public static <E, Q extends BaseQuery<Q, E>> BaseQuery<Q, E> buildQuery(db.sql.api.impl.cmd.struct.Where where, Consumer<BaseQuery<Q, E>> consumer) {
+        BaseQuery<Q, E> query = (BaseQuery<Q, E>) Query.create(where);
         consumer.accept(query);
         return query;
     }
 
-    public static BaseQuery<?> buildQuery(Class<?> entityType, Consumer<BaseQuery<?>> consumer) {
+    public static <E, Q extends BaseQuery<Q, E>> BaseQuery<Q, E> buildQuery(Class<E> entityType, Consumer<BaseQuery<Q, E>> consumer) {
         return buildQuery(entityType, WhereUtil.create(), consumer);
     }
 
-    public static BaseQuery<?> buildQuery(Class<?> entityType, db.sql.api.impl.cmd.struct.Where where, Consumer<BaseQuery<?>> consumer) {
-        BaseQuery<?> query = buildQuery(where, consumer);
+    public static <E, Q extends BaseQuery<Q, E>> BaseQuery<Q, E> buildQuery(Class<E> entityType, db.sql.api.impl.cmd.struct.Where where, Consumer<BaseQuery<Q, E>> consumer) {
+        BaseQuery<Q, E> query = buildQuery(where, consumer);
         setDefault(entityType, query);
         return query;
     }
 
-    public static BaseQuery<?> buildQuery(Class<?> entityType, db.sql.api.impl.cmd.struct.Where where) {
-        BaseQuery<?> query = Query.create(where);
+    public static <E, Q extends BaseQuery<Q, E>> BaseQuery<Q, E> buildQuery(Class<E> entityType, db.sql.api.impl.cmd.struct.Where where) {
+        BaseQuery<Q, E> query = (BaseQuery<Q, E>) Query.create(where);
         setDefault(entityType, query);
         return query;
     }

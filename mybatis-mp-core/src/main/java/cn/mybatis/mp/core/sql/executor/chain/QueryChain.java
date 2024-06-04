@@ -14,25 +14,37 @@ import java.util.Objects;
 /**
  * 查询链路
  */
-public class QueryChain extends BaseQuery<QueryChain> {
+public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
 
-    protected final MybatisMapper<?> mapper;
+    protected final MybatisMapper<E> mapper;
 
-    public QueryChain(MybatisMapper<?> mapper) {
+    public QueryChain(MybatisMapper<E> mapper) {
         this.mapper = mapper;
     }
 
-    public QueryChain(MybatisMapper<?> mapper, Where where) {
+    public QueryChain(MybatisMapper<E> mapper, Where where) {
         super(where);
         this.mapper = mapper;
     }
 
-    public static QueryChain of(MybatisMapper<?> mapper) {
-        return new QueryChain(mapper);
+    public static <E> QueryChain<E> of(MybatisMapper<E> mapper) {
+        return new QueryChain<>(mapper);
     }
 
-    public static QueryChain of(MybatisMapper<?> mapper, Where where) {
-        return new QueryChain(mapper, where);
+    public static <E> QueryChain<E> of(MybatisMapper<E> mapper, Where where) {
+        return new QueryChain<>(mapper, where);
+    }
+
+    public <E2> QueryChain<E2> returnType(Class<E2> returnType) {
+        return (QueryChain<E2>) super.setReturnType(returnType);
+    }
+
+    public <K, V> QueryChain<Map<K, V>> returnMap(Class<K> kClass, Class<V> vClass) {
+        return (QueryChain<Map<K, V>>) super.setReturnType(returnType);
+    }
+
+    public <K, V> QueryChain<Map<K, V>> returnMap() {
+        return (QueryChain) super.setReturnType(Map.class);
     }
 
     private void setDefault() {
@@ -58,10 +70,9 @@ public class QueryChain extends BaseQuery<QueryChain> {
     /**
      * 获取单个对象
      *
-     * @param <R>
      * @return
      */
-    public <R> R get() {
+    public E get() {
         return this.get(true);
     }
 
@@ -69,10 +80,9 @@ public class QueryChain extends BaseQuery<QueryChain> {
      * 获取单个对象
      *
      * @param optimize 是否自动优化
-     * @param <R>
      * @return
      */
-    public <R> R get(boolean optimize) {
+    public E get(boolean optimize) {
         this.setDefault(false);
         return mapper.get(this, optimize);
     }
@@ -80,10 +90,9 @@ public class QueryChain extends BaseQuery<QueryChain> {
     /**
      * 获取列表
      *
-     * @param <R>
      * @return
      */
-    public <R> List<R> list() {
+    public List<E> list() {
         return this.list(true);
     }
 
@@ -91,10 +100,9 @@ public class QueryChain extends BaseQuery<QueryChain> {
      * 获取列表
      *
      * @param optimize 是否自动优化
-     * @param <R>
      * @return
      */
-    public <R> List<R> list(boolean optimize) {
+    public List<E> list(boolean optimize) {
         this.setDefault(false);
         return mapper.list(this, optimize);
     }
@@ -102,10 +110,9 @@ public class QueryChain extends BaseQuery<QueryChain> {
     /**
      * 获取列表
      *
-     * @param <R>
      * @return
      */
-    public <R> Cursor<R> cursor() {
+    public Cursor<E> cursor() {
         return this.cursor(true);
     }
 
@@ -113,10 +120,9 @@ public class QueryChain extends BaseQuery<QueryChain> {
      * 获取列表
      *
      * @param optimize 是否自动优化
-     * @param <R>
      * @return
      */
-    public <R> Cursor<R> cursor(boolean optimize) {
+    public Cursor<E> cursor(boolean optimize) {
         this.setDefault(false);
         return mapper.cursor(this, optimize);
     }
@@ -163,10 +169,9 @@ public class QueryChain extends BaseQuery<QueryChain> {
      * 分页查询
      *
      * @param pager
-     * @param <R>
      * @return
      */
-    public <R, P extends Pager<R>> P paging(P pager) {
+    public <P extends Pager<E>> P paging(P pager) {
         this.setDefault();
         return mapper.paging(this, pager);
     }
@@ -176,10 +181,9 @@ public class QueryChain extends BaseQuery<QueryChain> {
      *
      * @param mapKey 指定的map的key属性
      * @param <K>    map的key
-     * @param <V>    map的value
      * @return
      */
-    public <K, V, T> Map<K, V> mapWithKey(Getter<T> mapKey) {
+    public <K> Map<K, E> mapWithKey(Getter<E> mapKey) {
         return this.mapWithKey(mapKey, true);
     }
 
@@ -189,10 +193,9 @@ public class QueryChain extends BaseQuery<QueryChain> {
      * @param mapKey   指定的map的key属性
      * @param optimize 是否优化sql
      * @param <K>      map的key
-     * @param <V>      map的value
      * @return
      */
-    public <K, V, T> Map<K, V> mapWithKey(Getter<T> mapKey, boolean optimize) {
+    public <K> Map<K, E> mapWithKey(Getter<E> mapKey, boolean optimize) {
         this.setDefault();
         return mapper.mapWithKey(mapKey, this, optimize);
     }

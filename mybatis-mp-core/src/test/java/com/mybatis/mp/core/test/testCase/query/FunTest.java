@@ -167,8 +167,9 @@ public class FunTest extends BaseTest {
         Query query = new Query().
                 selectWithFun(SysUser::getId, c -> c.pow(2)).
                 from(SysUser.class).
-                eq(SysUser::getId, 3).
-                returnType(BigDecimal.class);
+                eq(SysUser::getId, 3);
+
+        query.setReturnType(BigDecimal.class);
         check("if_", "SELECT  POW( t.id , 2) FROM t_sys_user t WHERE  t.id = 3", query);
     }
 
@@ -230,12 +231,12 @@ public class FunTest extends BaseTest {
 
     @Test
     public void if_() {
-        Query query = (new Query().
+        Query query = new Query().
                 selectWithFun(SysUser::getId, c -> c.eq(3).if_("abc", "")).
                 from(SysUser.class).
-                eq(SysUser::getId, 3).
-                returnType(String.class)
-        );
+                eq(SysUser::getId, 3);
+
+        query.setReturnType(String.class);
         check("if_", "SELECT  IF( t.id = 3 , 'abc' , '') FROM t_sys_user t WHERE  t.id = 3", query);
     }
 

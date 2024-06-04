@@ -5,6 +5,7 @@ import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.mvc.Dao;
 import cn.mybatis.mp.core.mybatis.mapper.MapperCmdBuilderUtil;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
+import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.chain.DeleteChain;
 import cn.mybatis.mp.core.sql.executor.chain.InsertChain;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
@@ -54,7 +55,7 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
         return idType;
     }
 
-    protected QueryChain queryChain() {
+    protected QueryChain<T> queryChain() {
         return QueryChain.of(mapper);
     }
 
@@ -172,6 +173,7 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     public Map<K, T> map(List<K> ids) {
         this.checkIdType();
         Where where = WhereUtil.create();
-        return mapper.mapWithKey(getTableInfo().getIdFieldInfo().getField().getName(), MapperCmdBuilderUtil.buildQuery(mapper.getEntityType(), where), false);
+        BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(mapper.getEntityType(), where);
+        return mapper.mapWithKey(getTableInfo().getIdFieldInfo().getField().getName(), query, false);
     }
 }

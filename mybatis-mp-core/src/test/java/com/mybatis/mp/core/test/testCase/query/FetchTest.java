@@ -114,7 +114,7 @@ public class FetchTest extends BaseTest {
             sysUser.setCreate_time(LocalDateTime.now());
             sysUserMapper.save(sysUser);
 
-            QueryChain queryChain = QueryChain.of(sysRoleMapper)
+            QueryChain<FetchSysRoleVo> queryChain = QueryChain.of(sysRoleMapper)
                     .select(FetchSysRoleVo.class)
                     .from(SysRole.class)
                     .returnType(FetchSysRoleVo.class);
