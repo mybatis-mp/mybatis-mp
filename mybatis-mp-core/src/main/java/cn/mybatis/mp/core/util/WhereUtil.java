@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 public final class WhereUtil {
-    public static cn.mybatis.mp.core.sql.executor.Where create() {
+    public static Where create() {
         return cn.mybatis.mp.core.sql.executor.Where.create();
     }
 
