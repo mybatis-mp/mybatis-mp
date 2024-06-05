@@ -3,7 +3,7 @@ package cn.mybatis.mp.core.sql.executor.chain;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
-import db.sql.api.Getter;
+import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.struct.Where;
 import org.apache.ibatis.cursor.Cursor;
 
@@ -183,7 +183,7 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
      * @param <K>    map的key
      * @return
      */
-    public <K> Map<K, E> mapWithKey(Getter<E> mapKey) {
+    public <K> Map<K, E> mapWithKey(GetterFun<E, K> mapKey) {
         return this.mapWithKey(mapKey, true);
     }
 
@@ -195,7 +195,7 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
      * @param <K>      map的key
      * @return
      */
-    public <K> Map<K, E> mapWithKey(Getter<E> mapKey, boolean optimize) {
+    public <K> Map<K, E> mapWithKey(GetterFun<E, K> mapKey, boolean optimize) {
         this.setDefault();
         return mapper.mapWithKey(mapKey, this, optimize);
     }

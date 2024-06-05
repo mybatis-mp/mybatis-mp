@@ -7,6 +7,7 @@ import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.BaseUpdate;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
+import db.sql.api.GetterFun;
 import db.sql.api.cmd.executor.DBRunnable;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
@@ -342,7 +343,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param <K>    map的key的类型
      * @return 一个map
      */
-    default <K> Map<K, T> mapWithKey(Getter<T> mapKey, Serializable... ids) {
+    default <K> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, Serializable... ids) {
         return getBasicMapper().mapWithKey(mapKey, ids);
     }
 
@@ -354,7 +355,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param <K>    map的key的类型
      * @return 一个map
      */
-    default <K> Map<K, T> mapWithKey(Getter<T> mapKey, List<Serializable> ids) {
+    default <K> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, List<Serializable> ids) {
         return getBasicMapper().mapWithKey(mapKey, ids);
     }
 
@@ -367,7 +368,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param <K>      map的key的类型
      * @return 一个map
      */
-    default <K> Map<K, T> mapWithKey(Getter<T> mapKey, Consumer<Where> consumer) {
+    default <K> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, Consumer<Where> consumer) {
         return getBasicMapper().mapWithKey(mapKey, consumer);
     }
 
@@ -595,7 +596,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param <V>    map的value
      * @return
      */
-    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<Q, V> query) {
+    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(GetterFun<V, K> mapKey, BaseQuery<Q, V> query) {
         return this.mapWithKey(mapKey, query, true);
     }
 
@@ -609,7 +610,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param <V>      map的value
      * @return
      */
-    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<Q, V> query, boolean optimize) {
+    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(GetterFun<V, K> mapKey, BaseQuery<Q, V> query, boolean optimize) {
         return this.mapWithKey(LambdaUtil.getName(mapKey), query, optimize);
     }
 

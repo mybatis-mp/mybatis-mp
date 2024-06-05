@@ -16,7 +16,7 @@
 package db.sql.api.impl.tookit;
 
 
-import db.sql.api.Getter;
+import db.sql.api.GetterFun;
 import org.apache.ibatis.util.MapUtil;
 
 import java.lang.invoke.SerializedLambda;
@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class LambdaUtil {
 
-    private static final Map<Getter, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(65535);
+    private static final Map<GetterFun, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(65535);
 
     private static final Map<String, Class<?>> CLASS_MAP = new ConcurrentHashMap();
 
@@ -35,7 +35,7 @@ public final class LambdaUtil {
 
     }
 
-    public static <T> String getName(Getter<T> getter) {
+    public static <T, R> String getName(GetterFun<T, R> getter) {
         return getFieldInfo(getter).getName();
     }
 
@@ -46,11 +46,11 @@ public final class LambdaUtil {
         return new LambdaFieldInfo(type, fieldName);
     }
 
-    public static <T> LambdaFieldInfo getFieldInfo(Getter<T> getter) {
+    public static <T, R> LambdaFieldInfo getFieldInfo(GetterFun<T, R> getter) {
         return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), getter.getClass().getClassLoader()));
     }
 
-    private static SerializedLambda getSerializedLambda(Getter getter) {
+    private static <T, R> SerializedLambda getSerializedLambda(GetterFun<T, R> getter) {
         try {
             Method method = getter.getClass().getDeclaredMethod("writeReplace");
             method.setAccessible(Boolean.TRUE);

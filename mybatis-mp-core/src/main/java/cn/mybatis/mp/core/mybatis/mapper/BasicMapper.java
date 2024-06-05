@@ -10,6 +10,7 @@ import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.core.util.WhereUtil;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
+import db.sql.api.GetterFun;
 import db.sql.api.cmd.executor.DBRunnable;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
@@ -481,7 +482,7 @@ public interface BasicMapper extends BaseMapper {
      * @param <K>    map的key的类型
      * @return 一个map
      */
-    default <E, K> Map<K, E> mapWithKey(Getter<E> mapKey, Serializable... ids) {
+    default <E, K> Map<K, E> mapWithKey(GetterFun<E, K> mapKey, Serializable... ids) {
         if (Objects.isNull(ids) || ids.length < 1) {
             return Collections.emptyMap();
         }
@@ -496,7 +497,7 @@ public interface BasicMapper extends BaseMapper {
      * @param <K>    map的key的类型
      * @return 一个map
      */
-    default <E, K> Map<K, E> mapWithKey(Getter<E> mapKey, List<Serializable> ids) {
+    default <E, K> Map<K, E> mapWithKey(GetterFun<E, K> mapKey, List<Serializable> ids) {
         if (Objects.isNull(ids) || ids.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -516,7 +517,7 @@ public interface BasicMapper extends BaseMapper {
      * @param <K>      map的key的类型
      * @return 一个map
      */
-    default <K, E> Map<K, E> mapWithKey(Getter<E> mapKey, Consumer<Where> consumer) {
+    default <K, E> Map<K, E> mapWithKey(GetterFun<E, K> mapKey, Consumer<Where> consumer) {
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(mapKey);
         Where where = WhereUtil.create();
         consumer.accept(where);

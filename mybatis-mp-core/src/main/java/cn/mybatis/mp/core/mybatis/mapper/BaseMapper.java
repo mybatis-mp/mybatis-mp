@@ -10,6 +10,7 @@ import cn.mybatis.mp.core.sql.executor.BaseUpdate;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
+import db.sql.api.GetterFun;
 import db.sql.api.impl.tookit.LambdaUtil;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
@@ -264,7 +265,7 @@ public interface BaseMapper extends CommonMapper {
      * @param <V>    map的value
      * @return
      */
-    default <K, V> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<? extends BaseQuery, V> query) {
+    default <K, V> Map<K, V> mapWithKey(GetterFun<V, K> mapKey, BaseQuery<? extends BaseQuery, V> query) {
         return this.mapWithKey(mapKey, query, true);
     }
 
@@ -278,7 +279,7 @@ public interface BaseMapper extends CommonMapper {
      * @param <V>      map的value
      * @return
      */
-    default <K, V> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<? extends BaseQuery, V> query, boolean optimize) {
+    default <K, V> Map<K, V> mapWithKey(GetterFun<V, K> mapKey, BaseQuery<? extends BaseQuery, V> query, boolean optimize) {
         return this.mapWithKey(LambdaUtil.getName(mapKey), query, optimize);
     }
 
