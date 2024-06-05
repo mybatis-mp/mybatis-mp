@@ -49,6 +49,30 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
         this.$ = $;
     }
 
+    public <T> TableField $(Getter<T> getter) {
+        return this.$(getter, 1);
+    }
+
+    public <T> TableField $(Getter<T> getter, int storey) {
+        return $().field(getter, storey);
+    }
+
+    public Table $(Class entityType) {
+        return this.$(entityType, 1);
+    }
+
+    public Table $(Class entityType, int storey) {
+        return $().table(entityType, storey);
+    }
+
+    public TableField $(Class entityType, String fieldName) {
+        return this.$(entityType, fieldName, 1);
+    }
+
+    public TableField $(Class entityType, String fieldName, int storey) {
+        return $().field(entityType, fieldName, storey);
+    }
+
     @Override
     public CMD_FACTORY $() {
         return $;

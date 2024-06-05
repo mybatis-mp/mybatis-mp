@@ -141,7 +141,7 @@ public interface MybatisMapper<T> extends CommonMapper {
         return getBasicMapper().get(getEntityType(), consumer);
     }
 
-    default <Q extends BaseQuery<Q, T>> T getWithQueryFun(Consumer<BaseQuery<Q, T>> consumer) {
+    default T getWithQueryFun(Consumer<BaseQuery<? extends BaseQuery, T>> consumer) {
         return getBasicMapper().getWithQueryFun(getEntityType(), consumer);
     }
 
@@ -156,7 +156,7 @@ public interface MybatisMapper<T> extends CommonMapper {
     }
 
 
-    default <Q extends BaseQuery<Q, T>> boolean existsWithQueryFun(Consumer<BaseQuery<Q, T>> consumer) {
+    default boolean existsWithQueryFun(Consumer<BaseQuery<? extends BaseQuery, T>> consumer) {
         return getBasicMapper().existsWithQueryFun(getEntityType(), consumer);
     }
 
@@ -213,7 +213,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @return
      */
     default int update(T entity, Where where) {
-        return getBasicMapper().update(entity, where, null);
+        return getBasicMapper().update(entity, where, (Getter<T>[]) null);
     }
 
     /**
@@ -265,7 +265,7 @@ public interface MybatisMapper<T> extends CommonMapper {
         return getBasicMapper().list(getEntityType(), consumer, selectFields);
     }
 
-    default <Q extends BaseQuery<Q, T>> List<T> listWithQueryFun(Consumer<BaseQuery<Q, T>> consumer) {
+    default List<T> listWithQueryFun(Consumer<BaseQuery<? extends BaseQuery, T>> consumer) {
         return getBasicMapper().listWithQueryFun(getEntityType(), consumer);
     }
 
@@ -283,7 +283,7 @@ public interface MybatisMapper<T> extends CommonMapper {
         return getBasicMapper().cursor(getEntityType(), consumer, selectFields);
     }
 
-    default <Q extends BaseQuery<Q, T>> Cursor<T> cursorWithQueryFun(Consumer<BaseQuery<Q, T>> consumer) {
+    default Cursor<T> cursorWithQueryFun(Consumer<BaseQuery<? extends BaseQuery, T>> consumer) {
         return getBasicMapper().cursorWithQueryFun(getEntityType(), consumer);
     }
 
@@ -303,7 +303,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param consumer query consumer
      * @return 返回count数
      */
-    default <Q extends BaseQuery<Q, T>> Integer countWithQueryFun(Consumer<BaseQuery<Q, T>> consumer) {
+    default Integer countWithQueryFun(Consumer<BaseQuery<? extends BaseQuery, T>> consumer) {
         return getBasicMapper().countWithQueryFun(getEntityType(), consumer);
     }
 
@@ -329,7 +329,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param consumer query consumer
      * @return 返回page
      */
-    default <Q extends BaseQuery<Q, T>, P extends Pager<T>> P pagingWithQueryFun(P pager, Consumer<BaseQuery<Q, T>> consumer) {
+    default <P extends Pager<T>> P pagingWithQueryFun(P pager, Consumer<BaseQuery<? extends BaseQuery, T>> consumer) {
         return getBasicMapper().pagingWithQueryFun(getEntityType(), pager, consumer);
     }
 

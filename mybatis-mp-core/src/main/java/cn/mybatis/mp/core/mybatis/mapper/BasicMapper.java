@@ -30,8 +30,8 @@ public interface BasicMapper extends BaseMapper {
      * @param id         ID
      * @return 当个当前实体类
      */
-    default <T> T getById(Class<T> entityType, Serializable id) {
-        return this.getById(entityType, id, (Getter<T>[]) null);
+    default <E> E getById(Class<E> entityType, Serializable id) {
+        return this.getById(entityType, id, (Getter<E>[]) null);
     }
 
     /**
@@ -42,7 +42,7 @@ public interface BasicMapper extends BaseMapper {
      * @param selectFields select列
      * @return 当个当前实体类
      */
-    default <T> T getById(Class<T> entityType, Serializable id, Getter<T>... selectFields) {
+    default <E> E getById(Class<E> entityType, Serializable id, Getter<E>... selectFields) {
         return this.getWithQueryFun(entityType, (baseQuery -> {
             TableInfo tableInfo = Tables.get(entityType);
             WhereUtil.appendIdWhere(baseQuery.$where(), tableInfo, id);
@@ -59,11 +59,11 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   where consumer
      * @return 当个当前实体
      */
-    default <T> T get(Class<T> entityType, Consumer<Where> consumer) {
+    default <E> E get(Class<E> entityType, Consumer<Where> consumer) {
         Where where = WhereUtil.create();
         consumer.accept(where);
 
-        BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(entityType, where);
+        BaseQuery<?, E> query = MapperCmdBuilderUtil.buildQuery(entityType, where);
         return this.get(query, false);
     }
 
@@ -75,7 +75,7 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   query consumer
      * @return 当个当前实体
      */
-    default <T, Q extends BaseQuery<Q, T>> T getWithQueryFun(Class<T> entityType, Consumer<BaseQuery<Q, T>> consumer) {
+    default <E> E getWithQueryFun(Class<E> entityType, Consumer<BaseQuery<? extends BaseQuery, E>> consumer) {
         return this.get(MapperCmdBuilderUtil.buildQuery(entityType, consumer), false);
     }
 
@@ -87,12 +87,12 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   where consumer
      * @return 是否存在
      */
-    default boolean exists(Class<?> entityType, Consumer<Where> consumer) {
+    default <E> boolean exists(Class<E> entityType, Consumer<Where> consumer) {
         Where where = WhereUtil.create();
         consumer.accept(where);
         return this.exists(MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
             baseQuery.select1();
-        }), false);
+        }));
     }
 
 
@@ -103,7 +103,7 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   where consumer
      * @return 是否存在
      */
-    default <T, Q extends BaseQuery<Q, T>> boolean existsWithQueryFun(Class<T> entityType, Consumer<BaseQuery<Q, T>> consumer) {
+    default <E> boolean existsWithQueryFun(Class<E> entityType, Consumer<BaseQuery<? extends BaseQuery, E>> consumer) {
         return this.exists(MapperCmdBuilderUtil.buildQuery(entityType, consumer));
     }
 
@@ -113,7 +113,7 @@ public interface BasicMapper extends BaseMapper {
      * @param entity
      * @return 影响条数
      */
-    default <T> int update(T entity) {
+    default <E> int update(E entity) {
         return this.$update(new EntityUpdateContext(entity));
     }
 
@@ -123,9 +123,9 @@ public interface BasicMapper extends BaseMapper {
      * @param list
      * @return 影响条数
      */
-    default <T> int update(List<T> list) {
+    default <E> int update(List<E> list) {
         int cnt = 0;
-        for (T entity : list) {
+        for (E entity : list) {
             cnt += this.update(entity);
         }
         return cnt;
@@ -137,7 +137,7 @@ public interface BasicMapper extends BaseMapper {
      * @param list
      * @return 修改条数
      */
-    default <T> int update(List<T> list, Getter<T>... forceUpdateFields) {
+    default <E> int update(List<E> list, Getter<E>... forceUpdateFields) {
         Set<String> forceUpdateFieldsSet = new HashSet<>();
         if (Objects.nonNull(forceUpdateFields)) {
             for (Getter<?> column : forceUpdateFields) {
@@ -146,7 +146,7 @@ public interface BasicMapper extends BaseMapper {
         }
 
         int cnt = 0;
-        for (T entity : list) {
+        for (E entity : list) {
             cnt += this.$update(new EntityUpdateContext(entity, forceUpdateFieldsSet));
         }
         return cnt;
@@ -159,7 +159,7 @@ public interface BasicMapper extends BaseMapper {
      * @param forceUpdateFields 强制更新指定，解决需要修改为null的需求
      * @return 返回修改条数
      */
-    default <T> int update(T entity, Getter<T>... forceUpdateFields) {
+    default <E> int update(E entity, Getter<E>... forceUpdateFields) {
         Set<String> forceUpdateFieldsSet = new HashSet<>();
         if (Objects.nonNull(forceUpdateFields)) {
             for (Getter getter : forceUpdateFields) {
@@ -170,13 +170,13 @@ public interface BasicMapper extends BaseMapper {
     }
 
 
-    default <T> int update(T entity, Consumer<Where> consumer) {
+    default <E> int update(E entity, Consumer<Where> consumer) {
         Where where = WhereUtil.create();
         consumer.accept(where);
-        return this.update(entity, where, null);
+        return this.update(entity, where, (Getter[]) null);
     }
 
-    default <T> int update(T entity, Where where, Getter<T>... forceUpdateFields) {
+    default <E> int update(E entity, Where where, Getter<E>... forceUpdateFields) {
         Set<String> forceUpdateFieldsSet = new HashSet<>();
         if (Objects.nonNull(forceUpdateFields)) {
             for (Getter getter : forceUpdateFields) {
@@ -192,7 +192,7 @@ public interface BasicMapper extends BaseMapper {
      * @param model 实体类model
      * @return 修改的条数
      */
-    default <T> int update(Model<T> model) {
+    default <E> int update(Model<E> model) {
         return this.$update(new ModelUpdateContext<>(model));
     }
 
@@ -203,7 +203,7 @@ public interface BasicMapper extends BaseMapper {
      * @param forceUpdateFields 强制更新指定，解决需要修改为null的需求
      * @return 修改的条数
      */
-    default <T> int update(Model<T> model, Getter<T>... forceUpdateFields) {
+    default <E> int update(Model<E> model, Getter<E>... forceUpdateFields) {
         Set<String> forceUpdateFieldsSet = new HashSet<>();
         if (Objects.nonNull(forceUpdateFields)) {
             for (Getter getter : forceUpdateFields) {
@@ -213,13 +213,13 @@ public interface BasicMapper extends BaseMapper {
         return this.$update(new ModelUpdateContext<>(model, forceUpdateFieldsSet));
     }
 
-    default <T> int update(Model<T> model, Consumer<Where> consumer) {
+    default <E> int update(Model<E> model, Consumer<Where> consumer) {
         Where where = WhereUtil.create();
         consumer.accept(where);
-        return this.update(model, where, (Getter<T>) null);
+        return this.update(model, where, (Getter<E>) null);
     }
 
-    default <T> int update(Model<T> model, Where where, Getter<T>... forceUpdateFields) {
+    default <E> int update(Model<E> model, Where where, Getter<E>... forceUpdateFields) {
         Set<String> forceUpdateFieldsSet = new HashSet<>();
         if (Objects.nonNull(forceUpdateFields)) {
             for (Getter getter : forceUpdateFields) {
@@ -237,7 +237,7 @@ public interface BasicMapper extends BaseMapper {
      * @param id         ID
      * @return 影响的数量
      */
-    default int deleteById(Class<?> entityType, Serializable id) {
+    default <E> int deleteById(Class<E> entityType, Serializable id) {
         TableInfo tableInfo = Tables.get(entityType);
         return this.delete(entityType, where -> WhereUtil.appendIdWhere(where, tableInfo, id));
     }
@@ -250,7 +250,7 @@ public interface BasicMapper extends BaseMapper {
      * @param ids        多个ID
      * @return 影响的数量
      */
-    default int deleteByIds(Class<?> entityType, Serializable... ids) {
+    default <E> int deleteByIds(Class<E> entityType, Serializable... ids) {
         if (ids == null || ids.length < 1) {
             throw new RuntimeException("ids array can't be empty");
         }
@@ -265,7 +265,7 @@ public interface BasicMapper extends BaseMapper {
      * @param ids        多个ID
      * @return 影响的数量
      */
-    default int deleteByIds(Class<?> entityType, List<Serializable> ids) {
+    default <E> int deleteByIds(Class<E> entityType, List<Serializable> ids) {
         if (ids == null || ids.isEmpty()) {
             throw new RuntimeException("ids list can't be empty");
         }
@@ -278,7 +278,7 @@ public interface BasicMapper extends BaseMapper {
      * @param entity 实体类实例
      * @return 影响的数量
      */
-    default <T> int delete(T entity) {
+    default <E> int delete(E entity) {
         if (Objects.isNull(entity)) {
             return 0;
         }
@@ -297,7 +297,7 @@ public interface BasicMapper extends BaseMapper {
      * @param list 实体类实例list
      * @return 修改条数
      */
-    default <T> int delete(List<T> list) {
+    default <E> int delete(List<E> list) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
@@ -319,7 +319,7 @@ public interface BasicMapper extends BaseMapper {
      * @param entityType 对应的实体类
      * @return 影响的数量
      */
-    default int delete(Class<?> entityType, Consumer<Where> consumer) {
+    default <E> int delete(Class<E> entityType, Consumer<Where> consumer) {
         Where where = WhereUtil.create();
         consumer.accept(where);
         return this.delete(entityType, where);
@@ -332,7 +332,7 @@ public interface BasicMapper extends BaseMapper {
      * @param where      where
      * @return 影响的数量
      */
-    default int delete(Class<?> entityType, Where where) {
+    default <E> int delete(Class<E> entityType, Where where) {
         if (!where.hasContent()) {
             throw new RuntimeException("delete has no where condition content ");
         }
@@ -354,14 +354,14 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   where consumer
      * @return 当个当前实体
      */
-    default <T> List<T> list(Class<T> entityType, Consumer<Where> consumer) {
+    default <E> List<E> list(Class<E> entityType, Consumer<Where> consumer) {
         Where where = WhereUtil.create();
         consumer.accept(where);
-        return this.list(entityType, where, (Getter<T>[]) null);
+        return this.list(entityType, where, (Getter<E>[]) null);
     }
 
-    default <T> List<T> list(Class<T> entityType, Where where, Getter<T>... selectFields) {
-        BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
+    default <E> List<E> list(Class<E> entityType, Where where, Getter<E>... selectFields) {
+        BaseQuery<?, E> query = MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
             if (Objects.nonNull(selectFields) && selectFields.length > 0) {
                 baseQuery.select(selectFields);
             }
@@ -376,7 +376,7 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   query consumer
      * @return 当个当前实体
      */
-    default <T, Q extends BaseQuery<Q, T>> List<T> listWithQueryFun(Class<T> entityType, Consumer<BaseQuery<Q, T>> consumer) {
+    default <E> List<E> listWithQueryFun(Class<E> entityType, Consumer<BaseQuery<? extends BaseQuery, E>> consumer) {
         return this.list(MapperCmdBuilderUtil.buildQuery(entityType, consumer), false);
     }
 
@@ -388,19 +388,18 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   where consumer
      * @return 当个当前实体
      */
-    default <T> Cursor<T> cursor(Class<T> entityType, Consumer<Where> consumer) {
+    default <E> Cursor<E> cursor(Class<E> entityType, Consumer<Where> consumer) {
         Where where = WhereUtil.create();
         consumer.accept(where);
-        return this.cursor(entityType, where, (Getter<T>[]) null);
+        return this.cursor(entityType, where, (Getter<E>[]) null);
     }
 
-    default <T> Cursor<T> cursor(Class<T> entityType, Where where, Getter<T>... selectFields) {
-        BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
+    default <E> Cursor<E> cursor(Class<E> entityType, Where where, Getter<E>... selectFields) {
+        return this.cursor(MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
             if (Objects.nonNull(selectFields) && selectFields.length > 0) {
                 baseQuery.select(selectFields);
             }
-        });
-        return this.cursor(query, false);
+        }), false);
     }
 
     /**
@@ -410,7 +409,7 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   query consumer
      * @return 当个当前实体
      */
-    default <T, Q extends BaseQuery<Q, T>> Cursor<T> cursorWithQueryFun(Class<T> entityType, Consumer<BaseQuery<Q, T>> consumer) {
+    default <E> Cursor<E> cursorWithQueryFun(Class<E> entityType, Consumer<BaseQuery<? extends BaseQuery, E>> consumer) {
         return this.cursor(MapperCmdBuilderUtil.buildQuery(entityType, consumer), false);
     }
 
@@ -421,7 +420,7 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   where consumer
      * @return 返回count数
      */
-    default Integer count(Class<?> entityType, Consumer<Where> consumer) {
+    default <E> Integer count(Class<E> entityType, Consumer<Where> consumer) {
         Where where = WhereUtil.create();
         consumer.accept(where);
         return this.count(MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
@@ -436,7 +435,7 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   query consumer
      * @return 返回count数
      */
-    default <T, Q extends BaseQuery<Q, T>> Integer countWithQueryFun(Class<T> entityType, Consumer<BaseQuery<Q, T>> consumer) {
+    default <E> Integer countWithQueryFun(Class<E> entityType, Consumer<BaseQuery<? extends BaseQuery, E>> consumer) {
         return this.count(MapperCmdBuilderUtil.buildQuery(entityType, consumer), false);
     }
 
@@ -447,22 +446,20 @@ public interface BasicMapper extends BaseMapper {
      * @param pager    分页参数
      * @return 分页结果
      */
-    default <T, P extends Pager<T>> P paging(Class<T> entityType, P pager, Consumer<Where> consumer) {
-        return this.paging(entityType, consumer, pager, null);
+    default <E, P extends Pager<E>> P paging(Class<E> entityType, P pager, Consumer<Where> consumer) {
+        return this.paging(entityType, consumer, pager, (Getter<E>[]) null);
     }
 
-    default <T, P extends Pager<T>> P paging(Class<T> entityType, Consumer<Where> consumer, P pager, Getter<T>... selectFields) {
+    default <E, P extends Pager<E>> P paging(Class<E> entityType, Consumer<Where> consumer, P pager, Getter<E>... selectFields) {
         pager.setOptimize(false);
         Where where = WhereUtil.create();
         consumer.accept(where);
 
-        BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
+        return this.paging(MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
             if (Objects.nonNull(selectFields) && selectFields.length > 0) {
                 baseQuery.select(selectFields);
             }
-        });
-
-        return this.paging(query, pager);
+        }), pager);
     }
 
     /**
@@ -472,7 +469,7 @@ public interface BasicMapper extends BaseMapper {
      * @param consumer   query consumer
      * @return 返回count数
      */
-    default <T, Q extends BaseQuery<Q, T>, P extends Pager<T>> P pagingWithQueryFun(Class<T> entityType, P pager, Consumer<BaseQuery<Q, T>> consumer) {
+    default <E, P extends Pager<E>> P pagingWithQueryFun(Class<E> entityType, P pager, Consumer<BaseQuery<? extends BaseQuery, E>> consumer) {
         return this.paging(MapperCmdBuilderUtil.buildQuery(entityType, consumer), pager);
     }
 
@@ -484,7 +481,7 @@ public interface BasicMapper extends BaseMapper {
      * @param <K>    map的key的类型
      * @return 一个map
      */
-    default <T, K> Map<K, T> mapWithKey(Getter<T> mapKey, Serializable... ids) {
+    default <E, K> Map<K, E> mapWithKey(Getter<E> mapKey, Serializable... ids) {
         if (Objects.isNull(ids) || ids.length < 1) {
             return Collections.emptyMap();
         }
@@ -499,7 +496,7 @@ public interface BasicMapper extends BaseMapper {
      * @param <K>    map的key的类型
      * @return 一个map
      */
-    default <T, K> Map<K, T> mapWithKey(Getter<T> mapKey, List<Serializable> ids) {
+    default <E, K> Map<K, E> mapWithKey(Getter<E> mapKey, List<Serializable> ids) {
         if (Objects.isNull(ids) || ids.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -519,7 +516,7 @@ public interface BasicMapper extends BaseMapper {
      * @param <K>      map的key的类型
      * @return 一个map
      */
-    default <T, K> Map<K, T> mapWithKey(Getter<T> mapKey, Consumer<Where> consumer) {
+    default <K, E> Map<K, E> mapWithKey(Getter<E> mapKey, Consumer<Where> consumer) {
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(mapKey);
         Where where = WhereUtil.create();
         consumer.accept(where);

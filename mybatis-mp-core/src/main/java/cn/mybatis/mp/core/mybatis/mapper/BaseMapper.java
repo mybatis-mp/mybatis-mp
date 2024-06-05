@@ -26,10 +26,10 @@ public interface BaseMapper extends CommonMapper {
      * 动态查询 返回单个当前实体
      *
      * @param query 查询query
+     * @param <E>   返回类
      * @return 单个当前实体
      */
-
-    default <T, Q extends BaseQuery<Q, T>> T get(BaseQuery<Q, T> query) {
+    default <E> E get(BaseQuery<? extends BaseQuery, E> query) {
         return this.get(query, true);
     }
 
@@ -38,10 +38,10 @@ public interface BaseMapper extends CommonMapper {
      *
      * @param query    查询query
      * @param optimize 是否优化
-     * @param <T>      返回的类型
-     * @return 返回单个当前实体
+     * @param <E>      返回类
+     * @return 返回单个对象
      */
-    default <T, Q extends BaseQuery<Q, T>> T get(BaseQuery<Q, T> query, boolean optimize) {
+    default <E> E get(BaseQuery<? extends BaseQuery, E> query, boolean optimize) {
         return this.$get(new SQLCmdQueryContext(query, optimize), new RowBounds(0, 2));
     }
 
@@ -49,9 +49,10 @@ public interface BaseMapper extends CommonMapper {
      * 是否存在
      *
      * @param query
+     * @param <E>   返回类
      * @return 是否存在
      */
-    default boolean exists(BaseQuery<?, ?> query) {
+    default <E> boolean exists(BaseQuery<? extends BaseQuery, E> query) {
         return this.exists(query, true);
     }
 
@@ -60,9 +61,10 @@ public interface BaseMapper extends CommonMapper {
      *
      * @param query    子查询
      * @param optimize 是否优化
-     * @return
+     * @param <E>      返回类
+     * @return 是否存在
      */
-    default boolean exists(BaseQuery<?, ?> query, boolean optimize) {
+    default <E> boolean exists(BaseQuery<? extends BaseQuery, E> query, boolean optimize) {
         if (Objects.isNull(query.getSelect())) {
             query.select1();
         }
@@ -78,7 +80,7 @@ public interface BaseMapper extends CommonMapper {
      * @param entity
      * @return 影响条数
      */
-    default <T> int save(T entity) {
+    default <E> int save(E entity) {
         return this.$saveEntity(new EntityInsertContext(entity));
     }
 
@@ -88,7 +90,7 @@ public interface BaseMapper extends CommonMapper {
      * @param list
      * @return 插入条数
      */
-    default <T> int save(List<T> list) {
+    default <E> int save(List<E> list) {
         int cnt = 0;
         for (Object entity : list) {
             cnt += this.save(entity);
@@ -107,7 +109,7 @@ public interface BaseMapper extends CommonMapper {
      * @param saveFields 指定那些列插入
      * @return 插入的条数
      */
-    default <T> int saveBatch(List<T> list, Getter<T>... saveFields) {
+    default <E> int saveBatch(List<E> list, Getter<E>... saveFields) {
         Objects.requireNonNull(list);
         if (list.isEmpty()) {
             return 0;
@@ -128,7 +130,7 @@ public interface BaseMapper extends CommonMapper {
      * @param model
      * @return
      */
-    default <T> int save(Model<T> model) {
+    default <E> int save(Model<E> model) {
         return this.$saveModel(new ModelInsertContext<>(model));
     }
 
@@ -168,7 +170,7 @@ public interface BaseMapper extends CommonMapper {
      * @param query 查询query
      * @return 返回结果列表
      */
-    default <T, Q extends BaseQuery<Q, T>> List<T> list(BaseQuery<Q, T> query) {
+    default <E> List<E> list(BaseQuery<? extends BaseQuery, E> query) {
         return this.list(query, true);
     }
 
@@ -180,7 +182,7 @@ public interface BaseMapper extends CommonMapper {
      * @param optimize 是否优化
      * @return 返回查询列表
      */
-    default <T, Q extends BaseQuery<Q, T>> List<T> list(BaseQuery<Q, T> query, boolean optimize) {
+    default <E> List<E> list(BaseQuery<? extends BaseQuery, E> query, boolean optimize) {
         return this.$list(new SQLCmdQueryContext(query, optimize));
     }
 
@@ -190,7 +192,7 @@ public interface BaseMapper extends CommonMapper {
      * @param query 查询query
      * @return 返回游标
      */
-    default <T, Q extends BaseQuery<Q, T>> Cursor<T> cursor(BaseQuery<Q, T> query) {
+    default <E> Cursor<E> cursor(BaseQuery<? extends BaseQuery, E> query) {
         return this.cursor(query, true);
     }
 
@@ -201,7 +203,7 @@ public interface BaseMapper extends CommonMapper {
      * @param optimize 是否优化
      * @return 返回游标
      */
-    default <T, Q extends BaseQuery<Q, T>> Cursor<T> cursor(BaseQuery<Q, T> query, boolean optimize) {
+    default <E> Cursor<E> cursor(BaseQuery<? extends BaseQuery, E> query, boolean optimize) {
         return this.$cursor(new SQLCmdQueryContext(query, optimize));
     }
 
@@ -211,7 +213,7 @@ public interface BaseMapper extends CommonMapper {
      * @param query 上下文
      * @return 返回count 数
      */
-    default Integer count(BaseQuery<?, ?> query) {
+    default Integer count(BaseQuery<? extends BaseQuery, ?> query) {
         return this.count(query, false);
     }
 
@@ -222,7 +224,7 @@ public interface BaseMapper extends CommonMapper {
      * @param optimize 是否优化
      * @return 返回count 数
      */
-    default Integer count(BaseQuery<?, ?> query, boolean optimize) {
+    default Integer count(BaseQuery<? extends BaseQuery, ?> query, boolean optimize) {
         query.setReturnType(Integer.TYPE);
         return this.$count(new SQLCmdCountQueryContext(query, optimize));
     }
@@ -235,7 +237,7 @@ public interface BaseMapper extends CommonMapper {
      * @param pager 分页参数
      * @return 分页结果
      */
-    default <T, Q extends BaseQuery<Q, T>, P extends Pager<T>> P paging(BaseQuery<Q, T> query, P pager) {
+    default <E, P extends Pager<E>> P paging(BaseQuery<? extends BaseQuery, E> query, P pager) {
         if (pager.isExecuteCount()) {
             Class returnType = query.getReturnType();
             query.setReturnType(Integer.TYPE);
@@ -262,7 +264,7 @@ public interface BaseMapper extends CommonMapper {
      * @param <V>    map的value
      * @return
      */
-    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<Q, V> query) {
+    default <K, V> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<? extends BaseQuery, V> query) {
         return this.mapWithKey(mapKey, query, true);
     }
 
@@ -276,7 +278,7 @@ public interface BaseMapper extends CommonMapper {
      * @param <V>      map的value
      * @return
      */
-    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<Q, V> query, boolean optimize) {
+    default <K, V> Map<K, V> mapWithKey(Getter<V> mapKey, BaseQuery<? extends BaseQuery, V> query, boolean optimize) {
         return this.mapWithKey(LambdaUtil.getName(mapKey), query, optimize);
     }
 
@@ -290,7 +292,7 @@ public interface BaseMapper extends CommonMapper {
      * @param <V>      map的value
      * @return
      */
-    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(String mapKey, BaseQuery<Q, V> query, boolean optimize) {
+    default <K, V> Map<K, V> mapWithKey(String mapKey, BaseQuery<? extends BaseQuery, V> query, boolean optimize) {
         return this.$mapWithKey(new MapKeySQLCmdQueryContext(mapKey, query, optimize));
     }
 
@@ -331,7 +333,7 @@ public interface BaseMapper extends CommonMapper {
      * @see MybatisSQLProvider#cmdCount(SQLCmdCountQueryContext, ProviderContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.QUERY_NAME)
-    <R> List<R> $list(SQLCmdQueryContext queryContext);
+    <E> List<E> $list(SQLCmdQueryContext queryContext);
 
     /**
      * 游标查询
@@ -341,7 +343,7 @@ public interface BaseMapper extends CommonMapper {
      * @see MybatisSQLProvider#cmdQuery(SQLCmdQueryContext, ProviderContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.QUERY_NAME)
-    <R> Cursor<R> $cursor(SQLCmdQueryContext queryContext);
+    <E> Cursor<E> $cursor(SQLCmdQueryContext queryContext);
 
     /**
      * count查询
