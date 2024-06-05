@@ -37,8 +37,8 @@ public class UpdateTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             int cnt = UpdateChain.of(sysUserMapper)
                     .set(SysUser::getUserName, "xx123")
-                    .set(true, SysUser::getUserName, "xx123")
-                    .set(SysUser::getUserName, "xx123", StringUtils::hasText)
+                    .set(true, SysUser::getRole_id, 1)
+                    .set(SysUser::getPassword, "xx123", StringUtils::hasText)
                     .onDB(DbType.H2, updateChain -> {
                         updateChain.eq(SysUser::getId, 3);
                     })
