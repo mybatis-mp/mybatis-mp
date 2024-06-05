@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTORY>,
         CMD_FACTORY extends CmdFactory
@@ -139,6 +140,17 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         }
         this.updateSets.set((TableField) field, v);
         return (SELF) this;
+    }
+
+    public <T> SELF set(boolean when, Getter<T> field, Object value) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.set(field, value);
+    }
+
+    public <T, V> SELF set(Getter<T> field, V value, Predicate<V> predicate) {
+        return this.set(predicate.test(value), field, value);
     }
 
     @Override

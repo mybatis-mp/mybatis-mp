@@ -13,6 +13,7 @@ import com.mybatis.mp.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.StringUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,6 +37,8 @@ public class UpdateTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             int cnt = UpdateChain.of(sysUserMapper)
                     .set(SysUser::getUserName, "xx123")
+                    .set(true, SysUser::getUserName, "xx123")
+                    .set(SysUser::getUserName, "xx123", StringUtils::hasText)
                     .onDB(DbType.H2, updateChain -> {
                         updateChain.eq(SysUser::getId, 3);
                     })
