@@ -164,7 +164,7 @@ public class FunTest extends BaseTest {
 
     @Test
     public void pow() {
-        Query query = new Query().
+        Query query = Query.create().
                 selectWithFun(SysUser::getId, c -> c.pow(2)).
                 from(SysUser.class).
                 eq(SysUser::getId, 3);
@@ -231,7 +231,7 @@ public class FunTest extends BaseTest {
 
     @Test
     public void if_() {
-        Query query = new Query().
+        Query query = Query.create().
                 selectWithFun(SysUser::getId, c -> c.eq(3).if_("abc", "")).
                 from(SysUser.class).
                 eq(SysUser::getId, 3);

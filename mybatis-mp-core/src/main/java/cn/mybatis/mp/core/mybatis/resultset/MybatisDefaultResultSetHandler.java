@@ -111,7 +111,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }));
     }
 
-    private List<Object> fetchData(FetchInfo fetchInfo, Query query, List<Serializable> queryValueList) {
+    private List<Object> fetchData(FetchInfo fetchInfo, Query<Object> query, List<Serializable> queryValueList) {
         if (Objects.isNull(basicMapper)) {
             basicMapper = this.configuration.getMapper(BasicMapper.class, SqlSessionThreadLocalUtil.get());
         }
@@ -169,7 +169,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
         int batchSize = 100;
         List queryValueList = new ArrayList<>(100);
-        Query query = new Query().returnType(fetchInfo.getReturnType());
+        Query query = Query.create().returnType(fetchInfo.getReturnType());
         if (Objects.isNull(fetchInfo.getTargetSelectColumn()) || StringPool.EMPTY.equals(fetchInfo.getTargetSelectColumn())) {
             query.select(fetchInfo.getReturnType());
         } else {

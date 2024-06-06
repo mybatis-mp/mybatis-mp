@@ -120,7 +120,7 @@ public class JoinTest extends BaseTest {
     @Test
     public void fullJoin() {
 
-        Query query = new Query()
+        Query query = Query.create()
                 .selectWithFun(SysUser::getId, FunctionInterface::count)
                 .from(SysUser.class)
                 .join(JoinMode.FULL, SysUser.class, SysRole.class);
