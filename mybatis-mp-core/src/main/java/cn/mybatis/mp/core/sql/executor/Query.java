@@ -21,6 +21,6 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     }
 
     public <R> Query<R> returnType(Class<R> returnType) {
-        return (Query) super.setReturnType(returnType);
+        return (Query<R>) super.setReturnType(returnType);
     }
 }
