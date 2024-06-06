@@ -1,17 +1,22 @@
 package com.mybatis.mp.core.test.testCase.cmdTemplete;
 
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
+import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
+import com.mybatis.mp.core.test.vo.SysUserRoleAutoSelectVo;
+import com.mybatis.mp.core.test.vo.SysUserVo;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.basic.CmdTemplate;
+import db.sql.api.impl.cmd.basic.Column;
 import db.sql.api.impl.cmd.basic.ConditionTemplate;
 import db.sql.api.impl.cmd.basic.FunTemplate;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -48,6 +53,23 @@ public class CmdTemplateTestCase extends BaseTest {
                     .get();
 
             assertTrue(str.equals("4") || str.equals("4.0"));
+        }
+    }
+
+    @Test
+    public void templateTest3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUserRoleAutoSelectVo vo = QueryChain.of(sysUserMapper)
+                    .select(SysUserRoleAutoSelectVo.class)
+                    .selectWithFun(SysRole::getId, c -> CmdTemplate.create(" RANK() OVER( ORDER BY {0}) ", new Column(c.getTable().getAlias()+"."+c.getName())).as("RANK"))
+                    .from(SysUser.class)
+                    .join(SysUser.class,SysRole.class)
+                    .returnType(SysUserRoleAutoSelectVo.class)
+                    .limit(1)
+                    .get();
+
+            assertEquals(vo.getId(),2);
         }
     }
 }

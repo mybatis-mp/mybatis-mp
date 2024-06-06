@@ -71,7 +71,7 @@ public abstract class BaseTemplate<T> implements Cmd, Alias<T> {
         if (Objects.nonNull(params) && params.length > 0) {
             Object[] paramsStr = new Object[params.length];
             for (int i = 0; i < params.length; i++) {
-                paramsStr[i] = params[i].sql(module, parent, context, new StringBuilder());
+                paramsStr[i] = params[i].sql(module, this, context, new StringBuilder());
             }
             str = MessageFormat.format(this.template, paramsStr);
         }
