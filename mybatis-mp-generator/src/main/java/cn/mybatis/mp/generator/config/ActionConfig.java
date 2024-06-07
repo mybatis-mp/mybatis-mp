@@ -206,6 +206,16 @@ public class ActionConfig {
     }
 
     /**
+     * 控制器save,update,...等返回的类
+     *
+     * @param returnClass
+     * @return
+     */
+    public ActionConfig returnClass(Class returnClass) {
+        return this.returnClass(returnClass.getName());
+    }
+
+    /**
      * 是否开启 swagger
      *
      * @param enable

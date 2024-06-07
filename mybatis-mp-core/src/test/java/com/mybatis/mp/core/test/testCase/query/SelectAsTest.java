@@ -40,12 +40,12 @@ public class SelectAsTest extends BaseTest {
     public void simpleReturnResultEntityFieldAs() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            SysUserVo sysUser = QueryChain.of(sysUserMapper)
+            SysUserVo sysUser = QueryChain.create()
                     .select(SysUser::getId, SysUser::getUserName, SysUser::getPassword)
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(SysUserVo.class)
-                    .get();
+                    .get(sysUserMapper);
             SysUserVo eqSysUser = new SysUserVo();
             eqSysUser.setId(1);
             eqSysUser.setUserName("admin");

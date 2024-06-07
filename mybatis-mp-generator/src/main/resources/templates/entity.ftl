@@ -21,7 +21,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @since ${date}
  */
 <#if entityConfig.isLombok()>
-    @Data
+@Data
 </#if>
 <#if entityConfig.isSwagger()>
 <#if generatorConfig.getSwaggerVersion() == 3>
