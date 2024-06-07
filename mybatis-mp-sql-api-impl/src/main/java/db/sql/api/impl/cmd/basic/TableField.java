@@ -53,7 +53,8 @@ public class TableField extends DatasetField<TableField, Table> {
                 Object other$alias = other.getAlias();
                 if (this$alias == null) {
                     return other$alias == null;
-                } else return this$alias.equals(other$alias);
+                }
+                return this$alias.equals(other$alias);
             }
         }
     }

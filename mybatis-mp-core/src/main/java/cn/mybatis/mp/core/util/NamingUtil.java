@@ -10,7 +10,8 @@ public final class NamingUtil {
     private static boolean isBlank(String str) {
         if (Objects.isNull(str)) {
             return true;
-        } else return StringPool.EMPTY.equals(str);
+        }
+        return StringPool.EMPTY.equals(str);
     }
 
     /**
