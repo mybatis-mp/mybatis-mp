@@ -33,10 +33,10 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
 
     /**
      * 非特殊情况 请使用of静态方法
-     * 使用此方法后 get list paging count cursor exists mapWithKey等执行方法 第一个参数必须是mapper
+     * 使用此方法后 后续执行查询需调用一次withMapper(mybatisMapper)方法
      *
      * @param <E>
-     * @return
+     * @return 自己
      */
     public static <E> QueryChain<E> create() {
         return new QueryChain<>();
@@ -94,6 +94,17 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
     }
 
     /**
+     * 用create静态方法的 Chain 需要调用一次此方法 用于设置 mapper
+     *
+     * @param mapper 操作目标实体类的mapper
+     * @return 自己
+     */
+    public <T> QueryChain<E> withMapper(MybatisMapper<T> mapper) {
+        this.checkAndSetMapper(mapper);
+        return this;
+    }
+
+    /**
      * 获取单个对象
      *
      * @return
@@ -111,29 +122,6 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
     public E get(boolean optimize) {
         this.setDefault(false);
         return mapper.get(this, optimize);
-    }
-
-    /**
-     * 获取单个对象
-     *
-     * @param mapper 操作目标实体类的mapper
-     * @return
-     */
-    public <T> E get(MybatisMapper<T> mapper) {
-        this.checkAndSetMapper(mapper);
-        return this.get();
-    }
-
-    /**
-     * 获取单个对象
-     *
-     * @param mapper   操作目标实体类的mapper
-     * @param optimize 是否自动优化
-     * @return
-     */
-    public <T> E get(MybatisMapper<T> mapper, boolean optimize) {
-        this.checkAndSetMapper(mapper);
-        return this.get(optimize);
     }
 
     /**
@@ -156,30 +144,6 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
         return mapper.list(this, optimize);
     }
 
-
-    /**
-     * 获取列表
-     *
-     * @param mapper 操作目标实体类的mapper
-     * @return
-     */
-    public <T> List<E> list(MybatisMapper<T> mapper) {
-        this.checkAndSetMapper(mapper);
-        return this.list();
-    }
-
-    /**
-     * 获取列表
-     *
-     * @param mapper   操作目标实体类的mapper
-     * @param optimize 是否自动优化
-     * @return
-     */
-    public <T> List<E> list(MybatisMapper<T> mapper, boolean optimize) {
-        this.checkAndSetMapper(mapper);
-        return this.list(optimize);
-    }
-
     /**
      * 获取列表
      *
@@ -192,17 +156,6 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
     /**
      * 获取列表
      *
-     * @param mapper 操作目标实体类的mapper
-     * @return
-     */
-    public <T> Cursor<E> cursor(MybatisMapper<T> mapper) {
-        this.checkAndSetMapper(mapper);
-        return this.cursor();
-    }
-
-    /**
-     * 获取列表
-     *
      * @param optimize 是否自动优化
      * @return
      */
@@ -210,20 +163,6 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
         this.setDefault(false);
         return mapper.cursor(this, optimize);
     }
-
-
-    /**
-     * 获取列表
-     *
-     * @param mapper   操作目标实体类的mapper
-     * @param optimize 是否自动优化
-     * @return
-     */
-    public <T> Cursor<E> cursor(MybatisMapper<T> mapper, boolean optimize) {
-        this.checkAndSetMapper(mapper);
-        return this.cursor(optimize);
-    }
-
 
     /**
      * 获取条数
@@ -249,46 +188,12 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
     }
 
     /**
-     * 获取条数
-     *
-     * @param mapper 操作目标实体类的mapper
-     * @return
-     */
-    public <T> Integer count(MybatisMapper<T> mapper) {
-        this.checkAndSetMapper(mapper);
-        return this.count();
-    }
-
-    /**
-     * 获取条数
-     *
-     * @param mapper   操作目标实体类的mapper
-     * @param optimize 是否自动优化
-     * @return
-     */
-    public <T> Integer count(MybatisMapper<T> mapper, boolean optimize) {
-        this.checkAndSetMapper(mapper);
-        return this.count(optimize);
-    }
-
-    /**
      * 判断是否存在
      *
      * @return
      */
     public boolean exists() {
         return this.exists(true);
-    }
-
-    /**
-     * 判断是否存在
-     *
-     * @param mapper 操作目标实体类的mapper
-     * @return
-     */
-    public <T> boolean exists(MybatisMapper<T> mapper) {
-        this.checkAndSetMapper(mapper);
-        return this.exists();
     }
 
     /**
@@ -307,18 +212,6 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
     }
 
     /**
-     * 判断是否存在
-     *
-     * @param mapper   操作目标实体类的mapper
-     * @param optimize 是否自动优化
-     * @return
-     */
-    public <T> boolean exists(MybatisMapper<T> mapper, boolean optimize) {
-        this.checkAndSetMapper(mapper);
-        return this.exists(optimize);
-    }
-
-    /**
      * 分页查询
      *
      * @param pager
@@ -327,18 +220,6 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
     public <P extends Pager<E>> P paging(P pager) {
         this.setDefault();
         return mapper.paging(this, pager);
-    }
-
-    /**
-     * 分页查询
-     *
-     * @param mapper 操作目标实体类的mapper
-     * @param pager
-     * @return
-     */
-    public <P extends Pager<E>, T> P paging(MybatisMapper<T> mapper, P pager) {
-        this.checkAndSetMapper(mapper);
-        return this.paging(pager);
     }
 
     /**
@@ -355,19 +236,6 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
     /**
      * 将结果转成map
      *
-     * @param mapper 操作目标实体类的mapper
-     * @param mapKey 指定的map的key属性
-     * @param <K>    map的key
-     * @return
-     */
-    public <K, T> Map<K, E> mapWithKey(MybatisMapper<T> mapper, GetterFun<E, K> mapKey) {
-        this.checkAndSetMapper(mapper);
-        return this.mapWithKey(mapKey);
-    }
-
-    /**
-     * 将结果转成map
-     *
      * @param mapKey   指定的map的key属性
      * @param optimize 是否优化sql
      * @param <K>      map的key
@@ -376,19 +244,5 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
     public <K> Map<K, E> mapWithKey(GetterFun<E, K> mapKey, boolean optimize) {
         this.setDefault();
         return mapper.mapWithKey(mapKey, this, optimize);
-    }
-
-    /**
-     * 将结果转成map
-     *
-     * @param mapper   操作目标实体类的mapper
-     * @param mapKey   指定的map的key属性
-     * @param optimize 是否优化sql
-     * @param <K>      map的key
-     * @return
-     */
-    public <K, T> Map<K, E> mapWithKey(MybatisMapper<T> mapper, GetterFun<E, K> mapKey, boolean optimize) {
-        this.checkAndSetMapper(mapper);
-        return this.mapWithKey(mapKey, optimize);
     }
 }

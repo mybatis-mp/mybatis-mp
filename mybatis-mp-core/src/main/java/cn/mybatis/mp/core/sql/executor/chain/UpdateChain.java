@@ -36,9 +36,9 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
 
     /**
      * 非特殊情况 请使用of静态方法
-     * 使用此方法后 execute 等执行方法 第一个参数必须是mapper
+     * 使用此方法后 后续执行查询需调用一次withMapper(mybatisMapper)方法
      *
-     * @return
+     * @return 自己
      */
     public static UpdateChain create() {
         return new UpdateChain();
@@ -63,6 +63,17 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
     }
 
     /**
+     * 用create静态方法的 Chain 需要调用一次此方法 用于设置 mapper
+     *
+     * @param mapper 操作目标实体类的mapper
+     * @return 自己
+     */
+    public <T> UpdateChain withMapper(MybatisMapper<T> mapper) {
+        this.checkAndSetMapper(mapper);
+        return this;
+    }
+
+    /**
      * 执行
      *
      * @return
@@ -70,16 +81,5 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
     public int execute() {
         this.setDefault();
         return mapper.update(this);
-    }
-
-    /**
-     * 执行
-     *
-     * @param mapper 操作目标实体类的mapper
-     * @return
-     */
-    public <T> int execute(MybatisMapper<T> mapper) {
-        this.checkAndSetMapper(mapper);
-        return this.execute();
     }
 }

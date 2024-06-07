@@ -45,7 +45,8 @@ public class SelectAsTest extends BaseTest {
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(SysUserVo.class)
-                    .get(sysUserMapper);
+                    .withMapper(sysUserMapper)
+                    .get();
             SysUserVo eqSysUser = new SysUserVo();
             eqSysUser.setId(1);
             eqSysUser.setUserName("admin");
