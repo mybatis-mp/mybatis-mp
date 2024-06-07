@@ -11,13 +11,13 @@ import java.util.function.Function;
 public interface IOrderBySubQueryGetterMethod<SELF extends IOrderBySubQueryGetterMethod, DATASET_FILED extends Cmd> extends IBaseOrderByMethods {
 
     default <T> SELF orderBy(ISubQuery subQuery, Getter<T> column) {
-        return this.orderBy(subQuery, defaultOrderByDirection(), column);
+        return this.orderBy(subQuery, ascOrderByDirection(), column);
     }
 
     <T> SELF orderBy(ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T> column);
 
     default <T> SELF orderBy(ISubQuery subQuery, Getter<T> column, Function<DATASET_FILED, Cmd> f) {
-        return this.orderBy(subQuery, defaultOrderByDirection(), column, f);
+        return this.orderBy(subQuery, ascOrderByDirection(), column, f);
     }
 
     <T> SELF orderBy(ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T> column, Function<DATASET_FILED, Cmd> f);
@@ -27,21 +27,21 @@ public interface IOrderBySubQueryGetterMethod<SELF extends IOrderBySubQueryGette
         if (!when) {
             return (SELF) this;
         }
-        return this.orderBy(subQuery, defaultOrderByDirection(), column);
+        return this.orderBy(subQuery, ascOrderByDirection(), column);
     }
 
     default <T> SELF orderBy(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T> column) {
         if (!when) {
             return (SELF) this;
         }
-        return this.orderBy(subQuery, defaultOrderByDirection(), column);
+        return this.orderBy(subQuery, ascOrderByDirection(), column);
     }
 
     default <T> SELF orderBy(boolean when, ISubQuery subQuery, Getter<T> column, Function<DATASET_FILED, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }
-        return this.orderBy(subQuery, defaultOrderByDirection(), column, f);
+        return this.orderBy(subQuery, ascOrderByDirection(), column, f);
     }
 
     default <T> SELF orderBy(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T> column, Function<DATASET_FILED, Cmd> f) {

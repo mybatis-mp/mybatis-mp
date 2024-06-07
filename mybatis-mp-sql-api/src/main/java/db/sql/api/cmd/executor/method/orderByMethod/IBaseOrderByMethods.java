@@ -4,6 +4,7 @@ import db.sql.api.cmd.basic.IOrderByDirection;
 
 public interface IBaseOrderByMethods {
 
-    IOrderByDirection defaultOrderByDirection();
+    IOrderByDirection ascOrderByDirection();
 
+    IOrderByDirection descOrderByDirection();
 }

@@ -35,13 +35,13 @@ public interface IOrderByMethods<SELF extends IOrderByMethods,
 
 
     default SELF orderBy(String columnName) {
-        return this.orderBy(defaultOrderByDirection(), columnName);
+        return this.orderBy(ascOrderByDirection(), columnName);
     }
 
     SELF orderBy(IOrderByDirection orderByDirection, String columnName);
 
     default SELF orderByWithFun(String columnName, Function<IColumn, Cmd> f) {
-        return this.orderByWithFun(defaultOrderByDirection(), columnName, f);
+        return this.orderByWithFun(ascOrderByDirection(), columnName, f);
     }
 
     SELF orderByWithFun(IOrderByDirection orderByDirection, String columnName, Function<IColumn, Cmd> f);
@@ -51,7 +51,7 @@ public interface IOrderByMethods<SELF extends IOrderByMethods,
         if (!when) {
             return (SELF) this;
         }
-        return this.orderBy(defaultOrderByDirection(), columnName);
+        return this.orderBy(ascOrderByDirection(), columnName);
     }
 
     default SELF orderBy(boolean when, IOrderByDirection orderByDirection, String columnName) {
@@ -65,7 +65,7 @@ public interface IOrderByMethods<SELF extends IOrderByMethods,
         if (!when) {
             return (SELF) this;
         }
-        return this.orderByWithFun(defaultOrderByDirection(), columnName, f);
+        return this.orderByWithFun(ascOrderByDirection(), columnName, f);
     }
 
     default SELF orderByWithFun(boolean when, IOrderByDirection orderByDirection, String columnName, Function<IColumn, Cmd> f) {

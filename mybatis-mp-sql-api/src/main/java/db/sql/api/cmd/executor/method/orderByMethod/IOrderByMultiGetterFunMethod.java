@@ -11,11 +11,11 @@ import java.util.function.Function;
 public interface IOrderByMultiGetterFunMethod<SELF extends IOrderByMultiGetterFunMethod, TABLE_FIELD extends Cmd> extends IBaseOrderByMethods {
 
     default <T> SELF orderByWithFun(Function<TABLE_FIELD[], Cmd> f, Getter<T>... columns) {
-        return this.orderByWithFun(defaultOrderByDirection(), f, 1, columns);
+        return this.orderByWithFun(ascOrderByDirection(), f, 1, columns);
     }
 
     default <T> SELF orderByWithFun(Function<TABLE_FIELD[], Cmd> f, int storey, Getter<T>... columns) {
-        return this.orderByWithFun(defaultOrderByDirection(), f, storey, columns);
+        return this.orderByWithFun(ascOrderByDirection(), f, storey, columns);
     }
 
     default <T> SELF orderByWithFun(IOrderByDirection orderByDirection, Function<TABLE_FIELD[], Cmd> f, Getter<T>... columns) {
@@ -25,7 +25,7 @@ public interface IOrderByMultiGetterFunMethod<SELF extends IOrderByMultiGetterFu
     <T> SELF orderByWithFun(IOrderByDirection orderByDirection, Function<TABLE_FIELD[], Cmd> f, int storey, Getter<T>... columns);
 
     default SELF orderByWithFun(Function<TABLE_FIELD[], Cmd> f, GetterColumnField... getterColumnFields) {
-        return this.orderByWithFun(defaultOrderByDirection(), f, getterColumnFields);
+        return this.orderByWithFun(ascOrderByDirection(), f, getterColumnFields);
     }
 
     SELF orderByWithFun(IOrderByDirection orderByDirection, Function<TABLE_FIELD[], Cmd> f, GetterColumnField... getterColumnFields);
@@ -34,14 +34,14 @@ public interface IOrderByMultiGetterFunMethod<SELF extends IOrderByMultiGetterFu
         if (!when) {
             return (SELF) this;
         }
-        return this.orderByWithFun(defaultOrderByDirection(), f, 1, columns);
+        return this.orderByWithFun(ascOrderByDirection(), f, 1, columns);
     }
 
     default <T> SELF orderByWithFun(boolean when, Function<TABLE_FIELD[], Cmd> f, int storey, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;
         }
-        return this.orderByWithFun(defaultOrderByDirection(), f, storey, columns);
+        return this.orderByWithFun(ascOrderByDirection(), f, storey, columns);
     }
 
     default <T> SELF orderByWithFun(boolean when, IOrderByDirection orderByDirection, Function<TABLE_FIELD[], Cmd> f, Getter<T>... columns) {
@@ -63,7 +63,7 @@ public interface IOrderByMultiGetterFunMethod<SELF extends IOrderByMultiGetterFu
         if (!when) {
             return (SELF) this;
         }
-        return this.orderByWithFun(defaultOrderByDirection(), f, getterColumnFields);
+        return this.orderByWithFun(ascOrderByDirection(), f, getterColumnFields);
     }
 
     default SELF orderByWithFun(boolean when, IOrderByDirection orderByDirection, Function<TABLE_FIELD[], Cmd> f, GetterColumnField... getterColumnFields) {

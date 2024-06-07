@@ -654,8 +654,13 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public IOrderByDirection defaultOrderByDirection() {
+    public IOrderByDirection ascOrderByDirection() {
         return OrderByDirection.ASC;
+    }
+
+    @Override
+    public IOrderByDirection descOrderByDirection() {
+        return OrderByDirection.DESC;
     }
 
     @Override

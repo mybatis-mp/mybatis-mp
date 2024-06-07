@@ -12,13 +12,13 @@ import java.util.function.Function;
 public interface IOrderBySubQueryMultiGetterFunMethod<SELF extends IOrderBySubQueryMultiGetterFunMethod, DATASET_FILED extends Cmd> extends IBaseOrderByMethods {
 
     default <T> SELF orderByWithFun(ISubQuery subQuery, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns) {
-        return this.orderByWithFun(subQuery, defaultOrderByDirection(), f, columns);
+        return this.orderByWithFun(subQuery, ascOrderByDirection(), f, columns);
     }
 
     <T> SELF orderByWithFun(ISubQuery subQuery, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns);
 
     default SELF orderByWithFun(ISubQuery subQuery, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields) {
-        return this.orderByWithFun(subQuery, defaultOrderByDirection(), f, columnFields);
+        return this.orderByWithFun(subQuery, ascOrderByDirection(), f, columnFields);
     }
 
     SELF orderByWithFun(ISubQuery subQuery, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields);
@@ -28,7 +28,7 @@ public interface IOrderBySubQueryMultiGetterFunMethod<SELF extends IOrderBySubQu
         if (!when) {
             return (SELF) this;
         }
-        return this.orderByWithFun(subQuery, defaultOrderByDirection(), f, columns);
+        return this.orderByWithFun(subQuery, ascOrderByDirection(), f, columns);
     }
 
     default <T> SELF orderByWithFun(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns) {
@@ -42,7 +42,7 @@ public interface IOrderBySubQueryMultiGetterFunMethod<SELF extends IOrderBySubQu
         if (!when) {
             return (SELF) this;
         }
-        return this.orderByWithFun(subQuery, defaultOrderByDirection(), f, columnFields);
+        return this.orderByWithFun(subQuery, ascOrderByDirection(), f, columnFields);
     }
 
     default SELF orderByWithFun(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields) {

@@ -9,13 +9,13 @@ import java.util.List;
 public interface IOrderByCmdMethod<SELF extends IOrderByCmdMethod, COLUMN extends Cmd> extends IBaseOrderByMethods {
 
     default SELF orderBy(COLUMN column) {
-        return this.orderBy(defaultOrderByDirection(), column);
+        return this.orderBy(ascOrderByDirection(), column);
     }
 
     SELF orderBy(IOrderByDirection orderByDirection, COLUMN column);
 
     default SELF orderBy(COLUMN... columns) {
-        return this.orderBy(defaultOrderByDirection(), columns);
+        return this.orderBy(ascOrderByDirection(), columns);
     }
 
     default SELF orderBy(IOrderByDirection orderByDirection, COLUMN... columns) {
@@ -26,7 +26,7 @@ public interface IOrderByCmdMethod<SELF extends IOrderByCmdMethod, COLUMN extend
     }
 
     default SELF orderBy(List<COLUMN> columns) {
-        return this.orderBy(defaultOrderByDirection(), columns);
+        return this.orderBy(ascOrderByDirection(), columns);
     }
 
     default SELF orderBy(IOrderByDirection orderByDirection, List<COLUMN> columns) {

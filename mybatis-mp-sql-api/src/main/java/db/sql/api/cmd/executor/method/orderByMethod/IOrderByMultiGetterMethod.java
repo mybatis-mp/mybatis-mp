@@ -7,11 +7,11 @@ import db.sql.api.cmd.basic.IOrderByDirection;
 public interface IOrderByMultiGetterMethod<SELF extends IOrderByMultiGetterMethod> extends IBaseOrderByMethods {
 
     default <T> SELF orderBy(Getter<T>... columns) {
-        return this.orderBy(defaultOrderByDirection(), 1, columns);
+        return this.orderBy(ascOrderByDirection(), 1, columns);
     }
 
     default <T> SELF orderBy(int storey, Getter<T>... columns) {
-        return this.orderBy(defaultOrderByDirection(), storey, columns);
+        return this.orderBy(ascOrderByDirection(), storey, columns);
     }
 
     default <T> SELF orderBy(IOrderByDirection orderByDirection, Getter<T>... columns) {
@@ -24,14 +24,14 @@ public interface IOrderByMultiGetterMethod<SELF extends IOrderByMultiGetterMetho
         if (!when) {
             return (SELF) this;
         }
-        return this.orderBy(defaultOrderByDirection(), 1, columns);
+        return this.orderBy(ascOrderByDirection(), 1, columns);
     }
 
     default <T> SELF orderBy(boolean when, int storey, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;
         }
-        return this.orderBy(defaultOrderByDirection(), storey, columns);
+        return this.orderBy(ascOrderByDirection(), storey, columns);
     }
 
     default <T> SELF orderBy(boolean when, IOrderByDirection orderByDirection, Getter<T>... columns) {

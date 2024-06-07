@@ -11,7 +11,7 @@ import java.util.function.Function;
 public interface IOrderBySubQueryGetterFunMethod<SELF extends IOrderBySubQueryGetterFunMethod, DATASET_FILED extends Cmd> extends IBaseOrderByMethods {
 
     default <T> SELF orderByWithFun(ISubQuery subQuery, Getter<T> column, Function<DATASET_FILED, Cmd> f) {
-        return this.orderByWithFun(subQuery, defaultOrderByDirection(), column, f);
+        return this.orderByWithFun(subQuery, ascOrderByDirection(), column, f);
     }
 
     <T> SELF orderByWithFun(ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T> column, Function<DATASET_FILED, Cmd> f);
@@ -20,7 +20,7 @@ public interface IOrderBySubQueryGetterFunMethod<SELF extends IOrderBySubQueryGe
         if (!when) {
             return (SELF) this;
         }
-        return this.orderByWithFun(subQuery, defaultOrderByDirection(), column, f);
+        return this.orderByWithFun(subQuery, ascOrderByDirection(), column, f);
     }
 
     default <T> SELF orderByWithFun(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T> column, Function<DATASET_FILED, Cmd> f) {

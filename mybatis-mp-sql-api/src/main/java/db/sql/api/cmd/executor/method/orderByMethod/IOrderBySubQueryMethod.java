@@ -10,13 +10,13 @@ import java.util.function.Function;
 public interface IOrderBySubQueryMethod<SELF extends IOrderBySubQueryMethod, DATASET_FILED extends Cmd> extends IBaseOrderByMethods {
 
     default SELF orderBy(ISubQuery subQuery, String columnName) {
-        return this.orderBy(subQuery, defaultOrderByDirection(), columnName);
+        return this.orderBy(subQuery, ascOrderByDirection(), columnName);
     }
 
     SELF orderBy(ISubQuery subQuery, IOrderByDirection orderByDirection, String columnName);
 
     default SELF orderByWithFun(ISubQuery subQuery, String columnName, Function<DATASET_FILED, Cmd> f) {
-        return this.orderByWithFun(subQuery, defaultOrderByDirection(), columnName, f);
+        return this.orderByWithFun(subQuery, ascOrderByDirection(), columnName, f);
     }
 
     SELF orderByWithFun(ISubQuery subQuery, IOrderByDirection orderByDirection, String columnName, Function<DATASET_FILED, Cmd> f);
@@ -26,7 +26,7 @@ public interface IOrderBySubQueryMethod<SELF extends IOrderBySubQueryMethod, DAT
         if (!when) {
             return (SELF) this;
         }
-        return this.orderBy(subQuery, defaultOrderByDirection(), columnName);
+        return this.orderBy(subQuery, ascOrderByDirection(), columnName);
     }
 
     default SELF orderBy(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, String columnName) {
@@ -40,7 +40,7 @@ public interface IOrderBySubQueryMethod<SELF extends IOrderBySubQueryMethod, DAT
         if (!when) {
             return (SELF) this;
         }
-        return this.orderByWithFun(subQuery, defaultOrderByDirection(), columnName, f);
+        return this.orderByWithFun(subQuery, ascOrderByDirection(), columnName, f);
     }
 
     default SELF orderByWithFun(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, String columnName, Function<DATASET_FILED, Cmd> f) {
