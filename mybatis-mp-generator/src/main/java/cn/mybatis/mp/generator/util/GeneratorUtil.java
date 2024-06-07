@@ -271,6 +271,10 @@ public class GeneratorUtil {
             classList.add(generatorConfig.getActionConfig().getSuperClass());
         }
 
+        if (generatorConfig.getActionConfig().getReturnClass() != null) {
+            classList.add(generatorConfig.getActionConfig().getReturnClass());
+        }
+
         classList.add(entityInfo.getEntityPackage() + "." + entityInfo.getName());
 
         if (entityInfo.getIdFieldInfo() != null) {
