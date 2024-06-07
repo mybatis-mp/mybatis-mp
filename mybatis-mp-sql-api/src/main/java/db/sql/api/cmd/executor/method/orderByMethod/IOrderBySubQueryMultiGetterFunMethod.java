@@ -15,14 +15,17 @@ public interface IOrderBySubQueryMultiGetterFunMethod<SELF extends IOrderBySubQu
         return this.orderByWithFun(subQuery, ascOrderByDirection(), f, columns);
     }
 
-    <T> SELF orderByWithFun(ISubQuery subQuery, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns);
+    default <T> SELF orderByDescWithFun(ISubQuery subQuery, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns) {
+        return this.orderByWithFun(subQuery, descOrderByDirection(), f, columns);
+    }
 
     default SELF orderByWithFun(ISubQuery subQuery, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields) {
         return this.orderByWithFun(subQuery, ascOrderByDirection(), f, columnFields);
     }
 
-    SELF orderByWithFun(ISubQuery subQuery, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields);
-
+    default SELF orderByDescWithFun(ISubQuery subQuery, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields) {
+        return this.orderByWithFun(subQuery, descOrderByDirection(), f, columnFields);
+    }
 
     default <T> SELF orderByWithFun(boolean when, ISubQuery subQuery, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns) {
         if (!when) {
@@ -31,11 +34,11 @@ public interface IOrderBySubQueryMultiGetterFunMethod<SELF extends IOrderBySubQu
         return this.orderByWithFun(subQuery, ascOrderByDirection(), f, columns);
     }
 
-    default <T> SELF orderByWithFun(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns) {
+    default <T> SELF orderByDescWithFun(boolean when, ISubQuery subQuery, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;
         }
-        return this.orderByWithFun(subQuery, orderByDirection, f, columns);
+        return this.orderByWithFun(subQuery, descOrderByDirection(), f, columns);
     }
 
     default SELF orderByWithFun(boolean when, ISubQuery subQuery, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields) {
@@ -43,6 +46,24 @@ public interface IOrderBySubQueryMultiGetterFunMethod<SELF extends IOrderBySubQu
             return (SELF) this;
         }
         return this.orderByWithFun(subQuery, ascOrderByDirection(), f, columnFields);
+    }
+
+    default SELF orderByDescWithFun(boolean when, ISubQuery subQuery, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderByWithFun(subQuery, descOrderByDirection(), f, columnFields);
+    }
+
+    <T> SELF orderByWithFun(ISubQuery subQuery, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns);
+
+    SELF orderByWithFun(ISubQuery subQuery, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields);
+
+    default <T> SELF orderByWithFun(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderByWithFun(subQuery, orderByDirection, f, columns);
     }
 
     default SELF orderByWithFun(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields) {

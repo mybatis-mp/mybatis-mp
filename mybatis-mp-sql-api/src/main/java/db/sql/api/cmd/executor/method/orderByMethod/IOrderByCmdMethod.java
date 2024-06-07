@@ -12,21 +12,33 @@ public interface IOrderByCmdMethod<SELF extends IOrderByCmdMethod, COLUMN extend
         return this.orderBy(ascOrderByDirection(), column);
     }
 
-    SELF orderBy(IOrderByDirection orderByDirection, COLUMN column);
-
     default SELF orderBy(COLUMN... columns) {
         return this.orderBy(ascOrderByDirection(), columns);
     }
+
+    default SELF orderBy(List<COLUMN> columns) {
+        return this.orderBy(ascOrderByDirection(), columns);
+    }
+
+    default SELF orderByDesc(COLUMN column) {
+        return this.orderBy(descOrderByDirection(), column);
+    }
+
+    default SELF orderByDesc(COLUMN... columns) {
+        return this.orderBy(descOrderByDirection(), columns);
+    }
+
+    default SELF orderByDesc(List<COLUMN> columns) {
+        return this.orderBy(descOrderByDirection(), columns);
+    }
+
+    SELF orderBy(IOrderByDirection orderByDirection, COLUMN column);
 
     default SELF orderBy(IOrderByDirection orderByDirection, COLUMN... columns) {
         for (COLUMN column : columns) {
             this.orderBy(orderByDirection, column);
         }
         return (SELF) this;
-    }
-
-    default SELF orderBy(List<COLUMN> columns) {
-        return this.orderBy(ascOrderByDirection(), columns);
     }
 
     default SELF orderBy(IOrderByDirection orderByDirection, List<COLUMN> columns) {

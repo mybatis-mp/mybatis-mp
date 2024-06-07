@@ -13,14 +13,17 @@ public interface IOrderBySubQueryMethod<SELF extends IOrderBySubQueryMethod, DAT
         return this.orderBy(subQuery, ascOrderByDirection(), columnName);
     }
 
-    SELF orderBy(ISubQuery subQuery, IOrderByDirection orderByDirection, String columnName);
+    default SELF orderByDesc(ISubQuery subQuery, String columnName) {
+        return this.orderBy(subQuery, descOrderByDirection(), columnName);
+    }
 
     default SELF orderByWithFun(ISubQuery subQuery, String columnName, Function<DATASET_FILED, Cmd> f) {
         return this.orderByWithFun(subQuery, ascOrderByDirection(), columnName, f);
     }
 
-    SELF orderByWithFun(ISubQuery subQuery, IOrderByDirection orderByDirection, String columnName, Function<DATASET_FILED, Cmd> f);
-
+    default SELF orderByDescWithFun(ISubQuery subQuery, String columnName, Function<DATASET_FILED, Cmd> f) {
+        return this.orderByWithFun(subQuery, descOrderByDirection(), columnName, f);
+    }
 
     default SELF orderBy(boolean when, ISubQuery subQuery, String columnName) {
         if (!when) {
@@ -29,11 +32,11 @@ public interface IOrderBySubQueryMethod<SELF extends IOrderBySubQueryMethod, DAT
         return this.orderBy(subQuery, ascOrderByDirection(), columnName);
     }
 
-    default SELF orderBy(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, String columnName) {
+    default SELF orderByDesc(boolean when, ISubQuery subQuery, String columnName) {
         if (!when) {
             return (SELF) this;
         }
-        return this.orderBy(subQuery, orderByDirection, columnName);
+        return this.orderBy(subQuery, descOrderByDirection(), columnName);
     }
 
     default SELF orderByWithFun(boolean when, ISubQuery subQuery, String columnName, Function<DATASET_FILED, Cmd> f) {
@@ -41,6 +44,24 @@ public interface IOrderBySubQueryMethod<SELF extends IOrderBySubQueryMethod, DAT
             return (SELF) this;
         }
         return this.orderByWithFun(subQuery, ascOrderByDirection(), columnName, f);
+    }
+
+    default SELF orderByDescWithFun(boolean when, ISubQuery subQuery, String columnName, Function<DATASET_FILED, Cmd> f) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderByWithFun(subQuery, descOrderByDirection(), columnName, f);
+    }
+
+    SELF orderBy(ISubQuery subQuery, IOrderByDirection orderByDirection, String columnName);
+
+    SELF orderByWithFun(ISubQuery subQuery, IOrderByDirection orderByDirection, String columnName, Function<DATASET_FILED, Cmd> f);
+
+    default SELF orderBy(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, String columnName) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(subQuery, orderByDirection, columnName);
     }
 
     default SELF orderByWithFun(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, String columnName, Function<DATASET_FILED, Cmd> f) {

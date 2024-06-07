@@ -14,11 +14,13 @@ public interface IOrderByMultiGetterMethod<SELF extends IOrderByMultiGetterMetho
         return this.orderBy(ascOrderByDirection(), storey, columns);
     }
 
-    default <T> SELF orderBy(IOrderByDirection orderByDirection, Getter<T>... columns) {
-        return this.orderBy(orderByDirection, 1, columns);
+    default <T> SELF orderByDesc(Getter<T>... columns) {
+        return this.orderBy(descOrderByDirection(), 1, columns);
     }
 
-    <T> SELF orderBy(IOrderByDirection orderByDirection, int storey, Getter<T>... columns);
+    default <T> SELF orderByDesc(int storey, Getter<T>... columns) {
+        return this.orderBy(descOrderByDirection(), storey, columns);
+    }
 
     default <T> SELF orderBy(boolean when, Getter<T>... columns) {
         if (!when) {
@@ -33,6 +35,27 @@ public interface IOrderByMultiGetterMethod<SELF extends IOrderByMultiGetterMetho
         }
         return this.orderBy(ascOrderByDirection(), storey, columns);
     }
+
+    default <T> SELF orderByDesc(boolean when, Getter<T>... columns) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(descOrderByDirection(), 1, columns);
+    }
+
+    default <T> SELF orderByDesc(boolean when, int storey, Getter<T>... columns) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(descOrderByDirection(), storey, columns);
+    }
+
+    default <T> SELF orderBy(IOrderByDirection orderByDirection, Getter<T>... columns) {
+        return this.orderBy(orderByDirection, 1, columns);
+    }
+
+    <T> SELF orderBy(IOrderByDirection orderByDirection, int storey, Getter<T>... columns);
+
 
     default <T> SELF orderBy(boolean when, IOrderByDirection orderByDirection, Getter<T>... columns) {
         if (!when) {

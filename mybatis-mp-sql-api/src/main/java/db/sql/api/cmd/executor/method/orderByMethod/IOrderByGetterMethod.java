@@ -14,11 +14,13 @@ public interface IOrderByGetterMethod<SELF extends IOrderByGetterMethod> extends
         return this.orderBy(ascOrderByDirection(), column, storey);
     }
 
-    default <T> SELF orderBy(IOrderByDirection orderByDirection, Getter<T> column) {
-        return this.orderBy(orderByDirection, column, 1);
+    default <T> SELF orderByDesc(Getter<T> column) {
+        return this.orderBy(descOrderByDirection(), column, 1);
     }
 
-    <T> SELF orderBy(IOrderByDirection orderByDirection, Getter<T> column, int storey);
+    default <T> SELF orderByDesc(Getter<T> column, int storey) {
+        return this.orderBy(descOrderByDirection(), column, storey);
+    }
 
     default <T> SELF orderBy(boolean when, Getter<T> column) {
         if (!when) {
@@ -34,13 +36,32 @@ public interface IOrderByGetterMethod<SELF extends IOrderByGetterMethod> extends
         return this.orderBy(ascOrderByDirection(), column, storey);
     }
 
+    default <T> SELF orderByDesc(boolean when, Getter<T> column) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(descOrderByDirection(), column, 1);
+    }
+
+    default <T> SELF orderByDesc(boolean when, Getter<T> column, int storey) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(descOrderByDirection(), column, storey);
+    }
+
+    default <T> SELF orderBy(IOrderByDirection orderByDirection, Getter<T> column) {
+        return this.orderBy(orderByDirection, column, 1);
+    }
+
+    <T> SELF orderBy(IOrderByDirection orderByDirection, Getter<T> column, int storey);
+
     default <T> SELF orderBy(boolean when, IOrderByDirection orderByDirection, Getter<T> column) {
         if (!when) {
             return (SELF) this;
         }
         return this.orderBy(orderByDirection, column, 1);
     }
-
 
     default <T> SELF orderBy(boolean when, IOrderByDirection orderByDirection, Getter<T> column, int storey) {
         if (!when) {

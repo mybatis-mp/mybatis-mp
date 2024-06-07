@@ -14,14 +14,17 @@ public interface IOrderBySubQueryGetterMethod<SELF extends IOrderBySubQueryGette
         return this.orderBy(subQuery, ascOrderByDirection(), column);
     }
 
-    <T> SELF orderBy(ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T> column);
+    default <T> SELF orderByDesc(ISubQuery subQuery, Getter<T> column) {
+        return this.orderBy(subQuery, descOrderByDirection(), column);
+    }
 
     default <T> SELF orderBy(ISubQuery subQuery, Getter<T> column, Function<DATASET_FILED, Cmd> f) {
         return this.orderBy(subQuery, ascOrderByDirection(), column, f);
     }
 
-    <T> SELF orderBy(ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T> column, Function<DATASET_FILED, Cmd> f);
-
+    default <T> SELF orderByDesc(ISubQuery subQuery, Getter<T> column, Function<DATASET_FILED, Cmd> f) {
+        return this.orderBy(subQuery, descOrderByDirection(), column, f);
+    }
 
     default <T> SELF orderBy(boolean when, ISubQuery subQuery, Getter<T> column) {
         if (!when) {
@@ -30,11 +33,11 @@ public interface IOrderBySubQueryGetterMethod<SELF extends IOrderBySubQueryGette
         return this.orderBy(subQuery, ascOrderByDirection(), column);
     }
 
-    default <T> SELF orderBy(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T> column) {
+    default <T> SELF orderByDesc(boolean when, ISubQuery subQuery, Getter<T> column) {
         if (!when) {
             return (SELF) this;
         }
-        return this.orderBy(subQuery, ascOrderByDirection(), column);
+        return this.orderBy(subQuery, descOrderByDirection(), column);
     }
 
     default <T> SELF orderBy(boolean when, ISubQuery subQuery, Getter<T> column, Function<DATASET_FILED, Cmd> f) {
@@ -42,6 +45,24 @@ public interface IOrderBySubQueryGetterMethod<SELF extends IOrderBySubQueryGette
             return (SELF) this;
         }
         return this.orderBy(subQuery, ascOrderByDirection(), column, f);
+    }
+
+    default <T> SELF orderByDesc(boolean when, ISubQuery subQuery, Getter<T> column, Function<DATASET_FILED, Cmd> f) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(subQuery, descOrderByDirection(), column, f);
+    }
+
+    <T> SELF orderBy(ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T> column);
+
+    <T> SELF orderBy(ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T> column, Function<DATASET_FILED, Cmd> f);
+
+    default <T> SELF orderBy(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T> column) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(subQuery, orderByDirection, column);
     }
 
     default <T> SELF orderBy(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T> column, Function<DATASET_FILED, Cmd> f) {

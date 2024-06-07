@@ -11,7 +11,9 @@ public interface IOrderBySubQueryMultiGetterMethod<SELF extends IOrderBySubQuery
         return this.orderBy(subQuery, ascOrderByDirection(), columns);
     }
 
-    <T> SELF orderBy(ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T>... columns);
+    default <T> SELF orderByDesc(ISubQuery subQuery, Getter<T>... columns) {
+        return this.orderBy(subQuery, descOrderByDirection(), columns);
+    }
 
     default <T> SELF orderBy(boolean when, ISubQuery subQuery, Getter<T>... columns) {
         if (!when) {
@@ -19,6 +21,15 @@ public interface IOrderBySubQueryMultiGetterMethod<SELF extends IOrderBySubQuery
         }
         return this.orderBy(subQuery, ascOrderByDirection(), columns);
     }
+
+    default <T> SELF orderByDesc(boolean when, ISubQuery subQuery, Getter<T>... columns) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.orderBy(subQuery, descOrderByDirection(), columns);
+    }
+
+    <T> SELF orderBy(ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T>... columns);
 
     default <T> SELF orderBy(boolean when, ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T>... columns) {
         if (!when) {
