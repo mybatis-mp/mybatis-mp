@@ -218,7 +218,7 @@ public class QueryTest extends BaseTest {
             SysUser sysUser = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId, SysUser::getUserName, SysUser::getRole_id)
                     .from(SysUser.class)
-                    .orderBy(OrderByDirection.DESC, SysUser::getRole_id, SysUser::getId)
+                    .orderByDesc(SysUser::getRole_id, SysUser::getId)
                     .limit(1)
                     .get();
             SysUser eqSysUser = new SysUser();
