@@ -236,7 +236,7 @@ public class GeneratorUtil {
         classList.add(entityInfo.getDaoPackage() + "." + entityInfo.getDaoName());
         classList.add(entityInfo.getServicePackage() + "." + entityInfo.getServiceName());
 
-        if (!generatorConfig.getServiceImplConfig().isInjectMapper()) {
+        if (generatorConfig.getServiceImplConfig().isInjectMapper() || !generatorConfig.getServiceImplConfig().isInjectDao()) {
             classList.add(entityInfo.getMapperPackage() + "." + entityInfo.getMapperName());
             classList.add(QueryChain.class.getName());
             classList.add(UpdateChain.class.getName());

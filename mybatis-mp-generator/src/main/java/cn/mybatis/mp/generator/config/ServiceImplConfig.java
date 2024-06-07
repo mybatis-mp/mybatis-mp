@@ -1,6 +1,5 @@
 package cn.mybatis.mp.generator.config;
 
-import cn.mybatis.mp.core.mvc.impl.ServiceImpl;
 import lombok.Getter;
 
 @Getter
@@ -9,7 +8,7 @@ public class ServiceImplConfig {
     /**
      * 接口父类
      */
-    private String superClass = ServiceImpl.class.getName();
+    private String superClass;
 
     /**
      * 注入dao
