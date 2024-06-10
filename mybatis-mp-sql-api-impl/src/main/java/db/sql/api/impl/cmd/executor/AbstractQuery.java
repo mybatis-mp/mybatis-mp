@@ -12,6 +12,7 @@ import db.sql.api.cmd.basic.IOrderByDirection;
 import db.sql.api.cmd.basic.UnionsCmdLists;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.cmd.executor.ISubQuery;
+import db.sql.api.cmd.executor.IWithQuery;
 import db.sql.api.cmd.struct.Joins;
 import db.sql.api.cmd.struct.query.Unions;
 import db.sql.api.cmd.struct.query.Withs;
@@ -20,6 +21,7 @@ import db.sql.api.impl.cmd.ConditionFactory;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.struct.*;
 import db.sql.api.impl.cmd.struct.query.*;
+import db.sql.api.impl.tookit.LambdaUtil;
 import db.sql.api.impl.tookit.SqlConst;
 
 import java.util.Map;
@@ -123,6 +125,16 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return $().field(entityType, fieldName, storey);
     }
 
+    public <T> DatasetField $(ISubQuery subQuery, Getter<T> column) {
+        String filedName = LambdaUtil.getName(column);
+        return new DatasetField<>((Dataset) subQuery, filedName);
+    }
+
+    public <T> DatasetField $(ISubQuery subQuery, Getter<T> column, int storey) {
+        String filedName = LambdaUtil.getName(column);
+        return new DatasetField<>((Dataset) subQuery, filedName);
+    }
+
     @Override
     protected void initCmdSorts(Map<Class<? extends Cmd>, Integer> cmdSorts) {
         int i = 0;
@@ -141,12 +153,12 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public With $with(ISubQuery subQuery) {
+    public With $with(IWithQuery withQuery) {
         if (Objects.isNull(this.withs)) {
             this.withs = new Withs();
             this.append(this.withs);
         }
-        With with = new With(subQuery);
+        With with = new With(withQuery);
         this.withs.add(with);
         return with;
     }

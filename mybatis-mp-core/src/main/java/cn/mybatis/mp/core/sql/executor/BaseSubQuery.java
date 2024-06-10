@@ -5,16 +5,10 @@ import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.ForeignKeyUtil;
 import db.sql.api.Cmd;
-import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.basic.Dataset;
 import db.sql.api.impl.cmd.basic.DatasetField;
-import db.sql.api.impl.cmd.condition.Exists;
-import db.sql.api.impl.cmd.condition.In;
 import db.sql.api.impl.cmd.executor.AbstractSubQuery;
-import db.sql.api.impl.cmd.struct.From;
 import db.sql.api.impl.cmd.struct.OnDataset;
-import db.sql.api.impl.cmd.struct.query.With;
-import db.sql.api.impl.tookit.SqlConst;
 
 import java.util.Map;
 import java.util.Objects;
@@ -79,24 +73,5 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
             consumer = ForeignKeyUtil.buildForeignKeyOnConsumer($, mainTable, mainTableStorey, secondTable, secondTableStorey);
         }
         return consumer;
-    }
-
-    @Override
-    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (parent instanceof From) {
-            return sqlBuilder.append(SqlConst.BLANK).append(this.alias);
-        }
-
-        if (parent instanceof In || parent instanceof Exists || parent instanceof With) {
-            return super.sql(module, this, context, sqlBuilder);
-        }
-        sqlBuilder.append(SqlConst.BRACKET_LEFT);
-        super.sql(module, this, context, sqlBuilder);
-        sqlBuilder.append(SqlConst.BRACKET_RIGHT);
-        if (this.alias != null) {
-            sqlBuilder.append(SqlConst.AS(context.getDbType())).append(this.alias);
-        }
-
-        return sqlBuilder;
     }
 }

@@ -56,7 +56,7 @@ public interface IQuery<SELF extends IQuery,
 
     CMD_FACTORY $();
 
-    WITH $with(ISubQuery subQuery);
+    WITH $with(IWithQuery withQuery);
 
     SELECT $select();
 
@@ -77,8 +77,8 @@ public interface IQuery<SELF extends IQuery,
     FORUPDATE $forUpdate();
 
     @Override
-    default SELF with(ISubQuery subQuery) {
-        $with(subQuery);
+    default SELF with(IWithQuery withQuery) {
+        $with(withQuery);
         return (SELF) this;
     }
 

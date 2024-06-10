@@ -1,7 +1,7 @@
 package db.sql.api.cmd.executor.method;
 
-import db.sql.api.cmd.executor.ISubQuery;
+import db.sql.api.cmd.executor.IWithQuery;
 
 public interface IWithMethod<SELF> {
-    SELF with(ISubQuery subQuery);
+    SELF with(IWithQuery withQuery);
 }

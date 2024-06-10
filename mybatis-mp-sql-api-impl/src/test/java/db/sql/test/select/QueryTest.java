@@ -3,7 +3,7 @@ package db.sql.test.select;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
 import db.sql.api.impl.cmd.executor.Query;
-import db.sql.api.impl.cmd.executor.SubQuery;
+import db.sql.api.impl.cmd.executor.WithQuery;
 import db.sql.test.BaseTest;
 import db.sql.test.Entity;
 import db.sql.test.Entity2;
@@ -143,11 +143,11 @@ public class QueryTest extends BaseTest {
         );
 
 
-        SubQuery subQuery = new SubQuery("a").select(userTable().$("id")).from(userTable());
+        WithQuery withQuery = new WithQuery("a").select(userTable().$("id")).from(userTable());
         check("WITH 测试", "with a as (select id from user) select id,name,a.id", new Query()
-                .with(subQuery)
+                .with(withQuery)
                 .select(userTable().$("id"), userTable().$("name"))
-                .select(subQuery, "id")
+                .select(withQuery, "id")
         );
 
 
