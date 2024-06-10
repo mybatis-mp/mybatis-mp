@@ -35,7 +35,7 @@ public class WithTest extends BaseTest {
                     .select(SysUser.class)
                     .from(SysUser.class)
                     .from(withQuery)
-                    .eq(SysUser::getRole_id, queryChain.$(withQuery, SysRole::getId))
+                    .eq(SysUser::getRole_id, withQuery.$(withQuery, SysRole::getId))
                     .orderBy(withQuery, SysRole::getId);
 
             Pager<SysUser> page = queryChain.paging(Pager.of(100));
