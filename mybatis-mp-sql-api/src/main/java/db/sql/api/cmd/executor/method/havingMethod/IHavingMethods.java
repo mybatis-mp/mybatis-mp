@@ -11,7 +11,7 @@ import java.util.function.Function;
 public interface IHavingMethods<SELF extends IHavingMethods, TABLE_FIELD, DATASET_FILED>
         extends IHavingAndMethod<SELF, TABLE_FIELD>,
         IHavingOrMethod<SELF, TABLE_FIELD>,
-        IHavingSubQueryAndMethod<SELF, DATASET_FILED>,
+        IHavingDatasetAndMethod<SELF, DATASET_FILED>,
         IHavingSubQueryOrMethod<SELF, DATASET_FILED> {
 
     default SELF having(ICondition condition) {

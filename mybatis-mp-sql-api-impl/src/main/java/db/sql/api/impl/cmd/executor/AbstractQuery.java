@@ -518,30 +518,30 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public <T> SELF havingAnd(ISubQuery subQuery, boolean when, Getter<T> column, Function<DatasetField, ICondition> f) {
+    public <T> SELF havingAnd(IDataset dataset, boolean when, Getter<T> column, Function<DatasetField, ICondition> f) {
         if (!when) {
             return (SELF) this;
         }
-        return this.havingAnd(subQuery, $.columnName(column), f);
+        return this.havingAnd( dataset, $.columnName(column), f);
     }
 
     @Override
-    public <T> SELF havingOr(ISubQuery subQuery, boolean when, Getter<T> column, Function<DatasetField, ICondition> f) {
+    public <T> SELF havingOr(IDataset dataset, boolean when, Getter<T> column, Function<DatasetField, ICondition> f) {
         if (!when) {
             return (SELF) this;
         }
-        return this.havingOr(subQuery, $.columnName(column), f);
+        return this.havingOr(dataset, $.columnName(column), f);
     }
 
     @Override
-    public SELF havingAnd(ISubQuery subQuery, String columnName, Function<DatasetField, ICondition> f) {
-        DatasetField datasetField = $.field((Dataset) subQuery, columnName);
+    public SELF havingAnd(IDataset dataset, String columnName, Function<DatasetField, ICondition> f) {
+        DatasetField datasetField = $.field((Dataset) dataset, columnName);
         return this.havingAnd(f.apply(datasetField));
     }
 
     @Override
-    public SELF havingOr(ISubQuery subQuery, String columnName, Function<DatasetField, ICondition> f) {
-        DatasetField datasetField = $.field((Dataset) subQuery, columnName);
+    public SELF havingOr(IDataset dataset, String columnName, Function<DatasetField, ICondition> f) {
+        DatasetField datasetField = $.field((Dataset) dataset, columnName);
         return this.havingOr(f.apply(datasetField));
     }
 
@@ -562,19 +562,19 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public <T> SELF havingAnd(ISubQuery subQuery, boolean when, Function<DatasetField[], ICondition> f, Getter<T>... columns) {
+    public <T> SELF havingAnd(IDataset dataset, boolean when, Function<DatasetField[], ICondition> f, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;
         }
-        return this.havingAnd(this.apply(subQuery, f, columns));
+        return this.havingAnd(this.apply(dataset, f, columns));
     }
 
     @Override
-    public <T> SELF havingOr(ISubQuery subQuery, boolean when, Function<DatasetField[], ICondition> f, Getter<T>... columns) {
+    public <T> SELF havingOr(IDataset dataset, boolean when, Function<DatasetField[], ICondition> f, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;
         }
-        return this.havingOr(this.apply(subQuery, f, columns));
+        return this.havingOr(this.apply(dataset, f, columns));
     }
 
     @Override
@@ -621,36 +621,36 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF havingAnd(ISubQuery subQuery, boolean when, Function<DatasetField[], ICondition> f, IColumnField... columnFields) {
+    public SELF havingAnd(IDataset dataset, boolean when, Function<DatasetField[], ICondition> f, IColumnField... columnFields) {
         if (!when) {
             return (SELF) this;
         }
-        return this.havingAnd(this.apply(subQuery, f, columnFields));
+        return this.havingAnd(this.apply(dataset, f, columnFields));
     }
 
     @Override
-    public SELF havingOr(ISubQuery subQuery, boolean when, Function<DatasetField[], ICondition> f, IColumnField... columnFields) {
+    public SELF havingOr(IDataset dataset, boolean when, Function<DatasetField[], ICondition> f, IColumnField... columnFields) {
         if (!when) {
             return (SELF) this;
         }
-        return this.havingOr(this.apply(subQuery, f, columnFields));
+        return this.havingOr(this.apply(dataset, f, columnFields));
     }
 
     @Override
-    public SELF havingAnd(ISubQuery subQuery, boolean when, String columnName, Function<DatasetField, ICondition> f) {
+    public SELF havingAnd(IDataset dataset, boolean when, String columnName, Function<DatasetField, ICondition> f) {
         if (!when) {
             return (SELF) this;
         }
-        DatasetField datasetField = $.field((Dataset) subQuery, columnName);
+        DatasetField datasetField = $.field((Dataset) dataset, columnName);
         return this.havingAnd(f.apply(datasetField));
     }
 
     @Override
-    public SELF havingOr(ISubQuery subQuery, boolean when, String columnName, Function<DatasetField, ICondition> f) {
+    public SELF havingOr(IDataset dataset, boolean when, String columnName, Function<DatasetField, ICondition> f) {
         if (!when) {
             return (SELF) this;
         }
-        DatasetField datasetField = $.field((Dataset) subQuery, columnName);
+        DatasetField datasetField = $.field((Dataset) dataset, columnName);
         return this.havingOr(f.apply(datasetField));
     }
 
