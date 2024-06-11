@@ -3,9 +3,11 @@ package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
+import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.struct.From;
 import db.sql.api.impl.cmd.struct.Join;
+import db.sql.api.impl.tookit.LambdaUtil;
 import db.sql.api.impl.tookit.SqlConst;
 
 import java.util.Objects;
@@ -30,6 +32,12 @@ public class Table implements Dataset<Table, TableField> {
     public TableField $(String name) {
         return new TableField(this, name);
     }
+
+    @Override
+    public <E> TableField $(Getter<E> getter) {
+        return $(LambdaUtil.getName(getter));
+    }
+
 
     public String getName() {
         return name;

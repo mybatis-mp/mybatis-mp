@@ -4,7 +4,7 @@ package db.sql.api.cmd.executor.method.selectMethod;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.basic.IColumn;
-import db.sql.api.cmd.executor.ISubQuery;
+import db.sql.api.cmd.basic.IDataset;
 
 import java.util.function.Function;
 
@@ -18,16 +18,16 @@ public interface ISelectMethods<SELF extends ISelectMethods,
         ISelectGetterFunMethod<SELF, TABLE_FIELD>,
         ISelectMultiGetterMethod<SELF>,
         ISelectMultiGetterFunMethod<SELF, TABLE_FIELD>,
-        ISelectSubQueryMethod<SELF, DATASET_FILED>,
-        ISelectSubQueryGetterMethod<SELF, DATASET_FILED>,
-        ISelectSubQueryGetterFunMethod<SELF, DATASET_FILED>,
-        ISelectSubQueryMultiGetterMethod<SELF>,
-        ISelectSubQueryMultiGetterFunMethod<SELF, DATASET_FILED> {
+        ISelectDatasetMethod<SELF, DATASET_FILED>,
+        ISelectDatasetGetterMethod<SELF, DATASET_FILED>,
+        ISelectDatasetGetterFunMethod<SELF, DATASET_FILED>,
+        ISelectDatasetMultiGetterMethod<SELF>,
+        ISelectDatasetMultiGetterFunMethod<SELF, DATASET_FILED> {
 
     @Override
-    default <T> SELF select(ISubQuery subQuery, Getter<T>... columns) {
+    default <T> SELF select(IDataset dataset, Getter<T>... columns) {
         for (Getter<T> column : columns) {
-            this.select(subQuery, column);
+            this.select(dataset, column);
         }
         return (SELF) this;
     }

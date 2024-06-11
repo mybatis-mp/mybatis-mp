@@ -6,10 +6,7 @@ import db.sql.api.cmd.ColumnField;
 import db.sql.api.cmd.GetterColumnField;
 import db.sql.api.cmd.IColumnField;
 import db.sql.api.cmd.JoinMode;
-import db.sql.api.cmd.basic.IColumn;
-import db.sql.api.cmd.basic.ICondition;
-import db.sql.api.cmd.basic.IOrderByDirection;
-import db.sql.api.cmd.basic.UnionsCmdLists;
+import db.sql.api.cmd.basic.*;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.cmd.executor.ISubQuery;
 import db.sql.api.cmd.executor.IWithQuery;
@@ -229,63 +226,63 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     /**
      * select 子查询 列
      *
-     * @param subQuery 子查询
+     * @param dataset 子查询
      * @param column   列
      * @param <T>      列的实体类
      * @return
      */
     @Override
-    public <T> SELF select(ISubQuery subQuery, Getter<T> column) {
-        return this.select(subQuery, $.columnName(column));
+    public <T> SELF select(IDataset dataset, Getter<T> column) {
+        return this.select(dataset, $.columnName(column));
     }
 
     /**
      * select 子查询 列
      *
-     * @param subQuery 子查询
+     * @param dataset 子查询
      * @param column   列
      * @param f        转换函数
      * @param <T>      列的实体类
      * @return
      */
     @Override
-    public <T> SELF selectWithFun(ISubQuery subQuery, Getter<T> column, Function<DatasetField, Cmd> f) {
-        return this.selectWithFun(subQuery, $.columnName(column), f);
+    public <T> SELF selectWithFun(IDataset dataset, Getter<T> column, Function<DatasetField, Cmd> f) {
+        return this.selectWithFun(dataset, $.columnName(column), f);
     }
 
     /**
      * select 子查询 列
      *
-     * @param subQuery   子查询
+     * @param dataset   子查询
      * @param columnName 列
      * @param f          转换函数
      * @return
      */
     @Override
-    public SELF selectWithFun(ISubQuery subQuery, String columnName, Function<DatasetField, Cmd> f) {
-        return this.select(f.apply($.field((Dataset) subQuery, columnName)));
+    public SELF selectWithFun(IDataset dataset, String columnName, Function<DatasetField, Cmd> f) {
+        return this.select(f.apply($.field((Dataset) dataset, columnName)));
     }
 
 
     @Override
-    public <T> SELF selectWithFun(ISubQuery subQuery, Function<DatasetField[], Cmd> f, Getter<T>... columns) {
-        return this.select(this.apply(subQuery, f, columns));
+    public <T> SELF selectWithFun(IDataset dataset, Function<DatasetField[], Cmd> f, Getter<T>... columns) {
+        return this.select(this.apply(dataset, f, columns));
     }
 
     @Override
-    public SELF selectWithFun(ISubQuery subQuery, Function<DatasetField[], Cmd> f, IColumnField... columnFields) {
-        return this.select(this.apply(subQuery, f, columnFields));
+    public SELF selectWithFun(IDataset dataset, Function<DatasetField[], Cmd> f, IColumnField... columnFields) {
+        return this.select(this.apply(dataset, f, columnFields));
     }
 
     @Override
-    public SELF select(ISubQuery subQuery, String columnName) {
-        return this.select($.field((Dataset) subQuery, columnName));
+    public SELF select(IDataset dataset, String columnName) {
+        return this.select($.field((Dataset) dataset, columnName));
     }
 
 
     @Override
-    public <T> SELF select(ISubQuery subQuery, Getter<T> column, Function<DatasetField, Cmd> f) {
-        return this.select(f.apply($.field((Dataset) subQuery, column)));
+    public <T> SELF select(IDataset dataset, Getter<T> column, Function<DatasetField, Cmd> f) {
+        return this.select(f.apply($.field((Dataset) dataset, column)));
     }
 
     @Override
@@ -596,25 +593,26 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return this.havingOr(f.apply($.fields(getterColumnFields)));
     }
 
-    private <T, R> R apply(ISubQuery subQuery, Function<DatasetField[], R> f, Getter<T>... columns) {
-        CmdFactory $ = (CmdFactory) subQuery.$();
+    private <T, R> R apply(IDataset dataset, Function<DatasetField[], R> f, Getter<T>... columns) {
+        Dataset<Dataset, DatasetField> ds = (Dataset) dataset;
         DatasetField[] datasetFields = new DatasetField[columns.length];
         for (int i = 0; i < columns.length; i++) {
-            datasetFields[i] = $.field((Dataset) subQuery, $.columnName(columns[i]));
+            datasetFields[i] = ds.$(columns[i]);
         }
         return f.apply(datasetFields);
     }
 
 
-    private <R> R apply(ISubQuery subQuery, Function<DatasetField[], R> f, IColumnField... columnFields) {
-        CmdFactory $ = (CmdFactory) subQuery.$();
+    private <R> R apply(IDataset dataset, Function<DatasetField[], R> f, IColumnField... columnFields) {
+        Dataset<Dataset, DatasetField> ds = (Dataset) dataset;
+
         DatasetField[] datasetFields = new DatasetField[columnFields.length];
         for (int i = 0; i < columnFields.length; i++) {
             IColumnField columnField = columnFields[i];
             if (columnField instanceof ColumnField) {
-                datasetFields[i] = $.field((Dataset) subQuery, ((ColumnField) columnField).getColumnName());
+                datasetFields[i] = ds.$(((ColumnField) columnField).getColumnName());
             } else if (columnField instanceof GetterColumnField) {
-                datasetFields[i] = $.field((Dataset) subQuery, $.columnName(((GetterColumnField<?>) columnField).getGetter()));
+                datasetFields[i] = ds.$(((GetterColumnField<?>) columnField).getGetter());
             } else {
                 throw new RuntimeException("Not Supported");
             }
