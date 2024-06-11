@@ -17,17 +17,20 @@ import db.sql.api.impl.cmd.struct.OnDataset;
 import db.sql.api.impl.cmd.struct.query.With;
 import db.sql.api.impl.tookit.SqlConst;
 
+import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
 public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends AbstractWithQuery<Q, MybatisCmdFactory> implements Dataset<Q, DatasetField> {
 
-    private final String alias;
+    private final String name;
 
-    public BaseWithQuery(String alias) {
+    private String alias;
+
+    public BaseWithQuery(String name) {
         super(new MybatisCmdFactory("wt"));
-        this.alias = alias;
+        this.name = name;
     }
 
     @Override
@@ -38,12 +41,20 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
 
     @Override
     public String getAlias() {
+        if(Objects.isNull(alias)){
+            return this.name;
+        }
         return alias;
+    }
+
+    public String getName(){
+        return this.name;
     }
 
     @Override
     public Q as(String alias) {
-        throw new RuntimeException("not support");
+        this.alias=alias;
+        return (Q) this;
     }
 
     @Override

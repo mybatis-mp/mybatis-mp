@@ -60,6 +60,12 @@ public class WithTest extends BaseTest {
                     .limit(111)
                     .eq(SysRole::getId, 1);
 
+            WithQuery aa = withQuery.as("aa");
+            WithQuery bb = withQuery.as("bb");
+
+
+            System.out.println(SQLPrinter.sql(QueryChain.of(sysUserMapper).from(aa,bb)));
+
             QueryChain<SysUser> queryChain = QueryChain.of(sysUserMapper);
             queryChain
                     .with(withQuery)

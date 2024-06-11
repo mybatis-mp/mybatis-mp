@@ -6,19 +6,12 @@ package cn.mybatis.mp.core.sql.executor;
  */
 public class WithQuery extends BaseWithQuery<WithQuery> {
 
-    public WithQuery() {
-        this(null);
+    public WithQuery(String name) {
+        super(name);
     }
 
-    public WithQuery(String alias) {
-        super(alias);
+    public static WithQuery create(String name) {
+        return new WithQuery(name);
     }
 
-    public static WithQuery create() {
-        return new WithQuery(null);
-    }
-
-    public static WithQuery create(String alias) {
-        return new WithQuery(alias);
-    }
 }
