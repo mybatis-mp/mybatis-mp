@@ -4,8 +4,8 @@ package db.sql.api.cmd.executor.method.orderByMethod;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.basic.IColumn;
+import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IOrderByDirection;
-import db.sql.api.cmd.executor.ISubQuery;
 
 import java.util.function.Function;
 
@@ -19,11 +19,11 @@ public interface IOrderByMethods<SELF extends IOrderByMethods,
         IOrderByGetterFunMethod<SELF, TABLE_FIELD>,
         IOrderByMultiGetterMethod<SELF>,
         IOrderByMultiGetterFunMethod<SELF, TABLE_FIELD>,
-        IOrderBySubQueryMethod<SELF, DATASET_FILED>,
-        IOrderBySubQueryGetterMethod<SELF, DATASET_FILED>,
-        IOrderBySubQueryGetterFunMethod<SELF, DATASET_FILED>,
-        IOrderBySubQueryMultiGetterMethod<SELF>,
-        IOrderBySubQueryMultiGetterFunMethod<SELF, DATASET_FILED> {
+        IOrderByDatasetMethod<SELF, DATASET_FILED>,
+        IOrderByDatasetGetterMethod<SELF, DATASET_FILED>,
+        IOrderByDatasetGetterFunMethod<SELF, DATASET_FILED>,
+        IOrderByDatasetMultiGetterMethod<SELF>,
+        IOrderByDatasetMultiGetterFunMethod<SELF, DATASET_FILED> {
 
 
 
@@ -77,9 +77,9 @@ public interface IOrderByMethods<SELF extends IOrderByMethods,
     SELF orderByWithFun(IOrderByDirection orderByDirection, String columnName, Function<IColumn, Cmd> f);
 
     @Override
-    default <T> SELF orderBy(ISubQuery subQuery, IOrderByDirection orderByDirection, Getter<T>... columns) {
+    default <T> SELF orderBy(IDataset dataset, IOrderByDirection orderByDirection, Getter<T>... columns) {
         for (Getter<T> column : columns) {
-            this.orderBy(subQuery, orderByDirection, column);
+            this.orderBy(dataset, orderByDirection, column);
         }
         return (SELF) this;
     }
