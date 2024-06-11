@@ -4,6 +4,7 @@ package db.sql.api.cmd.executor.method.groupByMethod;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.basic.IColumn;
+import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.executor.ISubQuery;
 
 import java.util.function.Function;
@@ -18,16 +19,16 @@ public interface IGroupByMethods<SELF extends IGroupByMethods,
         IGroupByGetterFunMethod<SELF, TABLE_FIELD>,
         IGroupByMultiGetterMethod<SELF>,
         IGroupByMultiGetterFunMethod<SELF, TABLE_FIELD>,
-        IGroupBySubQueryMethod<SELF, DATASET_FILED>,
-        IGroupBySubQueryGetterMethod<SELF, DATASET_FILED>,
-        IGroupBySubQueryGetterFunMethod<SELF, DATASET_FILED>,
-        IGroupBySubQueryMultiGetterMethod<SELF>,
-        IGroupBySubQueryMultiGetterFunMethod<SELF, DATASET_FILED> {
+        IGroupByDatasetMethod<SELF, DATASET_FILED>,
+        IGroupByDatasetGetterMethod<SELF, DATASET_FILED>,
+        IGroupByDatasetGetterFunMethod<SELF, DATASET_FILED>,
+        IGroupByDatasetMultiGetterMethod<SELF>,
+        IGroupByDatasetMultiGetterFunMethod<SELF, DATASET_FILED> {
 
     @Override
-    default <T> SELF groupBy(ISubQuery subQuery, Getter<T>... columns) {
+    default <T> SELF groupBy(IDataset dataset, Getter<T>... columns) {
         for (Getter<T> column : columns) {
-            this.groupBy(subQuery, column);
+            this.groupBy(dataset, column);
         }
         return (SELF) this;
     }

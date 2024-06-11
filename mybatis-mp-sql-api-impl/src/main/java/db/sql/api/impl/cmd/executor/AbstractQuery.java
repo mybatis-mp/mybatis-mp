@@ -433,63 +433,63 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     /**
      * groupBy 子查询 列
      *
-     * @param subQuery 子查询
+     * @param dataset 子查询
      * @param column   列
      * @param <T>      列的实体类
      * @return
      */
     @Override
-    public <T> SELF groupBy(ISubQuery subQuery, Getter<T> column) {
-        return this.groupBy(subQuery, $.columnName(column));
+    public <T> SELF groupBy(IDataset dataset, Getter<T> column) {
+        return this.groupBy(dataset, $.columnName(column));
     }
 
     /**
      * groupBy 子查询 列
      *
-     * @param subQuery 子查询
+     * @param dataset 子查询
      * @param column   列
      * @param f        转换函数
      * @param <T>      列的实体类
      * @return
      */
     @Override
-    public <T> SELF groupByWithFun(ISubQuery subQuery, Getter<T> column, Function<DatasetField, Cmd> f) {
-        return this.groupByWithFun(subQuery, $.columnName(column), f);
+    public <T> SELF groupByWithFun(IDataset dataset, Getter<T> column, Function<DatasetField, Cmd> f) {
+        return this.groupByWithFun(dataset, $.columnName(column), f);
     }
 
     /**
      * groupBy 子查询 列
      *
-     * @param subQuery   子查询
+     * @param dataset   子查询
      * @param columnName 列
      * @param f          转换函数
      * @return
      */
     @Override
-    public SELF groupByWithFun(ISubQuery subQuery, String columnName, Function<DatasetField, Cmd> f) {
-        return this.groupBy(f.apply($.field((Dataset) subQuery, columnName)));
+    public SELF groupByWithFun(IDataset dataset, String columnName, Function<DatasetField, Cmd> f) {
+        return this.groupBy(f.apply($.field((Dataset) dataset, columnName)));
     }
 
 
     @Override
-    public <T> SELF groupByWithFun(ISubQuery subQuery, Function<DatasetField[], Cmd> f, Getter<T>... columns) {
-        return this.groupBy(this.apply(subQuery, f, columns));
+    public <T> SELF groupByWithFun(IDataset dataset, Function<DatasetField[], Cmd> f, Getter<T>... columns) {
+        return this.groupBy(this.apply(dataset, f, columns));
     }
 
     @Override
-    public SELF groupByWithFun(ISubQuery subQuery, Function<DatasetField[], Cmd> f, IColumnField... columnFields) {
-        return this.groupBy(this.apply(subQuery, f, columnFields));
+    public SELF groupByWithFun(IDataset dataset, Function<DatasetField[], Cmd> f, IColumnField... columnFields) {
+        return this.groupBy(this.apply(dataset, f, columnFields));
     }
 
     @Override
-    public SELF groupBy(ISubQuery subQuery, String columnName) {
-        return this.groupBy($.field((Dataset) subQuery, columnName));
+    public SELF groupBy(IDataset dataset, String columnName) {
+        return this.groupBy($.field((Dataset) dataset, columnName));
     }
 
 
     @Override
-    public <T> SELF groupBy(ISubQuery subQuery, Getter<T> column, Function<DatasetField, Cmd> f) {
-        return this.groupBy(f.apply($.field((Dataset) subQuery, column)));
+    public <T> SELF groupBy(IDataset dataset, Getter<T> column, Function<DatasetField, Cmd> f) {
+        return this.groupBy(f.apply($.field((Dataset) dataset, column)));
     }
 
     @Override
