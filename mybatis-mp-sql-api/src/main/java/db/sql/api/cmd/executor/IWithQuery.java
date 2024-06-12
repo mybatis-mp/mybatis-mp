@@ -79,7 +79,5 @@ public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, DA
         UNION
         >, IDataset<SELF, DATASET_FIELD> {
 
-    String getName();
-
     IDataset asTable(String alisa);
 }

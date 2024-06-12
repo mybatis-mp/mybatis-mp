@@ -8,11 +8,9 @@ import db.sql.api.impl.cmd.basic.DatasetField;
  */
 public class WithQuery extends AbstractWithQuery<WithQuery, CmdFactory> implements db.sql.api.cmd.basic.IDataset<WithQuery, DatasetField> {
 
-    private final String name;
-
-    public WithQuery(String name) {
+    public WithQuery(String alias) {
         super(new CmdFactory("wt"));
-        this.name = name;
+        this.alias = alias;
     }
 
     @Override

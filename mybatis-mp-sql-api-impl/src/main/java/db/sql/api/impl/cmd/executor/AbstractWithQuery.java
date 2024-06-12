@@ -38,20 +38,20 @@ public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD
         Union
         > {
 
-    protected String name;
-
     public AbstractWithQuery(CMD_FACTORY $) {
         super($);
     }
 
+    protected String alias;
+
     @Override
-    public String getName() {
-        return name;
+    public String getAlias() {
+        return alias;
     }
 
     @Override
     public Table asTable(String alias) {
-        return new Table(this.getName(), alias);
+        return new Table(this.getAlias(), alias);
     }
 
     @Override
