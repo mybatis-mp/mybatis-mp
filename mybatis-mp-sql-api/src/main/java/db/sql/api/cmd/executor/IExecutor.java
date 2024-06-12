@@ -2,6 +2,8 @@ package db.sql.api.cmd.executor;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.ITable;
+import db.sql.api.cmd.basic.ITableField;
 import db.sql.api.tookit.CmdUtils;
 
 import java.util.Comparator;
@@ -10,11 +12,10 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public interface IExecutor<T extends IExecutor,
-        TABLE extends DATASET,
-        DATASET extends Cmd,
-        TABLE_FIELD extends DATASET_FILED,
-        DATASET_FILED extends Cmd
+public interface IExecutor<T extends IExecutor
+        , TABLE extends ITable<TABLE, TABLE_FIELD>
+        , TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>
+
         >
 
         extends DBRunnable<T, T>, Cmd {

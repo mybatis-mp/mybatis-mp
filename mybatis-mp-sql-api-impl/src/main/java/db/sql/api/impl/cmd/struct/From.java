@@ -2,8 +2,9 @@ package db.sql.api.impl.cmd.struct;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.IDataset;
+import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.struct.IFrom;
-import db.sql.api.impl.cmd.basic.Dataset;
 import db.sql.api.impl.tookit.Lists;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
@@ -11,18 +12,17 @@ import db.sql.api.tookit.CmdUtils;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class From<TABLE extends Dataset> implements IFrom<TABLE> {
+public class From implements IFrom {
 
-    private final List<TABLE> tables = new LinkedList<>();
+    private final List<IDataset> tables = new LinkedList<>();
 
-
-    public From append(TABLE... tables) {
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> From append(DATASET... tables) {
         Lists.merge(this.tables, tables);
         return this;
     }
 
     @Override
-    public List<TABLE> getTables() {
+    public List<IDataset> getTables() {
         return tables;
     }
 

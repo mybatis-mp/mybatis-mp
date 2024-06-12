@@ -1,7 +1,8 @@
 package db.sql.api.cmd.executor;
 
-import db.sql.api.Cmd;
 import db.sql.api.Getter;
+import db.sql.api.cmd.basic.ITable;
+import db.sql.api.cmd.basic.ITableField;
 import db.sql.api.cmd.struct.insert.IInsertFields;
 import db.sql.api.cmd.struct.insert.IInsertSelect;
 import db.sql.api.cmd.struct.insert.IInsertTable;
@@ -11,18 +12,15 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public interface IInsert<SELF extends IInsert,
-        TABLE extends DATASET,
-        DATASET extends Cmd,
-        TABLE_FIELD extends DATASET_FILED,
-        DATASET_FILED extends Cmd,
-        COLUMN extends Cmd,
+        TABLE extends ITable<TABLE, TABLE_FIELD>,
+        TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>,
         V,
         INSERT_TABLE extends IInsertTable<TABLE>,
-        INSERT_FIELD extends IInsertFields<COLUMN>,
+        INSERT_FIELD extends IInsertFields<TABLE_FIELD>,
         INSERT_VALUE extends IInsertValues<V>,
         INSERT_SELECT extends IInsertSelect<IQuery>
         >
-        extends IExecutor<SELF, TABLE, DATASET, TABLE_FIELD, DATASET_FILED> {
+        extends IExecutor<SELF, TABLE, TABLE_FIELD> {
 
 
     INSERT_TABLE $insert(TABLE table);

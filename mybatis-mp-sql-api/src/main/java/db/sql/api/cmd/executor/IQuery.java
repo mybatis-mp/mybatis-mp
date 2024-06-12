@@ -5,8 +5,7 @@ import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.ICmdFactory;
 import db.sql.api.cmd.JoinMode;
-import db.sql.api.cmd.basic.ICondition;
-import db.sql.api.cmd.basic.IOrderByDirection;
+import db.sql.api.cmd.basic.*;
 import db.sql.api.cmd.executor.method.*;
 import db.sql.api.cmd.struct.*;
 import db.sql.api.cmd.struct.conditionChain.IConditionChain;
@@ -16,22 +15,20 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public interface IQuery<SELF extends IQuery,
-        TABLE extends DATASET,
-        DATASET extends Cmd,
-        TABLE_FIELD extends DATASET_FILED,
-        DATASET_FILED extends Cmd,
-        COLUMN extends Cmd,
+public interface IQuery<SELF extends IQuery
+        , TABLE extends ITable<TABLE, TABLE_FIELD>
+        , TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>
+        , COLUMN extends Cmd,
         V,
 
-        CMD_FACTORY extends ICmdFactory<TABLE, DATASET, TABLE_FIELD, DATASET_FILED>,
+        CMD_FACTORY extends ICmdFactory<TABLE, TABLE_FIELD>,
         CONDITION_CHAIN extends IConditionChain<CONDITION_CHAIN, TABLE_FIELD, COLUMN, V>,
 
         WITH extends IWith<WITH>,
         SELECT extends ISelect<SELECT>,
-        FROM extends IFrom<DATASET>,
-        JOIN extends IJoin<JOIN, DATASET, ON>,
-        ON extends IOn<ON, DATASET, TABLE_FIELD, COLUMN, V, JOIN, CONDITION_CHAIN>,
+        FROM extends IFrom,
+        JOIN extends IJoin<JOIN, ON, TABLE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
+        ON extends IOn<ON, JOIN, TABLE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         JOINS extends Joins<JOIN>,
         WHERE extends IWhere<WHERE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         GROUPBY extends IGroupBy<GROUPBY, COLUMN>,
@@ -42,17 +39,17 @@ public interface IQuery<SELF extends IQuery,
         IUNION extends IUnion
         >
         extends IWithMethod<SELF>,
-        ISelectMethod<SELF, TABLE_FIELD, DATASET_FILED, COLUMN>,
-        IFromMethod<SELF, TABLE, DATASET>,
-        IJoinMethod<SELF, DATASET, ON>,
+        ISelectMethod<SELF, TABLE, TABLE_FIELD, COLUMN>,
+        IFromMethod<SELF, TABLE, TABLE_FIELD>,
+        IJoinMethod<SELF, ON>,
         IWhereMethod<SELF, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
-        IGroupByMethod<SELF, TABLE_FIELD, DATASET_FILED, COLUMN>,
-        IHavingMethod<SELF, TABLE_FIELD, DATASET_FILED, HAVING>,
-        IOrderByMethod<SELF, TABLE_FIELD, DATASET_FILED, COLUMN>,
+        IGroupByMethod<SELF, TABLE, TABLE_FIELD, COLUMN>,
+        IHavingMethod<SELF, TABLE, TABLE_FIELD, HAVING>,
+        IOrderByMethod<SELF, TABLE, TABLE_FIELD, COLUMN>,
         ILimitMethod<SELF>,
         IForUpdateMethod<SELF>,
         IUnionMethod<SELF>,
-        IExecutor<SELF, TABLE, DATASET, TABLE_FIELD, DATASET_FILED> {
+        IExecutor<SELF, TABLE, TABLE_FIELD> {
 
     CMD_FACTORY $();
 
@@ -60,9 +57,9 @@ public interface IQuery<SELF extends IQuery,
 
     SELECT $select();
 
-    FROM $from(DATASET... tables);
+    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> FROM $from(IDataset<DATASET, DATASET_FIELD>... tables);
 
-    JOIN $join(JoinMode mode, DATASET mainTable, DATASET secondTable);
+    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> JOIN $join(JoinMode mode, DATASET mainTable, DATASET secondTable);
 
     WHERE $where();
 
@@ -106,7 +103,7 @@ public interface IQuery<SELF extends IQuery,
     }
 
     @Override
-    default SELF from(DATASET... tables) {
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD>... tables) {
         $from(tables);
         return (SELF) this;
     }

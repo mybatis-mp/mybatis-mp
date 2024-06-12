@@ -3,38 +3,40 @@ package db.sql.api.impl.cmd.struct;
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.JoinMode;
+import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.struct.IJoin;
-import db.sql.api.impl.cmd.basic.Dataset;
+import db.sql.api.impl.cmd.basic.Table;
+import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
 import java.util.function.Function;
 
-public abstract class Join<SELF extends Join<SELF, TABLE, ON>, TABLE extends Dataset, ON extends On<ON, TABLE, SELF>> implements IJoin<SELF, TABLE, ON> {
+public class Join implements IJoin<Join, On, Table, TableField, Cmd, Object, ConditionChain> {
 
-    private final TABLE mainTable;
+    private final IDataset mainTable;
 
-    private final TABLE secondTable;
+    private final IDataset secondTable;
 
     private final JoinMode mode;
 
-    private final ON on;
+    private final On on;
 
 
-    public Join(JoinMode mode, TABLE mainTable, TABLE secondTable, Function<SELF, ON> onFunction) {
+    public Join(JoinMode mode, IDataset mainTable, IDataset secondTable, Function<Join, On> onFunction) {
         this.mode = mode;
         this.mainTable = mainTable;
         this.secondTable = secondTable;
-        this.on = onFunction.apply((SELF) this);
+        this.on = onFunction.apply(this);
     }
 
     @Override
-    public TABLE getMainTable() {
+    public IDataset getMainTable() {
         return mainTable;
     }
 
     @Override
-    public TABLE getSecondTable() {
+    public IDataset getSecondTable() {
         return secondTable;
     }
 
@@ -44,7 +46,7 @@ public abstract class Join<SELF extends Join<SELF, TABLE, ON>, TABLE extends Dat
     }
 
     @Override
-    public ON getOn() {
+    public On getOn() {
         return on;
     }
 

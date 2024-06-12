@@ -12,7 +12,7 @@ import db.sql.api.tookit.CmdUtils;
 
 import java.util.Objects;
 
-public class BasicValue extends Field<BasicValue> {
+public class BasicValue extends AbstractField<BasicValue> {
 
     private final Object value;
 

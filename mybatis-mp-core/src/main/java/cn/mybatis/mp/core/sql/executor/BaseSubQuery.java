@@ -5,16 +5,15 @@ import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.ForeignKeyUtil;
 import db.sql.api.Cmd;
-import db.sql.api.impl.cmd.basic.Dataset;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.executor.AbstractSubQuery;
-import db.sql.api.impl.cmd.struct.OnDataset;
+import db.sql.api.impl.cmd.struct.On;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSubQuery<Q, MybatisCmdFactory> implements Dataset<Q, DatasetField> {
+public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSubQuery<Q, MybatisCmdFactory> implements db.sql.api.cmd.basic.IDataset<Q, DatasetField> {
     private final String alias;
 
     public BaseSubQuery(String alias) {
@@ -65,7 +64,7 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
     }
 
     @Override
-    public Consumer<OnDataset> joinEntityIntercept(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<OnDataset> consumer) {
+    public Consumer<On> joinEntityIntercept(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<On> consumer) {
         this.addTenantCondition(secondTable, secondTableStorey);
         this.addLogicDeleteCondition(secondTable, secondTableStorey);
         if (Objects.isNull(consumer)) {

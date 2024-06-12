@@ -6,4 +6,5 @@ public interface Alias<T> {
 
     T as(String alias);
 
+
 }

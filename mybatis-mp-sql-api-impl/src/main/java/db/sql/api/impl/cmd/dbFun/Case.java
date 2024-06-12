@@ -33,15 +33,15 @@ public class Case extends BasicFunction<Case> {
         return this.when(condition, Methods.convert(then));
     }
 
-    public Case when(boolean when,Condition condition, Serializable then) {
-        if(!when){
+    public Case when(boolean when, Condition condition, Serializable then) {
+        if (!when) {
             return this;
         }
-        return this.when(condition,then);
+        return this.when(condition, then);
     }
 
     public <V extends Serializable> Case when(Condition condition, V then, Predicate<V> predicate) {
-        return this.when(predicate.test(then),condition,then);
+        return this.when(predicate.test(then), condition, then);
     }
 
     public Case else_(Cmd then) {

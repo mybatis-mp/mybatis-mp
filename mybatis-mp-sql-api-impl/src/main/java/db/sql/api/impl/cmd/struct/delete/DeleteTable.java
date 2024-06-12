@@ -2,23 +2,23 @@ package db.sql.api.impl.cmd.struct.delete;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.struct.delete.IDeleteTable;
-import db.sql.api.impl.cmd.basic.Dataset;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.AbstractDelete;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-public class DeleteTable implements IDeleteTable<Dataset> {
+public class DeleteTable implements IDeleteTable<IDataset> {
 
-    private final Dataset[] tables;
+    private final IDataset[] tables;
 
-    public DeleteTable(Dataset[] tables) {
+    public DeleteTable(IDataset[] tables) {
         this.tables = tables;
     }
 
     @Override
-    public Dataset[] getTables() {
+    public IDataset[] getTables() {
         return this.tables;
     }
 
@@ -35,7 +35,7 @@ public class DeleteTable implements IDeleteTable<Dataset> {
         }
         int length = this.tables.length;
         for (int i = 0; i < length; i++) {
-            Dataset dataset = this.tables[i];
+            IDataset dataset = this.tables[i];
             if (i != 0) {
                 sqlBuilder.append(SqlConst.DELIMITER);
             }

@@ -2,11 +2,15 @@ package db.sql.api.cmd;
 
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
-import db.sql.api.cmd.basic.IColumn;
+import db.sql.api.cmd.basic.IDataset;
+import db.sql.api.cmd.basic.IDatasetField;
+import db.sql.api.cmd.basic.ITable;
+import db.sql.api.cmd.basic.ITableField;
 
 import java.util.function.Function;
 
-public interface ICmdFactory<TABLE extends DATASET, DATASET, TABLE_FIELD, DATASET_FIELD> {
+public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
+        , TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> {
 
     default TABLE table(Class entity) {
         return this.table(entity, 1);
@@ -44,7 +48,7 @@ public interface ICmdFactory<TABLE extends DATASET, DATASET, TABLE_FIELD, DATASE
      * @param columnName
      * @return
      */
-    IColumn column(String columnName);
+    IDatasetField column(String columnName);
 
     default <T> TABLE_FIELD field(Getter<T> column) {
         return this.field(column, 1);
@@ -91,7 +95,7 @@ public interface ICmdFactory<TABLE extends DATASET, DATASET, TABLE_FIELD, DATASE
      * @param <T>
      * @return
      */
-    <T> DATASET_FIELD field(DATASET dataset, Getter<T> column);
+    <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> IDatasetField field(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column);
 
     /**
      * 根据dataset(可能是子查询 也可能是表) 列名，创建 列对象
@@ -100,7 +104,7 @@ public interface ICmdFactory<TABLE extends DATASET, DATASET, TABLE_FIELD, DATASE
      * @param name
      * @return
      */
-    DATASET_FIELD field(DATASET dataset, String name);
+    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> IDatasetField field(IDataset<DATASET, DATASET_FIELD> dataset, String name);
 
     /**
      * 所有列
@@ -108,7 +112,7 @@ public interface ICmdFactory<TABLE extends DATASET, DATASET, TABLE_FIELD, DATASE
      * @param dataset
      * @return
      */
-    DATASET_FIELD allField(DATASET dataset);
+    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> IDatasetField allField(IDataset<DATASET, DATASET_FIELD> dataset);
 
 
     /**

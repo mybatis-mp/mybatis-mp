@@ -8,17 +8,18 @@ import db.sql.api.cmd.IColumnField;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.*;
 import db.sql.api.cmd.executor.IQuery;
-import db.sql.api.cmd.executor.ISubQuery;
 import db.sql.api.cmd.executor.IWithQuery;
 import db.sql.api.cmd.struct.Joins;
 import db.sql.api.cmd.struct.query.Unions;
 import db.sql.api.cmd.struct.query.Withs;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.ConditionFactory;
-import db.sql.api.impl.cmd.basic.*;
+import db.sql.api.impl.cmd.basic.DatasetField;
+import db.sql.api.impl.cmd.basic.OrderByDirection;
+import db.sql.api.impl.cmd.basic.Table;
+import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.*;
 import db.sql.api.impl.cmd.struct.query.*;
-import db.sql.api.impl.tookit.LambdaUtil;
 import db.sql.api.impl.tookit.SqlConst;
 
 import java.util.Map;
@@ -33,19 +34,17 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         extends BaseExecutor<SELF, CMD_FACTORY>
         implements IQuery<SELF,
         Table,
-        Dataset,
         TableField,
-        DatasetField,
         Cmd,
         Object,
         CMD_FACTORY,
         ConditionChain,
         With,
         Select,
-        FromDataset,
-        JoinDataset,
-        OnDataset,
-        Joins<JoinDataset>,
+        From,
+        Join,
+        On,
+        Joins<Join>,
         Where,
         GroupBy,
         Having,
@@ -63,7 +62,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     protected Withs withs;
 
-    protected FromDataset from;
+    protected From from;
 
     protected Where where;
 
@@ -122,14 +121,24 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return $().field(entityType, fieldName, storey);
     }
 
-    public <T> DatasetField $(ISubQuery subQuery, Getter<T> column) {
-        String filedName = LambdaUtil.getName(column);
-        return new DatasetField<>((Dataset) subQuery, filedName);
+    protected <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD createRefDatasetField(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
+        if (dataset instanceof Table) {
+            return (DATASET_FIELD) new TableField((Table) dataset, columnName);
+        }
+        return (DATASET_FIELD) new DatasetField(dataset, columnName);
     }
 
-    public <T> DatasetField $(ISubQuery subQuery, Getter<T> column, int storey) {
-        String filedName = LambdaUtil.getName(column);
-        return new DatasetField<>((Dataset) subQuery, filedName);
+    protected <E, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD createRefDatasetField(IDataset<DATASET, DATASET_FIELD> dataset, Getter<E> column) {
+        return this.createRefDatasetField(dataset, this.$().columnName(column));
+    }
+
+
+    public <E, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD $(IDataset<DATASET, DATASET_FIELD> dataset, Getter<E> getter) {
+        return createRefDatasetField(dataset, getter);
+    }
+
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD $(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
+        return createRefDatasetField(dataset, columnName);
     }
 
     @Override
@@ -137,7 +146,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         int i = 0;
         cmdSorts.put(Withs.class, i += 10);
         cmdSorts.put(Select.class, i += 10);
-        cmdSorts.put(FromDataset.class, i += 10);
+        cmdSorts.put(From.class, i += 10);
         cmdSorts.put(Joins.class, i += 10);
         cmdSorts.put(Where.class, i += 10);
         cmdSorts.put(GroupBy.class, i += 10);
@@ -218,8 +227,9 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return this.select($.column(columnName));
     }
 
+
     @Override
-    public SELF selectWithFun(String columnName, Function<IColumn, Cmd> f) {
+    public SELF selectWithFun(String columnName, Function<IDatasetField, Cmd> f) {
         return this.select(f.apply($.column(columnName)));
     }
 
@@ -227,68 +237,67 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      * select 子查询 列
      *
      * @param dataset 子查询
-     * @param column   列
-     * @param <T>      列的实体类
+     * @param column  列
+     * @param <T>     列的实体类
      * @return
      */
     @Override
-    public <T> SELF select(IDataset dataset, Getter<T> column) {
-        return this.select(dataset, $.columnName(column));
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF select(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column) {
+        return this.select(this.createRefDatasetField(dataset, column));
     }
 
     /**
      * select 子查询 列
      *
      * @param dataset 子查询
-     * @param column   列
-     * @param f        转换函数
-     * @param <T>      列的实体类
+     * @param column  列
+     * @param f       转换函数
+     * @param <T>     列的实体类
      * @return
      */
     @Override
-    public <T> SELF selectWithFun(IDataset dataset, Getter<T> column, Function<DatasetField, Cmd> f) {
-        return this.selectWithFun(dataset, $.columnName(column), f);
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF selectWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column, Function<DATASET_FIELD, Cmd> f) {
+        return this.select(f.apply(this.createRefDatasetField(dataset, column)));
     }
 
     /**
      * select 子查询 列
      *
-     * @param dataset   子查询
+     * @param dataset    子查询
      * @param columnName 列
      * @param f          转换函数
      * @return
      */
     @Override
-    public SELF selectWithFun(IDataset dataset, String columnName, Function<DatasetField, Cmd> f) {
-        return this.select(f.apply($.field((Dataset) dataset, columnName)));
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF selectWithFun(IDataset<DATASET, DATASET_FIELD> dataset, String columnName, Function<DATASET_FIELD, Cmd> f) {
+        return this.select(f.apply(this.createRefDatasetField(dataset, columnName)));
     }
 
 
     @Override
-    public <T> SELF selectWithFun(IDataset dataset, Function<DatasetField[], Cmd> f, Getter<T>... columns) {
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF selectWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
         return this.select(this.apply(dataset, f, columns));
     }
 
     @Override
-    public SELF selectWithFun(IDataset dataset, Function<DatasetField[], Cmd> f, IColumnField... columnFields) {
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF selectWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
         return this.select(this.apply(dataset, f, columnFields));
     }
 
     @Override
-    public SELF select(IDataset dataset, String columnName) {
-        return this.select($.field((Dataset) dataset, columnName));
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF select(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
+        return this.select(this.createRefDatasetField(dataset, columnName));
+    }
+
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF select(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column, Function<DATASET_FIELD, Cmd> f) {
+        return this.select(f.apply(this.createRefDatasetField(dataset, column)));
     }
 
 
     @Override
-    public <T> SELF select(IDataset dataset, Getter<T> column, Function<DatasetField, Cmd> f) {
-        return this.select(f.apply($.field((Dataset) dataset, column)));
-    }
-
-    @Override
-    public FromDataset $from(Dataset... tables) {
+    public From $from(IDataset... tables) {
         if (this.from == null) {
-            from = new FromDataset();
+            from = new From();
             this.append(from);
         }
         this.from.append(tables);
@@ -307,8 +316,8 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public JoinDataset $join(JoinMode mode, Dataset mainTable, Dataset secondTable) {
-        JoinDataset join = new JoinDataset(mode, mainTable, secondTable, (joinDataset -> new OnDataset(this.conditionFactory, joinDataset)));
+    public Join $join(JoinMode mode, IDataset mainTable, IDataset secondTable) {
+        Join join = new Join(mode, mainTable, secondTable, (joinDataset -> new On(this.conditionFactory, joinDataset)));
         if (Objects.isNull(joins)) {
             joins = new Joins();
             this.append(joins);
@@ -318,20 +327,20 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<OnDataset> consumer) {
+    public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<On> consumer) {
         consumer = this.joinEntityIntercept(mainTable, mainTableStorey, secondTable, secondTableStorey, consumer);
         return this.join(mode, $.table(mainTable, mainTableStorey), $.table(secondTable, secondTableStorey), consumer);
     }
 
     @Override
-    public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, BiConsumer<Table, OnDataset> consumer) {
+    public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, BiConsumer<Table, On> consumer) {
         return this.join(mode, mainTable, mainTableStorey, secondTable, secondTableStorey, (on) -> {
             consumer.accept((Table) on.getJoin().getSecondTable(), on);
         });
     }
 
     @Override
-    public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Dataset secondTable, Consumer<OnDataset> consumer) {
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF join(JoinMode mode, Class mainTable, int mainTableStorey, DATASET secondTable, Consumer<On> consumer) {
         return this.join(mode, $.table(mainTable, mainTableStorey), secondTable, consumer);
     }
 
@@ -358,8 +367,8 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
 
     @Override
-    public SELF join(JoinMode mode, Dataset mainTable, Dataset secondTable, Consumer<OnDataset> consumer) {
-        JoinDataset join = $join(mode, mainTable, secondTable);
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> SELF join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<On> consumer) {
+        Join join = $join(mode, mainTable, secondTable);
         if (consumer != null) {
             consumer.accept(join.getOn());
         }
@@ -426,7 +435,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF groupByWithFun(String columnName, Function<IColumn, Cmd> f) {
+    public SELF groupByWithFun(String columnName, Function<IDatasetField, Cmd> f) {
         return this.groupBy(f.apply($.column(columnName)));
     }
 
@@ -434,62 +443,62 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      * groupBy 子查询 列
      *
      * @param dataset 子查询
-     * @param column   列
-     * @param <T>      列的实体类
+     * @param column  列
+     * @param <T>     列的实体类
      * @return
      */
     @Override
-    public <T> SELF groupBy(IDataset dataset, Getter<T> column) {
-        return this.groupBy(dataset, $.columnName(column));
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column) {
+        return this.groupBy(this.createRefDatasetField(dataset, column));
     }
 
     /**
      * groupBy 子查询 列
      *
      * @param dataset 子查询
-     * @param column   列
-     * @param f        转换函数
-     * @param <T>      列的实体类
+     * @param column  列
+     * @param f       转换函数
+     * @param <T>     列的实体类
      * @return
      */
     @Override
-    public <T> SELF groupByWithFun(IDataset dataset, Getter<T> column, Function<DatasetField, Cmd> f) {
-        return this.groupByWithFun(dataset, $.columnName(column), f);
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column, Function<DATASET_FIELD, Cmd> f) {
+        return this.groupBy(f.apply(this.createRefDatasetField(dataset, column)));
     }
 
     /**
      * groupBy 子查询 列
      *
-     * @param dataset   子查询
+     * @param dataset    子查询
      * @param columnName 列
      * @param f          转换函数
      * @return
      */
     @Override
-    public SELF groupByWithFun(IDataset dataset, String columnName, Function<DatasetField, Cmd> f) {
-        return this.groupBy(f.apply($.field((Dataset) dataset, columnName)));
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, String columnName, Function<DATASET_FIELD, Cmd> f) {
+        return this.groupBy(f.apply(this.createRefDatasetField(dataset, columnName)));
     }
 
 
     @Override
-    public <T> SELF groupByWithFun(IDataset dataset, Function<DatasetField[], Cmd> f, Getter<T>... columns) {
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
         return this.groupBy(this.apply(dataset, f, columns));
     }
 
     @Override
-    public SELF groupByWithFun(IDataset dataset, Function<DatasetField[], Cmd> f, IColumnField... columnFields) {
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
         return this.groupBy(this.apply(dataset, f, columnFields));
     }
 
     @Override
-    public SELF groupBy(IDataset dataset, String columnName) {
-        return this.groupBy($.field((Dataset) dataset, columnName));
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
+        return this.groupBy(this.createRefDatasetField(dataset, columnName));
     }
 
 
     @Override
-    public <T> SELF groupBy(IDataset dataset, Getter<T> column, Function<DatasetField, Cmd> f) {
-        return this.groupBy(f.apply($.field((Dataset) dataset, column)));
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column, Function<DATASET_FIELD, Cmd> f) {
+        return this.groupBy(f.apply(this.createRefDatasetField(dataset, column)));
     }
 
     @Override
@@ -518,31 +527,29 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public <T> SELF havingAnd(IDataset dataset, boolean when, Getter<T> column, Function<DatasetField, ICondition> f) {
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Getter<T> column, Function<DATASET_FIELD, ICondition> f) {
         if (!when) {
             return (SELF) this;
         }
-        return this.havingAnd( dataset, $.columnName(column), f);
+        return this.havingAnd(f.apply(this.createRefDatasetField(dataset, column)));
     }
 
     @Override
-    public <T> SELF havingOr(IDataset dataset, boolean when, Getter<T> column, Function<DatasetField, ICondition> f) {
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingOr(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Getter<T> column, Function<DATASET_FIELD, ICondition> f) {
         if (!when) {
             return (SELF) this;
         }
-        return this.havingOr(dataset, $.columnName(column), f);
+        return this.havingOr(f.apply(this.createRefDatasetField(dataset, column)));
     }
 
     @Override
-    public SELF havingAnd(IDataset dataset, String columnName, Function<DatasetField, ICondition> f) {
-        DatasetField datasetField = $.field((Dataset) dataset, columnName);
-        return this.havingAnd(f.apply(datasetField));
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, String columnName, Function<DATASET_FIELD, ICondition> f) {
+        return this.havingAnd(f.apply(this.createRefDatasetField(dataset, columnName)));
     }
 
     @Override
-    public SELF havingOr(IDataset dataset, String columnName, Function<DatasetField, ICondition> f) {
-        DatasetField datasetField = $.field((Dataset) dataset, columnName);
-        return this.havingOr(f.apply(datasetField));
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingOr(IDataset<DATASET, DATASET_FIELD> dataset, String columnName, Function<DATASET_FIELD, ICondition> f) {
+        return this.havingOr(f.apply(this.createRefDatasetField(dataset, columnName)));
     }
 
     @Override
@@ -562,7 +569,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public <T> SELF havingAnd(IDataset dataset, boolean when, Function<DatasetField[], ICondition> f, Getter<T>... columns) {
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Function<IDatasetField[], ICondition> f, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;
         }
@@ -570,7 +577,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public <T> SELF havingOr(IDataset dataset, boolean when, Function<DatasetField[], ICondition> f, Getter<T>... columns) {
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingOr(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Function<IDatasetField[], ICondition> f, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;
         }
@@ -593,26 +600,23 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return this.havingOr(f.apply($.fields(getterColumnFields)));
     }
 
-    private <T, R> R apply(IDataset dataset, Function<DatasetField[], R> f, Getter<T>... columns) {
-        Dataset<Dataset, DatasetField> ds = (Dataset) dataset;
-        DatasetField[] datasetFields = new DatasetField[columns.length];
+    private <T, R, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> R apply(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], R> f, Getter<T>... columns) {
+        IDatasetField[] datasetFields = new IDatasetField[columns.length];
         for (int i = 0; i < columns.length; i++) {
-            datasetFields[i] = ds.$(columns[i]);
+            datasetFields[i] = this.createRefDatasetField(dataset, columns[i]);
         }
         return f.apply(datasetFields);
     }
 
 
-    private <R> R apply(IDataset dataset, Function<DatasetField[], R> f, IColumnField... columnFields) {
-        Dataset<Dataset, DatasetField> ds = (Dataset) dataset;
-
-        DatasetField[] datasetFields = new DatasetField[columnFields.length];
+    private <R, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> R apply(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], R> f, IColumnField... columnFields) {
+        IDatasetField[] datasetFields = new IDatasetField[columnFields.length];
         for (int i = 0; i < columnFields.length; i++) {
             IColumnField columnField = columnFields[i];
             if (columnField instanceof ColumnField) {
-                datasetFields[i] = ds.$(((ColumnField) columnField).getColumnName());
+                datasetFields[i] = this.createRefDatasetField(dataset, ((ColumnField) columnField).getColumnName());
             } else if (columnField instanceof GetterColumnField) {
-                datasetFields[i] = ds.$(((GetterColumnField<?>) columnField).getGetter());
+                datasetFields[i] = this.createRefDatasetField(dataset, ((GetterColumnField<?>) columnField).getGetter());
             } else {
                 throw new RuntimeException("Not Supported");
             }
@@ -621,7 +625,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF havingAnd(IDataset dataset, boolean when, Function<DatasetField[], ICondition> f, IColumnField... columnFields) {
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Function<IDatasetField[], ICondition> f, IColumnField... columnFields) {
         if (!when) {
             return (SELF) this;
         }
@@ -629,7 +633,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF havingOr(IDataset dataset, boolean when, Function<DatasetField[], ICondition> f, IColumnField... columnFields) {
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingOr(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Function<IDatasetField[], ICondition> f, IColumnField... columnFields) {
         if (!when) {
             return (SELF) this;
         }
@@ -637,21 +641,19 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF havingAnd(IDataset dataset, boolean when, String columnName, Function<DatasetField, ICondition> f) {
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, String columnName, Function<DATASET_FIELD, ICondition> f) {
         if (!when) {
             return (SELF) this;
         }
-        DatasetField datasetField = $.field((Dataset) dataset, columnName);
-        return this.havingAnd(f.apply(datasetField));
+        return this.havingAnd(f.apply(this.createRefDatasetField(dataset, columnName)));
     }
 
     @Override
-    public SELF havingOr(IDataset dataset, boolean when, String columnName, Function<DatasetField, ICondition> f) {
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingOr(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, String columnName, Function<DATASET_FIELD, ICondition> f) {
         if (!when) {
             return (SELF) this;
         }
-        DatasetField datasetField = $.field((Dataset) dataset, columnName);
-        return this.havingOr(f.apply(datasetField));
+        return this.havingOr(f.apply(this.createRefDatasetField(dataset, columnName)));
     }
 
     @Override
@@ -741,70 +743,70 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF orderByWithFun(IOrderByDirection orderByDirection, String columnName, Function<IColumn, Cmd> f) {
-        return this.orderBy(orderByDirection, f.apply($.column(columnName)));
+    public SELF orderByWithFun(IOrderByDirection orderByDirection, String columnName, Function<IDatasetField, Cmd> f) {
+        return this.orderBy(orderByDirection, f.apply(this.$().column(columnName)));
     }
 
     /**
      * orderBy 子查询 列
      *
      * @param dataset 子查询
-     * @param column   列
-     * @param <T>      列的实体类
+     * @param column  列
+     * @param <T>     列的实体类
      * @return
      */
     @Override
-    public <T> SELF orderBy(IDataset dataset, IOrderByDirection orderByDirection, Getter<T> column) {
-        return this.orderBy(dataset, orderByDirection, $.columnName(column));
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T> column) {
+        return this.orderBy(orderByDirection, this.createRefDatasetField(dataset, column));
     }
 
     /**
      * orderBy 子查询 列
      *
      * @param dataset 子查询
-     * @param column   列
-     * @param f        转换函数
-     * @param <T>      列的实体类
+     * @param column  列
+     * @param f       转换函数
+     * @param <T>     列的实体类
      * @return
      */
     @Override
-    public <T> SELF orderByWithFun(IDataset dataset, IOrderByDirection orderByDirection, Getter<T> column, Function<DatasetField, Cmd> f) {
-        return this.orderByWithFun(dataset, orderByDirection, $.columnName(column), f);
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T> column, Function<DATASET_FIELD, Cmd> f) {
+        return this.orderBy(orderByDirection, f.apply(this.createRefDatasetField(dataset, column)));
     }
 
     /**
      * orderBy 子查询 列
      *
-     * @param dataset   子查询
+     * @param dataset    子查询
      * @param columnName 列
      * @param f          转换函数
      * @return
      */
     @Override
-    public SELF orderByWithFun(IDataset dataset, IOrderByDirection orderByDirection, String columnName, Function<DatasetField, Cmd> f) {
-        return this.orderBy(orderByDirection, f.apply($.field((Dataset) dataset, columnName)));
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, String columnName, Function<DATASET_FIELD, Cmd> f) {
+        return this.orderBy(orderByDirection, f.apply(this.createRefDatasetField(dataset, columnName)));
     }
 
 
     @Override
-    public <T> SELF orderByWithFun(IDataset dataset, IOrderByDirection orderByDirection, Function<DatasetField[], Cmd> f, Getter<T>... columns) {
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
         return this.orderBy(orderByDirection, this.apply(dataset, f, columns));
     }
 
     @Override
-    public SELF orderByWithFun(IDataset dataset, IOrderByDirection orderByDirection, Function<DatasetField[], Cmd> f, IColumnField... columnFields) {
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
         return this.orderBy(orderByDirection, this.apply(dataset, f, columnFields));
     }
 
     @Override
-    public SELF orderBy(IDataset dataset, IOrderByDirection orderByDirection, String columnName) {
-        return this.orderBy(orderByDirection, $.field((Dataset) dataset, columnName));
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, String columnName) {
+        return this.orderBy(orderByDirection, this.createRefDatasetField(dataset, columnName));
     }
 
 
     @Override
-    public <T> SELF orderBy(IDataset dataset, IOrderByDirection orderByDirection, Getter<T> column, Function<DatasetField, Cmd> f) {
-        return this.orderBy(orderByDirection, f.apply($.field((Dataset) dataset, column)));
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T> column, Function<DATASET_FIELD, Cmd> f) {
+        return this.orderBy(orderByDirection, f.apply(this.createRefDatasetField(dataset, column)));
     }
 
 
@@ -828,13 +830,14 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return (SELF) this;
     }
 
+
     @Override
     public Select getSelect() {
         return this.select;
     }
 
     @Override
-    public FromDataset getFrom() {
+    public From getFrom() {
         return this.from;
     }
 

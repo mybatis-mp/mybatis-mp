@@ -1,11 +1,13 @@
 package db.sql.api.impl.cmd.executor;
 
 import db.sql.api.Cmd;
+import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.IDataset;
+import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.executor.ISubQuery;
 import db.sql.api.cmd.struct.Joins;
 import db.sql.api.impl.cmd.CmdFactory;
-import db.sql.api.impl.cmd.basic.Dataset;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
@@ -15,10 +17,11 @@ import db.sql.api.impl.cmd.struct.*;
 import db.sql.api.impl.cmd.struct.query.*;
 import db.sql.api.impl.tookit.SqlConst;
 
-public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_FACTORY>, CMD_FACTORY extends CmdFactory> extends AbstractQuery<SELF, CMD_FACTORY>
+public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_FACTORY>, CMD_FACTORY extends CmdFactory>
+        extends AbstractQuery<SELF, CMD_FACTORY>
+
         implements ISubQuery<SELF,
         Table,
-        Dataset,
         TableField,
         DatasetField,
         Cmd,
@@ -27,10 +30,10 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
         ConditionChain,
         With,
         Select,
-        FromDataset,
-        JoinDataset,
-        OnDataset,
-        Joins<JoinDataset>,
+        From,
+        Join,
+        On,
+        Joins<Join>,
         Where,
         GroupBy,
         Having,
@@ -39,12 +42,32 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
         ForUpdate,
         Union
         > {
+
+    protected String alias;
+
     public AbstractSubQuery(CMD_FACTORY $) {
         super($);
     }
 
-    public abstract String getAlias();
+    @Override
+    public String getAlias() {
+        return alias;
+    }
 
+    @Override
+    public DatasetField $(String columnName) {
+        return new DatasetField(this, columnName);
+    }
+
+    @Override
+    public <E, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD $(IDataset<DATASET, DATASET_FIELD> dataset, Getter<E> getter) {
+        return super.$(dataset, getter);
+    }
+
+    @Override
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD $(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
+        return super.$(dataset, columnName);
+    }
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
@@ -64,6 +87,7 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
 
         return sqlBuilder;
     }
+
 
 }
 

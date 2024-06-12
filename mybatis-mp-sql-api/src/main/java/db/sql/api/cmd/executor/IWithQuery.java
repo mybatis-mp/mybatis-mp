@@ -3,18 +3,20 @@ package db.sql.api.cmd.executor;
 import db.sql.api.Cmd;
 import db.sql.api.cmd.ICmdFactory;
 import db.sql.api.cmd.basic.IDataset;
+import db.sql.api.cmd.basic.IDatasetField;
+import db.sql.api.cmd.basic.ITable;
+import db.sql.api.cmd.basic.ITableField;
 import db.sql.api.cmd.struct.*;
 import db.sql.api.cmd.struct.conditionChain.IConditionChain;
 import db.sql.api.cmd.struct.query.*;
 
 /**
- * 子查询
+ * WITH 查询
  *
  * @param <SELF>
  * @param <TABLE>
- * @param <DATASET>
  * @param <TABLE_FIELD>
- * @param <DATASET_FILED>
+ * @param <DATASET_FIELD>
  * @param <COLUMN>
  * @param <V>
  * @param <CMD_FACTORY>
@@ -32,22 +34,20 @@ import db.sql.api.cmd.struct.query.*;
  * @param <FORUPDATE>
  * @param <UNION>
  */
-public interface IWithQuery<SELF extends IWithQuery,
-        TABLE extends DATASET,
-        DATASET extends Cmd,
-        TABLE_FIELD extends DATASET_FILED,
-        DATASET_FILED extends COLUMN,
+public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, DATASET_FIELD, COLUMN, V, CMD_FACTORY, CONDITION_CHAIN, WITH, SELECT, FROM, JOIN, ON, JOINS, WHERE, GROUPBY, HAVING, ORDERBY, LIMIT, FORUPDATE, UNION>,
+        TABLE extends ITable<TABLE, TABLE_FIELD>,
+        TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>,
+        DATASET_FIELD extends IDatasetField<DATASET_FIELD>,
         COLUMN extends Cmd,
         V,
-
-        CMD_FACTORY extends ICmdFactory<TABLE, DATASET, TABLE_FIELD, DATASET_FILED>,
+        CMD_FACTORY extends ICmdFactory<TABLE, TABLE_FIELD>,
         CONDITION_CHAIN extends IConditionChain<CONDITION_CHAIN, TABLE_FIELD, COLUMN, V>,
 
         WITH extends IWith<WITH>,
         SELECT extends ISelect<SELECT>,
-        FROM extends IFrom<DATASET>,
-        JOIN extends IJoin<JOIN, DATASET, ON>,
-        ON extends IOn<ON, DATASET, TABLE_FIELD, COLUMN, V, JOIN, CONDITION_CHAIN>,
+        FROM extends IFrom,
+        JOIN extends IJoin<JOIN, ON, TABLE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
+        ON extends IOn<ON, JOIN, TABLE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         JOINS extends Joins<JOIN>,
         WHERE extends IWhere<WHERE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         GROUPBY extends IGroupBy<GROUPBY, COLUMN>,
@@ -59,9 +59,7 @@ public interface IWithQuery<SELF extends IWithQuery,
         > extends IQuery<
         SELF,
         TABLE,
-        DATASET,
         TABLE_FIELD,
-        DATASET_FILED,
         COLUMN,
         V,
         CMD_FACTORY,
@@ -79,7 +77,9 @@ public interface IWithQuery<SELF extends IWithQuery,
         LIMIT,
         FORUPDATE,
         UNION
-        >, IDataset<SELF, DATASET_FILED> {
+        >, IDataset<SELF, DATASET_FIELD> {
 
+    String getName();
 
+    IDataset asTable(String alisa);
 }

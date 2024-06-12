@@ -3,29 +3,25 @@ package db.sql.api.cmd.executor.method.orderByMethod;
 
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
-import db.sql.api.cmd.basic.IColumn;
-import db.sql.api.cmd.basic.IDataset;
-import db.sql.api.cmd.basic.IOrderByDirection;
+import db.sql.api.cmd.basic.*;
 
 import java.util.function.Function;
 
 public interface IOrderByMethods<SELF extends IOrderByMethods,
-        TABLE_FIELD extends Cmd,
-        DATASET_FILED extends Cmd,
+        TABLE extends ITable<TABLE, TABLE_FIELD>,
+        TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>,
         COLUMN extends Cmd>
         extends IBaseOrderByMethods,
         IOrderByCmdMethod<SELF, COLUMN>,
         IOrderByGetterMethod<SELF>,
-        IOrderByGetterFunMethod<SELF, TABLE_FIELD>,
+        IOrderByGetterFunMethod<SELF, TABLE, TABLE_FIELD>,
         IOrderByMultiGetterMethod<SELF>,
-        IOrderByMultiGetterFunMethod<SELF, TABLE_FIELD>,
-        IOrderByDatasetMethod<SELF, DATASET_FILED>,
-        IOrderByDatasetGetterMethod<SELF, DATASET_FILED>,
-        IOrderByDatasetGetterFunMethod<SELF, DATASET_FILED>,
+        IOrderByMultiGetterFunMethod<SELF, TABLE, TABLE_FIELD>,
+        IOrderByDatasetMethod<SELF>,
+        IOrderByDatasetGetterMethod<SELF>,
+        IOrderByDatasetGetterFunMethod<SELF>,
         IOrderByDatasetMultiGetterMethod<SELF>,
-        IOrderByDatasetMultiGetterFunMethod<SELF, DATASET_FILED> {
-
-
+        IOrderByDatasetMultiGetterFunMethod<SELF> {
 
 
     default SELF orderBy(String columnName) {
@@ -50,22 +46,22 @@ public interface IOrderByMethods<SELF extends IOrderByMethods,
         return this.orderBy(descOrderByDirection(), columnName);
     }
 
-    default SELF orderByWithFun(String columnName, Function<IColumn, Cmd> f) {
+    default SELF orderByWithFun(String columnName, Function<IDatasetField, Cmd> f) {
         return this.orderByWithFun(ascOrderByDirection(), columnName, f);
     }
 
-    default SELF orderByDescWithFun(String columnName, Function<IColumn, Cmd> f) {
+    default SELF orderByDescWithFun(String columnName, Function<IDatasetField, Cmd> f) {
         return this.orderByWithFun(descOrderByDirection(), columnName, f);
     }
 
-    default SELF orderByWithFun(boolean when, String columnName, Function<IColumn, Cmd> f) {
+    default SELF orderByWithFun(boolean when, String columnName, Function<IDatasetField, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }
         return this.orderByWithFun(ascOrderByDirection(), columnName, f);
     }
 
-    default SELF orderByDescWithFun(boolean when, String columnName, Function<IColumn, Cmd> f) {
+    default SELF orderByDescWithFun(boolean when, String columnName, Function<IDatasetField, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }
@@ -74,10 +70,10 @@ public interface IOrderByMethods<SELF extends IOrderByMethods,
 
     SELF orderBy(IOrderByDirection orderByDirection, String columnName);
 
-    SELF orderByWithFun(IOrderByDirection orderByDirection, String columnName, Function<IColumn, Cmd> f);
+    SELF orderByWithFun(IOrderByDirection orderByDirection, String columnName, Function<IDatasetField, Cmd> f);
 
     @Override
-    default <T> SELF orderBy(IDataset dataset, IOrderByDirection orderByDirection, Getter<T>... columns) {
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T>... columns) {
         for (Getter<T> column : columns) {
             this.orderBy(dataset, orderByDirection, column);
         }
@@ -91,7 +87,7 @@ public interface IOrderByMethods<SELF extends IOrderByMethods,
         return this.orderBy(orderByDirection, columnName);
     }
 
-    default SELF orderByWithFun(boolean when, IOrderByDirection orderByDirection, String columnName, Function<IColumn, Cmd> f) {
+    default SELF orderByWithFun(boolean when, IOrderByDirection orderByDirection, String columnName, Function<IDatasetField, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }

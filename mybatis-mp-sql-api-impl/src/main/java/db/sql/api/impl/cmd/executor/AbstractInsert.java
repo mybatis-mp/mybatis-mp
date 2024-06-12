@@ -7,8 +7,6 @@ import db.sql.api.cmd.executor.IInsert;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
-import db.sql.api.impl.cmd.basic.Dataset;
-import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.insert.InsertFields;
@@ -28,9 +26,6 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
         extends BaseExecutor<SELF, CMD_FACTORY>
         implements IInsert<SELF,
         Table,
-        Dataset,
-        TableField,
-        DatasetField,
         TableField,
         Cmd,
         InsertTable,

@@ -3,16 +3,18 @@ package db.sql.api.cmd.executor.method.havingMethod;
 import db.sql.api.Getter;
 import db.sql.api.cmd.GetterColumnField;
 import db.sql.api.cmd.IColumnField;
-import db.sql.api.cmd.basic.ICondition;
-import db.sql.api.cmd.executor.ISubQuery;
+import db.sql.api.cmd.basic.*;
 
 import java.util.function.Function;
 
-public interface IHavingMethods<SELF extends IHavingMethods, TABLE_FIELD, DATASET_FILED>
-        extends IHavingAndMethod<SELF, TABLE_FIELD>,
-        IHavingOrMethod<SELF, TABLE_FIELD>,
-        IHavingDatasetAndMethod<SELF, DATASET_FILED>,
-        IHavingSubQueryOrMethod<SELF, DATASET_FILED> {
+public interface IHavingMethods<SELF extends IHavingMethods,
+        TABLE extends ITable<TABLE, TABLE_FIELD>,
+        TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>
+        >
+        extends IHavingAndMethod<SELF, TABLE, TABLE_FIELD>,
+        IHavingOrMethod<SELF, TABLE, TABLE_FIELD>,
+        IHavingDatasetAndMethod<SELF>,
+        IHavingDatasetOrMethod<SELF> {
 
     default SELF having(ICondition condition) {
         return this.havingAnd(condition);
@@ -63,35 +65,31 @@ public interface IHavingMethods<SELF extends IHavingMethods, TABLE_FIELD, DATASE
     }
 
 
-    default SELF having(ISubQuery subQuery, String columnName, Function<DATASET_FILED, ICondition> f) {
-        return this.havingAnd(subQuery, columnName, f);
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF having(IDataset<DATASET, DATASET_FIELD> dataset, String columnName, Function<DATASET_FIELD, ICondition> f) {
+        return this.havingAnd(dataset, columnName, f);
     }
 
-    default SELF having(ISubQuery subQuery, boolean when, String columnName, Function<DATASET_FILED, ICondition> f) {
-        return this.havingAnd(subQuery, when, columnName, f);
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF having(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, String columnName, Function<DATASET_FIELD, ICondition> f) {
+        return this.havingAnd(dataset, when, columnName, f);
     }
 
-    default <T> SELF having(ISubQuery subQuery, Getter<T> column, Function<DATASET_FILED, ICondition> f) {
-        return this.havingAnd(subQuery, column, f);
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF having(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column, Function<DATASET_FIELD, ICondition> f) {
+        return this.havingAnd(dataset, column, f);
     }
 
-    default <T> SELF having(ISubQuery subQuery, boolean when, Getter<T> column, Function<DATASET_FILED, ICondition> f) {
-        return this.havingAnd(subQuery, when, column, f);
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF having(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Getter<T> column, Function<DATASET_FIELD, ICondition> f) {
+        return this.havingAnd(dataset, when, column, f);
     }
 
-    default <T> SELF having(ISubQuery subQuery, Function<DATASET_FILED[], ICondition> f, Getter<T>... columns) {
-        return this.havingAnd(subQuery, f, columns);
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF having(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], ICondition> f, Getter<T>... columns) {
+        return this.havingAnd(dataset, f, columns);
     }
 
-    default <T> SELF having(ISubQuery subQuery, boolean when, Function<DATASET_FILED[], ICondition> f, Getter<T>... columns) {
-        return this.havingAnd(subQuery, when, f, columns);
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF having(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Function<IDatasetField[], ICondition> f, Getter<T>... columns) {
+        return this.havingAnd(dataset, when, f, columns);
     }
 
-    default SELF having(ISubQuery subQuery, Function<DATASET_FILED[], ICondition> f, IColumnField... columnFields) {
-        return this.havingAnd(subQuery, f, columnFields);
-    }
-
-    default SELF havingOr(ISubQuery subQuery, boolean when, Function<DATASET_FILED[], ICondition> f, IColumnField... columnFields) {
-        return this.havingAnd(subQuery, when, f, columnFields);
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF having(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], ICondition> f, IColumnField... columnFields) {
+        return this.havingAnd(dataset, f, columnFields);
     }
 }

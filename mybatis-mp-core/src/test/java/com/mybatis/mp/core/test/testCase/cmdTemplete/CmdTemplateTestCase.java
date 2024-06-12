@@ -7,10 +7,8 @@ import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
 import com.mybatis.mp.core.test.vo.SysUserRoleAutoSelectVo;
-import com.mybatis.mp.core.test.vo.SysUserVo;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.basic.CmdTemplate;
-import db.sql.api.impl.cmd.basic.Column;
 import db.sql.api.impl.cmd.basic.ConditionTemplate;
 import db.sql.api.impl.cmd.basic.FunTemplate;
 import org.apache.ibatis.session.SqlSession;
@@ -64,12 +62,12 @@ public class CmdTemplateTestCase extends BaseTest {
                     .select(SysUserRoleAutoSelectVo.class)
                     .selectWithFun(SysRole::getId, c -> CmdTemplate.create(" RANK() OVER( ORDER BY {0}) ", c).as("RANK"))
                     .from(SysUser.class)
-                    .join(SysUser.class,SysRole.class)
+                    .join(SysUser.class, SysRole.class)
                     .returnType(SysUserRoleAutoSelectVo.class)
                     .limit(1)
                     .get();
 
-            assertEquals(vo.getId(),2);
+            assertEquals(vo.getId(), 2);
         }
     }
 }

@@ -3,23 +3,24 @@ package db.sql.api.cmd.executor.method.groupByMethod;
 
 import db.sql.api.Cmd;
 import db.sql.api.cmd.basic.IDataset;
+import db.sql.api.cmd.basic.IDatasetField;
 
 import java.util.function.Function;
 
-public interface IGroupByDatasetMethod<SELF extends IGroupByDatasetMethod, DATASET_FILED extends Cmd> {
+public interface IGroupByDatasetMethod<SELF extends IGroupByDatasetMethod> {
 
-    SELF groupBy(IDataset Dataset, String columnName);
+    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(IDataset<DATASET, DATASET_FIELD> dataset, String columnName);
 
-    SELF groupByWithFun(IDataset subQuery, String columnName, Function<DATASET_FILED, Cmd> f);
+    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, String columnName, Function<DATASET_FIELD, Cmd> f);
 
-    default SELF groupBy(boolean when, IDataset dataset, String columnName) {
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
         if (!when) {
             return (SELF) this;
         }
         return this.groupBy(dataset, columnName);
     }
 
-    default SELF groupByWithFun(boolean when, IDataset dataset, String columnName, Function<DATASET_FILED, Cmd> f) {
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupByWithFun(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, String columnName, Function<DATASET_FIELD, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }

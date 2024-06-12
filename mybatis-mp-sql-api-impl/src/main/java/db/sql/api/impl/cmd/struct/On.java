@@ -4,33 +4,27 @@ import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.struct.IOn;
 import db.sql.api.impl.cmd.ConditionFactory;
-import db.sql.api.impl.cmd.basic.Dataset;
+import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-public class On<
-        SELF extends On<SELF, TABLE, JOIN>,
-        TABLE extends Dataset,
-        JOIN extends Join<JOIN, TABLE, SELF>
-        >
-
-        implements IOn<SELF, TABLE, TableField, Cmd, Object, JOIN, ConditionChain> {
+public class On implements IOn<On, Join, Table, TableField, Cmd, Object, ConditionChain> {
 
     private final ConditionFactory conditionFactory;
 
-    private final JOIN join;
+    private final Join join;
 
     private final ConditionChain conditionChain;
 
-    public On(ConditionFactory conditionFactory, JOIN join) {
+    public On(ConditionFactory conditionFactory, Join join) {
         this.conditionFactory = conditionFactory;
         this.join = join;
         conditionChain = new ConditionChain(conditionFactory);
     }
 
     @Override
-    public JOIN getJoin() {
+    public Join getJoin() {
         return join;
     }
 

@@ -6,13 +6,13 @@ import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.ICondition;
+import db.sql.api.cmd.basic.IDataset;
+import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.executor.IUpdate;
 import db.sql.api.cmd.struct.Joins;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.ConditionFactory;
 import db.sql.api.impl.cmd.Methods;
-import db.sql.api.impl.cmd.basic.Dataset;
-import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.*;
@@ -31,23 +31,21 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         extends BaseExecutor<SELF, CMD_FACTORY>
         implements IUpdate<SELF,
         Table,
-        Dataset,
         TableField,
-        DatasetField,
         Cmd,
         Object,
         ConditionChain,
         UpdateTable,
-        FromTable,
-        JoinTable,
-        OnTable,
+        From,
+        Join,
+        On,
         Where
         > {
 
     protected final ConditionFactory conditionFactory;
     protected final CMD_FACTORY $;
     protected UpdateTable updateTable;
-    protected FromTable from;
+    protected From from;
     protected UpdateSets updateSets;
     protected Where where;
     protected Joins joins;
@@ -98,7 +96,7 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         int i = 0;
         cmdSorts.put(UpdateTable.class, i += 10);
         cmdSorts.put(UpdateSets.class, i += 10);
-        cmdSorts.put(FromTable.class, i += 10);
+        cmdSorts.put(From.class, i += 10);
         cmdSorts.put(Joins.class, i += 10);
         cmdSorts.put(Where.class, i += 10);
     }
@@ -132,13 +130,13 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     }
 
     @Override
-    public SELF set(Cmd field, Object value) {
+    public SELF set(TableField field, Object value) {
         Cmd v = Methods.convert(value);
         if (this.updateSets == null) {
             this.updateSets = new UpdateSets();
             this.append(this.updateSets);
         }
-        this.updateSets.set((TableField) field, v);
+        this.updateSets.set(field, v);
         return (SELF) this;
     }
 
@@ -165,8 +163,8 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     }
 
     @Override
-    public JoinTable $join(JoinMode mode, Table mainTable, Table secondTable) {
-        JoinTable join = new JoinTable(mode, mainTable, secondTable, this::apply);
+    public Join $join(JoinMode mode, IDataset mainTable, IDataset secondTable) {
+        Join join = new Join(mode, mainTable, secondTable, this::apply);
         if (Objects.isNull(joins)) {
             joins = new Joins();
             this.append(joins);
@@ -176,13 +174,13 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     }
 
     @Override
-    public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<OnTable> consumer) {
+    public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<On> consumer) {
         consumer = this.joinEntityIntercept(mainTable, mainTableStorey, secondTable, secondTableStorey, consumer);
         return this.join(mode, this.$.table(mainTable, mainTableStorey), this.$.table(secondTable, secondTableStorey), consumer);
     }
 
     @Override
-    public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Table secondTable, Consumer<OnTable> consumer) {
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF join(JoinMode mode, Class mainTable, int mainTableStorey, DATASET secondTable, Consumer<On> consumer) {
         return this.join(mode, this.$.table(mainTable, mainTableStorey), secondTable, consumer);
     }
 
@@ -208,9 +206,9 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     }
 
     @Override
-    public FromTable $from(Dataset... tables) {
+    public From $from(IDataset... tables) {
         if (this.from == null) {
-            from = new FromTable();
+            from = new From();
             this.append(from);
         }
         this.from.append(tables);
@@ -230,8 +228,8 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
 
 
     @Override
-    public SELF join(JoinMode mode, Table mainTable, Table secondTable, Consumer<OnTable> consumer) {
-        JoinTable join = $join(mode, mainTable, secondTable);
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> SELF join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<On> consumer) {
+        Join join = $join(mode, mainTable, secondTable);
         if (consumer != null) {
             consumer.accept(join.getOn());
         }
@@ -254,12 +252,12 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         return this.where;
     }
 
-    public FromTable getFrom() {
+    public From getFrom() {
         return from;
     }
 
-    private OnTable apply(JoinTable joinTable) {
-        return new OnTable(this.conditionFactory, joinTable);
+    private On apply(Join joinTable) {
+        return new On(this.conditionFactory, joinTable);
     }
 
 

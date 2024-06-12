@@ -2,20 +2,16 @@ package db.sql.api.cmd.executor.method;
 
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
-import db.sql.api.cmd.basic.Count1;
-import db.sql.api.cmd.basic.CountAll;
-import db.sql.api.cmd.basic.SQL1;
-import db.sql.api.cmd.basic.SQLCmdAll;
+import db.sql.api.cmd.basic.*;
 import db.sql.api.cmd.executor.method.selectMethod.ISelectMethods;
 
 public interface ISelectMethod<SELF extends ISelectMethod,
-        TABLE_FIELD extends DATASET_FILED,
-        DATASET_FILED extends Cmd,
+        TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>,
         COLUMN extends Cmd>
 
         extends ISelectMethods<SELF,
+        TABLE,
         TABLE_FIELD,
-        DATASET_FILED,
         COLUMN> {
 
     SELF selectDistinct();

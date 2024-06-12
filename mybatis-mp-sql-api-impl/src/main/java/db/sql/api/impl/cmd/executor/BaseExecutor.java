@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 
 
 public abstract class BaseExecutor<SELF extends BaseExecutor<SELF, CMD_FACTORY>, CMD_FACTORY extends CmdFactory> implements Executor<SELF, CMD_FACTORY> {
+
     protected final List<Cmd> cmds = new LinkedList<>();
 
     private final Map<Class<? extends Cmd>, Integer> cmdSorts = new HashMap<>();

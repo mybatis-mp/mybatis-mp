@@ -387,4 +387,15 @@ public interface FunctionInterface extends Cmd {
         return Methods.in(this, values);
     }
 
+    default IsNull isNull() {
+        return Methods.isNull(this);
+    }
+
+    default Empty empty() {
+        return Methods.empty(this);
+    }
+
+    default NotEmpty notEmpty() {
+        return Methods.notEmpty(this);
+    }
 }

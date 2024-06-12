@@ -5,10 +5,12 @@ import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.GetterColumnField;
 import db.sql.api.cmd.basic.IOrderByDirection;
+import db.sql.api.cmd.basic.ITable;
+import db.sql.api.cmd.basic.ITableField;
 
 import java.util.function.Function;
 
-public interface IOrderByMultiGetterFunMethod<SELF extends IOrderByMultiGetterFunMethod, TABLE_FIELD extends Cmd> extends IBaseOrderByMethods {
+public interface IOrderByMultiGetterFunMethod<SELF extends IOrderByMultiGetterFunMethod, TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> extends IBaseOrderByMethods {
 
     default <T> SELF orderByWithFun(Function<TABLE_FIELD[], Cmd> f, Getter<T>... columns) {
         return this.orderByWithFun(ascOrderByDirection(), f, 1, columns);

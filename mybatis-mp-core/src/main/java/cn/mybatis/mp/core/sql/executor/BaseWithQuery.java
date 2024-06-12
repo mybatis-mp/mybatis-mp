@@ -5,24 +5,15 @@ import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.ForeignKeyUtil;
 import db.sql.api.Cmd;
-import db.sql.api.SqlBuilderContext;
-import db.sql.api.impl.cmd.basic.Dataset;
 import db.sql.api.impl.cmd.basic.DatasetField;
-import db.sql.api.impl.cmd.condition.Exists;
-import db.sql.api.impl.cmd.condition.In;
-import db.sql.api.impl.cmd.executor.AbstractSubQuery;
 import db.sql.api.impl.cmd.executor.AbstractWithQuery;
-import db.sql.api.impl.cmd.struct.From;
-import db.sql.api.impl.cmd.struct.OnDataset;
-import db.sql.api.impl.cmd.struct.query.With;
-import db.sql.api.impl.tookit.SqlConst;
+import db.sql.api.impl.cmd.struct.On;
 
-import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends AbstractWithQuery<Q, MybatisCmdFactory> implements Dataset<Q, DatasetField> {
+public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends AbstractWithQuery<Q, MybatisCmdFactory> implements db.sql.api.cmd.basic.IDataset<Q, DatasetField> {
 
     private final String name;
 
@@ -41,19 +32,19 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
 
     @Override
     public String getAlias() {
-        if(Objects.isNull(alias)){
+        if (Objects.isNull(alias)) {
             return this.name;
         }
         return alias;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
     @Override
     public Q as(String alias) {
-        this.alias=alias;
+        this.alias = alias;
         return (Q) this;
     }
 
@@ -84,7 +75,7 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
     }
 
     @Override
-    public Consumer<OnDataset> joinEntityIntercept(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<OnDataset> consumer) {
+    public Consumer<On> joinEntityIntercept(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<On> consumer) {
         this.addTenantCondition(secondTable, secondTableStorey);
         this.addLogicDeleteCondition(secondTable, secondTableStorey);
         if (Objects.isNull(consumer)) {

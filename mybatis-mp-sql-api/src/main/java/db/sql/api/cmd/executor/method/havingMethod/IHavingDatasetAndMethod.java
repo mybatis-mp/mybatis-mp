@@ -4,34 +4,34 @@ import db.sql.api.Getter;
 import db.sql.api.cmd.IColumnField;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.basic.IDataset;
-import db.sql.api.cmd.executor.ISubQuery;
+import db.sql.api.cmd.basic.IDatasetField;
 
 import java.util.function.Function;
 
-public interface IHavingDatasetAndMethod<SELF extends IHavingDatasetAndMethod, DATASET_FILED> {
+public interface IHavingDatasetAndMethod<SELF extends IHavingDatasetAndMethod> {
 
-    default SELF havingAnd(IDataset dataset, String columnName, Function<DATASET_FILED, ICondition> f) {
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, String columnName, Function<DATASET_FIELD, ICondition> f) {
         return this.havingAnd(dataset, true, columnName, f);
     }
 
-    SELF havingAnd(IDataset dataset, boolean when, String columnName, Function<DATASET_FILED, ICondition> f);
+    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, String columnName, Function<DATASET_FIELD, ICondition> f);
 
-    default <T> SELF havingAnd(IDataset dataset, Getter<T> column, Function<DATASET_FILED, ICondition> f) {
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column, Function<DATASET_FIELD, ICondition> f) {
         return havingAnd(dataset, true, column, f);
     }
 
-    <T> SELF havingAnd(IDataset dataset, boolean when, Getter<T> column, Function<DATASET_FILED, ICondition> f);
+    <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Getter<T> column, Function<DATASET_FIELD, ICondition> f);
 
-    default <T> SELF havingAnd(IDataset dataset, Function<DATASET_FILED[], ICondition> f, Getter<T>... columns) {
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], ICondition> f, Getter<T>... columns) {
         return this.havingAnd(dataset, true, f, columns);
     }
 
-    <T> SELF havingAnd(IDataset dataset, boolean when, Function<DATASET_FILED[], ICondition> f, Getter<T>... columns);
+    <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Function<IDatasetField[], ICondition> f, Getter<T>... columns);
 
-    default SELF havingAnd(IDataset dataset, Function<DATASET_FILED[], ICondition> f, IColumnField... columnFields) {
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], ICondition> f, IColumnField... columnFields) {
         return this.havingAnd(dataset, true, f, columnFields);
     }
 
-    SELF havingAnd(IDataset dataset, boolean when, Function<DATASET_FILED[], ICondition> f, IColumnField... columnFields);
+    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Function<IDatasetField[], ICondition> f, IColumnField... columnFields);
 
 }

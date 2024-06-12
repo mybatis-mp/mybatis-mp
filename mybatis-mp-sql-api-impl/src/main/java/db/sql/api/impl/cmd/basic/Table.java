@@ -3,20 +3,23 @@ package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
-import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.IDataset;
+import db.sql.api.cmd.basic.ITable;
 import db.sql.api.impl.cmd.struct.From;
 import db.sql.api.impl.cmd.struct.Join;
-import db.sql.api.impl.tookit.LambdaUtil;
 import db.sql.api.impl.tookit.SqlConst;
 
 import java.util.Objects;
 
-public class Table implements Dataset<Table, TableField> {
+public class Table implements ITable<Table, TableField>, IDataset<Table, TableField> {
 
     protected String alias;
+
     protected String prefix;
+
     private String name;
+
     private String forceIndex;
 
     public Table(String name) {
@@ -32,12 +35,6 @@ public class Table implements Dataset<Table, TableField> {
     public TableField $(String name) {
         return new TableField(this, name);
     }
-
-    @Override
-    public <E> TableField $(Getter<E> getter) {
-        return $(LambdaUtil.getName(getter));
-    }
-
 
     public String getName() {
         return name;

@@ -2,11 +2,11 @@ package db.sql.api.impl.cmd.dbFun;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
-import db.sql.api.impl.cmd.basic.Field;
+import db.sql.api.impl.cmd.basic.AbstractField;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-public abstract class BasicFunction<T extends BasicFunction<T>> extends Field<T> implements Function<T>, FunctionInterface {
+public abstract class BasicFunction<T extends BasicFunction<T>> extends AbstractField<T> implements Function<T>, FunctionInterface {
 
     protected final char[] operator;
 

@@ -6,7 +6,7 @@ import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.ForeignKeyUtil;
 import db.sql.api.Cmd;
 import db.sql.api.impl.cmd.executor.AbstractQuery;
-import db.sql.api.impl.cmd.struct.OnDataset;
+import db.sql.api.impl.cmd.struct.On;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.Map;
@@ -63,7 +63,7 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
     }
 
     @Override
-    public Consumer<OnDataset> joinEntityIntercept(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<OnDataset> consumer) {
+    public Consumer<On> joinEntityIntercept(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<On> consumer) {
         this.addTenantCondition(secondTable, secondTableStorey);
         this.addLogicDeleteCondition(secondTable, secondTableStorey);
         if (Objects.isNull(consumer)) {

@@ -5,69 +5,69 @@ import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.IColumnField;
 import db.sql.api.cmd.basic.IDataset;
+import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.basic.IOrderByDirection;
-import db.sql.api.cmd.executor.ISubQuery;
 
 import java.util.function.Function;
 
-public interface IOrderByDatasetMultiGetterFunMethod<SELF extends IOrderByDatasetMultiGetterFunMethod, DATASET_FILED extends Cmd> extends IBaseOrderByMethods {
+public interface IOrderByDatasetMultiGetterFunMethod<SELF extends IOrderByDatasetMultiGetterFunMethod> extends IBaseOrderByMethods {
 
-    default <T> SELF orderByWithFun(IDataset dataset, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns) {
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
         return this.orderByWithFun(dataset, ascOrderByDirection(), f, columns);
     }
 
-    default <T> SELF orderByDescWithFun(IDataset dataset, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns) {
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByDescWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
         return this.orderByWithFun(dataset, descOrderByDirection(), f, columns);
     }
 
-    default SELF orderByWithFun(IDataset dataset, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields) {
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
         return this.orderByWithFun(dataset, ascOrderByDirection(), f, columnFields);
     }
 
-    default SELF orderByDescWithFun(IDataset dataset, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields) {
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByDescWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
         return this.orderByWithFun(dataset, descOrderByDirection(), f, columnFields);
     }
 
-    default <T> SELF orderByWithFun(boolean when, IDataset dataset, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns) {
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByWithFun(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;
         }
         return this.orderByWithFun(dataset, ascOrderByDirection(), f, columns);
     }
 
-    default <T> SELF orderByDescWithFun(boolean when, IDataset dataset, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns) {
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByDescWithFun(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;
         }
         return this.orderByWithFun(dataset, descOrderByDirection(), f, columns);
     }
 
-    default SELF orderByWithFun(boolean when, IDataset dataset, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields) {
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByWithFun(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
         if (!when) {
             return (SELF) this;
         }
         return this.orderByWithFun(dataset, ascOrderByDirection(), f, columnFields);
     }
 
-    default SELF orderByDescWithFun(boolean when, IDataset dataset, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields) {
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByDescWithFun(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
         if (!when) {
             return (SELF) this;
         }
         return this.orderByWithFun(dataset, descOrderByDirection(), f, columnFields);
     }
 
-    <T> SELF orderByWithFun(IDataset dataset, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns);
+    <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Function<IDatasetField[], Cmd> f, Getter<T>... columns);
 
-    SELF orderByWithFun(IDataset dataset, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields);
+    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Function<IDatasetField[], Cmd> f, IColumnField... columnFields);
 
-    default <T> SELF orderByWithFun(boolean when, IDataset dataset, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, Getter<T>... columns) {
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByWithFun(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
         if (!when) {
             return (SELF) this;
         }
         return this.orderByWithFun(dataset, orderByDirection, f, columns);
     }
 
-    default SELF orderByWithFun(boolean when, IDataset dataset, IOrderByDirection orderByDirection, Function<DATASET_FILED[], Cmd> f, IColumnField... columnFields) {
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderByWithFun(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
         if (!when) {
             return (SELF) this;
         }

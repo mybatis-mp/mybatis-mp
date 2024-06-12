@@ -5,6 +5,8 @@ import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.GetterColumnField;
 import db.sql.api.cmd.ICmdFactory;
+import db.sql.api.cmd.basic.IDataset;
+import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.condition.In;
 import db.sql.api.impl.cmd.condition.NotIn;
@@ -15,7 +17,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 
-public class CmdFactory extends Methods implements ICmdFactory<Table, Dataset, TableField, DatasetField> {
+public class CmdFactory extends Methods implements ICmdFactory<Table, TableField> {
 
     protected final Map<String, Table> tableCache = new HashMap<>(5);
     private final String tableAsPrefix;
@@ -98,10 +100,11 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, Dataset, T
         return new TableField(table, columnName(column));
     }
 
+
     @Override
-    public <T> DatasetField field(Dataset dataset, Getter<T> column) {
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD field(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column) {
         String filedName = LambdaUtil.getName(column);
-        return new DatasetField<>(dataset, filedName);
+        return (DATASET_FIELD) new DatasetField(dataset, filedName);
     }
 
     @Override
@@ -114,13 +117,13 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, Dataset, T
     }
 
     @Override
-    public DatasetField field(Dataset dataset, String columnName) {
-        return new DatasetField(dataset, columnName);
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD field(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
+        return (DATASET_FIELD) new DatasetField(dataset, columnName);
     }
 
     @Override
-    public DatasetField allField(Dataset dataset) {
-        return new AllField(dataset);
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD allField(IDataset<DATASET, DATASET_FIELD> dataset) {
+        return (DATASET_FIELD) new AllField(dataset);
     }
 
     @Override
@@ -135,10 +138,6 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, Dataset, T
 
     public BasicValue value(Object value) {
         return new BasicValue(value);
-    }
-
-    public AllField all(Dataset dataset) {
-        return new AllField(dataset);
     }
 
     public In in(Cmd main) {

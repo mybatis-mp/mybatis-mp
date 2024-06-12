@@ -2,11 +2,9 @@ package db.sql.api.impl.cmd.executor;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
-import db.sql.api.cmd.executor.ISubQuery;
 import db.sql.api.cmd.executor.IWithQuery;
 import db.sql.api.cmd.struct.Joins;
 import db.sql.api.impl.cmd.CmdFactory;
-import db.sql.api.impl.cmd.basic.Dataset;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
@@ -19,7 +17,6 @@ import db.sql.api.impl.tookit.SqlConst;
 public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD_FACTORY>, CMD_FACTORY extends CmdFactory> extends AbstractSubQuery<SELF, CMD_FACTORY>
         implements IWithQuery<SELF,
         Table,
-        Dataset,
         TableField,
         DatasetField,
         Cmd,
@@ -28,10 +25,10 @@ public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD
         ConditionChain,
         With,
         Select,
-        FromDataset,
-        JoinDataset,
-        OnDataset,
-        Joins<JoinDataset>,
+        From,
+        Join,
+        On,
+        Joins<Join>,
         Where,
         GroupBy,
         Having,
@@ -41,11 +38,21 @@ public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD
         Union
         > {
 
+    protected String name;
+
     public AbstractWithQuery(CMD_FACTORY $) {
         super($);
     }
 
-    public abstract String getAlias();
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public Table asTable(String alias) {
+        return new Table(this.getName(), alias);
+    }
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {

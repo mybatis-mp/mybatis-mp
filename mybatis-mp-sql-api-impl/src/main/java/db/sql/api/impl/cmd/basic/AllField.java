@@ -3,10 +3,11 @@ package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
 
-public class AllField extends DatasetField {
+public class AllField extends AbstractDatasetField<AllField> {
 
     public final static AllField ALL = new AllField();
 
@@ -14,12 +15,12 @@ public class AllField extends DatasetField {
         super(null, SqlConst.ALL);
     }
 
-    public AllField(Dataset table) {
+    public AllField(IDataset table) {
         super(table, SqlConst.ALL);
     }
 
     @Override
-    public DatasetField as(String alias) {
+    public AllField as(String alias) {
         throw new RuntimeException("AllField不能设置别名");
     }
 

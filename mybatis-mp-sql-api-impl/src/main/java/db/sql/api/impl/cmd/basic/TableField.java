@@ -1,6 +1,8 @@
 package db.sql.api.impl.cmd.basic;
 
-public class TableField extends DatasetField<TableField, Table> {
+import db.sql.api.cmd.basic.ITableField;
+
+public class TableField extends AbstractDatasetField<TableField> implements ITableField<TableField, Table> {
 
     public TableField(Table table, String name) {
         super(table, name);
@@ -8,6 +10,11 @@ public class TableField extends DatasetField<TableField, Table> {
 
     protected boolean canEqual(Object other) {
         return other instanceof TableField;
+    }
+
+    @Override
+    public Table getTable() {
+        return (Table) super.getTable();
     }
 
     @Override

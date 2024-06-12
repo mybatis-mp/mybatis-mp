@@ -10,7 +10,6 @@ import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
-import db.sql.api.impl.cmd.basic.OrderByDirection;
 import db.sql.api.impl.cmd.dbFun.FunctionInterface;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.SqlSession;
