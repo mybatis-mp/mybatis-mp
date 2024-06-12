@@ -3,6 +3,7 @@ package cn.mybatis.mp.core.mybatis.mapper;
 import cn.mybatis.mp.core.mybatis.configuration.MapKeySQLCmdQueryContext;
 import cn.mybatis.mp.core.mybatis.mapper.context.*;
 import cn.mybatis.mp.core.mybatis.provider.MybatisSQLProvider;
+import cn.mybatis.mp.core.mybatis.provider.TablePrefixUtil;
 import cn.mybatis.mp.core.sql.executor.BaseDelete;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
@@ -241,6 +242,7 @@ public interface BaseMapper extends CommonMapper {
     default <E, P extends Pager<E>> P paging(BaseQuery<? extends BaseQuery, E> query, P pager) {
         if (pager.isExecuteCount()) {
             Class returnType = query.getReturnType();
+            TablePrefixUtil.prefixMapping(query, returnType);
             query.setReturnType(Integer.TYPE);
             Integer count = this.$countFromQuery(new SQLCmdCountFromQueryContext(query, pager.isOptimize()));
             query.setReturnType(returnType);
