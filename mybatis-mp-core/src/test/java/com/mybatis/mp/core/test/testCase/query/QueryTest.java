@@ -10,6 +10,7 @@ import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
+import db.sql.api.impl.cmd.basic.OrderByDirection;
 import db.sql.api.impl.cmd.dbFun.FunctionInterface;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.SqlSession;
@@ -218,6 +219,24 @@ public class QueryTest extends BaseTest {
                     .select(SysUser::getId, SysUser::getUserName, SysUser::getRole_id)
                     .from(SysUser.class)
                     .orderByDesc(SysUser::getRole_id, SysUser::getId)
+                    .limit(1)
+                    .get();
+            SysUser eqSysUser = new SysUser();
+            eqSysUser.setId(3);
+            eqSysUser.setUserName("test2");
+            eqSysUser.setRole_id(1);
+            assertEquals(sysUser, eqSysUser, "orderby");
+        }
+    }
+
+    @Test
+    public void orderbyNullTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, SysUser::getUserName, SysUser::getRole_id)
+                    .from(SysUser.class)
+                    .orderBy(OrderByDirection.DESC_NULLS_FIRST, SysUser::getRole_id, SysUser::getId)
                     .limit(1)
                     .get();
             SysUser eqSysUser = new SysUser();
