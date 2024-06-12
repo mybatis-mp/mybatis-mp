@@ -5,7 +5,6 @@ import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.BasicValue;
-import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
@@ -66,10 +65,7 @@ public class Concat extends BasicFunction<Concat> {
             builder = cmds[i].sql(module, parent, context, builder);
 
             if (value.getClass() == BasicValue.class && context.getDbType() == DbType.PGSQL) {
-                BasicValue basicValue = (BasicValue) value;
-                if (Objects.nonNull(basicValue)) {
-                    builder.append(SqlConst.CAST_TEXT);
-                }
+                builder.append(SqlConst.CAST_TEXT);
             }
         }
         return builder;

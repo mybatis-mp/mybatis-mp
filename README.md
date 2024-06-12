@@ -1,8 +1,8 @@
 # 官网文档：<strong style="color:red">http://mybatis-mp.cn </strong> !!!
 
 ## 喜欢的朋友加入QQ群：<font color="red">121908790</font> ，群里不仅可以提mybatis-mp框架问题，还可以帮你解决后端的各种问题！
-##### 另外，喜欢的朋友，帮忙关注 和 star（点点小爱心）！
 
+##### 另外，喜欢的朋友，帮忙关注 和 star（点点小爱心）！
 
 > <strong style="color:red">特别申明：禁止在非法项目中使用，否则后果自负！</strong>
 
@@ -19,15 +19,25 @@
 </p>
 
 ## 与众不同的 几大亮点：
+
 #### 1：mybatis-mp - 亮点一：可自定义动态默认值
+
 #### 2：mybatis-mp - 亮点二：支持不同数据库ID自增配置
+
 #### 3：mybatis-mp - 亮点三：逻辑删除，可自动填充删除时间
+
 #### 4：mybatis-mp - 亮点四：可自定义sql（sql模板）
+
 #### 5：mybatis-mp - 亮点五：mapWithKey（把查询转成一个 map）
+
 #### 6：mybatis-mp - 亮点 六：部分字段 新增 和 修改
-#### 7：mybatis-mp - 亮点七：枚举的良好支持 
+
+#### 7：mybatis-mp - 亮点七：枚举的良好支持
+
 #### 8：mybatis-mp - 亮点八：mybatis-xml returnType 的 ORM 映射
+
 #### 9：mybatis-mp - 亮点九：优雅的 XML和 @Select查询 自动分页
+
 #### 10：mybatis-mp - 亮点十：支持多层嵌套VO，自动映射以及自动select 所需列
 
 ## 特征
@@ -81,7 +91,7 @@ https://gitee.com/mybatis-mp/mybatis-mp-spring-boot-demo
         <dependency>
             <groupId>cn.mybatis-mp</groupId>
             <artifactId>mybatis-mp-spring-boot-parent</artifactId>
-            <version>1.5.7-rc7</version>
+            <version>1.5.7-rc8</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -104,7 +114,7 @@ https://gitee.com/mybatis-mp/mybatis-mp-spring-boot-demo
         <dependency>
             <groupId>cn.mybatis-mp</groupId>
             <artifactId>mybatis-mp-spring-boot-parent</artifactId>
-            <version>1.5.7-rc7-spring-boot3</version>
+            <version>1.5.7-rc8-spring-boot3</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -147,7 +157,9 @@ public class DatasourceConfig {
 }
 
 ```
+
 ## 开始使用
+
 ```
 List<SysUser> list = QueryChain.of(sysUserMapper)
     // forSearch包含忽略null 、空字符串、对字符串进行trim去空格    
@@ -156,6 +168,7 @@ List<SysUser> list = QueryChain.of(sysUserMapper)
     .like(SysUser::getUserName," admin ")
     .list();
 ```
+
 > 优雅 简单 方便 快捷
 
 # 支持作者，赏作者一盒盒饭（^o^）

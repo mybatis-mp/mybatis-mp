@@ -7,7 +7,7 @@ public class IdValueConverter {
 
     public static Object convert(Object id, Class<?> targetType) {
         if (Objects.isNull(id)) {
-            return id;
+            return null;
         }
         if (targetType.isAssignableFrom(id.getClass())) {
             return id;

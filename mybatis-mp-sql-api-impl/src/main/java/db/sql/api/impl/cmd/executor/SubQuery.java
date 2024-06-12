@@ -13,11 +13,6 @@ public class SubQuery extends AbstractSubQuery<SubQuery, CmdFactory> {
     }
 
     @Override
-    public String getAlias() {
-        return alias;
-    }
-
-    @Override
     public SubQuery as(String alias) {
         throw new RuntimeException("not support");
     }
