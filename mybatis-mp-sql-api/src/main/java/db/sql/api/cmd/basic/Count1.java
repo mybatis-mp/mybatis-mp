@@ -9,6 +9,7 @@ public class Count1 implements Cmd {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+
         return sqlBuilder.append(" COUNT(1) ");
     }
 

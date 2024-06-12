@@ -60,10 +60,12 @@ public class CmdTemplateTestCase extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserRoleAutoSelectVo vo = QueryChain.of(sysUserMapper)
                     .select(SysUserRoleAutoSelectVo.class)
-                    .selectWithFun(SysRole::getId, c -> CmdTemplate.create(" RANK() OVER( ORDER BY {0}) ", c).as("RANK"))
+                    .selectWithFun(SysRole::getId, c -> CmdTemplate.create(" RANK() OVER( ORDER BY {0}) ", c).as("RANK2"))
+                    .selectWithFun(SysRole::getId, c -> CmdTemplate.create(" RANK() OVER( ORDER BY {0}) as RANK3", c))
                     .from(SysUser.class)
                     .join(SysUser.class, SysRole.class)
                     .returnType(SysUserRoleAutoSelectVo.class)
+                    .orderBy(SysUser::getId)
                     .limit(1)
                     .get();
 

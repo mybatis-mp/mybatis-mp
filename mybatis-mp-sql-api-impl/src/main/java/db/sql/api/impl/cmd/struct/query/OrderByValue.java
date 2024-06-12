@@ -3,9 +3,10 @@ package db.sql.api.impl.cmd.struct.query;
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IOrderByDirection;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
-import db.sql.api.impl.cmd.condition.IsNotNull;
 import db.sql.api.impl.cmd.condition.IsNull;
+import db.sql.api.impl.cmd.dbFun.Case;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
@@ -28,11 +29,11 @@ public class OrderByValue implements Cmd {
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (!IOrderByDirection.isSupportNullsOrder(context.getDbType())) {
-            Cmd nullDirectionCmd = null;
+            Case nullDirectionCmd = null;
             if (orderByDirection == OrderByDirection.DESC_NULLS_FIRST || orderByDirection == OrderByDirection.ASC_NULLS_FIRST) {
-                nullDirectionCmd = new IsNull(this.key);
+                nullDirectionCmd = Methods.case_().when(new IsNull(this.key), 1).else_(0);
             } else if (orderByDirection == OrderByDirection.DESC_NULLS_LAST || orderByDirection == OrderByDirection.ASC_NULLS_LAST) {
-                nullDirectionCmd = new IsNotNull(this.key);
+                nullDirectionCmd = Methods.case_().when(new IsNull(this.key), 0).else_(1);
             }
             if (Objects.nonNull(nullDirectionCmd)) {
                 nullDirectionCmd.sql(module, parent, context, sqlBuilder);

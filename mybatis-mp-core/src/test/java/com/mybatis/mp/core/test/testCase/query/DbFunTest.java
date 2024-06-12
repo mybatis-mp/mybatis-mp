@@ -59,7 +59,7 @@ public class DbFunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer id = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getId)
+
                     .from(SysUser.class)
                     .and(c -> c[0].eq(1), SysUser::getId, SysUser::getUserName)
                     .orderByWithFun(c -> c[0], SysUser::getId)

@@ -8,9 +8,13 @@ import java.io.Serializable;
 public class FetchObject {
 
     private final Serializable key;
+
     private final Object value;
 
-    public FetchObject(Serializable key, Object value) {
+    private final Object sourceKey;
+
+    public FetchObject(Object sourceKey, Serializable key, Object value) {
+        this.sourceKey = sourceKey;
         this.key = key;
         this.value = value;
     }

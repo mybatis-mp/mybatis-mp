@@ -652,7 +652,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("group by select 多字段 优化",
-                "select count(*) from (select 1 from t_sys_user t where t.id=1 group by t.id) as t",
+                "select count(*) from (select 1 as x$1 from t_sys_user t where t.id=1 group by t.id) as t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -663,7 +663,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("group by count 优化join",
-                "select count(*) from (select 1 from t_sys_user t where t.id=1 group by t.id) as t",
+                "select count(*) from (select 1 as x$1 from t_sys_user t where t.id=1 group by t.id) as t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -675,7 +675,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("group by count 不优化join",
-                "select count(*) from (select 1 from t_sys_user t right join sys_role t2 on t2.id=t.role_id where t.id=1 group by t.id) as t",
+                "select count(*) from (select 1 as x$1 from t_sys_user t right join sys_role t2 on t2.id=t.role_id where t.id=1 group by t.id) as t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)

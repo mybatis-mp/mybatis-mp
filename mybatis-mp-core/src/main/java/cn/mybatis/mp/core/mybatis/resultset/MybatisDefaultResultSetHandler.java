@@ -96,7 +96,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             if (Objects.isNull(fetchInfo.getEqGetFieldInvoker()) || fetchInfo.getFetch().limit() > 0) {
                 this.singleConditionFetch(rowValue, resultSet, fetchInfo);
             } else {
-                MapUtil.computeIfAbsent(needFetchValuesMap, fetchInfo, key -> new ArrayList<>()).add(new FetchObject(value, rowValue));
+                MapUtil.computeIfAbsent(needFetchValuesMap, fetchInfo, key -> new ArrayList<>()).add(new FetchObject(value, value, rowValue));
             }
         }
     }
@@ -106,7 +106,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             return;
         }
         needFetchValuesMap.forEach(((fetchInfo, fetchObjects) -> {
-            List<Object> list = this.fetchData(fetchInfo, fetchObjects.stream().map(item -> item.getKey().toString()).distinct().collect(Collectors.toList()));
+            List<Object> list = this.fetchData(fetchInfo, fetchObjects.stream().map(item -> item.getSourceKey()).distinct().collect(Collectors.toList()));
             this.fillFetchData(fetchInfo, fetchObjects, list);
         }));
     }

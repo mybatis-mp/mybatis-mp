@@ -389,9 +389,13 @@ public class QueryTest extends BaseTest {
                     .connect(queryChain -> {
                         queryChain.in(SysUser::getId, new SubQuery()
                                 .select(SysUser::getId)
+                                .select(SysUser::getUserName)
+                                .selectIgnore(SysUser::getUserName)
                                 .from(SysUser.class)
                                 .connect(subQuery -> {
                                     subQuery.eq(SysUser::getId, queryChain.$().field(SysUser::getId));
+                                    subQuery.eq(SysUser::getId, queryChain.$(SysUser::getId));
+                                    subQuery.eq(SysUser::getId, queryChain.$(SysUser.class, "id"));
                                 })
                                 .isNotNull(SysUser::getPassword)
                                 .connect(subQuery -> {
