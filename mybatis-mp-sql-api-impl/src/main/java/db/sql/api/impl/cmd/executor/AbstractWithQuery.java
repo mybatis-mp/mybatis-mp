@@ -38,11 +38,11 @@ public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD
         Union
         > {
 
+    protected String alias;
+
     public AbstractWithQuery(CMD_FACTORY $) {
         super($);
     }
-
-    protected String alias;
 
     @Override
     public String getAlias() {
