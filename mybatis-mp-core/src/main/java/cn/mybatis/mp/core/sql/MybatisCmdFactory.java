@@ -4,6 +4,8 @@ import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
+import cn.mybatis.mp.core.sql.executor.MpTable;
+import cn.mybatis.mp.core.util.TableInfoUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.Table;
@@ -33,7 +35,7 @@ public class MybatisCmdFactory extends CmdFactory {
         return MapUtil.computeIfAbsent(this.tableCache, String.format("%s.%s", entity.getName(), storey), key -> {
             TableInfo tableInfo = Tables.get(entity);
             tableNums++;
-            Table table = new Table(tableInfo.getSchemaAndTableName());
+            Table table = new MpTable(tableInfo.getSchemaAndTableName());
             table.as(tableAs(storey, tableNums));
             return table;
         });
@@ -48,21 +50,7 @@ public class MybatisCmdFactory extends CmdFactory {
 
     @Override
     public <T> String columnName(Getter<T> column) {
-        LambdaUtil.LambdaFieldInfo fieldInfo = LambdaUtil.getFieldInfo(column);
-        Class entity = fieldInfo.getType();
-        TableInfo tableInfo;
-        try {
-            tableInfo = Tables.get(entity);
-        } catch (NotTableClassException e) {
-            throw new RuntimeException(String.format("class %s is not entity", entity.getName()));
-        }
-
-        String filedName = fieldInfo.getName();
-        TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(filedName);
-        if (Objects.isNull(tableFieldInfo)) {
-            throw new RuntimeException(String.format("property %s is not a column", filedName));
-        }
-        return tableFieldInfo.getColumnName();
+        return TableInfoUtil.getColumnName(column);
     }
 
     @Override

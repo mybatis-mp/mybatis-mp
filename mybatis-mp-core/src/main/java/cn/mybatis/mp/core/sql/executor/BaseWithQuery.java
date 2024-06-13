@@ -6,6 +6,7 @@ import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.ForeignKeyUtil;
 import db.sql.api.Cmd;
 import db.sql.api.impl.cmd.basic.DatasetField;
+import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.AbstractWithQuery;
 import db.sql.api.impl.cmd.struct.On;
 
@@ -40,6 +41,11 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
 
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public Table asTable(String alias) {
+        return new MpTable(this.getAlias(), alias);
     }
 
     @Override

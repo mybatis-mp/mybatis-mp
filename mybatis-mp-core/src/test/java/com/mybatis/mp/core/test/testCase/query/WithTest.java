@@ -75,8 +75,8 @@ public class WithTest extends BaseTest {
                     .select(SysUser.class)
                     .from(SysUser.class)
                     .from(aaa, bbb)
-                    .eq(SysUser::getRole_id, aaa.$("id"))
-                    .eq(SysUser::getRole_id, bbb.$("id"))
+                    .eq(SysUser::getRole_id, aaa.$(SysUser::getId))
+                    .eq(SysUser::getRole_id, bbb.$(SysUser::getId))
                     .orderBy(aaa, SysRole::getId)
                     .orderBy(bbb, SysRole::getId);
 
@@ -178,8 +178,8 @@ public class WithTest extends BaseTest {
                     .with(withQuery)
                     .selectAll()
                     .from(withQuery)
-                    .returnMap().
-                    list();
+                    .returnMap()
+                    .list();
 
             System.out.println(mapList);
         }
@@ -212,8 +212,8 @@ public class WithTest extends BaseTest {
                     .with(withQuery)
                     .selectAll()
                     .from(withQuery)
-                    .returnMap().
-                    list();
+                    .returnMap()
+                    .list();
 
             System.out.println(mapList);
         }

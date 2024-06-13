@@ -1,6 +1,7 @@
 package cn.mybatis.mp.core.util;
 
 import cn.mybatis.mp.core.MybatisMpConfig;
+import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.db.reflect.Default;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
@@ -9,6 +10,8 @@ import cn.mybatis.mp.db.annotations.Table;
 import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;
 import db.sql.api.DbType;
+import db.sql.api.Getter;
+import db.sql.api.impl.tookit.LambdaUtil;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -151,5 +154,23 @@ public final class TableInfoUtil {
             }
         }
         return columnName;
+    }
+
+    public static <E> String getColumnName(Getter<E> column) {
+        LambdaUtil.LambdaFieldInfo fieldInfo = LambdaUtil.getFieldInfo(column);
+        Class entity = fieldInfo.getType();
+        TableInfo tableInfo;
+        try {
+            tableInfo = Tables.get(entity);
+        } catch (NotTableClassException e) {
+            throw new RuntimeException(String.format("class %s is not entity", entity.getName()));
+        }
+
+        String filedName = fieldInfo.getName();
+        TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(filedName);
+        if (Objects.isNull(tableFieldInfo)) {
+            throw new RuntimeException(String.format("property %s is not a column", filedName));
+        }
+        return tableFieldInfo.getColumnName();
     }
 }

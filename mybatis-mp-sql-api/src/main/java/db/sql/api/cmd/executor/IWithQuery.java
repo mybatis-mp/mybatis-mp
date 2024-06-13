@@ -87,7 +87,7 @@ public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, DA
      * @param alisa
      * @return
      */
-    IDataset asTable(String alisa);
+    TABLE asTable(String alisa);
 
     /**
      * 递归
