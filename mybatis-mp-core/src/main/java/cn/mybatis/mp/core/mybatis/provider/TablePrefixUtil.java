@@ -2,9 +2,7 @@ package cn.mybatis.mp.core.mybatis.provider;
 
 
 import cn.mybatis.mp.core.db.reflect.ResultInfos;
-import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.db.annotations.ResultEntity;
-import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.AbstractQuery;
 
