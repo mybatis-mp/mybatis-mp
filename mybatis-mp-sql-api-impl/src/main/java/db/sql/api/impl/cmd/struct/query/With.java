@@ -19,9 +19,9 @@ public class With implements IWith<With> {
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         Cmd recursive = this.withQuery.getRecursive();
-        if (Objects.nonNull(recursive)) {
-            sqlBuilder.append(SqlConst.RECURSIVE);
-        }
+//        if (Objects.nonNull(recursive)) {
+//            sqlBuilder.append(SqlConst.RECURSIVE);
+//        }
         sqlBuilder.append(this.withQuery.getAlias());
         if (Objects.nonNull(recursive)) {
             sqlBuilder = recursive.sql(module, this, context, sqlBuilder);

@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class TestDataSource {
 
-    public static final DbType DB_TYPE = DbType.MYSQL;
+    public static final DbType DB_TYPE = DbType.ORACLE;
 
     public static final String TIME_ZONE = "Asia/Shanghai";
 

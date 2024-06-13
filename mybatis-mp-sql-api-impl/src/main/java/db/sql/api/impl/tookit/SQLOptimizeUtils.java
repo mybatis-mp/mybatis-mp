@@ -113,7 +113,7 @@ public final class SQLOptimizeUtils {
         return removeOne;
     }
 
-    private static void optimizedCmdList(Map<Class, Cmd> classCmdMap, boolean forCount, boolean optimizeOrderBy, boolean optimizeJoins, boolean isUnionQuery) {
+    private static void optimizedCmdList(DbType dbType, Map<Class, Cmd> classCmdMap, boolean forCount, boolean optimizeOrderBy, boolean optimizeJoins, boolean isUnionQuery) {
 
         if (forCount) {
             if (!isUnionQuery) {
@@ -165,7 +165,7 @@ public final class SQLOptimizeUtils {
                     Cmd unionCmd = unionCmdList.get(j);
                     unionCmdClassMap.put(unionCmd.getClass(), unionCmd);
                 }
-                optimizedCmdList(unionCmdClassMap, false, optimizeOrderBy, optimizeJoins, true);
+                optimizedCmdList(dbType, unionCmdClassMap, false, optimizeOrderBy, optimizeJoins, true);
                 unionCmdList = (List<Cmd>) unionCmdClassMap.values().stream().sorted(union.getUnionQuery().comparator()).collect(Collectors.toList());
                 CmdList cmdList = new CmdList(union.getOperator(), unionCmdList);
                 cmdListList.add(cmdList);
@@ -176,7 +176,17 @@ public final class SQLOptimizeUtils {
 
         Select select = (Select) classCmdMap.get(Select.class);
         if (forCount && !isUnionQuery && !select.isDistinct()) {
-            Select newSelect = new Select().select(SQL1.INSTANCE);
+            Select newSelect;
+            if (dbType == DbType.ORACLE) {
+                if (classCmdMap.containsKey(GroupBy.class)) {
+                    //ORACLE 有group时 无法支持 select 1
+                    newSelect = select;
+                } else {
+                    newSelect = new Select().select(SQL1.INSTANCE);
+                }
+            } else {
+                newSelect = new Select().select(SQL1.INSTANCE);
+            }
             classCmdMap.put(Select.class, newSelect);
         }
     }
@@ -200,7 +210,7 @@ public final class SQLOptimizeUtils {
             Cmd cmd = cmdList.get(i);
             classCmdMap.put(cmd.getClass(), cmd);
         }
-        optimizedCmdList(classCmdMap, false, false, true, classCmdMap.containsKey(Unions.class));
+        optimizedCmdList(context.getDbType(), classCmdMap, false, false, true, classCmdMap.containsKey(Unions.class));
         cmdList = (List<Cmd>) classCmdMap.values().stream().sorted(query.comparator()).collect(Collectors.toList());
         return CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList);
     }
@@ -220,7 +230,7 @@ public final class SQLOptimizeUtils {
                 return SQLOptimizeUtils.getOptimizedCountSql(query, context, true, false);
             }
             //不优化直接包裹一层
-            return new StringBuilder("SELECT COUNT(*) FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(query.cmds())), query.sortedCmds())).append(") AS T");
+            return new StringBuilder("SELECT COUNT(*) FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(query.cmds())), query.sortedCmds())).append(") T");
         }
         return getOptimizedCountSql(query, context);
     }
@@ -241,7 +251,7 @@ public final class SQLOptimizeUtils {
             classCmdMap.put(cmd.getClass(), cmd);
         }
 
-        optimizedCmdList(classCmdMap, true, optimizeOrderBy, optimizeJoins, classCmdMap.containsKey(Unions.class));
+        optimizedCmdList(context.getDbType(), classCmdMap, true, optimizeOrderBy, optimizeJoins, classCmdMap.containsKey(Unions.class));
 
         boolean needWarp = false;
         if (classCmdMap.containsKey(Unions.class) || classCmdMap.containsKey(UnionsCmdLists.class)) {
@@ -264,7 +274,7 @@ public final class SQLOptimizeUtils {
         }
         cmdList = (List<Cmd>) classCmdMap.values().stream().sorted(query.comparator()).collect(Collectors.toList());
         if (needWarp) {
-            return new StringBuilder("SELECT COUNT(*) FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList)).append(") AS T");
+            return new StringBuilder("SELECT COUNT(*) FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList)).append(") T");
         }
         return CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList);
     }

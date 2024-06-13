@@ -473,7 +473,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void unionOrderBy() {
         check("unionOrderBy",
-                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) as t",
+                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -493,7 +493,7 @@ public class CountFromQueryTest extends BaseTest {
     @Test
     public void unionOrderByLimit() {
         check("unionOrderBy",
-                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc limit 3 offset 0 union select t.id,t.user_name from t_sys_user t where t.id=2) as t",
+                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc limit 3 offset 0 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -515,7 +515,7 @@ public class CountFromQueryTest extends BaseTest {
     public void optimizeCountSqlTest() {
 
         check("多个union count limit",
-                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc limit 1 offset 0 union select t.id,t.user_name from t_sys_user t where t.id=2 union select t.id,t.user_name from t_sys_user t where t.id=2 order by t.id asc limit 2 offset 0) as t",
+                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc limit 1 offset 0 union select t.id,t.user_name from t_sys_user t where t.id=2 union select t.id,t.user_name from t_sys_user t where t.id=2 order by t.id asc limit 2 offset 0) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -537,8 +537,9 @@ public class CountFromQueryTest extends BaseTest {
                 )
         );
 
+
         check("union count 不优化",
-                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) as t",
+                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -652,7 +653,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("group by select 多字段 优化",
-                "select count(*) from (select 1 as x$1 from t_sys_user t where t.id=1 group by t.id) as t",
+                "select count(*) from (select 1 as x$1 from t_sys_user t where t.id=1 group by t.id) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -663,7 +664,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("group by count 优化join",
-                "select count(*) from (select 1 as x$1 from t_sys_user t where t.id=1 group by t.id) as t",
+                "select count(*) from (select 1 as x$1 from t_sys_user t where t.id=1 group by t.id) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -675,7 +676,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("group by count 不优化join",
-                "select count(*) from (select 1 as x$1 from t_sys_user t right join sys_role t2 on t2.id=t.role_id where t.id=1 group by t.id) as t",
+                "select count(*) from (select 1 as x$1 from t_sys_user t right join sys_role t2 on t2.id=t.role_id where t.id=1 group by t.id) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -687,7 +688,7 @@ public class CountFromQueryTest extends BaseTest {
         );
 
         check("group by distinct count 不优化join",
-                "select count(*) from (select distinct t.id,t.user_name from t_sys_user t right join sys_role t2 on t2.id=t.role_id where t.id=1 group by t.id) as t",
+                "select count(*) from (select distinct t.id,t.user_name from t_sys_user t right join sys_role t2 on t2.id=t.role_id where t.id=1 group by t.id) t",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)
@@ -701,7 +702,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("多个union count 不优化",
-                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2 union select t.id,t.user_name from t_sys_user t where t.id=2) as t",
+                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
@@ -722,7 +723,7 @@ public class CountFromQueryTest extends BaseTest {
 
 
         check("union distinct count 不优化",
-                "select count(*) from (select distinct t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) as t",
+                "select count(*) from (select distinct t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
                 getCountSql(Query.create()
                         .selectDistinct()
                         .select(SysUser::getId, SysUser::getUserName)

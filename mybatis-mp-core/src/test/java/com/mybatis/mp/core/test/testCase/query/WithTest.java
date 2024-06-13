@@ -8,7 +8,6 @@ import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
-import com.mybatis.mp.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.Table;
@@ -165,7 +164,12 @@ public class WithTest extends BaseTest {
 
             WithQuery withQuery = WithQuery.create("sub")
                     .recursive("n", "n2")
-                    .select("1,1");
+                    .select("1,1")
+                    .onDB(DbType.ORACLE, self -> {
+                        self.from(new Table("dual"));
+                    }).elseDB(self -> {
+                        //
+                    });
 
             withQuery.unionAll(Query.create()
                     .select("n+1,n2+1")
@@ -189,10 +193,6 @@ public class WithTest extends BaseTest {
     @Test
     public void withRecursiveQuery2() {
 
-        if (TestDataSource.DB_TYPE == DbType.H2) {
-            return;
-        }
-
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
@@ -205,7 +205,6 @@ public class WithTest extends BaseTest {
             withQuery.unionAll(Query.create()
                     .select(SysUser::getId, SysUser::getRole_id)
                     .from(SysUser.class)
-                    .join(SysUser.class, withQuery, on -> on.eq(SysUser::getRole_id, withQuery.$(withQuery, SysUser::getRole_id)))
             );
 
             List<Map<String, Object>> mapList = QueryChain.of(sysUserMapper)

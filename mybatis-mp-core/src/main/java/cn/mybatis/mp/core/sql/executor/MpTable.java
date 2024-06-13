@@ -1,5 +1,6 @@
 package cn.mybatis.mp.core.sql.executor;
 
+import cn.mybatis.mp.core.util.TableInfoUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.basic.TableField;
 
@@ -15,6 +16,6 @@ public class MpTable extends db.sql.api.impl.cmd.basic.Table {
 
     @Override
     public <E> TableField $(Getter<E> column) {
-        return super.$(column);
+        return super.$(TableInfoUtil.getColumnName(column));
     }
 }
