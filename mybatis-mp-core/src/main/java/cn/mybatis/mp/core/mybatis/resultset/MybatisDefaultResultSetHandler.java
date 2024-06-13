@@ -84,19 +84,19 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
         for (int i = 0; i < fetchInfos.size(); i++) {
             FetchInfo fetchInfo = fetchInfos.get(i);
-            Serializable value;
+            Object onValue;
             try {
-                value = (Serializable) resultSet.getObject(fetchInfo.getValueColumn());
+                onValue = resultSet.getObject(fetchInfo.getValueColumn());
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            if (Objects.isNull(value)) {
+            if (Objects.isNull(onValue)) {
                 continue;
             }
             if (Objects.isNull(fetchInfo.getEqGetFieldInvoker()) || fetchInfo.getFetch().limit() > 0) {
-                this.singleConditionFetch(rowValue, resultSet, fetchInfo);
+                this.singleConditionFetch(rowValue, fetchInfo, onValue);
             } else {
-                MapUtil.computeIfAbsent(needFetchValuesMap, fetchInfo, key -> new ArrayList<>()).add(new FetchObject(value, value, rowValue));
+                MapUtil.computeIfAbsent(needFetchValuesMap, fetchInfo, key -> new ArrayList<>()).add(new FetchObject(onValue, onValue.toString(), rowValue));
             }
         }
     }
@@ -158,7 +158,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         });
 
         values.stream().forEach(item -> {
-            List<Object> matchValues = map.get(item.getKey().toString());
+            List<Object> matchValues = map.get(item.getMatchKey());
             this.setValue(item.getValue(), matchValues, fetchInfo);
         });
     }
@@ -197,14 +197,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         return resultList;
     }
 
-    public void singleConditionFetch(Object rowValue, ResultSet resultSet, FetchInfo fetchInfo) {
-        Object onValue;
-        try {
-            onValue = resultSet.getObject(fetchInfo.getValueColumn());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
+    public void singleConditionFetch(Object rowValue, FetchInfo fetchInfo, Object onValue) {
         if (Objects.isNull(basicMapper)) {
             basicMapper = this.configuration.getMapper(BasicMapper.class, SqlSessionThreadLocalUtil.get());
         }
