@@ -1,16 +1,21 @@
 package com.mybatis.mp.core.test.testCase.query;
 
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
+import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.sql.executor.WithQuery;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.tookit.SQLPrinter;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -150,4 +155,31 @@ public class WithTest extends BaseTest {
         }
     }
 
+
+    @Test
+    public void withRecursiveQuery() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
+            WithQuery withQuery = WithQuery.create("sub")
+                    .recursive("n", "n2")
+                    .select("1,1");
+
+            withQuery.unionAll(Query.create()
+                    .select("n+1,n2+1")
+                    .from(withQuery)
+                    .lt(Methods.column("n"), 2)
+                    .lt(Methods.column("n2"), 3)
+            );
+
+            List<Map<String, Object>> mapList = QueryChain.of(sysUserMapper)
+                    .with(withQuery)
+                    .selectAll()
+                    .from(withQuery)
+                    .returnMap().
+                    list();
+
+            System.out.println(mapList);
+        }
+    }
 }

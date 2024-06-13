@@ -24,6 +24,7 @@ public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD
         CMD_FACTORY,
         ConditionChain,
         With,
+        WithRecursive,
         Select,
         From,
         Join,
@@ -40,6 +41,8 @@ public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD
 
     protected String alias;
 
+    private WithRecursive recursive;
+
     public AbstractWithQuery(CMD_FACTORY $) {
         super($);
     }
@@ -53,6 +56,18 @@ public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD
     public Table asTable(String alias) {
         return new Table(this.getAlias(), alias);
     }
+
+    @Override
+    public WithRecursive getRecursive() {
+        return recursive;
+    }
+
+    @Override
+    public SELF recursive(String... params) {
+        this.recursive = new WithRecursive(params);
+        return (SELF) this;
+    }
+
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {

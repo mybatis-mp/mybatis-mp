@@ -4,6 +4,7 @@ import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.executor.IWithQuery;
 import db.sql.api.cmd.struct.query.IWith;
+import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
@@ -17,7 +18,16 @@ public class With implements IWith<With> {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(this.withQuery.getAlias()).append(SqlConst.AS).append(SqlConst.BRACKET_LEFT);
+        Cmd recursive = this.withQuery.getRecursive();
+        if (Objects.nonNull(recursive)) {
+            sqlBuilder.append(SqlConst.RECURSIVE);
+        }
+        sqlBuilder.append(this.withQuery.getAlias());
+        if (Objects.nonNull(recursive)) {
+            sqlBuilder = recursive.sql(module, this, context, sqlBuilder);
+        }
+
+        sqlBuilder.append(SqlConst.AS).append(SqlConst.BRACKET_LEFT);
         this.withQuery.sql(module, this, context, sqlBuilder).append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
     }

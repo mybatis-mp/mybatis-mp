@@ -70,7 +70,7 @@ public class ConcatAs extends BasicFunction<ConcatAs> {
             builder = cmds[i].sql(module, parent, context, builder);
 
             if (value.getClass() == BasicValue.class && context.getDbType() == DbType.PGSQL) {
-                    builder.append(SqlConst.CAST_TEXT);
+                builder.append(SqlConst.CAST_TEXT);
 
             }
         }

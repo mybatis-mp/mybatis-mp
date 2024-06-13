@@ -4,6 +4,7 @@ import db.sql.api.Cmd;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.basic.BasicValue;
+import db.sql.api.impl.cmd.basic.Column;
 import db.sql.api.impl.cmd.basic.Condition;
 import db.sql.api.impl.cmd.basic.DatePattern;
 import db.sql.api.impl.cmd.condition.*;
@@ -19,6 +20,11 @@ import java.util.concurrent.TimeUnit;
  * 数据库方法集合
  */
 public class Methods {
+
+    public static Column column(String column) {
+        Objects.requireNonNull(column);
+        return new Column(column);
+    }
 
     /**
      * value

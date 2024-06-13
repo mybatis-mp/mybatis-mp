@@ -34,7 +34,7 @@ import db.sql.api.cmd.struct.query.*;
  * @param <FORUPDATE>
  * @param <UNION>
  */
-public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, DATASET_FIELD, COLUMN, V, CMD_FACTORY, CONDITION_CHAIN, WITH, SELECT, FROM, JOIN, ON, JOINS, WHERE, GROUPBY, HAVING, ORDERBY, LIMIT, FORUPDATE, UNION>,
+public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, DATASET_FIELD, COLUMN, V, CMD_FACTORY, CONDITION_CHAIN, WITH, RECURSIVE, SELECT, FROM, JOIN, ON, JOINS, WHERE, GROUPBY, HAVING, ORDERBY, LIMIT, FORUPDATE, UNION>,
         TABLE extends ITable<TABLE, TABLE_FIELD>,
         TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>,
         DATASET_FIELD extends IDatasetField<DATASET_FIELD>,
@@ -43,7 +43,9 @@ public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, DA
         CMD_FACTORY extends ICmdFactory<TABLE, TABLE_FIELD>,
         CONDITION_CHAIN extends IConditionChain<CONDITION_CHAIN, TABLE_FIELD, COLUMN, V>,
 
+
         WITH extends IWith<WITH>,
+        RECURSIVE extends Cmd,
         SELECT extends ISelect<SELECT>,
         FROM extends IFrom,
         JOIN extends IJoin<JOIN, ON, TABLE, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
@@ -79,5 +81,21 @@ public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, DA
         UNION
         >, IDataset<SELF, DATASET_FIELD> {
 
+    /**
+     * 让WithQuery 成为一个表（同一个withQuery复用时使用）
+     *
+     * @param alisa
+     * @return
+     */
     IDataset asTable(String alisa);
+
+    /**
+     * 递归
+     *
+     * @param params 递归参数
+     * @return 自己
+     */
+    SELF recursive(String... params);
+
+    RECURSIVE getRecursive();
 }

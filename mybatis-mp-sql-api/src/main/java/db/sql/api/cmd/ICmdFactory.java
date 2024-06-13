@@ -42,14 +42,6 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
      */
     <T> String columnName(Getter<T> column);
 
-    /**
-     * 获取列对象
-     *
-     * @param columnName
-     * @return
-     */
-    IDatasetField column(String columnName);
-
     default <T> TABLE_FIELD field(Getter<T> column) {
         return this.field(column, 1);
     }

@@ -152,6 +152,8 @@ public final class SqlConst {
 
     public static final char[] SELF_FROM_DUAL = "SELECT * FROM DUAL".toCharArray();
 
+    public static final char[] RECURSIVE = " RECURSIVE ".toCharArray();
+
     public static String FORCE_INDEX(DbType dbType, String indexName) {
         switch (dbType) {
             case SQL_SERVER: {

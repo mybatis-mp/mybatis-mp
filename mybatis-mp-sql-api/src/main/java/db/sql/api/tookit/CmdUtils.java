@@ -53,6 +53,20 @@ public class CmdUtils {
         return builder;
     }
 
+    public static StringBuilder join(StringBuilder builder, String[] strs, char[] delimiter) {
+        if (strs == null || strs.length < 1) {
+            return builder;
+        }
+        int length = strs.length;
+        for (int i = 0; i < length; i++) {
+            if (i != 0 && delimiter != null) {
+                builder.append(delimiter);
+            }
+            builder.append(strs[i]);
+        }
+        return builder;
+    }
+
     public static boolean contain(Cmd cmd, Object... params) {
         if (Objects.isNull(params)) {
             return false;
