@@ -74,8 +74,10 @@ public interface IQuery<SELF extends IQuery
     FORUPDATE $forUpdate();
 
     @Override
-    default SELF with(IWithQuery withQuery) {
-        $with(withQuery);
+    default SELF with(IWithQuery... withQuerys) {
+        for (IWithQuery withQuery : withQuerys) {
+            $with(withQuery);
+        }
         return (SELF) this;
     }
 

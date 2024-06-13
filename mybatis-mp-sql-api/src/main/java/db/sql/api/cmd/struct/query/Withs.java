@@ -24,6 +24,7 @@ public class Withs implements Cmd {
         if (withs == null || withs.isEmpty()) {
             return sqlBuilder;
         }
+        sqlBuilder.append(" WITH ");
         CmdUtils.join(module, this, context, sqlBuilder, this.withs, ",".toCharArray());
         return sqlBuilder;
     }

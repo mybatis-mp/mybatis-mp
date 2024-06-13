@@ -111,4 +111,43 @@ public class WithTest extends BaseTest {
         }
     }
 
+    @Test
+    public void withQueryMuti() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
+            WithQuery withQuery1 = WithQuery.create("sub")
+                    .select(SysRole.class)
+                    .from(SysRole.class)
+                    .orderBy(SysRole::getId)
+                    .limit(111)
+                    .eq(SysRole::getId, 1);
+
+            WithQuery withQuery2 = WithQuery.create("sub2")
+                    .select(SysRole.class)
+                    .from(SysRole.class)
+                    .orderBy(SysRole::getId)
+                    .limit(111)
+                    .eq(SysRole::getId, 1);
+
+
+            QueryChain<SysUser> queryChain = QueryChain.of(sysUserMapper);
+            queryChain
+                    .with(withQuery1, withQuery2)
+                    .select(withQuery1, SysRole::getId, c -> c.as("xx"))
+                    .selectWithFun(withQuery2, "id", c -> c.plus(1).as("xx2"))
+                    .select(SysUser.class)
+                    .from(SysUser.class)
+                    .from(withQuery1, withQuery2)
+                    .eq(SysUser::getRole_id, withQuery1.$("id"))
+                    .eq(SysUser::getRole_id, withQuery2.$("id"))
+                    .orderBy(withQuery1, SysRole::getId)
+                    .orderBy(withQuery2, SysRole::getId);
+
+            Pager<SysUser> page = queryChain.paging(Pager.of(100));
+            System.out.println(SQLPrinter.sql(queryChain));
+            assertEquals(2, page.getResults().size(), "withQuery");
+        }
+    }
+
 }
