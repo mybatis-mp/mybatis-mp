@@ -167,7 +167,11 @@ public class WithTest extends BaseTest {
                     .select("1,1")
                     .onDB(DbType.ORACLE, self -> {
                         self.from(new Table("dual"));
-                    }).elseDB(self -> {
+                    })
+                    .onDB(DbType.DB2, self -> {
+                        self.from(new Table("SYSIBM.SYSDUMMY1"));
+                    })
+                    .elseDB(self -> {
                         //
                     });
 

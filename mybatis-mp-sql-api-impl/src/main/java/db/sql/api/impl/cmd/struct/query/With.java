@@ -1,6 +1,7 @@
 package db.sql.api.impl.cmd.struct.query;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.executor.IWithQuery;
 import db.sql.api.cmd.struct.query.IWith;
@@ -19,9 +20,12 @@ public class With implements IWith<With> {
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         Cmd recursive = this.withQuery.getRecursive();
-//        if (Objects.nonNull(recursive)) {
-//            sqlBuilder.append(SqlConst.RECURSIVE);
-//        }
+
+        if (Objects.nonNull(recursive) && (context.getDbType() == DbType.H2 || context.getDbType() ==
+                DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.PGSQL)) {
+            sqlBuilder.append(SqlConst.RECURSIVE);
+        }
+
         sqlBuilder.append(this.withQuery.getAlias());
         if (Objects.nonNull(recursive)) {
             sqlBuilder = recursive.sql(module, this, context, sqlBuilder);
