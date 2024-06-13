@@ -8,6 +8,8 @@ import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
+import com.mybatis.mp.core.test.testCase.TestDataSource;
+import db.sql.api.DbType;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.tookit.SQLPrinter;
@@ -170,6 +172,40 @@ public class WithTest extends BaseTest {
                     .from(withQuery)
                     .lt(Methods.column("n"), 2)
                     .lt(Methods.column("n2"), 3)
+            );
+
+            List<Map<String, Object>> mapList = QueryChain.of(sysUserMapper)
+                    .with(withQuery)
+                    .selectAll()
+                    .from(withQuery)
+                    .returnMap().
+                    list();
+
+            System.out.println(mapList);
+        }
+    }
+
+
+    @Test
+    public void withRecursiveQuery2() {
+
+        if (TestDataSource.DB_TYPE == DbType.H2) {
+            return;
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
+            WithQuery withQuery = WithQuery.create("dept_with")
+                    .recursive()
+                    .select(SysUser::getId, SysUser::getRole_id)
+                    .from(SysUser.class)
+                    .eq(SysUser::getRole_id, 100);
+
+            withQuery.unionAll(Query.create()
+                    .select(SysUser::getId, SysUser::getRole_id)
+                    .from(SysUser.class)
+                    .join(SysUser.class, withQuery, on -> on.eq(SysUser::getRole_id, withQuery.$(withQuery, SysUser::getRole_id)))
             );
 
             List<Map<String, Object>> mapList = QueryChain.of(sysUserMapper)
