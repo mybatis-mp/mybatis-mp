@@ -12,10 +12,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public interface IExecutor<T extends IExecutor
-        , TABLE extends ITable<TABLE, TABLE_FIELD>
-        , TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>
-
+public interface IExecutor<T extends IExecutor,
+        TABLE extends ITable<TABLE, TABLE_FIELD>,
+        TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>
         >
 
         extends DBRunnable<T, T>, Cmd {

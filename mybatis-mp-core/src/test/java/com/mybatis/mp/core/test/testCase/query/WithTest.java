@@ -165,12 +165,12 @@ public class WithTest extends BaseTest {
             WithQuery withQuery = WithQuery.create("sub")
                     .recursive("n", "n2")
                     .select("1,1")
-                    .onDB(DbType.ORACLE, self -> {
+                    .onDB(self -> {
                         self.from(new Table("dual"));
-                    })
-                    .onDB(DbType.DB2, self -> {
+                    }, DbType.ORACLE)
+                    .onDB(self -> {
                         self.from(new Table("SYSIBM.SYSDUMMY1"));
-                    })
+                    }, DbType.DB2)
                     .elseDB(self -> {
                         //
                     });

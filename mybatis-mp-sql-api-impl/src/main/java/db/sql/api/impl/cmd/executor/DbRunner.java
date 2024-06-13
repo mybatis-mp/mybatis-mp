@@ -16,8 +16,10 @@ public class DbRunner<T> implements DBRunnable<DbRunner<T>, T> {
 
 
     @Override
-    public DbRunner<T> onDB(DbType dbType, Consumer<T> consumer) {
-        consumerMap.put(dbType, consumer);
+    public DbRunner<T> onDB(Consumer<T> consumer, DbType... dbTypes) {
+        for (DbType dbType : dbTypes) {
+            consumerMap.put(dbType, consumer);
+        }
         return this;
     }
 

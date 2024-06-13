@@ -31,8 +31,8 @@ public abstract class BaseExecutor<SELF extends BaseExecutor<SELF, CMD_FACTORY>,
     }
 
     @Override
-    public SELF onDB(DbType dbType, Consumer<SELF> consumer) {
-        this.dbRunner().onDB(dbType, consumer);
+    public SELF onDB(Consumer<SELF> consumer, DbType... dbTypes) {
+        this.dbRunner().onDB(consumer, dbTypes);
         return (SELF) this;
     }
 

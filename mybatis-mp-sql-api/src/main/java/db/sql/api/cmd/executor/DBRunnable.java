@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 public interface DBRunnable<T, E> {
 
-    T onDB(DbType dbType, Consumer<E> consumer);
+    T onDB(Consumer<E> consumer, DbType... dbTypes);
 
     T elseDB(Consumer<E> consumer);
 

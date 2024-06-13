@@ -35,13 +35,13 @@ public class QueryTest extends BaseTest {
 
 
             sysUserMapper.runDBRunner(runner -> {
-                runner.onDB(DbType.H2, basicMapper -> {
+                runner.onDB(basicMapper -> {
                     sysUserMapper.getById(1);
-                });
+                }, DbType.H2);
 
-                runner.onDB(DbType.MYSQL, basicMapper -> {
+                runner.onDB(basicMapper -> {
                     sysUserMapper.getById(2);
-                });
+                }, DbType.MYSQL);
 
                 runner.elseDB(basicMapper -> {
                     sysUserMapper.getById(3);
@@ -50,12 +50,12 @@ public class QueryTest extends BaseTest {
 
             SysUser sysUser = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId)
-                    .onDB(DbType.H2, queryChain -> {
+                    .onDB(queryChain -> {
                         queryChain.eq(SysUser::getId, 3);
-                    })
-                    .onDB(DbType.MYSQL, queryChain -> {
+                    }, DbType.H2)
+                    .onDB(queryChain -> {
                         queryChain.eq(SysUser::getId, 2);
-                    })
+                    }, DbType.MYSQL)
                     .elseDB(queryChain -> {
                         queryChain.eq(SysUser::getId, 1);
                     })
