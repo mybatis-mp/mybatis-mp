@@ -184,7 +184,7 @@ public class WithTest extends BaseTest {
 
             List<Map<String, Object>> mapList = QueryChain.of(sysUserMapper)
                     .with(withQuery)
-                    .selectAll()
+                    .selectAll(withQuery)
                     .from(withQuery)
                     .returnMap()
                     .list();
