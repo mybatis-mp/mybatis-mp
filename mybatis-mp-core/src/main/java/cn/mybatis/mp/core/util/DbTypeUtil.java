@@ -44,6 +44,8 @@ public final class DbTypeUtil {
             return DbType.DB2;
         } else if (jdbcUrl.contains(":kingbase8:")) {
             return DbType.KING_BASE;
+        } else if (jdbcUrl.contains(":clickhouse:")) {
+            return DbType.CLICK_HOUSE;
         } else {
             throw new RuntimeException("Unrecognized database type:" + jdbcUrl);
         }

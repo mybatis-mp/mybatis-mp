@@ -2,6 +2,7 @@ package db.sql.api.impl.cmd.struct.update;
 
 
 import db.sql.api.Cmd;
+import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.struct.update.IUpdateSets;
 import db.sql.api.impl.cmd.basic.TableField;
@@ -31,7 +32,11 @@ public class UpdateSets implements IUpdateSets<TableField, Cmd, UpdateSet> {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(SqlConst.SET);
+        if (context.getDbType() == DbType.CLICK_HOUSE) {
+            sqlBuilder.append(SqlConst.BLANK).append(SqlConst.UPDATE);
+        } else {
+            sqlBuilder.append(SqlConst.SET);
+        }
         return CmdUtils.join(module, this, context, sqlBuilder, this.updateSets, SqlConst.DELIMITER);
     }
 

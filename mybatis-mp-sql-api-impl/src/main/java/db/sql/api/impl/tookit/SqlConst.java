@@ -33,6 +33,7 @@ public final class SqlConst {
     public static final char[] FROM = " FROM ".toCharArray();
     public static final char[] DELETE = "DELETE ".toCharArray();
     public static final char[] UPDATE = "UPDATE ".toCharArray();
+    public static final char[] ALTER_TABLE = "ALTER TABLE ".toCharArray();
     public static final char[] INSERT_INTO = "INSERT INTO ".toCharArray();
     public static final char[] INSERT_IGNORE_INTO = "INSERT IGNORE INTO ".toCharArray();
     public static final char[] INTO = " INTO ".toCharArray();

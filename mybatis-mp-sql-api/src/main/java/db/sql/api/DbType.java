@@ -22,7 +22,9 @@ public enum DbType {
 
     DB2(new KeywordWrap("\"", "\"", true), new HashSet<>()),
 
-    KING_BASE(new KeywordWrap("\"", "\"", true), new HashSet<>());
+    KING_BASE(new KeywordWrap("\"", "\"", true), new HashSet<>()),
+
+    CLICK_HOUSE(new KeywordWrap("\"", "\"", true), new HashSet<>());
 
     private final KeywordWrap keywordWrap;
     private final Set<String> keywords;

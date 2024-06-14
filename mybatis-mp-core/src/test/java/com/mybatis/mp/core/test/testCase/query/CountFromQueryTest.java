@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CountFromQueryTest extends BaseTest {
 
     private String getCountSql(Query query) {
-       return getCountSql(query,true);
+        return getCountSql(query, true);
     }
 
-    private String getCountSql(Query query,boolean optimize) {
+    private String getCountSql(Query query, boolean optimize) {
         //创建构建SQL的上下文 数据库:MYSQL SQL模式 打印
         SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(DbType.MYSQL, SQLMode.PRINT);
         String sql = SQLPrinter.sql(query);
@@ -39,7 +39,7 @@ public class CountFromQueryTest extends BaseTest {
                                 .eq(SysUser::getId, 1)
                                 .orderBy(SysUser::getId)
                                 .limit(1)
-                        ,false)
+                        , false)
         );
 
         check("order by 优化后的count SQL",
@@ -517,7 +517,7 @@ public class CountFromQueryTest extends BaseTest {
                                 .from(SysUser.class)
                                 .eq(SysUser::getId, 2)
                                 .orderBy(SysUser::getId)
-                        ),false
+                        ), false
                 )
         );
     }

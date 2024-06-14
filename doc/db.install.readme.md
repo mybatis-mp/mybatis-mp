@@ -69,6 +69,7 @@ docker run --name dm -e INSTANCE_NAME=SYSDBA -e DSYSDBA_PWD=SYSDBA001 -p 5236:52
 ```
 
 # 人大金仓
+
 ```
 docker load -i kdb_x86_64_V008R006C008B0014.tar
 ```

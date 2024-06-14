@@ -29,8 +29,12 @@ public class UpdateTable implements IUpdateTable<Table> {
         if (this.tables == null || this.tables.length < 1) {
             return sqlBuilder;
         }
+        if (context.getDbType() == DbType.CLICK_HOUSE) {
+            sqlBuilder.append(SqlConst.ALTER_TABLE);
+        } else {
+            sqlBuilder.append(SqlConst.UPDATE);
+        }
 
-        sqlBuilder.append(SqlConst.UPDATE);
         int length = this.tables.length;
         for (int i = 0; i < length; i++) {
             Table table = this.tables[i];
@@ -46,7 +50,9 @@ public class UpdateTable implements IUpdateTable<Table> {
                 }
             }
 
-            if (context.getDbType() == DbType.SQL_SERVER) {
+            if (context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.CLICK_HOUSE) {
+                //CLICK_HOUSE 不支持别名
+
                 //SQL_SERVER 别名支持的话 需要 带有from ；否则 只能是表面
                 AbstractUpdate abstractUpdate = (AbstractUpdate) module;
                 if (Objects.nonNull(abstractUpdate.getFrom())) {
