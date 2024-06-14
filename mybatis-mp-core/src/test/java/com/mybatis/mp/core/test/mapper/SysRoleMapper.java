@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 public interface SysRoleMapper extends MybatisMapper<SysRole> {
-    @Paging
+    @Paging(optimize = false)
     Pager<SysRole> xmlPaging(Pager<SysRole> pager, @Param("id") Integer id, @Param("id2") Integer id2);
 
     @Paging

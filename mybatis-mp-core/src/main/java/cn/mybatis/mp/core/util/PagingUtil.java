@@ -36,7 +36,9 @@ public final class PagingUtil {
             return;
         }
 
-        addPagingCountMappedStatement(ms);
+        Paging paging = mapperMethod.getAnnotation(Paging.class);
+
+        addPagingCountMappedStatement(ms, paging);
         addPagingListMappedStatement(ms, mapperMethod);
     }
 
@@ -72,13 +74,13 @@ public final class PagingUtil {
         }
     }
 
-    private static void addPagingCountMappedStatement(MappedStatement ms) {
+    private static void addPagingCountMappedStatement(MappedStatement ms, Paging paging) {
         String id = ms.getId() + "-count";
 
         ResultMap resultMap = new ResultMap.Builder(ms.getConfiguration(), id + "-inline", Integer.TYPE, Collections.emptyList()).build();
         List<ResultMap> resultMaps = Collections.singletonList(resultMap);
 
-        SqlSource sqlSource = new PagingCountSqlSource(ms.getConfiguration(), ms.getSqlSource());
+        SqlSource sqlSource = new PagingCountSqlSource(ms.getConfiguration(), ms.getSqlSource(), paging.optimize());
         MappedStatement.Builder msBuilder = new MappedStatement.Builder(ms.getConfiguration(), id, sqlSource, ms.getSqlCommandType())
                 .resource(ms.getResource())
                 .resultMaps(resultMaps)
@@ -117,26 +119,21 @@ public final class PagingUtil {
         return sqlBuilder.toString();
     }
 
-    public static String getCountSQL(DbType dbType, String sql) {
+    public static String getCountSQL(DbType dbType, String sql, boolean optimize) {
         if (dbType == DbType.SQL_SERVER) {
-            String upperCaseSql = sql.toUpperCase();
+            //sql server 必须移除order by
+            optimize = true;
+        }
+        if (optimize) {
+            String upperCaseSql = sql.toUpperCase().replaceAll("  ", " ");
             //移除最外层的order by
             int orderByIndex = upperCaseSql.lastIndexOf("ORDER BY");
             if (orderByIndex > 0) {
-                int bracketRightIndex = upperCaseSql.lastIndexOf(")", orderByIndex);
-                String orderByStr;
-                if (bracketRightIndex < 0) {
-                    orderByStr = upperCaseSql.substring(orderByIndex);
-                } else {
-                    orderByStr = upperCaseSql.substring(bracketRightIndex);
+                if (upperCaseSql.indexOf("OFFSET", orderByIndex + 1) > 0 || upperCaseSql.indexOf("LIMIT", orderByIndex + 1) > 0) {
+                    //后面有 分页 不处理
+                    return sql;
                 }
-                if (!orderByStr.contains("OFFSET")) {
-                    if (bracketRightIndex < 0) {
-                        sql = sql.substring(0, orderByIndex);
-                    } else {
-                        sql = sql.substring(0, orderByIndex) + " " + sql.substring(bracketRightIndex);
-                    }
-                }
+                sql = sql.substring(0, orderByIndex + (sql.length() - upperCaseSql.length()));
             }
         }
         return String.format("SELECT COUNT(*) FROM (%s) T", sql);

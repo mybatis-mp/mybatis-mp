@@ -14,4 +14,10 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 public @interface Paging {
 
+    /**
+     * 是否优化
+     *
+     * @return
+     */
+    boolean optimize() default true;
 }

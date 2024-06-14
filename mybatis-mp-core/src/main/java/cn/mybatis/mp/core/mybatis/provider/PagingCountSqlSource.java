@@ -15,16 +15,19 @@ public class PagingCountSqlSource implements SqlSource {
 
     private final SqlSource sqlSource;
 
-    public PagingCountSqlSource(Configuration configuration, SqlSource sqlSource) {
+    private final boolean optimize;
+
+    public PagingCountSqlSource(Configuration configuration, SqlSource sqlSource, boolean optimize) {
         this.configuration = configuration;
         this.sqlSource = sqlSource;
         this.dbType = DbTypeUtil.getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
+        this.optimize = optimize;
     }
 
     @Override
     public BoundSql getBoundSql(Object parameterObject) {
         BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
-        String sql = PagingUtil.getCountSQL(this.dbType, boundSql.getSql());
+        String sql = PagingUtil.getCountSQL(this.dbType, boundSql.getSql(), optimize);
         return new PagingBoundSql(this.configuration, sql, boundSql);
     }
 
