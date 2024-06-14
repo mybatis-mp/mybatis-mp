@@ -353,7 +353,7 @@ public class UpdateTest extends BaseTest {
                         //.from(SysUser.class)
                         .eq(SysUser::getId, 2);
 
-                if (TestDataSource.DB_TYPE == DbType.PGSQL) {
+                if (TestDataSource.DB_TYPE == DbType.PGSQL || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                     updateChain.from(SysRole.class)
                             .eq(SysUser::getId, SysRole::getId);
                 } else if (TestDataSource.DB_TYPE == DbType.SQL_SERVER) {

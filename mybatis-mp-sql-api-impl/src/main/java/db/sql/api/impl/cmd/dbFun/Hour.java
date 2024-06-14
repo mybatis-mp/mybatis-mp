@@ -13,7 +13,7 @@ public class Hour extends BasicFunction<Hour> {
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(SqlConst.HOUR(context.getDbType()));
-        if (context.getDbType() != DbType.PGSQL && context.getDbType() != DbType.ORACLE && context.getDbType() != DbType.SQL_SERVER) {
+        if (context.getDbType() != DbType.PGSQL && context.getDbType() != DbType.ORACLE && context.getDbType() != DbType.SQL_SERVER && context.getDbType() != DbType.KING_BASE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
         }
 

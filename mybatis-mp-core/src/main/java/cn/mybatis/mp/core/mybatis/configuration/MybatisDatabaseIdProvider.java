@@ -38,6 +38,8 @@ public class MybatisDatabaseIdProvider extends VendorDatabaseIdProvider {
         properties.put("SQL Server", DbType.SQL_SERVER.name());
         properties.put("PostgreSQL", DbType.PGSQL.name());
         properties.put("DM DBMS", DbType.DM.name());
+        properties.put("KingbaseES", DbType.KING_BASE.name());
+
         return properties;
     }
 }

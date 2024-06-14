@@ -20,7 +20,9 @@ public enum DbType {
 
     DM(new KeywordWrap("\"", "\"", true), new HashSet<>()),
 
-    DB2(new KeywordWrap("\"", "\"", true), new HashSet<>());
+    DB2(new KeywordWrap("\"", "\"", true), new HashSet<>()),
+
+    KING_BASE(new KeywordWrap("\"", "\"", true), new HashSet<>());
 
     private final KeywordWrap keywordWrap;
     private final Set<String> keywords;

@@ -73,7 +73,7 @@ public class DefaultValueTestCase extends BaseTest {
 
             List<DefaultValueTest> list = Arrays.asList(defaultValueTest, defaultValueTest2, defaultValueTest3);
 
-            if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                 defaultValueTest.setId(11);
                 defaultValueTest2.setId(12);
                 defaultValueTest3.setId(13);
@@ -82,14 +82,14 @@ public class DefaultValueTestCase extends BaseTest {
                 mapper.saveBatch(list, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
             }
 
-            if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                 defaultValueTest = mapper.getById(11);
             } else {
                 defaultValueTest = mapper.getById(1);
             }
 
             assertNotNull(defaultValueTest.getId());
-            if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                 assertNull(defaultValueTest.getValue1());
             } else {
                 assertNotNull(defaultValueTest.getValue1());
@@ -98,14 +98,14 @@ public class DefaultValueTestCase extends BaseTest {
             assertNotNull(defaultValueTest.getValue2());
             assertNotNull(defaultValueTest.getCreateTime());
 
-            if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                 defaultValueTest2 = mapper.getById(12);
             } else {
                 defaultValueTest2 = mapper.getById(2);
             }
 
             assertNotNull(defaultValueTest2.getId());
-            if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                 assertNull(defaultValueTest2.getValue1());
             } else {
                 assertNotNull(defaultValueTest2.getValue1());
@@ -127,7 +127,7 @@ public class DefaultValueTestCase extends BaseTest {
             System.out.println(defaultValueTest);
             defaultValueTest = mapper.getById(1);
             System.out.println(defaultValueTest);
-            if (TestDataSource.DB_TYPE != DbType.ORACLE) {
+            if (TestDataSource.DB_TYPE != DbType.ORACLE && TestDataSource.DB_TYPE != DbType.KING_BASE) {
                 InsertChain insert = InsertChain.of(mapper)
                         .insert(DefaultValueTest.class)
                         //.insertIgnore()

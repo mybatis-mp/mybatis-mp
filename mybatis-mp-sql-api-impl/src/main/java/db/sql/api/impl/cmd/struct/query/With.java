@@ -22,7 +22,7 @@ public class With implements IWith<With> {
         Cmd recursive = this.withQuery.getRecursive();
 
         if (Objects.nonNull(recursive) && (context.getDbType() == DbType.H2 || context.getDbType() ==
-                DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.PGSQL)) {
+                DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE)) {
             sqlBuilder.append(SqlConst.RECURSIVE);
         }
 

@@ -1,6 +1,7 @@
 package com.mybatis.mp.core.test.testCase;
 
 import cn.mybatis.mp.core.mybatis.configuration.MybatisConfiguration;
+import cn.mybatis.mp.core.mybatis.configuration.MybatisDatabaseIdProvider;
 import com.mybatis.mp.core.test.db2.typeHandler.LocalDateTimeTypeHandler;
 import com.mybatis.mp.core.test.mapper.*;
 import db.sql.api.Cmd;
@@ -96,7 +97,7 @@ public class BaseTest {
 
 
         //设置多数据库 DatabaseIdProvider xml 多数据库 判断时开启
-        //factory.setDatabaseIdProvider(new MybatisDatabaseIdProvider());
+        factory.setDatabaseIdProvider(new MybatisDatabaseIdProvider());
 
         factory.setDataSource(dataSource);
         // 5 创建 mybatis sqlSessionFactory

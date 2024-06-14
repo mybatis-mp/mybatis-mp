@@ -194,6 +194,9 @@ public final class SqlConst {
             case SQL_SERVER: {
                 return " CAST(GETDATE() AS date)";
             }
+            case KING_BASE: {
+                return " CURRENT_DATE";
+            }
             case ORACLE: {
                 return " TO_CHAR(CURRENT_DATE,'YYYY-MM-DD')";
             }
@@ -211,6 +214,9 @@ public final class SqlConst {
             }
             case SQL_SERVER: {
                 return " CAST(GETDATE() AS time)";
+            }
+            case KING_BASE: {
+                return " CURRENT_TIME";
             }
             case ORACLE: {
                 return " TO_CHAR(CURRENT_DATE,'HH24:MI:SS')";
@@ -230,6 +236,9 @@ public final class SqlConst {
             case SQL_SERVER: {
                 return " GETDATE()";
             }
+            case KING_BASE: {
+                return " CURRENT_TIMESTAMP";
+            }
             case ORACLE: {
                 return " CURRENT_DATE";
             }
@@ -242,6 +251,7 @@ public final class SqlConst {
 
     public static String DATE_FORMAT(DbType dbType) {
         switch (dbType) {
+            case KING_BASE:
             case H2:
             case PGSQL:
             case ORACLE:
@@ -283,6 +293,7 @@ public final class SqlConst {
 
     public static String DAY(DbType dbType) {
         switch (dbType) {
+            case KING_BASE:
             case ORACLE:
             case PGSQL: {
                 return " EXTRACT (DAY FROM ";
@@ -296,6 +307,7 @@ public final class SqlConst {
             case SQL_SERVER: {
                 return " DATEPART(HOUR,";
             }
+            case KING_BASE:
             case ORACLE:
             case PGSQL: {
                 return " EXTRACT(HOUR FROM ";
@@ -309,6 +321,7 @@ public final class SqlConst {
             case SQL_SERVER: {
                 return " DATEPART(WEEKDAY,";
             }
+            case KING_BASE:
             case PGSQL:
             case ORACLE: {
                 return " TO_CHAR";

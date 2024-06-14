@@ -18,6 +18,7 @@ public class IdTest {
     @TableId(dbType = DbType.SQL_SERVER, value = IdAutoType.AUTO)
     @TableId(dbType = DbType.PGSQL, value = IdAutoType.SQL, sql = "select nextval('id_test_id_seq')")
     @TableId(dbType = DbType.ORACLE, value = IdAutoType.SQL, sql = "select id_test_seq.NEXTVAL FROM dual")
+    @TableId(dbType = DbType.KING_BASE, value = IdAutoType.SQL, sql = "select id_test_seq.NEXTVAL FROM dual")
     private Long id;
 
     private LocalDateTime createTime;

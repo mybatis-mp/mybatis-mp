@@ -13,6 +13,7 @@ public class CompositeTest {
 
     @TableId
     @TableId(dbType = DbType.ORACLE, value = IdAutoType.SQL, sql = "select composite_test_seq.NEXTVAL FROM dual")
+    @TableId(dbType = DbType.KING_BASE, value = IdAutoType.SQL, sql = "select composite_test_seq.NEXTVAL FROM dual")
     private Long id;
 
     @Version

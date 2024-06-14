@@ -36,6 +36,7 @@ public interface DatePattern extends Cmd {
 
     default String yearPattern(DbType dbType) {
         switch (dbType) {
+            case KING_BASE:
             case H2:
             case PGSQL:
             case ORACLE:
@@ -60,6 +61,7 @@ public interface DatePattern extends Cmd {
 
     default String monthPattern(DbType dbType) {
         switch (dbType) {
+            case KING_BASE:
             case H2:
             case SQL_SERVER:
             case PGSQL:
@@ -82,6 +84,7 @@ public interface DatePattern extends Cmd {
 
     default String dayPattern(DbType dbType) {
         switch (dbType) {
+            case KING_BASE:
             case H2:
             case PGSQL:
             case ORACLE:
@@ -106,6 +109,7 @@ public interface DatePattern extends Cmd {
 
     default String hourPattern(DbType dbType) {
         switch (dbType) {
+            case KING_BASE:
             case H2:
             case PGSQL:
             case ORACLE:
@@ -130,6 +134,7 @@ public interface DatePattern extends Cmd {
 
     default String minutePattern(DbType dbType) {
         switch (dbType) {
+            case KING_BASE:
             case H2:
             case PGSQL:
             case ORACLE:
@@ -154,6 +159,7 @@ public interface DatePattern extends Cmd {
 
     default String secondPattern(DbType dbType) {
         switch (dbType) {
+            case KING_BASE:
             case H2:
             case PGSQL:
             case ORACLE:

@@ -17,7 +17,7 @@ public class NotEmpty<COLUMN, V> extends BaseCondition<Cmd, Void> {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.ORACLE) {
+        if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.KING_BASE) {
             return new IsNotNull(this.field).sql(module, parent, context, sqlBuilder);
         }
         return new Ne(this.field, "").sql(module, parent, context, sqlBuilder);

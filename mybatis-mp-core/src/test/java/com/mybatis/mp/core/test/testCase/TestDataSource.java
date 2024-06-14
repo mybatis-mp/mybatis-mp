@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class TestDataSource {
 
-    public static final DbType DB_TYPE = DbType.H2;
+    public static final DbType DB_TYPE = DbType.KING_BASE;
 
     public static final String TIME_ZONE = "Asia/Shanghai";
 
@@ -52,6 +52,9 @@ public class TestDataSource {
             }
             case DB2: {
                 return createDB2DataSource();
+            }
+            case KING_BASE: {
+                return createKingbaseDataSource();
             }
         }
         return null;
@@ -103,6 +106,17 @@ public class TestDataSource {
         ds.setUsername("system");
         ds.setPassword("oracle");
         ds.setDriverClassName("oracle.jdbc.OracleDriver");
+        ds.setAutoCommit(false);
+        return ds;
+    }
+
+    private static DataSource createKingbaseDataSource() {
+        //docker run -tid --name kingbase2 -p 4321:54321 -e DB_USER=system -e DB_PASSWORD=123456 kingbase_v008r006c008b0014_single_x86:v1 bin/bash
+        HikariDataSource ds = new HikariDataSource();
+        ds.setJdbcUrl("jdbc:kingbase8://localhost:4321/test3");
+        ds.setUsername("system");
+        ds.setPassword("123456");
+        ds.setDriverClassName("com.kingbase8.Driver");
         ds.setAutoCommit(false);
         return ds;
     }

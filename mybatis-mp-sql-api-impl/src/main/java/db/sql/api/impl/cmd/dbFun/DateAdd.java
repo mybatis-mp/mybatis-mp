@@ -53,7 +53,7 @@ public class DateAdd extends BasicFunction<DateAdd> {
             this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
-        } else if (context.getDbType() == DbType.ORACLE) {
+        } else if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.KING_BASE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append('+');

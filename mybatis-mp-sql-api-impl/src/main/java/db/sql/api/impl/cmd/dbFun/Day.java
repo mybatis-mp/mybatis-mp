@@ -13,7 +13,7 @@ public class Day extends BasicFunction<Day> {
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(SqlConst.DAY(context.getDbType()));
-        if (context.getDbType() != DbType.PGSQL && context.getDbType() != DbType.ORACLE) {
+        if (context.getDbType() != DbType.PGSQL && context.getDbType() != DbType.ORACLE && context.getDbType() != DbType.KING_BASE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
         }
 

@@ -288,11 +288,16 @@ public class FunTest extends BaseTest {
     public void currentDate() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            LocalDate currentDate = QueryChain.of(sysUserMapper)
+            Object currentDate = QueryChain.of(sysUserMapper)
                     .select(Methods.currentDate())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
-                    .returnType(LocalDate.class)
+                    .onDB(self -> {
+                        self.returnType(String.class);
+                    }, DbType.KING_BASE)
+                    .elseDB(self -> {
+                        self.returnType(LocalDate.class);
+                    })
                     .get();
         }
     }
@@ -301,11 +306,16 @@ public class FunTest extends BaseTest {
     public void currentTime() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            LocalTime currentDate = QueryChain.of(sysUserMapper)
+            Object currentTime = QueryChain.of(sysUserMapper)
                     .select(Methods.currentTime())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
-                    .returnType(LocalTime.class)
+                    .onDB(self -> {
+                        self.returnType(String.class);
+                    }, DbType.KING_BASE)
+                    .elseDB(self -> {
+                        self.returnType(LocalTime.class);
+                    })
                     .get();
 
         }
@@ -524,7 +534,7 @@ public class FunTest extends BaseTest {
 
     @Test
     public void dateDiff() {
-        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
             //oracle 不支持
             return;
         }
