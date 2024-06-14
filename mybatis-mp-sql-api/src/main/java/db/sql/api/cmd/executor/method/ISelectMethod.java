@@ -26,8 +26,8 @@ public interface ISelectMethod<SELF extends ISelectMethod,
         return (SELF) this;
     }
 
-    default SELF selectAll(IDataset<?,?> dataset) {
-        this.select((COLUMN)new SQLCmdAll(dataset));
+    default SELF selectAll(IDataset<?, ?> dataset) {
+        this.select((COLUMN) new SQLCmdAll(dataset));
         return (SELF) this;
     }
 

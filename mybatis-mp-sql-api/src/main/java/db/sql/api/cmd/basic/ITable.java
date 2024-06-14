@@ -6,5 +6,5 @@ public interface ITable<T extends ITable<T, TABLE_FIELD>, TABLE_FIELD extends IT
 
    <E> TABLE_FIELD $(Getter<E> column);
 
-   String getName();
+    String getName();
 }
