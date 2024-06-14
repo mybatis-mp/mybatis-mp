@@ -17,10 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CountFromQueryTest extends BaseTest {
 
     private String getCountSql(Query query) {
+       return getCountSql(query,true);
+    }
+
+    private String getCountSql(Query query,boolean optimize) {
         //创建构建SQL的上下文 数据库:MYSQL SQL模式 打印
         SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(DbType.MYSQL, SQLMode.PRINT);
         String sql = SQLPrinter.sql(query);
-        String str = SQLOptimizeUtils.getCountSqlFromQuery(query, sqlBuilderContext, true).toString();
+        String str = SQLOptimizeUtils.getCountSqlFromQuery(query, sqlBuilderContext, optimize).toString();
         assertEquals(sql, SQLPrinter.sql(query), "sql count优化破坏了原来有query");
         return str;
     }
@@ -30,12 +34,25 @@ public class CountFromQueryTest extends BaseTest {
         check("order by 优化后的count SQL",
                 "select count(*) from t_sys_user t where t.id=1",
                 getCountSql(Query.create()
+                                .select(SysUser::getId, SysUser::getUserName)
+                                .from(SysUser.class)
+                                .eq(SysUser::getId, 1)
+                                .orderBy(SysUser::getId)
+                                .limit(1)
+                        ,false)
+        );
+
+        check("order by 优化后的count SQL",
+                "select count(*) from t_sys_user t where t.id=1",
+                getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
                         .eq(SysUser::getId, 1)
                         .orderBy(SysUser::getId)
                 )
         );
+
+
     }
 
 
@@ -487,6 +504,22 @@ public class CountFromQueryTest extends BaseTest {
                         )
                 )
         );
+
+        check("unionOrderBy",
+                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 union select t.id,t.user_name from t_sys_user t where t.id=2) t",
+                getCountSql(Query.create()
+                        .select(SysUser::getId, SysUser::getUserName)
+                        .from(SysUser.class)
+                        .eq(SysUser::getId, 1)
+                        .orderBy(SysUser::getId)
+                        .union(Query.create()
+                                .select(SysUser::getId, SysUser::getUserName)
+                                .from(SysUser.class)
+                                .eq(SysUser::getId, 2)
+                                .orderBy(SysUser::getId)
+                        ),false
+                )
+        );
     }
 
 
@@ -589,6 +622,16 @@ public class CountFromQueryTest extends BaseTest {
                 )
         );
 
+
+        check("order by count优化",
+                "select count(*) from t_sys_user t where t.id=1",
+                getCountSql(Query.create()
+                        .select(SysUser::getId, SysUser::getUserName)
+                        .from(SysUser.class)
+                        .eq(SysUser::getId, 1)
+                        .orderBy(SysUser::getId)
+                )
+        );
 
         check("order by count优化",
                 "select count(*) from t_sys_user t where t.id=1",
