@@ -8,7 +8,7 @@ import cn.mybatis.mp.core.sql.executor.BaseUpdate;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
-import db.sql.api.cmd.executor.DBRunnable;
+import db.sql.api.impl.cmd.executor.DbSelector;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
 import org.apache.ibatis.cursor.Cursor;
@@ -25,8 +25,8 @@ import java.util.function.Consumer;
  */
 public interface MybatisMapper<T> extends CommonMapper {
 
-    default void runDBRunner(Consumer<DBRunnable<BasicMapper, BasicMapper>> consumer) {
-        this.getBasicMapper().runDBRunner(consumer);
+    default void runDbSelector(Consumer<DbSelector> consumer) {
+        this.getBasicMapper().runDbSelector(consumer);
     }
 
     /**

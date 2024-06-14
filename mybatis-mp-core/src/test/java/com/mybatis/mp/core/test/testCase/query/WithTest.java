@@ -165,14 +165,12 @@ public class WithTest extends BaseTest {
             WithQuery withQuery = WithQuery.create("sub")
                     .recursive("n", "n2")
                     .select("1,1")
-                    .onDB(self -> {
-                        self.from(new Table("dual"));
-                    }, DbType.ORACLE)
-                    .onDB(self -> {
-                        self.from(new Table("SYSIBM.SYSDUMMY1"));
-                    }, DbType.DB2)
-                    .elseDB(self -> {
-                        //
+                    .dbExecutor((query, dbSelector) -> {
+                        dbSelector.when(DbType.ORACLE, () -> {
+                            query.from(new Table("dual"));
+                        }).when(DbType.DB2, () -> {
+                            query.from(new Table("SYSIBM.SYSDUMMY1"));
+                        });
                     });
 
             withQuery.unionAll(Query.create()

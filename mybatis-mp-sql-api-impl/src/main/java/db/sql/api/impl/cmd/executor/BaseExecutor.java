@@ -6,7 +6,7 @@ import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.tookit.CmdUtils;
 
 import java.util.*;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 
 public abstract class BaseExecutor<SELF extends BaseExecutor<SELF, CMD_FACTORY>, CMD_FACTORY extends CmdFactory> implements Executor<SELF, CMD_FACTORY> {
@@ -15,43 +15,40 @@ public abstract class BaseExecutor<SELF extends BaseExecutor<SELF, CMD_FACTORY>,
 
     private final Map<Class<? extends Cmd>, Integer> cmdSorts = new HashMap<>();
 
-    private DbRunner<SELF> dbRunner;
+    private List<DbSelector> dbSelectors;
 
-    private boolean isRunDbRunner = false;
+    private boolean isExecuteSelector = false;
 
     public BaseExecutor() {
         this.initCmdSorts(cmdSorts);
     }
 
-    private DbRunner<SELF> dbRunner() {
-        if (Objects.isNull(this.dbRunner)) {
-            this.dbRunner = new DbRunner<>();
+    private DbSelector createDbSelector() {
+        if (Objects.isNull(this.dbSelectors)) {
+            this.dbSelectors = new ArrayList<>();
         }
-        return this.dbRunner;
+        DbSelector dbSelector = new DbSelector();
+        this.dbSelectors.add(dbSelector);
+        return dbSelector;
     }
 
     @Override
-    public SELF onDB(Consumer<SELF> consumer, DbType... dbTypes) {
-        this.dbRunner().onDB(consumer, dbTypes);
+    public SELF dbExecutor(BiConsumer<SELF, DbSelector> consumer) {
+        SELF self = (SELF) this;
+        consumer.accept(self, this.createDbSelector());
         return (SELF) this;
     }
 
     @Override
-    public SELF elseDB(Consumer<SELF> consumer) {
-        this.dbRunner().elseDB(consumer);
-        return (SELF) this;
-    }
-
-    @Override
-    public void runOnDB(DbType dbType, SELF executor) {
-        if (this.isRunDbRunner) {
+    public void dbExecute(DbType dbType) {
+        if (this.isExecuteSelector) {
             return;
         }
-        this.isRunDbRunner = true;
-        if (Objects.isNull(this.dbRunner)) {
+        this.isExecuteSelector = true;
+        if (Objects.isNull(this.dbSelectors)) {
             return;
         }
-        this.dbRunner.runOnDB(dbType, executor);
+        dbSelectors.stream().forEach(dbSelector -> dbSelector.dbExecute(dbType));
     }
 
     @Override

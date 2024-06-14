@@ -3,7 +3,7 @@ package cn.mybatis.mp.core.mybatis.configuration;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.util.DbTypeUtil;
 import cn.mybatis.mp.db.annotations.Paging;
-import db.sql.api.impl.cmd.executor.DbRunner;
+import db.sql.api.impl.cmd.executor.DbSelector;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.reflection.ParamNameResolver;
 import org.apache.ibatis.session.SqlSession;
@@ -19,7 +19,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     public final static String MAP_WITH_KEY_METHOD_NAME = "$mapWithKey";
 
-    public final static String RUN_DB_RUNNER_METHOD_NAME = "runDBRunner";
+    public final static String RUN_DB_RUNNER_METHOD_NAME = "runDbSelector";
 
     protected final SqlSession sqlSession;
 
@@ -36,14 +36,13 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         if (method.isDefault()) {
             return super.invoke(proxy, method, args);
         }
-
         try {
             SqlSessionThreadLocalUtil.set(sqlSession);
             if (method.getName().equals(RUN_DB_RUNNER_METHOD_NAME)) {
                 Consumer<Object> consumer = (Consumer<Object>) args[0];
-                DbRunner dbRunner = new DbRunner();
-                consumer.accept(dbRunner);
-                dbRunner.runOnDB(DbTypeUtil.getDbType(sqlSession.getConnection()), proxy);
+                DbSelector dbSelector = new DbSelector();
+                consumer.accept(dbSelector);
+                dbSelector.dbExecute(DbTypeUtil.getDbType(sqlSession.getConnection()));
                 return null;
             } else if (method.getName().equals(MAP_WITH_KEY_METHOD_NAME)) {
                 return mapWithKey(method, args);

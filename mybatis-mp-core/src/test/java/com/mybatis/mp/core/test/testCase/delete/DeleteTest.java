@@ -23,14 +23,16 @@ public class DeleteTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             int cnt = DeleteChain.of(sysUserMapper)
-                    .onDB(deleteChain -> {
-                        deleteChain.eq(SysUser::getId, 3);
-                    }, DbType.H2)
-                    .onDB(deleteChain -> {
-                        deleteChain.eq(SysUser::getId, 2);
-                    }, DbType.MYSQL)
-                    .elseDB(deleteChain -> {
-                        deleteChain.eq(SysUser::getId, 1);
+                    .dbExecutor((deleteChain, dbSelector) -> {
+                        dbSelector.when(DbType.H2, () -> {
+                                    deleteChain.eq(SysUser::getId, 3);
+                                })
+                                .when(DbType.MYSQL, () -> {
+                                    deleteChain.eq(SysUser::getId, 2);
+                                })
+                                .otherwise(() -> {
+                                    deleteChain.eq(SysUser::getId, 1);
+                                });
                     })
                     .execute();
             assertEquals(cnt, 1);

@@ -1,6 +1,7 @@
 package db.sql.api.cmd.executor;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
@@ -17,11 +18,13 @@ public interface IExecutor<T extends IExecutor,
         TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>
         >
 
-        extends DBRunnable<T, T>, Cmd {
+        extends Cmd {
 
     Map<Class<? extends Cmd>, Integer> cmdSorts();
 
     List<Cmd> cmds();
+
+    void dbExecute(DbType dbType);
 
     /**
      * 内联，用于获取自身
@@ -65,12 +68,12 @@ public interface IExecutor<T extends IExecutor,
 
     @Override
     default StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        this.runOnDB(context.getDbType(), (T) this);
+        this.dbExecute(context.getDbType());
         return this.sql(context, sqlBuilder);
     }
 
     default StringBuilder sql(SqlBuilderContext context, StringBuilder sqlBuilder) {
-        this.runOnDB(context.getDbType(), (T) this);
+        this.dbExecute(context.getDbType());
         List<Cmd> cmdList = cmds();
         if (cmdList == null || cmdList.isEmpty()) {
             return sqlBuilder;

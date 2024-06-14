@@ -33,32 +33,29 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
-
-            sysUserMapper.runDBRunner(runner -> {
-                runner.onDB(basicMapper -> {
+            sysUserMapper.runDbSelector(dbSelector -> {
+                dbSelector.when(DbType.H2, () -> {
                     sysUserMapper.getById(1);
-                }, DbType.H2);
-
-                runner.onDB(basicMapper -> {
+                }).when(DbType.MYSQL, () -> {
                     sysUserMapper.getById(2);
-                }, DbType.MYSQL);
-
-                runner.elseDB(basicMapper -> {
+                }).otherwise(() -> {
                     sysUserMapper.getById(3);
                 });
             });
 
             SysUser sysUser = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId)
-                    .onDB(queryChain -> {
-                        queryChain.eq(SysUser::getId, 3);
-                    }, DbType.H2)
-                    .onDB(queryChain -> {
-                        queryChain.eq(SysUser::getId, 2);
-                    }, DbType.MYSQL)
-                    .elseDB(queryChain -> {
-                        queryChain.eq(SysUser::getId, 1);
+                    .dbExecutor((queryChain, dbSelector) -> {
+                        dbSelector.when(DbType.H2, () -> {
+                                    queryChain.eq(SysUser::getId, 3);
+                                }).when(DbType.MYSQL, () -> {
+                                    queryChain.eq(SysUser::getId, 2);
+                                })
+                                .otherwise(() -> {
+                                    queryChain.eq(SysUser::getId, 1);
+                                });
                     })
+
                     .get();
             if (TestDataSource.DB_TYPE == DbType.H2) {
                 assertEquals(sysUser.getId(), 3);

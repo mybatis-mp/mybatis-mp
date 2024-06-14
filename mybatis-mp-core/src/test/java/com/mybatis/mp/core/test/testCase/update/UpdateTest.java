@@ -39,14 +39,14 @@ public class UpdateTest extends BaseTest {
                     .set(SysUser::getUserName, "xx123")
                     .set(true, SysUser::getRole_id, 1)
                     .set(SysUser::getPassword, "xx123", StringUtils::hasText)
-                    .onDB(updateChain -> {
-                        updateChain.eq(SysUser::getId, 3);
-                    }, DbType.H2)
-                    .onDB(updateChain -> {
-                        updateChain.eq(SysUser::getId, 2);
-                    }, DbType.MYSQL)
-                    .elseDB(updateChain -> {
-                        updateChain.eq(SysUser::getId, 1);
+                    .dbExecutor((updateChain, dbSelector) -> {
+                        dbSelector.when(DbType.H2, () -> {
+                            updateChain.eq(SysUser::getId, 3);
+                        }).when(DbType.MYSQL, () -> {
+                            updateChain.eq(SysUser::getId, 2);
+                        }).otherwise(() -> {
+                            updateChain.eq(SysUser::getId, 1);
+                        });
                     })
                     .execute();
             assertEquals(cnt, 1);

@@ -292,11 +292,13 @@ public class FunTest extends BaseTest {
                     .select(Methods.currentDate())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
-                    .onDB(self -> {
-                        self.returnType(String.class);
-                    }, DbType.KING_BASE)
-                    .elseDB(self -> {
-                        self.returnType(LocalDate.class);
+                    .dbExecutor((queryChain, dbSelector) -> {
+                        dbSelector.when(DbType.KING_BASE, () -> {
+                                    queryChain.returnType(String.class);
+                                })
+                                .otherwise(() -> {
+                                    queryChain.returnType(LocalDate.class);
+                                });
                     })
                     .get();
         }
@@ -310,11 +312,13 @@ public class FunTest extends BaseTest {
                     .select(Methods.currentTime())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
-                    .onDB(self -> {
-                        self.returnType(String.class);
-                    }, DbType.KING_BASE)
-                    .elseDB(self -> {
-                        self.returnType(LocalTime.class);
+                    .dbExecutor((queryChain, dbSelector) -> {
+                        dbSelector.when(DbType.KING_BASE, () -> {
+                                    queryChain.returnType(String.class);
+                                })
+                                .otherwise(() -> {
+                                    queryChain.returnType(LocalTime.class);
+                                });
                     })
                     .get();
 
