@@ -26,14 +26,16 @@ public class DbSelector implements Selector {
     }
 
     public DbSelector otherwise(Runnable runnable) {
+        if (Objects.nonNull(this.otherwise)) {
+            throw new RuntimeException("The method of 'otherwise' has already called");
+        }
         this.otherwise = runnable;
-        return null;
+        return this;
     }
 
     public DbSelector otherwise() {
-        this.otherwise = () -> {
-        };
-        return null;
+        return this.otherwise(() -> {
+        });
     }
 
     public void dbExecute(DbType dbType) {

@@ -22,6 +22,11 @@ import java.util.function.Consumer;
 
 public interface BasicMapper extends BaseMapper {
 
+    /**
+     * 选择器 不同数据库执行不同的方法
+     *
+     * @param consumer
+     */
     void selector(Consumer<Selector> consumer);
 
     /**
