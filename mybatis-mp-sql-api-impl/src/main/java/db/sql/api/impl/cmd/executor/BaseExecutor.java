@@ -15,7 +15,7 @@ public abstract class BaseExecutor<SELF extends BaseExecutor<SELF, CMD_FACTORY>,
 
     private final Map<Class<? extends Cmd>, Integer> cmdSorts = new HashMap<>();
 
-    private List<DbSelector> dbSelectors;
+    private List<Selector> selectors;
 
     private boolean isExecuteSelector = false;
 
@@ -23,32 +23,32 @@ public abstract class BaseExecutor<SELF extends BaseExecutor<SELF, CMD_FACTORY>,
         this.initCmdSorts(cmdSorts);
     }
 
-    private DbSelector createDbSelector() {
-        if (Objects.isNull(this.dbSelectors)) {
-            this.dbSelectors = new ArrayList<>();
+    private Selector createSelector() {
+        if (Objects.isNull(this.selectors)) {
+            this.selectors = new ArrayList<>();
         }
         DbSelector dbSelector = new DbSelector();
-        this.dbSelectors.add(dbSelector);
+        this.selectors.add(dbSelector);
         return dbSelector;
     }
 
     @Override
-    public SELF dbExecutor(BiConsumer<SELF, DbSelector> consumer) {
+    public SELF selector(BiConsumer<SELF, Selector> consumer) {
         SELF self = (SELF) this;
-        consumer.accept(self, this.createDbSelector());
+        consumer.accept(self, this.createSelector());
         return (SELF) this;
     }
 
     @Override
-    public void dbExecute(DbType dbType) {
+    public void selectorExecute(DbType dbType) {
         if (this.isExecuteSelector) {
             return;
         }
         this.isExecuteSelector = true;
-        if (Objects.isNull(this.dbSelectors)) {
+        if (Objects.isNull(this.selectors)) {
             return;
         }
-        dbSelectors.stream().forEach(dbSelector -> dbSelector.dbExecute(dbType));
+        selectors.stream().forEach(dbSelector -> dbSelector.dbExecute(dbType));
     }
 
     @Override

@@ -39,8 +39,8 @@ public class UpdateTest extends BaseTest {
                     .set(SysUser::getUserName, "xx123")
                     .set(true, SysUser::getRole_id, 1)
                     .set(SysUser::getPassword, "xx123", StringUtils::hasText)
-                    .dbExecutor((updateChain, dbSelector) -> {
-                        dbSelector.when(DbType.H2, () -> {
+                    .selector((updateChain, selector) -> {
+                        selector.when(DbType.H2, () -> {
                             updateChain.eq(SysUser::getId, 3);
                         }).when(DbType.MYSQL, () -> {
                             updateChain.eq(SysUser::getId, 2);

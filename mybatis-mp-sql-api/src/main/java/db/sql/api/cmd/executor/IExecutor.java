@@ -24,7 +24,7 @@ public interface IExecutor<T extends IExecutor,
 
     List<Cmd> cmds();
 
-    void dbExecute(DbType dbType);
+    void selectorExecute(DbType dbType);
 
     /**
      * 内联，用于获取自身
@@ -68,12 +68,12 @@ public interface IExecutor<T extends IExecutor,
 
     @Override
     default StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        this.dbExecute(context.getDbType());
+        this.selectorExecute(context.getDbType());
         return this.sql(context, sqlBuilder);
     }
 
     default StringBuilder sql(SqlBuilderContext context, StringBuilder sqlBuilder) {
-        this.dbExecute(context.getDbType());
+        this.selectorExecute(context.getDbType());
         List<Cmd> cmdList = cmds();
         if (cmdList == null || cmdList.isEmpty()) {
             return sqlBuilder;

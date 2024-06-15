@@ -11,7 +11,7 @@ import cn.mybatis.mp.core.util.WhereUtil;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
-import db.sql.api.impl.cmd.executor.DbSelector;
+import db.sql.api.impl.cmd.executor.Selector;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
 import org.apache.ibatis.cursor.Cursor;
@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 
 public interface BasicMapper extends BaseMapper {
 
-    void runDbSelector(Consumer<DbSelector> consumer);
+    void selector(Consumer<Selector> consumer);
 
     /**
      * 根据ID查询，只返回指定列

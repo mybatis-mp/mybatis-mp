@@ -14,6 +14,12 @@ public interface Executor<SELF extends Executor,
 
     CMD_FACTORY $();
 
-    SELF dbExecutor(BiConsumer<SELF, DbSelector> consumer);
+    /**
+     * 选择器 不同数据库类型执行不同语句
+     *
+     * @param consumer
+     * @return 自己
+     */
+    SELF selector(BiConsumer<SELF, Selector> consumer);
 
 }

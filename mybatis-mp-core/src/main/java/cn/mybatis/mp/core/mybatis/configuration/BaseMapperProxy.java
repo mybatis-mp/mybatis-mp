@@ -19,7 +19,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     public final static String MAP_WITH_KEY_METHOD_NAME = "$mapWithKey";
 
-    public final static String RUN_DB_RUNNER_METHOD_NAME = "runDbSelector";
+    public final static String SELECTOR_METHOD_NAME = "selector";
 
     protected final SqlSession sqlSession;
 
@@ -38,12 +38,12 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         }
         try {
             SqlSessionThreadLocalUtil.set(sqlSession);
-            if (method.getName().equals(RUN_DB_RUNNER_METHOD_NAME)) {
+            if (method.getName().equals(SELECTOR_METHOD_NAME)) {
                 Consumer<Object> consumer = (Consumer<Object>) args[0];
                 DbSelector dbSelector = new DbSelector();
                 consumer.accept(dbSelector);
                 dbSelector.dbExecute(DbTypeUtil.getDbType(sqlSession.getConnection()));
-                return null;
+                return Void.class;
             } else if (method.getName().equals(MAP_WITH_KEY_METHOD_NAME)) {
                 return mapWithKey(method, args);
             } else if (method.isAnnotationPresent(Paging.class)) {
