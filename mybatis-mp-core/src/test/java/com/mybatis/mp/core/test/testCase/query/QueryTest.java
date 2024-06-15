@@ -47,12 +47,12 @@ public class QueryTest extends BaseTest {
                     .select(SysUser::getId)
                     .selector((queryChain, selector) -> {
                         selector.when(DbType.H2, () -> {
-                                    queryChain.eq(SysUser::getId, 3);
-                                }).when(DbType.MYSQL, () -> {
-                                    queryChain.eq(SysUser::getId, 2);
-                                }).otherwise(() -> {
-                                    queryChain.eq(SysUser::getId, 1);
-                                });
+                            queryChain.eq(SysUser::getId, 3);
+                        }).when(DbType.MYSQL, () -> {
+                            queryChain.eq(SysUser::getId, 2);
+                        }).otherwise(() -> {
+                            queryChain.eq(SysUser::getId, 1);
+                        });
                     })
                     .get();
 
