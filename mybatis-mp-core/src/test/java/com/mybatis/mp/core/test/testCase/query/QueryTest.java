@@ -50,13 +50,12 @@ public class QueryTest extends BaseTest {
                                     queryChain.eq(SysUser::getId, 3);
                                 }).when(DbType.MYSQL, () -> {
                                     queryChain.eq(SysUser::getId, 2);
-                                })
-                                .otherwise(() -> {
+                                }).otherwise(() -> {
                                     queryChain.eq(SysUser::getId, 1);
                                 });
                     })
-
                     .get();
+
             if (TestDataSource.DB_TYPE == DbType.H2) {
                 assertEquals(sysUser.getId(), 3);
             } else if (TestDataSource.DB_TYPE == DbType.MYSQL) {
