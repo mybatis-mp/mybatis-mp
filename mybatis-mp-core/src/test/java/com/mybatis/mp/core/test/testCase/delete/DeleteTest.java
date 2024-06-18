@@ -23,7 +23,7 @@ public class DeleteTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             int cnt = DeleteChain.of(sysUserMapper)
-                    .selector((deleteChain, selector) -> {
+                    .dbAdapt((deleteChain, selector) -> {
                         selector.when(DbType.H2, () -> {
                                     deleteChain.eq(SysUser::getId, 3);
                                 })

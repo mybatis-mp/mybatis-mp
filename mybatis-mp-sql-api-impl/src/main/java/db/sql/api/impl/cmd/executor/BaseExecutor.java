@@ -33,7 +33,7 @@ public abstract class BaseExecutor<SELF extends BaseExecutor<SELF, CMD_FACTORY>,
     }
 
     @Override
-    public SELF selector(BiConsumer<SELF, Selector> consumer) {
+    public SELF dbAdapt(BiConsumer<SELF, Selector> consumer) {
         SELF self = (SELF) this;
         consumer.accept(self, this.createSelector());
         return (SELF) this;

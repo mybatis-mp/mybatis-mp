@@ -26,11 +26,11 @@ import java.util.function.Consumer;
 public interface MybatisMapper<T> extends CommonMapper {
 
     /**
-     * 选择器 不同数据库执行不同的方法
+     * 数据库适配 不同数据库执行不同的方法
      *
      * @param consumer
      */
-    default void selector(Consumer<Selector> consumer) {
+    default void dbAdapt(Consumer<Selector> consumer) {
         this.getBasicMapper().selector(consumer);
     }
 

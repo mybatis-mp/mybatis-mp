@@ -33,7 +33,7 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
-            sysUserMapper.selector(selector -> {
+            sysUserMapper.dbAdapt(selector -> {
                 selector.when(DbType.H2, () -> {
                     sysUserMapper.getById(1);
                 }).when(DbType.MYSQL, () -> {
@@ -45,7 +45,7 @@ public class QueryTest extends BaseTest {
 
             SysUser sysUser = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId)
-                    .selector((queryChain, selector) -> {
+                    .dbAdapt((queryChain, selector) -> {
                         selector.when(DbType.H2, () -> {
                             queryChain.eq(SysUser::getId, 3);
                         }).when(DbType.MYSQL, () -> {

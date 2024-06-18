@@ -165,7 +165,7 @@ public class WithTest extends BaseTest {
             WithQuery withQuery = WithQuery.create("sub")
                     .recursive("n", "n2")
                     .select("1,1")
-                    .selector((query, selector) -> {
+                    .dbAdapt((query, selector) -> {
                         selector.when(DbType.ORACLE, () -> {
                             query.from(new Table("dual"));
                         }).when(DbType.DB2, () -> {

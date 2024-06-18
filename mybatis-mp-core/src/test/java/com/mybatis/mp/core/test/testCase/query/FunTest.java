@@ -292,7 +292,7 @@ public class FunTest extends BaseTest {
                     .select(Methods.currentDate())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
-                    .selector((queryChain, selector) -> {
+                    .dbAdapt((queryChain, selector) -> {
                         selector.when(DbType.KING_BASE, () -> {
                                     queryChain.returnType(String.class);
                                 })
@@ -312,7 +312,7 @@ public class FunTest extends BaseTest {
                     .select(Methods.currentTime())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
-                    .selector((queryChain, selector) -> {
+                    .dbAdapt((queryChain, selector) -> {
                         selector.when(DbType.KING_BASE, () -> {
                                     queryChain.returnType(String.class);
                                 })
