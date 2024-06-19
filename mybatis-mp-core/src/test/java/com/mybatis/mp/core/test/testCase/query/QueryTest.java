@@ -33,7 +33,7 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
-            sysUserMapper.dbAdapt(selector -> {
+            sysUserMapper.dbAdapter(selector -> {
                 selector.when(DbType.H2, () -> {
                     sysUserMapper.getById(1);
                 }).when(DbType.MYSQL, () -> {
