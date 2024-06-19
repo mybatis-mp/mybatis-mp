@@ -30,7 +30,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      *
      * @param consumer
      */
-    default void dbAdapter(Consumer<Selector> consumer) {
+    default void dbAdapt(Consumer<Selector> consumer) {
         this.getBasicMapper().selector(consumer);
     }
 
