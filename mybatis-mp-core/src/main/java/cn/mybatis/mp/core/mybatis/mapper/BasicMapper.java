@@ -27,7 +27,7 @@ public interface BasicMapper extends BaseMapper {
      *
      * @param consumer
      */
-    void selector(Consumer<Selector> consumer);
+    void dbAdapt(Consumer<Selector> consumer);
 
     /**
      * 根据ID查询，只返回指定列

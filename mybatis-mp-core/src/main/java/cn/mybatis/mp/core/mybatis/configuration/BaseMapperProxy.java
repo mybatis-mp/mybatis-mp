@@ -19,7 +19,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     public final static String MAP_WITH_KEY_METHOD_NAME = "$mapWithKey";
 
-    public final static String SELECTOR_METHOD_NAME = "selector";
+    public final static String DB_ADAPT_METHOD_NAME = "dbAdapt";
 
     protected final SqlSession sqlSession;
 
@@ -38,7 +38,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         }
         try {
             SqlSessionThreadLocalUtil.set(sqlSession);
-            if (method.getName().equals(SELECTOR_METHOD_NAME)) {
+            if (method.getName().equals(DB_ADAPT_METHOD_NAME)) {
                 Consumer<Object> consumer = (Consumer<Object>) args[0];
                 DbSelector dbSelector = new DbSelector();
                 consumer.accept(dbSelector);
