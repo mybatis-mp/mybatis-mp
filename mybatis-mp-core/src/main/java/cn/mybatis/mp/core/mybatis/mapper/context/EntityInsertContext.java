@@ -99,6 +99,6 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
 
     @Override
     public void setId(Object id) {
-        setId(this.entity, this.tableInfo.getIdFieldInfo(), id);
+        SetIdUtil.setId(this.entity, this.tableInfo.getIdFieldInfo(), id);
     }
 }
