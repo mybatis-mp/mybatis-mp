@@ -36,7 +36,7 @@ public class TableIdGeneratorWrapper {
     private static Class getEntityClass(MappedStatement ms) {
         try {
             Class clazz = Class.forName(getMapperName(ms));
-            List<Class> list = GenericUtil.getGenericInterfaceClass(clazz);
+            List<Class<?>> list = GenericUtil.getGenericInterfaceClass(clazz);
             if (Objects.isNull(list) || list.isEmpty()) {
                 return null;
             }

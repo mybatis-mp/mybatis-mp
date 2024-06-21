@@ -49,7 +49,7 @@ public class PreparedParameterHandler implements ParameterHandler {
                     ps.setNull(i + 1, Types.NULL);
                     continue;
                 }
-                TypeHandler typeHandler = this.configuration.buildTypeHandler(realValue.getClass(), parameter.getTypeHandler());
+                TypeHandler typeHandler = MybatisTypeHandlerUtil.getTypeHandler(this.configuration, realValue.getClass(), parameter.getTypeHandler());
                 JdbcType jdbcType = parameter.getJdbcType();
                 if (jdbcType == JdbcType.UNDEFINED && realValue.getClass().isEnum()) {
                     jdbcType = null;

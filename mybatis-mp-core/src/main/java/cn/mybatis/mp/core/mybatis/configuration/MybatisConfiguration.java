@@ -21,14 +21,12 @@ import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -101,7 +99,7 @@ public class MybatisConfiguration extends Configuration {
         }
 
         if (MybatisMapper.class.isAssignableFrom(type)) {
-            Optional<Class> entityOptional = GenericUtil.getGenericInterfaceClass(type).stream().filter(item -> item.isAnnotationPresent(Table.class)).findFirst();
+            Optional<Class<?>> entityOptional = GenericUtil.getGenericInterfaceClass(type).stream().filter(item -> item.isAnnotationPresent(Table.class)).findFirst();
             if (!entityOptional.isPresent()) {
                 throw new RuntimeException(type + " did not add a generic");
             }
@@ -139,29 +137,11 @@ public class MybatisConfiguration extends Configuration {
                 .column(columnName)
                 .javaType(property.getType())
                 .jdbcType(jdbcType)
-                .typeHandler(this.buildTypeHandler(property.getType(), typeHandlerClass));
+                .typeHandler(MybatisTypeHandlerUtil.getTypeHandler(this, property, typeHandlerClass, jdbcType));
         if (id) {
             resultMappingBuilder.flags(Collections.singletonList(ResultFlag.ID));
         }
         return resultMappingBuilder.build();
-    }
-
-
-    public TypeHandler buildTypeHandler(Class type, Class<? extends TypeHandler<?>> typeHandlerClass) {
-        if (typeHandlerClass == UnknownTypeHandler.class) {
-            TypeHandler typeHandler = this.getTypeHandlerRegistry().getTypeHandler(type);
-            if (Objects.nonNull(typeHandler)) {
-                return typeHandler;
-            }
-        }
-
-        TypeHandler typeHandler = this.getTypeHandlerRegistry().getMappingTypeHandler(typeHandlerClass);
-        if (Objects.nonNull(typeHandler)) {
-            return typeHandler;
-        }
-
-        typeHandler = this.getTypeHandlerRegistry().getInstance(type, typeHandlerClass);
-        return typeHandler;
     }
 
     @Override

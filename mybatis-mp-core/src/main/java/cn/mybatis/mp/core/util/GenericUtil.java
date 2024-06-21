@@ -9,8 +9,8 @@ import java.util.List;
 
 public class GenericUtil {
 
-    public static List<Class> get(Class clazz) {
-        List<Class> list = getGenericInterfaceClass(clazz);
+    public static List<Class<?>> get(Class clazz) {
+        List<Class<?>> list = getGenericInterfaceClass(clazz);
         list.addAll(getGenericSuperClass(clazz));
         return list;
     }
@@ -21,11 +21,11 @@ public class GenericUtil {
      * @param clazz
      * @return
      */
-    public static List<Class> getGenericSuperClass(Class clazz) {
+    public static List<Class<?>> getGenericSuperClass(Class clazz) {
         Type type = clazz.getGenericSuperclass();
         if (type instanceof ParameterizedType) {
             Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
-            List<Class> classList = new ArrayList<>(actualTypeArguments.length);
+            List<Class<?>> classList = new ArrayList<>(actualTypeArguments.length);
             for (Type actualTypeArgument : actualTypeArguments) {
                 if (!(actualTypeArgument instanceof Class)) {
                     continue;
@@ -43,24 +43,24 @@ public class GenericUtil {
      * @param clazz
      * @return
      */
-    public static List<Class> getGenericInterfaceClass(Class clazz) {
+    public static List<Class<?>> getGenericInterfaceClass(Class clazz) {
         Type[] types = clazz.getGenericInterfaces();
         return getGenericTypes(types);
     }
 
-    public static List<Class> getGenericTypes(Type[] types) {
-        List<Class> classList = new ArrayList<>(types.length * 2);
+    public static List<Class<?>> getGenericTypes(Type[] types) {
+        List<Class<?>> classList = new ArrayList<>(types.length * 2);
         for (Type type : types) {
             classList = getGeneric(type, classList);
         }
         return classList;
     }
 
-    public static List<Class> getGeneric(Type type) {
+    public static List<Class<?>> getGeneric(Type type) {
         return getGeneric(type, new ArrayList<>(1));
     }
 
-    public static List<Class> getGeneric(Type type, List<Class> resultList) {
+    public static List<Class<?>> getGeneric(Type type, List<Class<?>> resultList) {
         if (type instanceof ParameterizedType) {
             Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
             for (Type actualTypeArgument : actualTypeArguments) {
@@ -73,7 +73,7 @@ public class GenericUtil {
         return resultList;
     }
 
-    public static List<Class> getGenericParameterTypes(Method method) {
+    public static List<Class<?>> getGenericParameterTypes(Method method) {
         return getGenericTypes(method.getGenericParameterTypes());
     }
 }

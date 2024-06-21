@@ -128,7 +128,7 @@ public final class ResultMapUtils {
         Class targetType = nestedResultInfo.getField().getType();
         //假如是集合类型
         if (Collection.class.isAssignableFrom(targetType)) {
-            List<Class> types = GenericUtil.getGeneric(nestedResultInfo.getField().getGenericType());
+            List<Class<?>> types = GenericUtil.getGeneric(nestedResultInfo.getField().getGenericType());
             if (Objects.nonNull(types) && !types.isEmpty()) {
                 targetType = types.get(0);
             }
