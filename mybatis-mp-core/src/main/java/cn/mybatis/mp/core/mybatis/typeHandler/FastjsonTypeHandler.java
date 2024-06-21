@@ -7,6 +7,10 @@ import java.lang.reflect.Type;
 
 public class FastjsonTypeHandler extends AbstractJsonTypeHandler {
 
+    public FastjsonTypeHandler(Class<?> type) {
+        super(type);
+    }
+
     public FastjsonTypeHandler(Class<?> type, Type genericType) {
         super(type, genericType);
     }

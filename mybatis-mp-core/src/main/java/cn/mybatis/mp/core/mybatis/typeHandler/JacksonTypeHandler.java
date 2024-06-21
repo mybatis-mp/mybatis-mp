@@ -13,6 +13,10 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler {
 
     private static volatile ObjectMapper OBJECT_MAPPER;
 
+    public JacksonTypeHandler(Class<?> type) {
+        super(type);
+    }
+
     public JacksonTypeHandler(Class<?> type, Type genericType) {
         super(type, genericType);
     }
@@ -25,6 +29,7 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler {
     }
 
     public static void setObjectMapper(ObjectMapper objectMapper) {
+        Objects.requireNonNull(objectMapper);
         OBJECT_MAPPER = objectMapper;
     }
 

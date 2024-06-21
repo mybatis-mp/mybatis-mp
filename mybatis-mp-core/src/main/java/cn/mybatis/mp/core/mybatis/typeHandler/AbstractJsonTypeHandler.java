@@ -11,6 +11,10 @@ import java.util.Objects;
 
 public abstract class AbstractJsonTypeHandler extends GenericTypeHandler<Object> {
 
+    public AbstractJsonTypeHandler(Class<?> type) {
+        super(type);
+    }
+
     public AbstractJsonTypeHandler(Class<?> type, Type genericType) {
         super(type, genericType);
     }

@@ -23,6 +23,10 @@ public abstract class GenericTypeHandler<T> extends BaseTypeHandler<T> {
      */
     protected final Type genericType;
 
+    public GenericTypeHandler(Class<?> type) {
+        this(type, null);
+    }
+
     public GenericTypeHandler(Class<?> type, Type genericType) {
         this.type = type;
         this.genericType = genericType;

@@ -7,6 +7,7 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.condition.Like;
 import db.sql.api.impl.cmd.struct.query.OrderBy;
+import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
@@ -39,6 +40,13 @@ public class BasicValue extends AbstractField<BasicValue> {
         } else {
             sqlBuilder.append(context.addParam(value));
         }
+
+        if (parent instanceof Select) {
+            if (Objects.nonNull(this.getAlias())) {
+                sqlBuilder.append(SqlConst.AS(context.getDbType())).append(this.getAlias());
+            }
+        }
+
         return sqlBuilder;
     }
 

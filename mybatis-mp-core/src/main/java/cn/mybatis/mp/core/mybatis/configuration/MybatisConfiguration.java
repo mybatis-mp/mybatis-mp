@@ -6,6 +6,7 @@ import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdContext;
 import cn.mybatis.mp.core.mybatis.resultset.MybatisDefaultResultSetHandler;
 import cn.mybatis.mp.core.mybatis.typeHandler.EnumTypeHandler;
+import cn.mybatis.mp.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import cn.mybatis.mp.core.util.GenericUtil;
 import cn.mybatis.mp.db.annotations.Table;
 import org.apache.ibatis.binding.MapperProxyFactory;
@@ -34,12 +35,15 @@ public class MybatisConfiguration extends Configuration {
 
     public MybatisConfiguration() {
         super();
-        this.setDefaultScriptingLanguage(MybatisLanguageDriver.class);
-        this.setDefaultEnumTypeHandler(EnumTypeHandler.class);
+        this.init();
     }
 
     public MybatisConfiguration(Environment environment) {
         super(environment);
+        this.init();
+    }
+
+    private void init() {
         this.setDefaultScriptingLanguage(MybatisLanguageDriver.class);
         this.setDefaultEnumTypeHandler(EnumTypeHandler.class);
     }

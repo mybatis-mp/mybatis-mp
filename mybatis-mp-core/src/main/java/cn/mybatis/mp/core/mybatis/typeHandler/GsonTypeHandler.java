@@ -9,6 +9,10 @@ public class GsonTypeHandler extends AbstractJsonTypeHandler {
 
     private volatile static Gson GSON;
 
+    public GsonTypeHandler(Class<?> type) {
+        super(type);
+    }
+
     public GsonTypeHandler(Class<?> type, Type genericType) {
         super(type, genericType);
     }

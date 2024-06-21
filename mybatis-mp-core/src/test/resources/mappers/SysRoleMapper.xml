@@ -27,4 +27,20 @@
         </if>
         order by id asc
     </select>
+
+
+    <select id="jsonTypeTest1" resultType="com.mybatis.mp.core.test.vo.JsonTypeTestVo">
+        ${sql}
+    </select>
+
+    <resultMap id="jsonTypeTestResultMap" type="com.mybatis.mp.core.test.vo.JsonTypeTestVo">
+        <result property="aa" column="aa" typeHandler="cn.mybatis.mp.core.mybatis.typeHandler.JacksonTypeHandler"/>
+        <result property="bb" column="bb" typeHandler="cn.mybatis.mp.core.mybatis.typeHandler.JacksonTypeHandler"/>
+        <result property="dd" column="aa" typeHandler="cn.mybatis.mp.core.mybatis.typeHandler.JacksonTypeHandler"/>
+        <result property="ee" column="bb" typeHandler="cn.mybatis.mp.core.mybatis.typeHandler.JacksonTypeHandler"/>
+    </resultMap>
+
+    <select id="jsonTypeTest2" resultMap="jsonTypeTestResultMap">
+        ${sql}
+    </select>
 </mapper>

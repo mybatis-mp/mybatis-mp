@@ -4,6 +4,7 @@ import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.db.annotations.Paging;
 import com.mybatis.mp.core.test.DO.SysRole;
+import com.mybatis.mp.core.test.vo.JsonTypeTestVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -20,4 +21,10 @@ public interface SysRoleMapper extends MybatisMapper<SysRole> {
     @Paging
     @Select("select * from sys_role where id >=#{id} and id <=#{id2} order by id asc")
     Pager<SysRole> annotationPaging(Pager<SysRole> pager, @Param("id") Integer id, @Param("id2") Integer id2);
+
+
+    JsonTypeTestVo jsonTypeTest1(@Param("sql") String sql);
+
+    JsonTypeTestVo jsonTypeTest2(@Param("sql") String sql);
+
 }
