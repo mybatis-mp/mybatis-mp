@@ -96,7 +96,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
                         if (tableId.value() == IdAutoType.GENERATOR) {
                             IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
                             Object id = identifierGenerator.nextId(tableInfo.getType());
-                            if (setId(t, tableFieldInfo, id)) {
+                            if (SetIdUtil.setId(t, tableFieldInfo, id)) {
                                 value = id;
                             }
                         } else {
@@ -129,21 +129,6 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
         return insert;
     }
 
-    private static boolean setId(Object obj, TableFieldInfo idFieldInfo, Object id) {
-        try {
-            //如果设置了id 则不在设置
-            if (idFieldInfo.getReadFieldInvoker().invoke(obj, null) != null) {
-                return false;
-            }
-            if (idFieldInfo.getField().getType() == String.class) {
-                id = id instanceof String ? id : String.valueOf(id);
-            }
-            TableInfoUtil.setValue(idFieldInfo, obj, id);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        return true;
-    }
 
     @Override
     public void init(DbType dbType) {

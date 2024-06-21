@@ -11,7 +11,6 @@ import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.tenant.TenantUtil;
-import cn.mybatis.mp.core.util.IdValueConverter;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.db.IdAutoType;
@@ -36,24 +35,6 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
         this.tableInfo = Tables.get(entity.getClass());
 
     }
-
-    private static boolean setId(Object obj, TableFieldInfo idFieldInfo, Object id) {
-        try {
-            //如果设置了id 则不在设置
-            if (idFieldInfo.getReadFieldInvoker().invoke(obj, null) != null) {
-                return false;
-            }
-            if (idFieldInfo.getField().getType() == String.class) {
-                id = id instanceof String ? id : String.valueOf(id);
-            }
-            id = IdValueConverter.convert(id, idFieldInfo.getField().getType());
-            TableInfoUtil.setValue(idFieldInfo, obj, id);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        return true;
-    }
-
 
     @Override
     public void init(DbType dbType) {
@@ -84,7 +65,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
                     isNeedInsert = true;
                     IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
                     Object id = identifierGenerator.nextId(tableInfo.getType());
-                    if (setId(entity, tableFieldInfo, id)) {
+                    if (SetIdUtil.setId(entity, tableFieldInfo, id)) {
                         value = id;
                     }
                 }

@@ -10,7 +10,6 @@ import cn.mybatis.mp.core.incrementer.IdentifierGeneratorFactory;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.tenant.TenantUtil;
-import cn.mybatis.mp.core.util.IdValueConverter;
 import cn.mybatis.mp.core.util.ModelInfoUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.db.IdAutoType;
@@ -37,23 +36,6 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
         this.entityType = modelInfo.getEntityType();
     }
 
-    private static boolean setId(Object obj, ModelFieldInfo idFieldInfo, Object id) {
-        try {
-            //如果设置了id 则不在设置
-            if (idFieldInfo.getReadFieldInvoker().invoke(obj, null) != null) {
-                return false;
-            }
-            if (idFieldInfo.getField().getType() == String.class) {
-                id = id instanceof String ? id : String.valueOf(id);
-            }
-            id = IdValueConverter.convert(id, idFieldInfo.getField().getType());
-            //默认值回写
-            ModelInfoUtil.setValue(idFieldInfo, obj, id);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        return true;
-    }
 
     @Override
     public void init(DbType dbType) {
@@ -87,7 +69,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
                     if (modelInfo.getIdFieldInfo().getField().getType() == String.class) {
                         id = id instanceof String ? id : String.valueOf(id);
                     }
-                    if (setId(model, modelFieldInfo, id)) {
+                    if (SetIdUtil.setId(model, modelFieldInfo, id)) {
                         value = id;
                     }
                 }
@@ -121,7 +103,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
 
     @Override
     public void setId(Object id) {
-        setId(this.model, this.modelInfo.getIdFieldInfo(), id);
+        SetIdUtil.setId(this.model, this.modelInfo.getIdFieldInfo(), id);
     }
 
 }
