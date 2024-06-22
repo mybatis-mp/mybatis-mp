@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public final class SetIdUtil {
 
-    private static boolean isIdExists(Object obj, GetFieldInvoker getFieldInvoker){
+    private static boolean isIdExists(Object obj, GetFieldInvoker getFieldInvoker) {
         //如果设置了id 则不在设置
         Object sourceId;
         try {
@@ -21,11 +21,11 @@ public final class SetIdUtil {
             throw new RuntimeException(e);
         }
         if (Objects.nonNull(sourceId)) {
-            if(sourceId instanceof String){
-                if(!StringPool.EMPTY.equals(((String) sourceId).trim())){
+            if (sourceId instanceof String) {
+                if (!StringPool.EMPTY.equals(((String) sourceId).trim())) {
                     return true;
                 }
-            }else{
+            } else {
                 return true;
             }
         }
@@ -33,7 +33,7 @@ public final class SetIdUtil {
     }
 
     public static boolean setId(Object obj, TableFieldInfo idFieldInfo, Object id) {
-        if(isIdExists(obj,idFieldInfo.getReadFieldInvoker())){
+        if (isIdExists(obj, idFieldInfo.getReadFieldInvoker())) {
             return false;
         }
 
@@ -46,7 +46,7 @@ public final class SetIdUtil {
     }
 
     public static boolean setId(Object obj, ModelFieldInfo idFieldInfo, Object id) {
-        if(isIdExists(obj,idFieldInfo.getReadFieldInvoker())){
+        if (isIdExists(obj, idFieldInfo.getReadFieldInvoker())) {
             return false;
         }
 

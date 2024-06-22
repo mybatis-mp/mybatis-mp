@@ -1,5 +1,6 @@
 package com.mybatis.mp.core.test.testCase;
 
+import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.mybatis.configuration.MybatisConfiguration;
 import cn.mybatis.mp.core.mybatis.configuration.MybatisDatabaseIdProvider;
 import com.mybatis.mp.core.test.db2.typeHandler.LocalDateTimeTypeHandler;
@@ -55,6 +56,8 @@ public class BaseTest {
     public void init() {
         dataSource = TestDataSource.getDataSource();
 
+        MybatisMpConfig.setParamTypeHandlerWrap(true);
+
         // 1 创建 事务管理工厂
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
 
@@ -88,6 +91,8 @@ public class BaseTest {
 
         configuration.addMapper(NestedFirstMapper.class);
         configuration.addMapper(NestedMutiFirstMapper.class);
+        configuration.addMapper(UUIDMapper.class);
+        configuration.addMapper(SysUserEncryptMapper.class);
 
         String mapperLocations = "classpath:/mappers/**.xml";
 

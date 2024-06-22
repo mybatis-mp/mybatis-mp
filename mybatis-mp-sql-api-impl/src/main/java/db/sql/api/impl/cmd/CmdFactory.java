@@ -5,6 +5,7 @@ import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.GetterColumnField;
 import db.sql.api.cmd.ICmdFactory;
+import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.impl.cmd.basic.*;
@@ -141,5 +142,36 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, TableField
 
     public NotIn notIn(Cmd main) {
         return new NotIn(main);
+    }
+
+    public boolean isEnableParamWrap() {
+        //空处理 留给ORM框架扩展
+        return false;
+    }
+
+    /**
+     * 根据列包装参数
+     *
+     * @param column 列字段
+     * @param param  参数
+     * @param <T>
+     * @return 参数
+     */
+    public <T> Object paramWrap(Getter<T> column, Object param) {
+        //空处理 留给ORM框架扩展
+        return param;
+    }
+
+    /**
+     * 根据列包装参数
+     *
+     * @param column 列字段
+     * @param param  参数
+     * @param <T>
+     * @return 数组 第1为为LikeMode
+     */
+    public <T> Object[] likeParamWrap(Getter<T> column, Object param, LikeMode likeMode, boolean isNotLike) {
+        //空处理 留给ORM框架扩展
+        return new Object[]{likeMode, param};
     }
 }

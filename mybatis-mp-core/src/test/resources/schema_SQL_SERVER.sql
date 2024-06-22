@@ -52,6 +52,14 @@ CREATE TABLE id_test
     create_time DATETIME NOT NULL DEFAULT  GETDATE()
 );
 
+drop table if exists uuid_test;
+
+CREATE TABLE uuid_test
+(
+    id varchar(64) PRIMARY KEY,
+    create_time DATETIME NOT NULL DEFAULT  GETDATE()
+);
+
 drop table if exists version_test;
 
 CREATE TABLE version_test

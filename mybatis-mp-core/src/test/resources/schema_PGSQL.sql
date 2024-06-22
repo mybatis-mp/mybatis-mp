@@ -48,6 +48,14 @@ CREATE TABLE IF NOT EXISTS id_test
     create_time TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+drop table if exists uuid_test;
+
+CREATE TABLE IF NOT EXISTS uuid_test
+(
+    id varchar(64) PRIMARY KEY,
+    create_time TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 drop table if exists version_test;
 
 CREATE TABLE IF NOT EXISTS version_test

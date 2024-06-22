@@ -13,15 +13,15 @@ import java.util.List;
 @ResultEntity(SysUser.class)
 public class JsonTypeTestVo {
 
-    @ResultField(value = "aa",typeHandler = JacksonTypeHandler.class)
+    @ResultField(value = "aa", typeHandler = JacksonTypeHandler.class)
     private List<SysUser> aa;
 
-    @ResultField(value = "bb",typeHandler = JacksonTypeHandler.class)
+    @ResultField(value = "bb", typeHandler = JacksonTypeHandler.class)
     private SysUser bb;
 
-    @ResultField(value = "aa",typeHandler = JacksonTypeHandler.class)
+    @ResultField(value = "aa", typeHandler = JacksonTypeHandler.class)
     private List<SysRole> dd;
 
-    @ResultField(value = "bb",typeHandler = JacksonTypeHandler.class)
+    @ResultField(value = "bb", typeHandler = JacksonTypeHandler.class)
     private SysRole ee;
 }

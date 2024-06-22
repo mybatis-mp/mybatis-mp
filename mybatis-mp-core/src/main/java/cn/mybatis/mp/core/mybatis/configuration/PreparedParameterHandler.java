@@ -1,7 +1,9 @@
 package cn.mybatis.mp.core.mybatis.configuration;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.MybatisLikeQueryParameter;
 import cn.mybatis.mp.core.mybatis.mapper.context.MybatisParameter;
 import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdContext;
+import cn.mybatis.mp.core.mybatis.typeHandler.LikeQuerySupport;
 import cn.mybatis.mp.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import db.sql.api.impl.cmd.executor.Executor;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
@@ -40,7 +42,23 @@ public class PreparedParameterHandler implements ParameterHandler {
                 ps.setNull(i + 1, Types.NULL);
                 continue;
             }
-            if (value instanceof MybatisParameter) {
+            if (value instanceof MybatisLikeQueryParameter) {
+                MybatisLikeQueryParameter parameter = (MybatisLikeQueryParameter) value;
+                Object realValue = parameter.getValue();
+                if (value instanceof Supplier) {
+                    realValue = ((Supplier<?>) value).get();
+                }
+                if (Objects.isNull(realValue)) {
+                    ps.setNull(i + 1, Types.NULL);
+                    continue;
+                }
+                LikeQuerySupport typeHandler = (LikeQuerySupport) MybatisTypeHandlerUtil.getTypeHandler(this.configuration, realValue.getClass(), parameter.getTypeHandler());
+                JdbcType jdbcType = parameter.getJdbcType();
+                if (jdbcType == JdbcType.UNDEFINED && realValue.getClass().isEnum()) {
+                    jdbcType = null;
+                }
+                typeHandler.setLikeParameter(parameter.getLikeMode(), parameter.isNotLike(), ps, i + 1, realValue, jdbcType);
+            } else if (value instanceof MybatisParameter) {
                 MybatisParameter parameter = (MybatisParameter) value;
                 Object realValue = parameter.getValue();
                 if (value instanceof Supplier) {

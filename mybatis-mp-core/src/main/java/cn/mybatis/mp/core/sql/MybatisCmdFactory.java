@@ -1,18 +1,26 @@
 package cn.mybatis.mp.core.sql;
 
+import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
+import cn.mybatis.mp.core.mybatis.mapper.context.MybatisLikeQueryParameter;
+import cn.mybatis.mp.core.mybatis.mapper.context.MybatisQueryParameter;
+import cn.mybatis.mp.core.mybatis.typeHandler.LikeQuerySupport;
+import cn.mybatis.mp.core.mybatis.typeHandler.QuerySupport;
 import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.core.util.TableInfoUtil;
+import db.sql.api.Cmd;
 import db.sql.api.Getter;
+import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.tookit.LambdaUtil;
 import org.apache.ibatis.util.MapUtil;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 
@@ -84,5 +92,54 @@ public class MybatisCmdFactory extends CmdFactory {
             tableFields[i] = table.$(tableInfo.getFieldInfo(LambdaUtil.getName(columns[i])).getColumnName());
         }
         return tableFields;
+    }
+
+    @Override
+    public boolean isEnableParamWrap() {
+        return MybatisMpConfig.isParamTypeHandlerWrap();
+    }
+
+    @Override
+    public <T> Object paramWrap(Getter<T> column, Object param) {
+        if (!isEnableParamWrap()) {
+            return param;
+        }
+        if (Objects.isNull(param) || param instanceof Cmd) {
+            return param;
+        }
+        if (param instanceof Serializable) {
+            LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(column);
+            TableInfo tableInfo = Tables.get(lambdaFieldInfo.getType());
+            TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(lambdaFieldInfo.getName());
+            Class typeHandler = tableFieldInfo.getTableFieldAnnotation().typeHandler();
+            if (QuerySupport.class.isAssignableFrom(typeHandler)) {
+                return new MybatisQueryParameter(param, typeHandler, tableFieldInfo.getTableFieldAnnotation().jdbcType());
+            }
+        }
+        return param;
+    }
+
+    @Override
+    public <T> Object[] likeParamWrap(Getter<T> column, Object param, LikeMode likeMode, boolean isNotLike) {
+        if (!isEnableParamWrap()) {
+            return new Object[]{likeMode, param};
+        }
+        if (Objects.isNull(param) || param instanceof Cmd) {
+            return new Object[]{likeMode, param};
+        }
+        if (param instanceof Serializable) {
+            LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(column);
+            TableInfo tableInfo = Tables.get(lambdaFieldInfo.getType());
+            TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(lambdaFieldInfo.getName());
+            Class typeHandler = tableFieldInfo.getTableFieldAnnotation().typeHandler();
+            if (LikeQuerySupport.class.isAssignableFrom(typeHandler)) {
+                LikeQuerySupport likeQuerySupport = (LikeQuerySupport) tableFieldInfo.getLikeQueryTypeHandler();
+                param = new MybatisLikeQueryParameter(param, isNotLike, likeMode, typeHandler, tableFieldInfo.getTableFieldAnnotation().jdbcType());
+                likeMode = likeQuerySupport.convertLikeMode(likeMode, isNotLike);
+            } else if (QuerySupport.class.isAssignableFrom(typeHandler)) {
+                param = new MybatisQueryParameter(param, typeHandler, tableFieldInfo.getTableFieldAnnotation().jdbcType());
+            }
+        }
+        return new Object[]{likeMode, param};
     }
 }

@@ -22,7 +22,6 @@ public final class MybatisTypeHandlerUtil {
             return typeHandler;
         }
         typeHandler = cfg.getTypeHandlerRegistry().getInstance(type, typeHandlerClass);
-        cfg.getTypeHandlerRegistry().register(type, typeHandlerClass);
         return typeHandler;
     }
 
@@ -38,7 +37,6 @@ public final class MybatisTypeHandlerUtil {
             return typeHandler;
         }
         typeHandler = cfg.getTypeHandlerRegistry().getInstance(type, typeHandlerClass);
-        cfg.getTypeHandlerRegistry().register(type, typeHandlerClass);
         return typeHandler;
     }
 

@@ -11,7 +11,7 @@ public class NotLike extends Like {
         this(key, value, LikeMode.DEFAULT);
     }
 
-    public NotLike(Cmd key, String value) {
+    public NotLike(Cmd key, Object value) {
         this(key, Methods.convert(value), LikeMode.DEFAULT);
     }
 
@@ -19,7 +19,7 @@ public class NotLike extends Like {
         super(SqlConst.NOT_LIKE, key, value, mode);
     }
 
-    public NotLike(Cmd key, String value, LikeMode mode) {
+    public NotLike(Cmd key, Object value, LikeMode mode) {
         super(SqlConst.NOT_LIKE, key, Methods.convert(value), mode);
     }
 }

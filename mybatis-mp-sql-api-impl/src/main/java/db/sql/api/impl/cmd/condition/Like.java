@@ -21,7 +21,7 @@ public class Like extends BasicCondition {
         this(key, value, LikeMode.DEFAULT);
     }
 
-    public Like(Cmd key, String value) {
+    public Like(Cmd key, Object value) {
         this(key, Methods.convert(value), LikeMode.DEFAULT);
     }
 
@@ -29,7 +29,7 @@ public class Like extends BasicCondition {
         this(SqlConst.LIKE, key, value, mode);
     }
 
-    public Like(Cmd key, String value, LikeMode mode) {
+    public Like(Cmd key, Object value, LikeMode mode) {
         this(SqlConst.LIKE, key, Methods.convert(value), mode);
     }
 
@@ -94,7 +94,10 @@ public class Like extends BasicCondition {
             return sqlBuilder;
         }
 
-        sqlBuilder.append(SqlConst.CONCAT).append(SqlConst.BRACKET_LEFT);
+        if (before || after) {
+            sqlBuilder.append(SqlConst.CONCAT).append(SqlConst.BRACKET_LEFT);
+        }
+
 
         if (before) {
             sqlBuilder.append(SqlConst.VAGUE_SYMBOL).append(SqlConst.DELIMITER);
@@ -111,7 +114,9 @@ public class Like extends BasicCondition {
         if (after) {
             sqlBuilder.append(SqlConst.DELIMITER).append(SqlConst.VAGUE_SYMBOL);
         }
-        sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+        if (before || after) {
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+        }
         return sqlBuilder;
     }
 }

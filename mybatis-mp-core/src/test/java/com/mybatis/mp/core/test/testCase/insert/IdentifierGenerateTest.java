@@ -3,8 +3,10 @@ package com.mybatis.mp.core.test.testCase.insert;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import com.mybatis.mp.core.test.DO.IdTest;
 import com.mybatis.mp.core.test.DO.IdTest2;
+import com.mybatis.mp.core.test.DO.UUIDTest;
 import com.mybatis.mp.core.test.mapper.IdTest2Mapper;
 import com.mybatis.mp.core.test.mapper.IdTestMapper;
+import com.mybatis.mp.core.test.mapper.UUIDMapper;
 import com.mybatis.mp.core.test.model.IdTestModel;
 import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
@@ -96,6 +98,17 @@ public class IdentifierGenerateTest extends BaseTest {
 
 
             assertNotNull(QueryChain.of(idTestMapper).eq(IdTest2::getId, 1).get());
+        }
+    }
+
+    @Test
+    public void insertUUIDTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            UUIDMapper idTestMapper = session.getMapper(UUIDMapper.class);
+            UUIDTest idTest = new UUIDTest();
+            idTest.setCreateTime(LocalDateTime.now());
+            idTestMapper.save(idTest);
+            assertNotNull(idTest.getId());
         }
     }
 }

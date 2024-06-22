@@ -67,6 +67,14 @@ CREATE TABLE  id_test
     create_time TIMESTAMP DEFAULT SYSDATE NOT NULL
 );
 
+DROP TABLE  uuid_test;
+
+CREATE TABLE  uuid_test
+(
+    id varchar(64) PRIMARY KEY,
+    create_time TIMESTAMP DEFAULT SYSDATE NOT NULL
+);
+
 DROP TABLE  version_test;
 
 CREATE TABLE  version_test

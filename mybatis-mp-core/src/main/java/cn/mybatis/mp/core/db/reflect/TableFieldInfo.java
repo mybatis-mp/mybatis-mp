@@ -1,13 +1,17 @@
 package cn.mybatis.mp.core.db.reflect;
 
 import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
+import cn.mybatis.mp.core.mybatis.typeHandler.LikeQuerySupport;
 import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
 import cn.mybatis.mp.db.annotations.*;
 import org.apache.ibatis.reflection.invoker.GetFieldInvoker;
 import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
+import org.apache.ibatis.type.TypeHandler;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 
 public class TableFieldInfo {
 
@@ -49,6 +53,8 @@ public class TableFieldInfo {
 
     private final SetFieldInvoker writeFieldInvoker;
 
+    private final TypeHandler<?> likeQueryTypeHandler;
+
     public TableFieldInfo(Field field) {
         this.field = field;
         this.tableFieldAnnotation = TableInfoUtil.getTableFieldAnnotation(field);
@@ -64,6 +70,31 @@ public class TableFieldInfo {
             LogicDeleteUtil.getLogicAfterValue(this);
         }
         this.writeFieldInvoker = new SetFieldInvoker(field);
+        likeQueryTypeHandler = createTypeHandler(field, this.tableFieldAnnotation);
+    }
+
+    private TypeHandler<?> createTypeHandler(Field field, TableField tableField) {
+        if (!LikeQuerySupport.class.isAssignableFrom(tableField.typeHandler())) {
+            return null;
+        }
+
+        Constructor constructor;
+        try {
+            constructor = tableField.typeHandler().getConstructor(Class.class, Type.class);
+            return (TypeHandler<?>) constructor.newInstance(field.getType(), field.getGenericType());
+        } catch (ReflectiveOperationException e) {
+            try {
+                constructor = tableField.typeHandler().getConstructor(Class.class);
+                return (TypeHandler<?>) constructor.newInstance(field.getType());
+            } catch (ReflectiveOperationException e2) {
+                try {
+                    constructor = tableField.typeHandler().getConstructor();
+                    return (TypeHandler<?>) constructor.newInstance();
+                } catch (ReflectiveOperationException e3) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     public Object getValue(Object object) {
@@ -117,5 +148,9 @@ public class TableFieldInfo {
 
     public SetFieldInvoker getWriteFieldInvoker() {
         return writeFieldInvoker;
+    }
+
+    public TypeHandler<?> getLikeQueryTypeHandler() {
+        return likeQueryTypeHandler;
     }
 }

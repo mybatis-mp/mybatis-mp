@@ -53,6 +53,13 @@ CREATE TABLE IF NOT EXISTS id_test
     PRIMARY KEY(id)
 );
 
+CREATE TABLE IF NOT EXISTS uuid_test
+(
+    id varchar(64),
+    create_time DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY(id)
+);
+
 drop table if exists version_test;
 
 CREATE TABLE IF NOT EXISTS version_test

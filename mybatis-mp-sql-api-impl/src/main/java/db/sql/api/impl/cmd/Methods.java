@@ -1455,9 +1455,7 @@ public class Methods {
      * @return
      */
     public static Like like(Cmd key, String value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonEmpty(value);
-        return new Like(key, value);
+        return like(key, value, LikeMode.DEFAULT);
     }
 
     /**
@@ -1467,9 +1465,8 @@ public class Methods {
      * @param value
      * @return
      */
-    public static Like like(Cmd key, String value, LikeMode mode) {
+    public static Like like(Cmd key, Object value, LikeMode mode) {
         Objects.requireNonNull(key);
-        Objects.requireNonEmpty(value);
         return new Like(key, value, mode);
     }
 
@@ -1481,9 +1478,7 @@ public class Methods {
      * @return
      */
     public static NotLike notLike(Cmd key, String value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonEmpty(value);
-        return new NotLike(key, value);
+        return notLike(key, value, LikeMode.DEFAULT);
     }
 
     /**
@@ -1493,9 +1488,8 @@ public class Methods {
      * @param value
      * @return
      */
-    public static NotLike notLike(Cmd key, String value, LikeMode mode) {
+    public static NotLike notLike(Cmd key, Object value, LikeMode mode) {
         Objects.requireNonNull(key);
-        Objects.requireNonEmpty(value);
         return new NotLike(key, value, mode);
     }
 }
