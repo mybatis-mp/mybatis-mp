@@ -34,7 +34,7 @@ public final class MapperCmdBuilderUtil {
     }
 
     public static <E> BaseQuery<? extends BaseQuery, E> buildQuery(db.sql.api.impl.cmd.struct.Where where, Consumer<BaseQuery<? extends BaseQuery, E>> consumer) {
-        BaseQuery<? extends BaseQuery, E> query = (BaseQuery<? extends BaseQuery, E>) Query.create(where);
+        BaseQuery<? extends BaseQuery, E> query = Query.create(where);
         consumer.accept(query);
         return query;
     }
@@ -50,7 +50,7 @@ public final class MapperCmdBuilderUtil {
     }
 
     public static <E> BaseQuery<? extends BaseQuery, E> buildQuery(Class<E> entityType, db.sql.api.impl.cmd.struct.Where where) {
-        BaseQuery<? extends BaseQuery, E> query = (BaseQuery<?, E>) Query.create(where);
+        BaseQuery<? extends BaseQuery, E> query = Query.create(where);
         setDefault(entityType, query);
         return query;
     }

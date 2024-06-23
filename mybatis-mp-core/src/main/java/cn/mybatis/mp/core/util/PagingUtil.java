@@ -103,9 +103,7 @@ public final class PagingUtil {
 
     public static String getLimitedSQL(DbType dbType, Pager<?> pager, String sql) {
         if (dbType == DbType.SQL_SERVER) {
-            StringBuilder sqlBuilder = new StringBuilder(sql);
-            sqlBuilder.append(" OFFSET ").append(pager.getOffset()).append(" ROWS FETCH NEXT ").append(pager.getSize()).append(" ROWS ONLY");
-            return sqlBuilder.toString();
+            return sql + " OFFSET " + pager.getOffset() + " ROWS FETCH NEXT " + pager.getSize() + " ROWS ONLY";
         }
 
 

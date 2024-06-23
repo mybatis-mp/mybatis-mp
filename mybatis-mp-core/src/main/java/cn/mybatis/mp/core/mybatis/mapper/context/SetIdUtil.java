@@ -22,9 +22,7 @@ public final class SetIdUtil {
         }
         if (Objects.nonNull(sourceId)) {
             if (sourceId instanceof String) {
-                if (!StringPool.EMPTY.equals(((String) sourceId).trim())) {
-                    return true;
-                }
+                return !StringPool.EMPTY.equals(((String) sourceId).trim());
             } else {
                 return true;
             }
