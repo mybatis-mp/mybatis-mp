@@ -21,7 +21,6 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     private boolean isIgnoreEmpty = false;
     private boolean isIgnoreNull = false;
     private boolean isStringTrim = false;
-    private boolean isParamsTypeHandler = false;
 
     public ConditionFactory(CmdFactory cmdFactory) {
         this.cmdFactory = cmdFactory;
