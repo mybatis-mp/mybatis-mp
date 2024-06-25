@@ -10,7 +10,7 @@ import org.apache.ibatis.reflection.invoker.GetFieldInvoker;
 
 import java.util.Objects;
 
-public final class SetIdUtil {
+public final class IdUtil {
 
     private static boolean isIdExists(Object obj, GetFieldInvoker getFieldInvoker) {
         //如果设置了id 则不在设置
@@ -20,9 +20,13 @@ public final class SetIdUtil {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        if (Objects.nonNull(sourceId)) {
-            if (sourceId instanceof String) {
-                return !StringPool.EMPTY.equals(((String) sourceId).trim());
+        return isIdExists(sourceId);
+    }
+
+    public static boolean isIdExists(Object id) {
+        if (Objects.nonNull(id)) {
+            if (id instanceof String) {
+                return !StringPool.EMPTY.equals(((String) id).trim());
             } else {
                 return true;
             }

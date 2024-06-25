@@ -58,21 +58,26 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
             ModelFieldInfo modelFieldInfo = modelInfo.getModelFieldInfos().get(i);
             boolean isNeedInsert = false;
             Object value = modelFieldInfo.getValue(model);
-            if (Objects.nonNull(value)) {
-                isNeedInsert = true;
-            } else if (modelFieldInfo.getTableFieldInfo().isTableId()) {
-                TableId tableId = TableIds.get(modelInfo.getTableInfo().getType(), dbType);
-                if (tableId.value() == IdAutoType.GENERATOR) {
+            if (modelFieldInfo.getTableFieldInfo().isTableId()) {
+                if (!IdUtil.isIdExists(value)) {
+                    TableId tableId = TableIds.get(modelInfo.getTableInfo().getType(), dbType);
+                    if (tableId.value() == IdAutoType.GENERATOR) {
+                        isNeedInsert = true;
+                        IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
+                        Object id = identifierGenerator.nextId(modelInfo.getType());
+                        if (modelInfo.getIdFieldInfo().getField().getType() == String.class) {
+                            id = id instanceof String ? id : String.valueOf(id);
+                        }
+                        if (IdUtil.setId(model, modelFieldInfo, id)) {
+                            value = id;
+                            isNeedInsert = true;
+                        }
+                    }
+                } else {
                     isNeedInsert = true;
-                    IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
-                    Object id = identifierGenerator.nextId(modelInfo.getType());
-                    if (modelInfo.getIdFieldInfo().getField().getType() == String.class) {
-                        id = id instanceof String ? id : String.valueOf(id);
-                    }
-                    if (SetIdUtil.setId(model, modelFieldInfo, id)) {
-                        value = id;
-                    }
                 }
+            } else if (Objects.nonNull(value)) {
+                isNeedInsert = true;
             } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
                 isNeedInsert = true;
 
@@ -103,7 +108,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
 
     @Override
     public void setId(Object id) {
-        SetIdUtil.setId(this.model, this.modelInfo.getIdFieldInfo(), id);
+        IdUtil.setId(this.model, this.modelInfo.getIdFieldInfo(), id);
     }
 
 }

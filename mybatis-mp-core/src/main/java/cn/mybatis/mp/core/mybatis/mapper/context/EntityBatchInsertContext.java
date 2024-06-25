@@ -91,12 +91,13 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
             for (int i = 0; i < fieldSize; i++) {
                 TableFieldInfo tableFieldInfo = saveFieldInfoSet.get(i);
                 Object value = tableFieldInfo.getValue(t);
-                if (Objects.isNull(value)) {
+                boolean hasValue = Objects.nonNull(value) || (tableFieldInfo.isTableId() && IdUtil.isIdExists(value));
+                if (!hasValue) {
                     if (tableFieldInfo.isTableId()) {
                         if (tableId.value() == IdAutoType.GENERATOR) {
                             IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
                             Object id = identifierGenerator.nextId(tableInfo.getType());
-                            if (SetIdUtil.setId(t, tableFieldInfo, id)) {
+                            if (IdUtil.setId(t, tableFieldInfo, id)) {
                                 value = id;
                             }
                         } else {

@@ -62,18 +62,23 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
 
             boolean isNeedInsert = false;
             Object value = tableFieldInfo.getValue(entity);
-            if (Objects.nonNull(value)) {
-                isNeedInsert = true;
-            } else if (tableFieldInfo.isTableId()) {
-                TableId tableId = TableIds.get(entity.getClass(), dbType);
-                if (tableId.value() == IdAutoType.GENERATOR) {
-                    isNeedInsert = true;
-                    IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
-                    Object id = identifierGenerator.nextId(tableInfo.getType());
-                    if (SetIdUtil.setId(entity, tableFieldInfo, id)) {
-                        value = id;
+            if (tableFieldInfo.isTableId()) {
+                if (!IdUtil.isIdExists(value)) {
+                    TableId tableId = TableIds.get(entity.getClass(), dbType);
+                    if (tableId.value() == IdAutoType.GENERATOR) {
+                        isNeedInsert = true;
+                        IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
+                        Object id = identifierGenerator.nextId(tableInfo.getType());
+                        if (IdUtil.setId(entity, tableFieldInfo, id)) {
+                            value = id;
+                            isNeedInsert = true;
+                        }
                     }
+                } else {
+                    isNeedInsert = true;
                 }
+            } else if (Objects.nonNull(value)) {
+                isNeedInsert = true;
             } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
                 isNeedInsert = true;
 
@@ -104,6 +109,6 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
 
     @Override
     public void setId(Object id) {
-        SetIdUtil.setId(this.entity, this.tableInfo.getIdFieldInfo(), id);
+        IdUtil.setId(this.entity, this.tableInfo.getIdFieldInfo(), id);
     }
 }

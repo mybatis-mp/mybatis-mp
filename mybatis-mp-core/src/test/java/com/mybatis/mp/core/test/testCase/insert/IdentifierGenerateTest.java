@@ -16,8 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IdentifierGenerateTest extends BaseTest {
 
@@ -111,6 +110,31 @@ public class IdentifierGenerateTest extends BaseTest {
             idTest.setCreateTime(LocalDateTime.now());
             idTestMapper.save(idTest);
             assertNotNull(idTest.getId());
+        }
+    }
+
+    @Test
+    public void insertUUID2Test() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            UUIDMapper idTestMapper = session.getMapper(UUIDMapper.class);
+            UUIDTest idTest = new UUIDTest();
+            idTest.setId(" ");
+            idTest.setCreateTime(LocalDateTime.now());
+            idTestMapper.save(idTest);
+            assertNotEquals(idTest.getId(), "");
+            assertNotEquals(idTest.getId(), " ");
+        }
+    }
+
+    @Test
+    public void insertUUID3Test() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            UUIDMapper idTestMapper = session.getMapper(UUIDMapper.class);
+            UUIDTest idTest = new UUIDTest();
+            idTest.setId("a");
+            idTest.setCreateTime(LocalDateTime.now());
+            idTestMapper.save(idTest);
+            assertEquals(idTest.getId(), "a");
         }
     }
 }
