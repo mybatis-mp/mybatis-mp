@@ -258,6 +258,18 @@ public interface MybatisMapper<T> extends CommonMapper {
     }
 
     /**
+     * 实体类新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param entity
+     * @param <E>
+     * @return
+     */
+    default <E> int saveOrUpdate(E entity) {
+        return getBasicMapper().saveOrUpdate(entity);
+    }
+
+    /**
      * 列表查询,返回类型，当前实体类
      *
      * @param consumer where consumer

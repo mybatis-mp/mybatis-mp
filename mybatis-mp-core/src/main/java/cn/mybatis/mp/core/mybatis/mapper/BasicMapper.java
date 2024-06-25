@@ -6,11 +6,13 @@ import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
 import cn.mybatis.mp.core.mybatis.mapper.context.*;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.Delete;
+import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.core.util.WhereUtil;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
+import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.Selector;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
@@ -246,6 +248,39 @@ public interface BasicMapper extends BaseMapper {
     default <E> int deleteById(Class<E> entityType, Serializable id) {
         TableInfo tableInfo = Tables.get(entityType);
         return this.delete(entityType, where -> WhereUtil.appendIdWhere(where, tableInfo, id));
+    }
+
+    /**
+     * 实体类新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param entity
+     * @param <E>
+     * @return
+     */
+    default <E> int saveOrUpdate(E entity) {
+        Class<?> entityType = entity.getClass();
+        TableInfo tableInfo = Tables.get(entityType);
+        Query<E> query = Query.create();
+        Table table = query.$(entityType);
+
+        Serializable id;
+        try {
+            id = (Serializable) tableInfo.getIdFieldInfo().getReadFieldInvoker().invoke(entity, null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        query.select1()
+                .from(table)
+                .where(where -> where.eq(query.$().field(table, tableInfo.getIdFieldInfo().getColumnName()), id));
+
+        boolean exists = this.exists(query);
+        if (exists) {
+            return this.update(entity);
+        } else {
+            return this.save(entity);
+        }
     }
 
 

@@ -28,6 +28,13 @@ public @interface TableField {
     boolean select() default true;
 
     /**
+     * 是否进行 insert
+     *
+     * @return 默认 true
+     */
+    boolean insert() default true;
+
+    /**
      * 是否进行 update
      *
      * @return 默认 true

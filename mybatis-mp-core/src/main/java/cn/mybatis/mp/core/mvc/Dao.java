@@ -22,6 +22,8 @@ public interface Dao<T, K> {
 
     int update(T entity);
 
+    int saveOrUpdate(T entity);
+
     int update(List<T> list);
 
     int update(T entity, Getter<T>... forceUpdateFields);

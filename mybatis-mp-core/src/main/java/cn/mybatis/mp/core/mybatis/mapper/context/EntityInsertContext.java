@@ -55,6 +55,11 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
         List<Object> values = new LinkedList<>();
         for (int i = 0; i < tableInfo.getFieldSize(); i++) {
             TableFieldInfo tableFieldInfo = tableInfo.getTableFieldInfos().get(i);
+
+            if (!tableFieldInfo.getTableFieldAnnotation().update()) {
+                continue;
+            }
+
             boolean isNeedInsert = false;
             Object value = tableFieldInfo.getValue(entity);
             if (Objects.nonNull(value)) {

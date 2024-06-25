@@ -25,8 +25,8 @@ import java.util.Objects;
 public abstract class DaoImpl<T, K> implements Dao<T, K> {
 
     protected MybatisMapper<T> mapper;
-    protected Class<K> idType;
-    private TableInfo tableInfo;
+    protected volatile Class<K> idType;
+    private volatile TableInfo tableInfo;
 
     public DaoImpl() {
 
@@ -50,7 +50,8 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     @Override
     public Class<K> getIdType() {
         if (idType == null) {
-            idType = (Class<K>) GenericUtil.getGenericSuperClass(this.getClass()).get(1);
+            List<?> genericTypes = GenericUtil.getGenericSuperClass(this.getClass());
+            idType = (Class<K>) genericTypes.get(genericTypes.size() - 1);
         }
         return idType;
     }
@@ -109,6 +110,12 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     public int update(T entity) {
         this.checkIdType();
         return mapper.update(entity);
+    }
+
+    @Override
+    public int saveOrUpdate(T entity) {
+        this.checkIdType();
+        return mapper.saveOrUpdate(entity);
     }
 
     @Override

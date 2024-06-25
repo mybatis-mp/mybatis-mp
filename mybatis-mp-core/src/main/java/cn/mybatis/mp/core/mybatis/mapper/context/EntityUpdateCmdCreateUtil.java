@@ -29,7 +29,14 @@ public class EntityUpdateCmdCreateUtil {
 
         for (int i = 0; i < tableInfo.getFieldSize(); i++) {
             TableFieldInfo tableFieldInfo = tableInfo.getTableFieldInfos().get(i);
+
+            boolean isForceUpdate = forceUpdateFields.contains(tableFieldInfo.getField().getName());
+            if (!isForceUpdate && !tableFieldInfo.getTableFieldAnnotation().update()) {
+                continue;
+            }
+
             Object value = tableFieldInfo.getValue(t);
+
             if (tableFieldInfo.isTableId()) {
                 if (Objects.nonNull(value)) {
                     update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), $.value(value));
@@ -62,20 +69,17 @@ public class EntityUpdateCmdCreateUtil {
             }
 
             if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
-
                 //设置默认值
                 value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getField().getType(), tableFieldInfo.getTableFieldAnnotation().updateDefaultValue());
                 //默认值回写
                 TableInfoUtil.setValue(tableFieldInfo, t, value);
             }
 
-            if (forceUpdateFields.contains(tableFieldInfo.getField().getName())) {
+            if (isForceUpdate) {
                 if (Objects.isNull(value)) {
                     update.set($.field(table, tableFieldInfo.getColumnName()), $.NULL());
                     continue;
                 }
-            } else if (!tableFieldInfo.getTableFieldAnnotation().update()) {
-                continue;
             }
 
             if (Objects.nonNull(value)) {

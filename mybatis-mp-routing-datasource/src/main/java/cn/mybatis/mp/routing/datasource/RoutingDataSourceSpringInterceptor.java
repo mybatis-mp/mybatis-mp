@@ -5,6 +5,7 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.expression.ExpressionParser;
@@ -12,7 +13,6 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
@@ -27,7 +27,8 @@ public class RoutingDataSourceSpringInterceptor implements MethodInterceptor {
     private static final ParameterNameDiscoverer localVariableTable = new DefaultParameterNameDiscoverer();
     private static final ExpressionParser parser = new SpelExpressionParser();
     private final Logger logger = LoggerFactory.getLogger(RoutingDataSourceSpringInterceptor.class);
-    @Resource
+
+    @Autowired(required = false)
     private RoutingDataSourceSwitchContext routingDataSourceSwitchContext;
 
     public static void main(String[] args) {

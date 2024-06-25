@@ -38,6 +38,8 @@ public class IdentifierGenerateTest extends BaseTest {
             idTestMapper.getBasicMapper().save(idTest);
             //System.out.println(idTest);
             assertNotNull(idTest.getId());
+
+            idTestMapper.saveOrUpdate(idTest);
         }
     }
 
