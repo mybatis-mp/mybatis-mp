@@ -271,7 +271,7 @@ public interface BasicMapper extends BaseMapper {
         }
 
         if (Objects.isNull(id)) {
-            return this.save(id);
+            return this.save(entity);
         }
 
         Query<E> query = Query.create();
