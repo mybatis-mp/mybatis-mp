@@ -13,6 +13,7 @@ import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.basic.Table;
+import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.Selector;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
@@ -261,19 +262,25 @@ public interface BasicMapper extends BaseMapper {
     default <E> int saveOrUpdate(E entity) {
         Class<?> entityType = entity.getClass();
         TableInfo tableInfo = Tables.get(entityType);
-        Query<E> query = Query.create();
-        Table table = query.$(entityType);
 
-        Serializable id;
+        Object id;
         try {
-            id = (Serializable) tableInfo.getIdFieldInfo().getReadFieldInvoker().invoke(entity, null);
+            id = tableInfo.getIdFieldInfo().getReadFieldInvoker().invoke(entity, null);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
 
+        if (Objects.isNull(id)) {
+            return this.save(id);
+        }
+
+        Query<E> query = Query.create();
+        Table table = query.$(entityType);
+
+        TableField idTableField = query.$().field(table, tableInfo.getIdFieldInfo().getColumnName());
         query.select1()
                 .from(table)
-                .where(where -> where.eq(query.$().field(table, tableInfo.getIdFieldInfo().getColumnName()), id));
+                .where(where -> where.eq(idTableField, id));
 
         boolean exists = this.exists(query);
         if (exists) {
