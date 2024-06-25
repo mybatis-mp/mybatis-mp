@@ -40,9 +40,13 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
         this.mapper = mapper;
     }
 
+    protected MybatisMapper<T> getMapper() {
+        return this.mapper;
+    }
+
     protected TableInfo getTableInfo() {
         if (Objects.isNull(tableInfo)) {
-            tableInfo = Tables.get(mapper.getEntityType());
+            tableInfo = Tables.get(getMapper().getEntityType());
         }
         return tableInfo;
     }
@@ -57,19 +61,19 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     protected QueryChain<T> queryChain() {
-        return QueryChain.of(mapper);
+        return QueryChain.of(getMapper());
     }
 
     protected UpdateChain updateChain() {
-        return UpdateChain.of(mapper);
+        return UpdateChain.of(getMapper());
     }
 
     protected InsertChain insertChain() {
-        return InsertChain.of(mapper);
+        return InsertChain.of(getMapper());
     }
 
     protected DeleteChain deleteChain() {
-        return DeleteChain.of(mapper);
+        return DeleteChain.of(getMapper());
     }
 
     private void checkIdType() {
@@ -82,51 +86,51 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     @Override
     public T getById(K id) {
         this.checkIdType();
-        return mapper.getById((Serializable) id);
+        return getMapper().getById((Serializable) id);
     }
 
     @Override
     public T getById(K id, Getter<T>... selectFields) {
         this.checkIdType();
-        return mapper.getById((Serializable) id, selectFields);
+        return getMapper().getById((Serializable) id, selectFields);
     }
 
     @Override
     public int save(T entity) {
-        return mapper.save(entity);
+        return getMapper().save(entity);
     }
 
     @Override
     public int save(List<T> list) {
-        return mapper.save(list);
+        return getMapper().save(list);
     }
 
     @Override
     public int save(Model<T> model) {
-        return mapper.save(model);
+        return getMapper().save(model);
     }
 
     @Override
     public int update(T entity) {
         this.checkIdType();
-        return mapper.update(entity);
+        return getMapper().update(entity);
     }
 
     @Override
     public int saveOrUpdate(T entity) {
         this.checkIdType();
-        return mapper.saveOrUpdate(entity);
+        return getMapper().saveOrUpdate(entity);
     }
 
     @Override
     public int update(List<T> list) {
-        return mapper.update(list);
+        return getMapper().update(list);
     }
 
     @Override
     public int update(T entity, Getter<T>... forceUpdateFields) {
         this.checkIdType();
-        return mapper.update(entity, forceUpdateFields);
+        return getMapper().update(entity, forceUpdateFields);
     }
 
     @Override
@@ -134,41 +138,41 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
         if (getIdType() == Void.class) {
             throw new RuntimeException("Not Supported");
         }
-        return mapper.update(model);
+        return getMapper().update(model);
     }
 
     @Override
     public int update(Model<T> model, Getter<T>... forceUpdateFields) {
-        return mapper.update(model, forceUpdateFields);
+        return getMapper().update(model, forceUpdateFields);
     }
 
     @Override
     public int delete(T entity) {
         this.checkIdType();
-        return mapper.delete(entity);
+        return getMapper().delete(entity);
     }
 
     @Override
     public int delete(List<T> list) {
-        return mapper.delete(list);
+        return getMapper().delete(list);
     }
 
     @Override
     public int deleteById(K id) {
         this.checkIdType();
-        return mapper.deleteById((Serializable) id);
+        return getMapper().deleteById((Serializable) id);
     }
 
     @Override
     public int deleteByIds(K... ids) {
         this.checkIdType();
-        return mapper.deleteByIds(ids);
+        return getMapper().deleteByIds(ids);
     }
 
     @Override
     public int deleteByIds(List<K> ids) {
         this.checkIdType();
-        return mapper.deleteByIds((List<Serializable>) ids);
+        return getMapper().deleteByIds((List<Serializable>) ids);
     }
 
     @Override
@@ -180,7 +184,7 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     public Map<K, T> map(List<K> ids) {
         this.checkIdType();
         Where where = WhereUtil.create();
-        BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(mapper.getEntityType(), where);
-        return mapper.mapWithKey(getTableInfo().getIdFieldInfo().getField().getName(), query, false);
+        BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(getMapper().getEntityType(), where);
+        return getMapper().mapWithKey(getTableInfo().getIdFieldInfo().getField().getName(), query, false);
     }
 }
