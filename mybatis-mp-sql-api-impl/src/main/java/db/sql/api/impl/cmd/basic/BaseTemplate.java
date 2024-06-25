@@ -1,10 +1,12 @@
 package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
+import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.Alias;
 import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
+import db.sql.api.impl.tookit.SqlUtil;
 import db.sql.api.tookit.CmdUtils;
 
 import java.text.MessageFormat;
@@ -38,6 +40,10 @@ public abstract class BaseTemplate<T> implements Cmd, Alias<T> {
     @Override
     public String getAlias() {
         return this.alias;
+    }
+
+    public <T2> T as(Getter<T2> aliasGetter) {
+        return this.as(SqlUtil.getAsName(aliasGetter));
     }
 
     @Override

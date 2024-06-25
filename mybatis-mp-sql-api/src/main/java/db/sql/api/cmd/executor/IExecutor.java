@@ -33,6 +33,19 @@ public interface IExecutor<T extends IExecutor,
      * @return
      */
     default T connect(Consumer<T> consumer) {
+        return this.connect(true, consumer);
+    }
+
+    /**
+     * 内联，用于获取自身
+     *
+     * @param consumer
+     * @return
+     */
+    default T connect(boolean when, Consumer<T> consumer) {
+        if (!when) {
+            return (T) this;
+        }
         consumer.accept((T) this);
         return (T) this;
     }
