@@ -56,7 +56,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
         for (int i = 0; i < tableInfo.getFieldSize(); i++) {
             TableFieldInfo tableFieldInfo = tableInfo.getTableFieldInfos().get(i);
 
-            if (!tableFieldInfo.getTableFieldAnnotation().update()) {
+            if (!tableFieldInfo.getTableFieldAnnotation().insert()) {
                 continue;
             }
 
