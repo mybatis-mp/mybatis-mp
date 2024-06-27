@@ -52,11 +52,11 @@ public class ResultInfo {
     }
 
     private static void parseResultEntity(ParseResult parseResult, Class<?> clazz, ResultEntity resultEntity) {
-        TableInfo resultEntityTableInfo = Tables.get(resultEntity.value());
+        TableInfo resultEntityTableInfo = resultEntity.value().isAnnotationPresent(Table.class) ? Tables.get(resultEntity.value()) : null;
 
         int tableCount = 0;
         if (Objects.nonNull(resultEntityTableInfo)) {
-            createPrefix(resultEntity.value(), resultEntity.storey(), parseResult.tablePrefixes, 0);
+            tableCount = createPrefix(resultEntity.value(), resultEntity.storey(), parseResult.tablePrefixes, 0);
         } else if (resultEntity.value() != Void.TYPE) {
             throw new NotTableClassException(resultEntity.value());
         }
@@ -89,7 +89,7 @@ public class ResultInfo {
 
 
             if (Objects.isNull(resultEntityTableInfo)) {
-                throw new NotTableClassException(resultEntity.value());
+                throw new RuntimeException("the class:" + clazz + "'s @ResultEntity not set correct value");
             }
 
             TableInfo tableInfo;
