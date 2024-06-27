@@ -53,11 +53,13 @@ public class ResultInfo {
 
     private static void parseResultEntity(ParseResult parseResult, Class<?> clazz, ResultEntity resultEntity) {
         TableInfo resultEntityTableInfo = Tables.get(resultEntity.value());
-        if (Objects.isNull(resultEntityTableInfo)) {
+
+        int tableCount = 0;
+        if (Objects.nonNull(resultEntityTableInfo)) {
+            createPrefix(resultEntity.value(), resultEntity.storey(), parseResult.tablePrefixes, 0);
+        } else if (resultEntity.value() != Void.TYPE) {
             throw new NotTableClassException(resultEntity.value());
         }
-
-        int tableCount = createPrefix(resultEntity.value(), resultEntity.storey(), parseResult.tablePrefixes, 0);
 
         List<Field> fieldList = FieldUtil.getResultMappingFields(clazz);
         for (Field field : fieldList) {
@@ -85,6 +87,10 @@ public class ResultInfo {
                 continue;
             }
 
+
+            if (Objects.isNull(resultEntityTableInfo)) {
+                throw new NotTableClassException(resultEntity.value());
+            }
 
             TableInfo tableInfo;
             TableFieldInfo tableFieldInfo;
