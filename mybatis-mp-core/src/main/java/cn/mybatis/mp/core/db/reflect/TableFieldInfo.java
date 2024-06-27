@@ -2,6 +2,7 @@ package cn.mybatis.mp.core.db.reflect;
 
 import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
 import cn.mybatis.mp.core.mybatis.typeHandler.LikeQuerySupport;
+import cn.mybatis.mp.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
 import cn.mybatis.mp.db.annotations.*;
@@ -53,7 +54,7 @@ public class TableFieldInfo {
 
     private final SetFieldInvoker writeFieldInvoker;
 
-    private final TypeHandler<?> likeQueryTypeHandler;
+    private final TypeHandler<?> typeHandler;
 
     public TableFieldInfo(Field field) {
         this.field = field;
@@ -70,7 +71,7 @@ public class TableFieldInfo {
             LogicDeleteUtil.getLogicAfterValue(this);
         }
         this.writeFieldInvoker = new SetFieldInvoker(field);
-        likeQueryTypeHandler = createTypeHandler(field, this.tableFieldAnnotation);
+        typeHandler = MybatisTypeHandlerUtil.createTypeHandler(field, this.tableFieldAnnotation.typeHandler());
     }
 
     private TypeHandler<?> createTypeHandler(Field field, TableField tableField) {
@@ -150,7 +151,7 @@ public class TableFieldInfo {
         return writeFieldInvoker;
     }
 
-    public TypeHandler<?> getLikeQueryTypeHandler() {
-        return likeQueryTypeHandler;
+    public TypeHandler<?> getTypeHandler() {
+        return typeHandler;
     }
 }

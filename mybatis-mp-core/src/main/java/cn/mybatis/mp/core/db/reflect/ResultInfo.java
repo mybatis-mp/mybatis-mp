@@ -7,6 +7,7 @@ import cn.mybatis.mp.core.util.GenericUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.db.annotations.*;
 import lombok.Data;
+import org.apache.ibatis.type.TypeHandler;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -266,12 +267,14 @@ public class ResultInfo {
         Fetch fetch = field.getAnnotation(Fetch.class);
 
         String valueColumn = fetch.column();
+        TypeHandler<?> valueTypeHandler = null;
         if (StringPool.EMPTY.equals(valueColumn)) {
             if (!fetch.source().isAnnotationPresent(Table.class)) {
                 throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the source: " + fetch.source().getName() + " is not a entity");
             }
             TableInfo fetchTableInfo = Tables.get(fetch.source());
             TableFieldInfo fetchFieldInfo = fetchTableInfo.getFieldInfo(fetch.property());
+            valueTypeHandler = fetchFieldInfo.getTypeHandler();
             if (Objects.isNull(fetchFieldInfo)) {
                 throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the property: " + fetch.property() + " is not a entity field");
             }
@@ -284,6 +287,7 @@ public class ResultInfo {
 
             resultFieldInfos.add(new ResultTableFieldInfo(false, fetch.source(), fetch.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
             valueColumn = tablePrefix + fetchFieldInfo.getColumnName();
+
         }
 
         if (StringPool.EMPTY.equals(fetch.targetProperty())) {
@@ -357,7 +361,7 @@ public class ResultInfo {
             targetMatchField = fetchTargetFieldInfo.getField();
         }
 
-        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new LinkedList<>()).add(new FetchInfo(field, fetch, returnType, valueColumn, targetMatchField, targetMatchColumn, targetSelectColumn, orderBy));
+        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new LinkedList<>()).add(new FetchInfo(field, fetch, returnType, valueColumn, valueTypeHandler, targetMatchField, targetMatchColumn, targetSelectColumn, orderBy));
         return tableCount;
     }
 

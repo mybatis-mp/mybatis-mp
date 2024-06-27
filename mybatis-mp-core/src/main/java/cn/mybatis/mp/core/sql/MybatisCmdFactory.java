@@ -133,7 +133,7 @@ public class MybatisCmdFactory extends CmdFactory {
             TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(lambdaFieldInfo.getName());
             Class typeHandler = tableFieldInfo.getTableFieldAnnotation().typeHandler();
             if (LikeQuerySupport.class.isAssignableFrom(typeHandler)) {
-                LikeQuerySupport likeQuerySupport = (LikeQuerySupport) tableFieldInfo.getLikeQueryTypeHandler();
+                LikeQuerySupport likeQuerySupport = (LikeQuerySupport) tableFieldInfo.getTypeHandler();
                 param = new MybatisLikeQueryParameter(param, isNotLike, likeMode, typeHandler, tableFieldInfo.getTableFieldAnnotation().jdbcType());
                 likeMode = likeQuerySupport.convertLikeMode(likeMode, isNotLike);
             } else if (QuerySupport.class.isAssignableFrom(typeHandler)) {

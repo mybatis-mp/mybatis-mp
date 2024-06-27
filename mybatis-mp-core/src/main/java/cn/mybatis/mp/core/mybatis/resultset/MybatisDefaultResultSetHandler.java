@@ -86,7 +86,14 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             FetchInfo fetchInfo = fetchInfos.get(i);
             Object onValue;
             try {
-                onValue = resultSet.getObject(fetchInfo.getValueColumn());
+                if (Objects.nonNull(fetchInfo.getValueTypeHandler())) {
+                    onValue = fetchInfo.getValueTypeHandler().getResult(resultSet, fetchInfo.getValueColumn());
+                } else {
+                    onValue = resultSet.getObject(fetchInfo.getValueColumn());
+                    if (!(onValue instanceof Number)) {
+                        onValue = resultSet.getString(fetchInfo.getValueColumn());
+                    }
+                }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

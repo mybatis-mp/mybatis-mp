@@ -16,6 +16,40 @@ public final class MybatisTypeHandlerUtil {
 
     private final static Map<Class<? extends TypeHandler<?>>, Map<Type, Map<Class<?>, TypeHandler<?>>>> GENERIC_TYPE_HANDLERS = new ConcurrentHashMap();
 
+    public static TypeHandler<?> createTypeHandler(Field field, Class<? extends TypeHandler<?>> typeHandlerClass) {
+        if (typeHandlerClass == UnknownTypeHandler.class) {
+            return null;
+        }
+        ReflectiveOperationException exception;
+        try {
+            Constructor constructor = typeHandlerClass.getConstructor(Class.class, Type.class);
+            return (TypeHandler<?>) constructor.newInstance(field.getType(), field.getGenericType());
+        } catch (ReflectiveOperationException e) {
+            exception = e;
+        }
+
+        if (Objects.nonNull(exception)) {
+            try {
+                Constructor constructor = typeHandlerClass.getConstructor(Class.class);
+                return (TypeHandler<?>) constructor.newInstance(field.getType());
+            } catch (ReflectiveOperationException e) {
+                exception = e;
+            }
+        }
+
+        if (Objects.nonNull(exception)) {
+            try {
+                Constructor constructor = typeHandlerClass.getConstructor();
+                return (TypeHandler<?>) constructor.newInstance();
+            } catch (ReflectiveOperationException e) {
+                exception = e;
+            }
+        }
+
+        throw new RuntimeException(exception);
+    }
+
+
     public static TypeHandler<?> getTypeHandler(Configuration cfg, Class<?> type, Class<? extends TypeHandler<?>> typeHandlerClass) {
         TypeHandler<?> typeHandler = cfg.getTypeHandlerRegistry().getMappingTypeHandler(typeHandlerClass);
         if (Objects.nonNull(typeHandler)) {

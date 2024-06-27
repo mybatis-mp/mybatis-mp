@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.reflection.invoker.GetFieldInvoker;
 import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
+import org.apache.ibatis.type.TypeHandler;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -20,6 +21,8 @@ public class FetchInfo {
 
     private final String valueColumn;
 
+    private final TypeHandler<?> valueTypeHandler;
+
     private final String targetMatchColumn;
 
     private final String targetSelectColumn;
@@ -34,11 +37,12 @@ public class FetchInfo {
 
     private final Class<?> returnType;
 
-    public FetchInfo(Field field, Fetch fetch, Class returnType, String valueColumn, Field targetMatchField, String targetMatchColumn, String targetSelectColumn, String orderBy) {
+    public FetchInfo(Field field, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler, Field targetMatchField, String targetMatchColumn, String targetSelectColumn, String orderBy) {
         this.field = field;
         this.fetch = fetch;
         this.writeFieldInvoker = new SetFieldInvoker(field);
         this.valueColumn = valueColumn;
+        this.valueTypeHandler = valueTypeHandler;
         this.eqGetFieldInvoker = Objects.isNull(targetMatchField) ? null : new GetFieldInvoker(targetMatchField);
         this.targetMatchColumn = targetMatchColumn;
         this.targetSelectColumn = targetSelectColumn;
