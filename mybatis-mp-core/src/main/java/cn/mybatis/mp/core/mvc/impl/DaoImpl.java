@@ -36,12 +36,12 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
         this.setMapper(mapper);
     }
 
-    protected void setMapper(MybatisMapper<T> mapper) {
-        this.mapper = mapper;
-    }
-
     protected MybatisMapper<T> getMapper() {
         return this.mapper;
+    }
+
+    protected void setMapper(MybatisMapper<T> mapper) {
+        this.mapper = mapper;
     }
 
     protected TableInfo getTableInfo() {

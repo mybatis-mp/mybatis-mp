@@ -12,6 +12,8 @@ public final class SqlConst {
 
     public static final char[] BLANK = S_BLANK.toCharArray();
 
+    public static final char[] DISTINCT = " DISTINCT ".toCharArray();
+
     public static final char[] NULL = " NULL ".toCharArray();
 
     public static final char[] UNION = " UNION ".toCharArray();

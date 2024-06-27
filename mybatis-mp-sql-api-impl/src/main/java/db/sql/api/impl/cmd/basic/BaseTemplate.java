@@ -1,22 +1,19 @@
 package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
-import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
-import db.sql.api.cmd.basic.Alias;
 import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
-import db.sql.api.impl.tookit.SqlUtil;
 import db.sql.api.tookit.CmdUtils;
 
 import java.text.MessageFormat;
 import java.util.Objects;
 
-public abstract class BaseTemplate<T> implements Cmd, Alias<T> {
+public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAlias<T> implements Cmd {
 
     protected final String template;
+
     protected final Cmd[] params;
-    private String alias;
 
     public BaseTemplate(String template, Object... params) {
         this.template = template;
@@ -35,21 +32,6 @@ public abstract class BaseTemplate<T> implements Cmd, Alias<T> {
     public BaseTemplate(String template, Cmd... params) {
         this.template = template;
         this.params = params;
-    }
-
-    @Override
-    public String getAlias() {
-        return this.alias;
-    }
-
-    public <T2> T as(Getter<T2> aliasGetter) {
-        return this.as(SqlUtil.getAsName(aliasGetter));
-    }
-
-    @Override
-    public T as(String alias) {
-        this.alias = alias;
-        return (T) this;
     }
 
     /**

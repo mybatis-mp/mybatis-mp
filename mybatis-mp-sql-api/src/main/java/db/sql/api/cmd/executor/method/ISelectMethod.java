@@ -31,15 +31,9 @@ public interface ISelectMethod<SELF extends ISelectMethod,
         return (SELF) this;
     }
 
-    default SELF selectCount1() {
-        this.select((COLUMN) Count1.INSTANCE);
-        return (SELF) this;
-    }
+    SELF selectCount1();
 
-    default SELF selectCountAll() {
-        this.select((COLUMN) CountAll.INSTANCE);
-        return (SELF) this;
-    }
+    SELF selectCountAll();
 
     default SELF select(Class entity) {
         return this.select(entity, 1);

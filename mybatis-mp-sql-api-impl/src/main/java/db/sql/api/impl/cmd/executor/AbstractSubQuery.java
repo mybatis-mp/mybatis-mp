@@ -49,6 +49,10 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
         super($);
     }
 
+    public AbstractSubQuery(Where where) {
+        super(where);
+    }
+
     @Override
     public String getAlias() {
         return alias;

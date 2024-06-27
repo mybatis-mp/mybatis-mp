@@ -3,10 +3,7 @@ package db.sql.api.impl.cmd;
 import db.sql.api.Cmd;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.executor.IQuery;
-import db.sql.api.impl.cmd.basic.BasicValue;
-import db.sql.api.impl.cmd.basic.Column;
-import db.sql.api.impl.cmd.basic.Condition;
-import db.sql.api.impl.cmd.basic.DatePattern;
+import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.condition.*;
 import db.sql.api.impl.cmd.dbFun.*;
 import db.sql.api.impl.tookit.Objects;
@@ -175,6 +172,36 @@ public class Methods {
     public static Count count(Cmd key) {
         Objects.requireNonNull(key);
         return new Count(key);
+    }
+
+    /**
+     * count(1) 条数 函数
+     *
+     * @return
+     */
+    public static Count1 count1() {
+        return Count1.INSTANCE;
+    }
+
+    /**
+     * count(*) 条数 函数
+     *
+     * @return
+     */
+    public static CountAll countAll() {
+        return CountAll.INSTANCE;
+    }
+
+    /**
+     * count条数 函数
+     *
+     * @param key
+     * @param distinct 是否去重
+     * @return
+     */
+    public static Count count(Cmd key, boolean distinct) {
+        Objects.requireNonNull(key);
+        return new Count(key, distinct);
     }
 
     /**

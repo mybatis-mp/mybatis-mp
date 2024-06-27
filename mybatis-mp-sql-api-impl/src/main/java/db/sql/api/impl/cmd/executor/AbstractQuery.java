@@ -14,10 +14,7 @@ import db.sql.api.cmd.struct.query.Unions;
 import db.sql.api.cmd.struct.query.Withs;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.ConditionFactory;
-import db.sql.api.impl.cmd.basic.DatasetField;
-import db.sql.api.impl.cmd.basic.OrderByDirection;
-import db.sql.api.impl.cmd.basic.Table;
-import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.struct.*;
 import db.sql.api.impl.cmd.struct.query.*;
 import db.sql.api.impl.tookit.SqlConst;
@@ -176,6 +173,18 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
             this.append(select);
         }
         return select;
+    }
+
+    @Override
+    public SELF selectCount1() {
+        this.select(Count1.INSTANCE);
+        return (SELF) this;
+    }
+
+    @Override
+    public SELF selectCountAll() {
+        this.select(CountAll.INSTANCE);
+        return (SELF) this;
     }
 
     /**

@@ -39,6 +39,10 @@ public interface FunctionInterface extends Cmd {
         return Methods.count(this);
     }
 
+    default Count count(boolean distinct) {
+        return Methods.count(this, distinct);
+    }
+
     default Round round() {
         return this.round(0);
     }

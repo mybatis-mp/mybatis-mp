@@ -2,7 +2,7 @@ package db.sql.api.cmd.basic;
 
 import db.sql.api.Getter;
 
-public interface IField<T extends IField<T>> extends Alias {
+public interface IField<T extends IField<T>> extends Alias<T> {
 
     /**
      * lambda 别名

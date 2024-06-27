@@ -8,16 +8,23 @@ import db.sql.api.Cmd;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.executor.AbstractSubQuery;
 import db.sql.api.impl.cmd.struct.On;
+import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
 public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSubQuery<Q, MybatisCmdFactory> implements db.sql.api.cmd.basic.IDataset<Q, DatasetField> {
+
     private final String alias;
 
     public BaseSubQuery(String alias) {
         super(new MybatisCmdFactory("st"));
+        this.alias = alias;
+    }
+
+    public BaseSubQuery(String alias, Where where) {
+        super(where);
         this.alias = alias;
     }
 
