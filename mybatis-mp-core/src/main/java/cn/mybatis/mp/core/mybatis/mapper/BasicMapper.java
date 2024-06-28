@@ -10,6 +10,7 @@ import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.core.util.WhereUtil;
 import cn.mybatis.mp.db.Model;
+import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.basic.Table;
@@ -280,7 +281,12 @@ public interface BasicMapper extends BaseMapper {
         TableField idTableField = query.$().field(table, tableInfo.getIdFieldInfo().getColumnName());
         query.select1()
                 .from(table)
-                .where(where -> where.eq(idTableField, id));
+                .where(where -> where.eq(idTableField, id))
+                .dbAdapt((q, selector) -> {
+                    selector.when(DbType.SQL_SERVER,()->{
+                        q.orderBy(idTableField);
+                    }).otherwise();
+                });
 
         boolean exists = this.exists(query);
         if (exists) {
