@@ -44,11 +44,15 @@ public interface BaseMapper extends CommonMapper {
      * @return 返回单个对象
      */
     default <E> E get(BaseQuery<? extends BaseQuery, E> query, boolean optimize) {
-        query.dbAdapt((q, selector) -> {
-            selector.when(DbType.SQL_SERVER,()->{}).otherwise(()->{
-                query.limit(2);
+        if (Objects.isNull(query.getLimit())) {
+            query.dbAdapt((q, selector) -> {
+                selector.when(DbType.SQL_SERVER, () -> {
+                    //忽略
+                }).otherwise(() -> {
+                    query.limit(2);
+                });
             });
-        });
+        }
 
         return this.$get(new SQLCmdQueryContext(query, optimize), new RowBounds(0, 2));
     }
