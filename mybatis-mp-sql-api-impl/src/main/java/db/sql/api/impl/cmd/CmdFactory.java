@@ -42,13 +42,13 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, TableField
         return as;
     }
 
-    public Table cacheTable(Class entity, int storey) {
+    public Table cacheTable(Class<?> entity, int storey) {
         return this.tableCache.get(String.format("%s.%s", entity.getName(), storey));
     }
 
 
     @Override
-    public Table table(Class entity, int storey) {
+    public Table table(Class<?> entity, int storey) {
         return tableCache.computeIfAbsent(entity.getName(), key -> {
             Table table = new Table(entity.getSimpleName());
             table.as(tableAs(storey, ++tableNums));
@@ -104,7 +104,7 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, TableField
     }
 
     @Override
-    public TableField field(Class entity, String filedName, int storey) {
+    public TableField field(Class<?> entity, String filedName, int storey) {
         return this.field(entity, storey, filedName);
     }
 
@@ -127,7 +127,7 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, TableField
         return RF.apply(this.field(column, storey));
     }
 
-    protected TableField field(Class clazz, int storey, String filedName) {
+    protected TableField field(Class<?> clazz, int storey, String filedName) {
         Table table = table(clazz, storey);
         return new TableField(table, filedName);
     }

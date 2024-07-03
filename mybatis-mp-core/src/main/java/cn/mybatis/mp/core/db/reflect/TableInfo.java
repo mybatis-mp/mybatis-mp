@@ -17,7 +17,7 @@ public class TableInfo {
     /**
      * 对应的类
      */
-    private final Class type;
+    private final Class<?> type;
 
     /**
      * 数据库 schema
@@ -64,7 +64,7 @@ public class TableInfo {
     /**
      * 外键关系
      */
-    private final Map<Class, ForeignInfo> foreignInfoMap;
+    private final Map<Class<?>, ForeignInfo> foreignInfoMap;
 
     /**
      * 字段信息 key为属性字段名 value为字段信息
@@ -76,7 +76,7 @@ public class TableInfo {
      */
     private final boolean hasIgnoreField;
 
-    public TableInfo(Class entity) {
+    public TableInfo(Class<?> entity) {
         this.type = entity;
 
         Table table = (Table) entity.getAnnotation(Table.class);
@@ -95,7 +95,7 @@ public class TableInfo {
 
         List<TableFieldInfo> tableFieldInfos = new LinkedList<>();
         Map<String, TableFieldInfo> tableFieldInfoMap = new HashMap<>();
-        Map<Class, ForeignInfo> foreignInfoMap = new HashMap<>();
+        Map<Class<?>, ForeignInfo> foreignInfoMap = new HashMap<>();
 
         List<Field> fieldList = FieldUtil.getResultMappingFields(entity);
         for (Field field : fieldList) {
@@ -171,11 +171,11 @@ public class TableInfo {
      * @param entityClass
      * @return
      */
-    public final ForeignInfo getForeignInfo(Class entityClass) {
+    public final ForeignInfo getForeignInfo(Class<?> entityClass) {
         return this.foreignInfoMap.get(entityClass);
     }
 
-    public Class getType() {
+    public Class<?> getType() {
         return this.type;
     }
 
@@ -191,7 +191,7 @@ public class TableInfo {
         return schemaAndTableName;
     }
 
-    public Map<Class, ForeignInfo> getForeignInfoMap() {
+    public Map<Class<?>, ForeignInfo> getForeignInfoMap() {
         return foreignInfoMap;
     }
 

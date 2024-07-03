@@ -161,7 +161,8 @@ public class SpringRoutingDataSource extends AbstractRoutingDataSource {
         return dataSource;
     }
 
-    private DataSource removeTargetByKey(String key, Map<Object, DataSource>... dataSourceMaps) {
+    @SafeVarargs
+    private final DataSource removeTargetByKey(String key, Map<Object, DataSource>... dataSourceMaps) {
         DataSource dataSource = null;
         for (Map<Object, DataSource> dataSourceMap : dataSourceMaps) {
             if (Objects.isNull(dataSource)) {

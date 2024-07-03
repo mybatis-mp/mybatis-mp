@@ -5,6 +5,13 @@ import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.ForeignKeyUtil;
 import db.sql.api.Cmd;
+import db.sql.api.Getter;
+import db.sql.api.cmd.GetterColumnField;
+import db.sql.api.cmd.IColumnField;
+import db.sql.api.cmd.basic.IDataset;
+import db.sql.api.cmd.basic.IDatasetField;
+import db.sql.api.cmd.basic.IOrderByDirection;
+import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.AbstractQuery;
 import db.sql.api.impl.cmd.struct.On;
 import db.sql.api.impl.cmd.struct.Where;
@@ -12,6 +19,7 @@ import db.sql.api.impl.cmd.struct.Where;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQuery<Q, MybatisCmdFactory> {
 
@@ -27,24 +35,6 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     public BaseQuery(Where where) {
         super(where);
-    }
-
-    @Override
-    protected void initCmdSorts(Map<Class<? extends Cmd>, Integer> cmdSorts) {
-        super.initCmdSorts(cmdSorts);
-        cmdSorts.put(cn.mybatis.mp.core.sql.executor.Where.class, cmdSorts.get(Where.class));
-    }
-
-    @Override
-    public Q select(Class entity, int storey) {
-        SelectClassUtil.select(this, entity, storey);
-        return (Q) this;
-    }
-
-    @Override
-    public Q select(int storey, Class... entities) {
-        SelectClassUtil.select(this, storey, entities);
-        return (Q) this;
     }
 
     protected void addTenantCondition(Class entity, int storey) {
@@ -81,4 +71,455 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
         this.returnType = returnType;
         return (BaseQuery<Q2, E2>) this;
     }
+
+    /**************以下为去除警告************/
+
+    @Override
+    protected void initCmdSorts(Map<Class<? extends Cmd>, Integer> cmdSorts) {
+        super.initCmdSorts(cmdSorts);
+        cmdSorts.put(cn.mybatis.mp.core.sql.executor.Where.class, cmdSorts.get(Where.class));
+    }
+
+    @Override
+    public Q select(Class entity, int storey) {
+        SelectClassUtil.select(this, entity, storey);
+        return (Q) this;
+    }
+
+
+    @Override
+    @SafeVarargs
+    public final Q select(int storey, Class... entities) {
+        SelectClassUtil.select(this, storey, entities);
+        return (Q) this;
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q select(Class... entities) {
+        return super.select(entities);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q select(Cmd... cmds) {
+        return super.select(cmds);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T>  Q select(int storey, Getter<T>... columns) {
+        return super.select(storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T>  Q select(  Getter<T>... columns) {
+        return super.select(1, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q select(boolean when, Getter<T>... columns) {
+        return super.select(when, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q select(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
+        return super.select(dataset, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q select(boolean when, int storey, Getter<T>... columns) {
+        return super.select(when, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q select(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
+        return super.select(when, dataset, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q selectIgnore(Getter<T>... columns) {
+        return super.selectIgnore(columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q selectIgnore(int storey, Getter<T>... columns) {
+        return super.selectIgnore(storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q selectWithFun(Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
+        return super.selectWithFun(f, getterColumnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q selectWithFun(Function<TableField[], Cmd> f, Getter<T>... columns) {
+        return super.selectWithFun(f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q selectWithFun(Function<TableField[], Cmd> f, int storey, Getter<T>... columns) {
+        return super.selectWithFun(f, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q selectWithFun(boolean when, Function<TableField[], Cmd> f, Getter<T>... columns) {
+        return super.selectWithFun(when, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q selectWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
+        return super.selectWithFun(dataset, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q selectWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
+        return super.selectWithFun(dataset, f, columnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q selectWithFun(boolean when, Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
+        return super.selectWithFun(when, f, getterColumnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q selectWithFun(boolean when, Function<TableField[], Cmd> f, int storey, Getter<T>... columns) {
+        return super.selectWithFun(when, f, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q selectWithFun(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
+        return super.selectWithFun(when, dataset, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q selectWithFun(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
+        return super.selectWithFun(when, dataset, f, columnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q from(IDataset<DATASET, DATASET_FIELD>... tables) {
+        return super.from(tables);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q from(Class... entities) {
+        return super.from(entities);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q from(int storey, Class... entities) {
+        return super.from(storey, entities);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q groupBy(Getter<T>... columns) {
+        return super.groupBy(columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q groupBy(Cmd... cmds) {
+        return super.groupBy(cmds);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q groupBy(int storey, Getter<T>... columns) {
+        return super.groupBy(storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q groupBy(boolean when, Getter<T>... columns) {
+        return super.groupBy(when, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q groupBy(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
+        return super.groupBy(dataset, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q groupBy(boolean when, int storey, Getter<T>... columns) {
+        return super.groupBy(when, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q groupByWithFun(Function<TableField[], Cmd> f, Getter<T>... columns) {
+        return super.groupByWithFun(f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q groupBy(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
+        return super.groupBy(when, dataset, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q groupByWithFun(Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
+        return super.groupByWithFun(f, getterColumnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q groupByWithFun(Function<TableField[], Cmd> f, int storey, Getter<T>... columns) {
+        return super.groupByWithFun(f, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q groupByWithFun(boolean when, Function<TableField[], Cmd> f, Getter<T>... columns) {
+        return super.groupByWithFun(when, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q groupByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
+        return super.groupByWithFun(dataset, f, columnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q groupByWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
+        return super.groupByWithFun(dataset, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q groupByWithFun(boolean when, Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
+        return super.groupByWithFun(when, f, getterColumnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q groupByWithFun(boolean when, Function<TableField[], Cmd> f, int storey, Getter<T>... columns) {
+        return super.groupByWithFun(when, f, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q groupByWithFun(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
+        return super.groupByWithFun(when, dataset, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q groupByWithFun(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
+        return super.groupByWithFun(when, dataset, f, columnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q orderBy(Cmd... cmds) {
+        return super.orderBy(cmds);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderBy(Getter<T>... columns) {
+        return super.orderBy(columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderBy(int storey, Getter<T>... columns) {
+        return super.orderBy(storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderBy(boolean when, Getter<T>... columns) {
+        return super.orderBy(when, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q orderBy(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
+        return super.orderBy(dataset, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q orderBy(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
+        return super.orderBy(when, dataset, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderBy(boolean when, int storey, Getter<T>... columns) {
+        return super.orderBy(when, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q orderBy(IOrderByDirection orderByDirection, Cmd... cmds) {
+        return super.orderBy(orderByDirection, cmds);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderBy(IOrderByDirection orderByDirection, Getter<T>... columns) {
+        return super.orderBy(orderByDirection, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderBy(IOrderByDirection orderByDirection, int storey, Getter<T>... columns) {
+        return super.orderBy(orderByDirection, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderBy(boolean when, IOrderByDirection orderByDirection, Getter<T>... columns) {
+        return super.orderBy(when, orderByDirection, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T>... columns) {
+        return super.orderBy(dataset, orderByDirection, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderBy(boolean when, IOrderByDirection orderByDirection, int storey, Getter<T>... columns) {
+        return super.orderBy(when, orderByDirection, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q orderBy(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T>... columns) {
+        return super.orderBy(when, dataset, orderByDirection, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q orderByDesc(Cmd... cmds) {
+        return super.orderByDesc(cmds);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderByDesc(Getter<T>... columns) {
+        return super.orderByDesc(columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderByDesc(int storey, Getter<T>... columns) {
+        return super.orderByDesc(storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderByDesc(boolean when, Getter<T>... columns) {
+        return super.orderByDesc(when, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q orderByDesc(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
+        return super.orderByDesc(dataset, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderByDesc(boolean when, int storey, Getter<T>... columns) {
+        return super.orderByDesc(when, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q orderByDesc(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
+        return super.orderByDesc(when, dataset, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderByDescWithFun(Function<TableField[], Cmd> f, Getter<T>... columns) {
+        return super.orderByDescWithFun(f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q orderByDescWithFun(Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
+        return super.orderByDescWithFun(f, getterColumnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderByDescWithFun(Function<TableField[], Cmd> f, int storey, Getter<T>... columns) {
+        return super.orderByDescWithFun(f, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderByDescWithFun(boolean when, Function<TableField[], Cmd> f, Getter<T>... columns) {
+        return super.orderByDescWithFun(when, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q orderByDescWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
+        return super.orderByDescWithFun(dataset, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q orderByDescWithFun(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
+        return super.orderByDescWithFun(dataset, f, columnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q orderByDescWithFun(boolean when, Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
+        return super.orderByDescWithFun(when, f, getterColumnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q orderByDescWithFun(boolean when, Function<TableField[], Cmd> f, int storey, Getter<T>... columns) {
+        return super.orderByDescWithFun(when, f, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q orderByDescWithFun(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, Getter<T>... columns) {
+        return super.orderByDescWithFun(when, dataset, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q orderByDescWithFun(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], Cmd> f, IColumnField... columnFields) {
+        return super.orderByDescWithFun(when, dataset, f, columnFields);
+    }
+
+
 }
+

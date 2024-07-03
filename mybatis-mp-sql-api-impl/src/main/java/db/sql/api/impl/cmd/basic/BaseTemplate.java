@@ -15,6 +15,7 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
 
     protected final Cmd[] params;
 
+    @SafeVarargs
     public BaseTemplate(String template, Object... params) {
         this.template = template;
         if (Objects.nonNull(params)) {
@@ -29,6 +30,7 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
         }
     }
 
+    @SafeVarargs
     public BaseTemplate(String template, Cmd... params) {
         this.template = template;
         this.params = params;
@@ -69,10 +71,10 @@ public abstract class BaseTemplate<T extends BaseTemplate<T>> extends AbstractAl
     }
 
     @Override
-    public boolean contain(Cmd cmd) {
+    public final boolean contain(Cmd cmd) {
         if (Objects.isNull(params)) {
             return false;
         }
-        return CmdUtils.contain(cmd, params);
+        return CmdUtils.contain(cmd, (Object[]) params);
     }
 }

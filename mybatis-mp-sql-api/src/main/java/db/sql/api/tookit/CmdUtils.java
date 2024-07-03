@@ -67,7 +67,8 @@ public class CmdUtils {
         return builder;
     }
 
-    public static boolean contain(Cmd cmd, Object... params) {
+    @SafeVarargs
+    public final static boolean contain(Cmd cmd, Object... params) {
         if (Objects.isNull(params)) {
             return false;
         }

@@ -12,7 +12,7 @@ import java.util.function.Function;
 public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
         , TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> {
 
-    default TABLE table(Class entity) {
+    default TABLE table(Class<?> entity) {
         return this.table(entity, 1);
     }
 
@@ -23,7 +23,7 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
      * @param storey 存储层级
      * @return
      */
-    TABLE table(Class entity, int storey);
+    TABLE table(Class<?> entity, int storey);
 
     /**
      * 根据表名获取TABLE对象
@@ -64,7 +64,7 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
 
     TABLE_FIELD[] fields(GetterColumnField... getterColumnFields);
 
-    default TABLE_FIELD field(Class entity, String filedName) {
+    default TABLE_FIELD field(Class<?> entity, String filedName) {
         return this.field(entity, filedName, 1);
     }
 
@@ -76,7 +76,7 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
      * @param storey
      * @return
      */
-    TABLE_FIELD field(Class entity, String filedName, int storey);
+    TABLE_FIELD field(Class<?> entity, String filedName, int storey);
 
 
     /**

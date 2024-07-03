@@ -22,7 +22,7 @@ public class GetterColumnField<T> implements IColumnField {
     }
 
     public static <T> GetterColumnField create(Getter<T> getter, int storey) {
-        return new GetterColumnField(getter, storey);
+        return new GetterColumnField<>(getter, storey);
     }
 
     public Getter<T> getGetter() {
