@@ -8,6 +8,7 @@ import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.GetterColumnField;
 import db.sql.api.cmd.IColumnField;
+import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.basic.IOrderByDirection;
@@ -72,8 +73,6 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
         return (BaseQuery<Q2, E2>) this;
     }
 
-    /**************以下为去除警告************/
-
     @Override
     protected void initCmdSorts(Map<Class<? extends Cmd>, Integer> cmdSorts) {
         super.initCmdSorts(cmdSorts);
@@ -86,6 +85,7 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
         return (Q) this;
     }
 
+    /**************以下为去除警告************/
 
     @Override
     @SafeVarargs
@@ -336,6 +336,181 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
+    public final <T> Q having(Function<TableField[], ICondition> f, Getter<T>... columns) {
+        return super.having(f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q having(Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
+        return super.having(f, getterColumnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q having(Function<TableField[], ICondition> f, int storey, Getter<T>... columns) {
+        return super.having(f, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q having(boolean when, Function<TableField[], ICondition> f, Getter<T>... columns) {
+        return super.having(when, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q having(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], ICondition> f, Getter<T>... columns) {
+        return super.having(dataset, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q having(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], ICondition> f, IColumnField... columnFields) {
+        return super.having(dataset, f, columnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q having(boolean when, Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
+        return super.having(when, f, getterColumnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q having(boolean when, Function<TableField[], ICondition> f, int storey, Getter<T>... columns) {
+        return super.having(when, f, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q having(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Function<IDatasetField[], ICondition> f, Getter<T>... columns) {
+        return super.having(dataset, when, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q havingAnd(Function<TableField[], ICondition> f, Getter<T>... columns) {
+        return super.havingAnd(f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q havingAnd(Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
+        return super.havingAnd(f, getterColumnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q havingAnd(Function<TableField[], ICondition> f, int storey, Getter<T>... columns) {
+        return super.havingAnd(f, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q havingAnd(boolean when, Function<TableField[], ICondition> f, Getter<T>... columns) {
+        return super.havingAnd(when, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], ICondition> f, Getter<T>... columns) {
+        return super.havingAnd(dataset, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], ICondition> f, IColumnField... columnFields) {
+        return super.havingAnd(dataset, f, columnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q havingAnd(boolean when, Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
+        return super.havingAnd(when, f, getterColumnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q havingAnd(boolean when, Function<TableField[], ICondition> f, int storey, Getter<T>... columns) {
+        return super.havingAnd(when, f, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Function<IDatasetField[], ICondition> f, Getter<T>... columns) {
+        return super.havingAnd(dataset, when, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q havingAnd(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Function<IDatasetField[], ICondition> f, IColumnField... columnFields) {
+        return super.havingAnd(dataset, when, f, columnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q havingOr(Function<TableField[], ICondition> f, Getter<T>... columns) {
+        return super.havingOr(f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q havingOr(Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
+        return super.havingOr(f, getterColumnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q havingOr(Function<TableField[], ICondition> f, int storey, Getter<T>... columns) {
+        return super.havingOr(f, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q havingOr(boolean when, Function<TableField[], ICondition> f, Getter<T>... columns) {
+        return super.havingOr(when, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q havingOr(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], ICondition> f, Getter<T>... columns) {
+        return super.havingOr(dataset, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q havingOr(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], ICondition> f, IColumnField... columnFields) {
+        return super.havingOr(dataset, f, columnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Q havingOr(boolean when, Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
+        return super.havingOr(when, f, getterColumnFields);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T> Q havingOr(boolean when, Function<TableField[], ICondition> f, int storey, Getter<T>... columns) {
+        return super.havingOr(when, f, storey, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q havingOr(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Function<IDatasetField[], ICondition> f, Getter<T>... columns) {
+        return super.havingOr(dataset, when, f, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q havingOr(IDataset<DATASET, DATASET_FIELD> dataset, boolean when, Function<IDatasetField[], ICondition> f, IColumnField... columnFields) {
+        return super.havingOr(dataset, when, f, columnFields);
+    }
+
+
+    @Override
+    @SafeVarargs
     public final Q orderBy(Cmd... cmds) {
         return super.orderBy(cmds);
     }
@@ -520,6 +695,6 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
         return super.orderByDescWithFun(when, dataset, f, columnFields);
     }
 
-
+    /**************以上为去除警告************/
 }
 
