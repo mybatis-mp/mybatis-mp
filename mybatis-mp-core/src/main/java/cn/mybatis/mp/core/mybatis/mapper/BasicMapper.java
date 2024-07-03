@@ -34,6 +34,13 @@ public interface BasicMapper extends BaseMapper {
     void dbAdapt(Consumer<Selector> consumer);
 
     /**
+     * 获取当前数据库的类型
+     *
+     * @return
+     */
+    DbType getCurrentDbType();
+
+    /**
      * 根据ID查询，只返回指定列
      *
      * @param entityType 实体类

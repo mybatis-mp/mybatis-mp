@@ -116,6 +116,58 @@ public class DefaultValueTestCase extends BaseTest {
     }
 
     @Test
+    public void batchInsert2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
+            DefaultValueTest defaultValueTest = new DefaultValueTest();
+            DefaultValueTest defaultValueTest2 = new DefaultValueTest();
+            DefaultValueTest defaultValueTest3 = new DefaultValueTest();
+
+            List<DefaultValueTest> list = Arrays.asList(defaultValueTest, defaultValueTest2, defaultValueTest3);
+
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+                defaultValueTest.setId(11);
+                defaultValueTest2.setId(12);
+                defaultValueTest3.setId(13);
+                mapper.saveBatch(list);
+            } else {
+                mapper.saveBatch(list);
+            }
+
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+                defaultValueTest = mapper.getById(11);
+            } else {
+                defaultValueTest = mapper.getById(1);
+            }
+
+            assertNotNull(defaultValueTest.getId());
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+                assertNull(defaultValueTest.getValue1());
+            } else {
+                assertNotNull(defaultValueTest.getValue1());
+            }
+
+            assertNotNull(defaultValueTest.getValue2());
+            assertNotNull(defaultValueTest.getCreateTime());
+
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+                defaultValueTest2 = mapper.getById(12);
+            } else {
+                defaultValueTest2 = mapper.getById(2);
+            }
+
+            assertNotNull(defaultValueTest2.getId());
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+                assertNull(defaultValueTest2.getValue1());
+            } else {
+                assertNotNull(defaultValueTest2.getValue1());
+            }
+            assertNotNull(defaultValueTest2.getValue2());
+            assertNotNull(defaultValueTest2.getCreateTime());
+        }
+    }
+
+    @Test
     public void insertSelect() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);

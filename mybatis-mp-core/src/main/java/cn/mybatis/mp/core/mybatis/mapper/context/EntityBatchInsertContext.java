@@ -121,9 +121,12 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
                 }
 
                 TableField tableField = tableFieldInfo.getTableFieldAnnotation();
-                MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                values.add(insert.$().value(mybatisParameter));
-
+                if (Objects.isNull(value)) {
+                    values.add(insert.$().NULL());
+                } else {
+                    MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
+                    values.add(insert.$().value(mybatisParameter));
+                }
             }
             insert.values(values);
         }

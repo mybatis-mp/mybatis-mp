@@ -21,6 +21,8 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     public final static String DB_ADAPT_METHOD_NAME = "dbAdapt";
 
+    public final static String CURRENT_DB_TYPE_METHOD_NAME = "getCurrentDbType";
+
     protected final SqlSession sqlSession;
 
     protected final Class<T> mapperInterface;
@@ -48,6 +50,8 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 return mapWithKey(method, args);
             } else if (method.isAnnotationPresent(Paging.class)) {
                 return paging(method, args);
+            } else if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
+                return DbTypeUtil.getDbType(sqlSession.getConnection());
             }
             return super.invoke(proxy, method, args);
         } finally {

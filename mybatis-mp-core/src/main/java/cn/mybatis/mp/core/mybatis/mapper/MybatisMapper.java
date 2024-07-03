@@ -1,11 +1,18 @@
 package cn.mybatis.mp.core.mybatis.mapper;
 
+import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
+import cn.mybatis.mp.core.db.reflect.TableInfo;
+import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.mybatis.mapper.context.*;
 import cn.mybatis.mp.core.sql.executor.BaseDelete;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.BaseUpdate;
+import cn.mybatis.mp.core.util.TableInfoUtil;
+import cn.mybatis.mp.db.IdAutoType;
 import cn.mybatis.mp.db.Model;
+import cn.mybatis.mp.db.annotations.TableId;
+import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.executor.Selector;
@@ -32,6 +39,15 @@ public interface MybatisMapper<T> extends CommonMapper {
      */
     default void dbAdapt(Consumer<Selector> consumer) {
         this.getBasicMapper().dbAdapt(consumer);
+    }
+
+    /**
+     * 获取当前数据库的类型
+     *
+     * @return
+     */
+    default DbType getCurrentDbType() {
+        return this.getBasicMapper().getCurrentDbType();
     }
 
     /**
@@ -460,6 +476,48 @@ public interface MybatisMapper<T> extends CommonMapper {
             cnt += this.save(entity);
         }
         return cnt;
+    }
+
+    /**
+     * 使用数据库原生方式批量插入
+     * 一次最好在100条内
+     * <p>
+     * 会自动加入 主键 租户ID 逻辑删除列 乐观锁
+     * 自动设置 默认值,不会忽略NULL值字段
+     *
+     * @param list
+     * @return 插入的条数
+     */
+    default int saveBatch(List<T> list) {
+        Objects.requireNonNull(list);
+        if (list.isEmpty()) {
+            return 0;
+        }
+        Set<String> saveFieldSet = new HashSet<>();
+        final T first = list.get(0);
+        TableInfo tableInfo = Tables.get(first.getClass());
+
+        for (TableFieldInfo tableFieldInfo : tableInfo.getTableFieldInfos()) {
+            if (!tableFieldInfo.getTableFieldAnnotation().insert()) {
+                continue;
+            }
+            if (tableFieldInfo.isTableId()) {
+                TableId tableId = TableInfoUtil.getTableIdAnnotation(tableFieldInfo.getField(), getCurrentDbType());
+                if (tableId.value() == IdAutoType.AUTO) {
+                    Object id;
+                    try {
+                        id = tableFieldInfo.getReadFieldInvoker().invoke(first, null);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (Objects.isNull(id)) {
+                        continue;
+                    }
+                }
+            }
+            saveFieldSet.add(tableFieldInfo.getField().getName());
+        }
+        return this.$save(new EntityBatchInsertContext(list, saveFieldSet));
     }
 
     /**
