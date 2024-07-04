@@ -60,7 +60,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         return filed != null;
     }
 
-    protected <T> Object paramWrap(Getter<T> column, Object param) {
+    protected <T> Object conditionParamWrap(Getter<T> column, Object param) {
         return cmdFactory.conditionParamWrap(column, param);
     }
 
@@ -318,8 +318,8 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             throw new ConditionValueNullException("条件参数里包含null值");
         }
 
-        value = (Serializable) paramWrap(column, value);
-        value2 = (Serializable) paramWrap(column, value2);
+        value = (Serializable) conditionParamWrap(column, value);
+        value2 = (Serializable) conditionParamWrap(column, value2);
         return Methods.between(convertToCmd(column, storey), value, value2);
     }
 
@@ -353,8 +353,8 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             }
             throw new ConditionValueNullException("条件参数里包含null值");
         }
-        value = (Serializable) paramWrap(column, value);
-        value2 = (Serializable) paramWrap(column, value2);
+        value = (Serializable) conditionParamWrap(column, value);
+        value2 = (Serializable) conditionParamWrap(column, value2);
         return Methods.notBetween(convertToCmd(column, storey), value, value2);
     }
 
@@ -383,7 +383,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        value = paramWrap(column, value);
+        value = conditionParamWrap(column, value);
         return Methods.eq(convertToCmd(column, storey), convertToCmd(value));
     }
 
@@ -404,7 +404,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        value = paramWrap(column, value);
+        value = conditionParamWrap(column, value);
         return Methods.gt(convertToCmd(column, storey), convertToCmd(value));
     }
 
@@ -425,7 +425,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        value = paramWrap(column, value);
+        value = conditionParamWrap(column, value);
         return Methods.gte(convertToCmd(column, storey), convertToCmd(value));
     }
 
@@ -463,7 +463,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        value = paramWrap(column, value);
+        value = conditionParamWrap(column, value);
         return Methods.lt(convertToCmd(column, storey), convertToCmd(value));
     }
 
@@ -484,7 +484,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        value = paramWrap(column, value);
+        value = conditionParamWrap(column, value);
         return Methods.lte(convertToCmd(column, storey), convertToCmd(value));
     }
 
@@ -505,7 +505,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        value = paramWrap(column, value);
+        value = conditionParamWrap(column, value);
         return Methods.ne(convertToCmd(column, storey), convertToCmd(value));
     }
 
@@ -595,7 +595,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
 
         if (cmdFactory.isEnableConditionParamWrap()) {
             for (int i = 0; i < values.length; i++) {
-                values[i] = (Serializable) paramWrap(column, values[i]);
+                values[i] = (Serializable) conditionParamWrap(column, values[i]);
             }
         }
 
@@ -613,7 +613,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         }
 
         if (cmdFactory.isEnableConditionParamWrap()) {
-            values = values.stream().map(value -> (Serializable) paramWrap(column, value)).collect(Collectors.toList());
+            values = values.stream().map(value -> (Serializable) conditionParamWrap(column, value)).collect(Collectors.toList());
         }
         return Methods.in(convertToCmd(column, storey), values);
     }
@@ -681,7 +681,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         }
         if (cmdFactory.isEnableConditionParamWrap()) {
             for (int i = 0; i < values.length; i++) {
-                values[i] = (Serializable) paramWrap(column, values[i]);
+                values[i] = (Serializable) conditionParamWrap(column, values[i]);
             }
         }
         return Methods.notIn(convertToCmd(column, storey), values);
@@ -697,7 +697,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             return null;
         }
         if (cmdFactory.isEnableConditionParamWrap()) {
-            values = values.stream().map(value -> (Serializable) paramWrap(column, value)).collect(Collectors.toList());
+            values = values.stream().map(value -> (Serializable) conditionParamWrap(column, value)).collect(Collectors.toList());
         }
         return Methods.notIn(convertToCmd(column, storey), values);
     }
