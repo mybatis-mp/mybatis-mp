@@ -61,7 +61,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     protected <T> Object paramWrap(Getter<T> column, Object param) {
-        return cmdFactory.paramWrap(column, param);
+        return cmdFactory.conditionParamWrap(column, param);
     }
 
     private Object getSingleValue(Object value) {
@@ -593,7 +593,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             return null;
         }
 
-        if (cmdFactory.isEnableParamWrap()) {
+        if (cmdFactory.isEnableConditionParamWrap()) {
             for (int i = 0; i < values.length; i++) {
                 values[i] = (Serializable) paramWrap(column, values[i]);
             }
@@ -612,7 +612,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             return null;
         }
 
-        if (cmdFactory.isEnableParamWrap()) {
+        if (cmdFactory.isEnableConditionParamWrap()) {
             values = values.stream().map(value -> (Serializable) paramWrap(column, value)).collect(Collectors.toList());
         }
         return Methods.in(convertToCmd(column, storey), values);
@@ -679,7 +679,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(values)) {
             return null;
         }
-        if (cmdFactory.isEnableParamWrap()) {
+        if (cmdFactory.isEnableConditionParamWrap()) {
             for (int i = 0; i < values.length; i++) {
                 values[i] = (Serializable) paramWrap(column, values[i]);
             }
@@ -696,7 +696,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(values)) {
             return null;
         }
-        if (cmdFactory.isEnableParamWrap()) {
+        if (cmdFactory.isEnableConditionParamWrap()) {
             values = values.stream().map(value -> (Serializable) paramWrap(column, value)).collect(Collectors.toList());
         }
         return Methods.notIn(convertToCmd(column, storey), values);

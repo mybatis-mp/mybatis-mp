@@ -144,7 +144,7 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, TableField
         return new NotIn(main);
     }
 
-    public boolean isEnableParamWrap() {
+    public boolean isEnableConditionParamWrap() {
         //空处理 留给ORM框架扩展
         return false;
     }
@@ -157,7 +157,7 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, TableField
      * @param <T>
      * @return 参数
      */
-    public <T> Object paramWrap(Getter<T> column, Object param) {
+    public <T> Object conditionParamWrap(Getter<T> column, Object param) {
         //空处理 留给ORM框架扩展
         return param;
     }

@@ -56,7 +56,7 @@ public class BaseTest {
     public void init() {
         dataSource = TestDataSource.getDataSource();
 
-        MybatisMpConfig.setParamTypeHandlerWrap(true);
+        MybatisMpConfig.setConditionParamTypeHandlerWrap(true);
 
         // 1 创建 事务管理工厂
         TransactionFactory transactionFactory = new JdbcTransactionFactory();

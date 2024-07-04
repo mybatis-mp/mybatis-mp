@@ -49,7 +49,7 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
             });
 
             TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(fieldInfo.getName());
-            if (tableFieldInfo.getTableFieldAnnotation().typeHandler() != UnknownTypeHandler.class) {
+            if (tableFieldInfo.getField().getType().isAssignableFrom(value.getClass()) && tableFieldInfo.getTableFieldAnnotation().typeHandler() != UnknownTypeHandler.class) {
                 value = MybatisParameter.create(value, tableFieldInfo.getTableFieldAnnotation().typeHandler(), tableFieldInfo.getTableFieldAnnotation().jdbcType());
             }
             cmdValues.add(Methods.convert(value));

@@ -48,7 +48,7 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
         });
 
         TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(fieldInfo.getName());
-        if (tableFieldInfo.getTableFieldAnnotation().typeHandler() != UnknownTypeHandler.class) {
+        if (tableFieldInfo.getField().getType().isAssignableFrom(value.getClass()) && tableFieldInfo.getTableFieldAnnotation().typeHandler() != UnknownTypeHandler.class) {
             value = MybatisParameter.create(value, tableFieldInfo.getTableFieldAnnotation().typeHandler(), tableFieldInfo.getTableFieldAnnotation().jdbcType());
         }
         return super.set(field, value);

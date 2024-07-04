@@ -26,7 +26,7 @@ public final class MybatisMpConfig {
     private static final String SQL_BUILDER = "SQLBuilder";
     private static final String LOGIC_DELETE_SWITCH = "logicDeleteSwitch";
     private static final String DEFAULT_VALUE_MANAGER = "defaultValueManager";
-    private static final String PARAM_TYPE_HANDLER_WRAP = "param_type_handler_wrap";
+    private static final String CONDITION_PARAM_TYPE_HANDLER_WRAP = "param_type_handler_wrap";
     private static final QuerySQLBuilder DEFAULT_SQL_BUILDER = new MybatisMpQuerySQLBuilder();
 
     static {
@@ -72,8 +72,8 @@ public final class MybatisMpConfig {
      *
      * @return
      */
-    public static boolean isParamTypeHandlerWrap() {
-        return (boolean) CACHE.computeIfAbsent(PARAM_TYPE_HANDLER_WRAP, key -> false);
+    public static boolean getConditionParamTypeHandlerWrap() {
+        return (boolean) CACHE.computeIfAbsent(CONDITION_PARAM_TYPE_HANDLER_WRAP, key -> false);
     }
 
     /**
@@ -82,8 +82,8 @@ public final class MybatisMpConfig {
      *
      * @param bool
      */
-    public static void setParamTypeHandlerWrap(boolean bool) {
-        CACHE.putIfAbsent(PARAM_TYPE_HANDLER_WRAP, bool);
+    public static void setConditionParamTypeHandlerWrap(boolean bool) {
+        CACHE.putIfAbsent(CONDITION_PARAM_TYPE_HANDLER_WRAP, bool);
     }
 
     /**
