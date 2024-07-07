@@ -290,7 +290,7 @@ public interface BasicMapper extends BaseMapper {
                 .from(table)
                 .where(where -> where.eq(idTableField, id))
                 .dbAdapt((q, selector) -> {
-                    selector.when(DbType.SQL_SERVER,()->{
+                    selector.when(DbType.SQL_SERVER, () -> {
                         q.orderBy(idTableField);
                     }).otherwise();
                 });

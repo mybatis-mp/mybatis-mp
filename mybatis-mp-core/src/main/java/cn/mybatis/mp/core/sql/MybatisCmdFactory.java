@@ -31,6 +31,8 @@ import java.util.Objects;
  */
 public class MybatisCmdFactory extends CmdFactory {
 
+    private Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
+
     public MybatisCmdFactory() {
         super();
     }
@@ -56,7 +58,6 @@ public class MybatisCmdFactory extends CmdFactory {
         return this.field(fieldInfo.getType(), fieldInfo.getName(), storey);
     }
 
-
     @Override
     public <T> String columnName(Getter<T> column) {
         return TableInfoUtil.getColumnName(column);
@@ -79,7 +80,6 @@ public class MybatisCmdFactory extends CmdFactory {
         return new TableField(table, tableFieldInfo.getColumnName());
     }
 
-
     @Override
     public <T> TableField[] fields(int storey, Getter<T>... columns) {
         if (columns.length < 2) {
@@ -94,8 +94,6 @@ public class MybatisCmdFactory extends CmdFactory {
         }
         return tableFields;
     }
-
-    private Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
 
     @Override
     public boolean isEnableConditionParamWrap() {

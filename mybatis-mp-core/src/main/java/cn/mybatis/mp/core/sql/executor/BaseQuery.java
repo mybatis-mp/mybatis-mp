@@ -108,13 +108,13 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final <T>  Q select(int storey, Getter<T>... columns) {
+    public final <T> Q select(int storey, Getter<T>... columns) {
         return super.select(storey, columns);
     }
 
     @Override
     @SafeVarargs
-    public final <T>  Q select(  Getter<T>... columns) {
+    public final <T> Q select(Getter<T>... columns) {
         return super.select(1, columns);
     }
 

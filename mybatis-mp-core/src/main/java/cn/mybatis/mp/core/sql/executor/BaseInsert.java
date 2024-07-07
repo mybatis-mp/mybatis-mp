@@ -16,13 +16,12 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 import java.util.*;
 
 public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert<T, MybatisCmdFactory> {
+    private Getter<?>[] fields;
+    private Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
+
     public BaseInsert() {
         super(new MybatisCmdFactory());
     }
-
-    private Getter<?>[] fields;
-
-    private Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
 
     @Override
     @SafeVarargs

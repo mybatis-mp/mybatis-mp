@@ -26,6 +26,8 @@ import java.util.function.Consumer;
 
 public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate<T, MybatisCmdFactory> {
 
+    private Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
+
     public BaseUpdate() {
         super(new MybatisCmdFactory());
     }
@@ -33,8 +35,6 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
     public BaseUpdate(Where where) {
         super(where);
     }
-
-    private Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
 
     @Override
     public <G> T set(Getter<G> field, Object value) {

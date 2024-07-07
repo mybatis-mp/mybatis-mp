@@ -13,14 +13,14 @@ public class MybatisParameter implements Serializable {
 
     private final JdbcType jdbcType;
 
-    public static final MybatisParameter create(Object value, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType) {
-        return new MybatisParameter(value, typeHandler, jdbcType);
-    }
-
     public MybatisParameter(Object value, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType) {
         this.typeHandler = typeHandler;
         this.jdbcType = jdbcType;
         this.value = value;
+    }
+
+    public static final MybatisParameter create(Object value, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType) {
+        return new MybatisParameter(value, typeHandler, jdbcType);
     }
 
     public Class<? extends TypeHandler<?>> getTypeHandler() {
