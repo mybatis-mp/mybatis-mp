@@ -4,10 +4,13 @@ import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
+import cn.mybatis.mp.core.sql.executor.MpDatasetField;
 import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.core.sql.executor.MpTableField;
 import cn.mybatis.mp.core.util.TableInfoUtil;
 import db.sql.api.Getter;
+import db.sql.api.cmd.basic.IDataset;
+import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
@@ -87,5 +90,19 @@ public class MybatisCmdFactory extends CmdFactory {
             tableFields[i] = table.$(tableInfo.getFieldInfo(LambdaUtil.getName(columns[i])).getColumnName());
         }
         return tableFields;
+    }
+
+    @Override
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD field(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column) {
+        LambdaUtil.LambdaFieldInfo fieldInfo = LambdaUtil.getFieldInfo(column);
+        TableInfo tableInfo = Tables.get(fieldInfo.getType());
+        TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(fieldInfo.getName());
+
+        if (dataset instanceof MpTable) {
+            return (DATASET_FIELD) new MpTableField((MpTable) dataset, tableFieldInfo);
+        } else if (dataset instanceof Table) {
+            return (DATASET_FIELD) new TableField((Table) dataset, tableFieldInfo.getColumnName());
+        }
+        return (DATASET_FIELD) new MpDatasetField(dataset, tableFieldInfo.getColumnName(), tableFieldInfo.getField().getType(), tableFieldInfo.getTypeHandler(), tableFieldInfo.getTableFieldAnnotation().jdbcType());
     }
 }

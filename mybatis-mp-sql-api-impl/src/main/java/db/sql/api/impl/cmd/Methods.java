@@ -2,7 +2,7 @@ package db.sql.api.impl.cmd;
 
 import db.sql.api.Cmd;
 import db.sql.api.cmd.LikeMode;
-import db.sql.api.cmd.basic.ITableField;
+import db.sql.api.cmd.basic.IParamWrap;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.condition.*;
@@ -28,12 +28,12 @@ public class Methods {
             return (Cmd) param;
         }
 
-        if (!(key instanceof ITableField)) {
+        if (!(key instanceof IParamWrap)) {
             return new BasicValue(param);
         }
 
-        ITableField tableField = (ITableField) key;
-        return new BasicValue(tableField.paramWrap(param));
+        IParamWrap paramWrap = (IParamWrap) key;
+        return new BasicValue(paramWrap.paramWrap(param));
     }
 
     public static Object likeParamWrap(Cmd key, Object param, LikeMode mode, boolean isNotLike) {
@@ -44,11 +44,11 @@ public class Methods {
             return param;
         }
 
-        if (!(key instanceof ITableField)) {
+        if (!(key instanceof IParamWrap)) {
             return param;
         }
-        ITableField tableField = (ITableField) key;
-        return tableField.likeParamWrap(mode, param, isNotLike);
+        IParamWrap paramWrap = (IParamWrap) key;
+        return paramWrap.likeParamWrap(mode, param, isNotLike);
     }
 
     public static Column column(String column) {

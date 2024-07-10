@@ -164,6 +164,16 @@ public class TableInfo {
         return tableFieldInfoMap.get(property);
     }
 
+    /**
+     * 根据列名获取字段信息
+     *
+     * @param columnName
+     * @return
+     */
+    public final TableFieldInfo getFieldInfoByColumnName(String columnName) {
+        return tableFieldInfos.stream().filter(item -> item.getColumnName().equals(columnName)).findFirst().orElse(null);
+    }
+
 
     /**
      * 根据连接的表的类获取外键匹配信息

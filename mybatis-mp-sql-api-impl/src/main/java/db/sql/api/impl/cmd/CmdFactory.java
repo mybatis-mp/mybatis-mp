@@ -95,13 +95,6 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, TableField
         return new TableField(table, columnName(column));
     }
 
-
-    @Override
-    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD field(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column) {
-        String filedName = LambdaUtil.getName(column);
-        return (DATASET_FIELD) new DatasetField(dataset, filedName);
-    }
-
     @Override
     public TableField field(Class<?> entity, String filedName, int storey) {
         return this.field(entity, storey, filedName);
@@ -112,7 +105,16 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, TableField
     }
 
     @Override
+    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD field(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column) {
+        String filedName = LambdaUtil.getName(column);
+        return (DATASET_FIELD) new DatasetField(dataset, filedName);
+    }
+
+    @Override
     public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD field(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
+        if (dataset instanceof Table) {
+            return (DATASET_FIELD) new TableField((Table) dataset, columnName);
+        }
         return (DATASET_FIELD) new DatasetField(dataset, columnName);
     }
 

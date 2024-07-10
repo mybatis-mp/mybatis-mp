@@ -85,7 +85,6 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
         }
         return consumer;
     }
-
     /**************以下为去除警告************/
 
     @Override
