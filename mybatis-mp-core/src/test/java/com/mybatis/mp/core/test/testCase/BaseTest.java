@@ -1,6 +1,5 @@
 package com.mybatis.mp.core.test.testCase;
 
-import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.mybatis.configuration.MybatisConfiguration;
 import cn.mybatis.mp.core.mybatis.configuration.MybatisDatabaseIdProvider;
 import com.mybatis.mp.core.test.db2.typeHandler.LocalDateTimeTypeHandler;
@@ -55,8 +54,6 @@ public class BaseTest {
     @BeforeEach
     public void init() {
         dataSource = TestDataSource.getDataSource();
-
-        MybatisMpConfig.setConditionParamTypeHandlerWrap(true);
 
         // 1 创建 事务管理工厂
         TransactionFactory transactionFactory = new JdbcTransactionFactory();

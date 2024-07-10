@@ -1,5 +1,6 @@
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
+import db.sql.api.impl.tookit.Objects;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
@@ -33,5 +34,10 @@ public class MybatisParameter implements Serializable {
 
     public Object getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.isNull(value) ? "null" : value.toString();
     }
 }

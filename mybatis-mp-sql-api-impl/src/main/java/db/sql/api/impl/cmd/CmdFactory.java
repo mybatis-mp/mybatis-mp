@@ -5,12 +5,9 @@ import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.GetterColumnField;
 import db.sql.api.cmd.ICmdFactory;
-import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.impl.cmd.basic.*;
-import db.sql.api.impl.cmd.condition.In;
-import db.sql.api.impl.cmd.condition.NotIn;
 import db.sql.api.impl.tookit.LambdaUtil;
 
 import java.util.HashMap;
@@ -21,7 +18,9 @@ import java.util.function.Function;
 public class CmdFactory extends Methods implements ICmdFactory<Table, TableField> {
 
     protected final Map<String, Table> tableCache = new HashMap<>(5);
+
     private final String tableAsPrefix;
+
     protected int tableNums = 0;
 
     public CmdFactory() {
@@ -136,42 +135,4 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, TableField
         return new BasicValue(value);
     }
 
-    public In in(Cmd main) {
-        return new In(main);
-    }
-
-    public NotIn notIn(Cmd main) {
-        return new NotIn(main);
-    }
-
-    public boolean isEnableConditionParamWrap() {
-        //空处理 留给ORM框架扩展
-        return false;
-    }
-
-    /**
-     * 根据列包装参数
-     *
-     * @param column 列字段
-     * @param param  参数
-     * @param <T>
-     * @return 参数
-     */
-    public <T> Object conditionParamWrap(Getter<T> column, Object param) {
-        //空处理 留给ORM框架扩展
-        return param;
-    }
-
-    /**
-     * 根据列包装参数
-     *
-     * @param column 列字段
-     * @param param  参数
-     * @param <T>
-     * @return 数组 第1为为LikeMode
-     */
-    public <T> Object[] likeParamWrap(Getter<T> column, Object param, LikeMode likeMode, boolean isNotLike) {
-        //空处理 留给ORM框架扩展
-        return new Object[]{likeMode, param};
-    }
 }

@@ -2,6 +2,7 @@ package db.sql.api.impl.cmd;
 
 import db.sql.api.Cmd;
 import db.sql.api.cmd.LikeMode;
+import db.sql.api.cmd.basic.ITableField;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.condition.*;
@@ -12,11 +13,43 @@ import db.sql.api.impl.tookit.SqlConst;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 数据库方法集合
  */
 public class Methods {
+
+    public static Cmd paramWrapAndConvertToCmd(Cmd key, Object param) {
+        if (java.util.Objects.isNull(param)) {
+            return null;
+        }
+        if (param instanceof Cmd) {
+            return (Cmd) param;
+        }
+
+        if (!(key instanceof ITableField)) {
+            return new BasicValue(param);
+        }
+
+        ITableField tableField = (ITableField) key;
+        return new BasicValue(tableField.paramWrap(param));
+    }
+
+    public static Object likeParamWrap(Cmd key, Object param, LikeMode mode, boolean isNotLike) {
+        if (java.util.Objects.isNull(param)) {
+            return null;
+        }
+        if (param instanceof Cmd) {
+            return param;
+        }
+
+        if (!(key instanceof ITableField)) {
+            return param;
+        }
+        ITableField tableField = (ITableField) key;
+        return tableField.likeParamWrap(mode, param, isNotLike);
+    }
 
     public static Column column(String column) {
         Objects.requireNonNull(column);
@@ -1208,21 +1241,10 @@ public class Methods {
      *
      * @return
      */
-    public static Eq eq(Cmd key, Serializable value) {
+    public static Eq eq(Cmd key, Object value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
-        return new Eq(key, value);
-    }
-
-    /**
-     * eq等于 判断
-     *
-     * @return
-     */
-    public static Eq eq(Cmd key, Cmd value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
-        return new Eq(key, value);
+        return new Eq(key, paramWrapAndConvertToCmd(key, value));
     }
 
     /**
@@ -1230,21 +1252,10 @@ public class Methods {
      *
      * @return
      */
-    public static Ne ne(Cmd key, Serializable value) {
+    public static Ne ne(Cmd key, Object value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
-        return new Ne(key, value);
-    }
-
-    /**
-     * ne不等于 判断
-     *
-     * @return
-     */
-    public static Ne ne(Cmd key, Cmd value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
-        return new Ne(key, value);
+        return new Ne(key, paramWrapAndConvertToCmd(key, value));
     }
 
     /**
@@ -1273,43 +1284,23 @@ public class Methods {
      *
      * @return
      */
-    public static Gt gt(Cmd key, Serializable value) {
+    public static Gt gt(Cmd key, Object value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
-        return new Gt(key, value);
+        return new Gt(key, paramWrapAndConvertToCmd(key, value));
     }
 
-    /**
-     * gt大于 判断
-     *
-     * @return
-     */
-    public static Gt gt(Cmd key, Cmd value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
-        return new Gt(key, value);
-    }
+
 
     /**
      * gte大于等于 判断
      *
      * @return
      */
-    public static Gte gte(Cmd key, Serializable value) {
+    public static Gte gte(Cmd key, Object value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
-        return new Gte(key, value);
-    }
-
-    /**
-     * gte大于等于 判断
-     *
-     * @return
-     */
-    public static Gte gte(Cmd key, Cmd value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
-        return new Gte(key, value);
+        return new Gte(key, paramWrapAndConvertToCmd(key, value));
     }
 
     /**
@@ -1317,21 +1308,10 @@ public class Methods {
      *
      * @return
      */
-    public static Lt lt(Cmd key, Serializable value) {
+    public static Lt lt(Cmd key, Object value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
-        return new Lt(key, value);
-    }
-
-    /**
-     * gt小于 判断
-     *
-     * @return
-     */
-    public static Lt lt(Cmd key, Cmd value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
-        return new Lt(key, value);
+        return new Lt(key, paramWrapAndConvertToCmd(key, value));
     }
 
     /**
@@ -1339,21 +1319,27 @@ public class Methods {
      *
      * @return
      */
-    public static Lte lte(Cmd key, Serializable value) {
+    public static Lte lte(Cmd key, Object value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
-        return new Lte(key, value);
+        return new Lte(key, paramWrapAndConvertToCmd(key, value));
     }
 
+
     /**
-     * gt小于等于 判断
+     * in 多个值
      *
      * @return
      */
-    public static Lte lte(Cmd key, Cmd value) {
+    @SafeVarargs
+    public final static In in(Cmd key, Object... values) {
         Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
-        return new Lte(key, value);
+        Objects.requireNonEmpty(values);
+        Cmd[] cmds = new Cmd[values.length];
+        for (int i = 0; i < values.length; i++) {
+            cmds[i] = paramWrapAndConvertToCmd(key, values[i]);
+        }
+        return new In(key).add(cmds);
     }
 
     /**
@@ -1361,21 +1347,10 @@ public class Methods {
      *
      * @return
      */
-    public static In in(Cmd key, Serializable... values) {
+    public static In in(Cmd key, Collection<?> values) {
         Objects.requireNonNull(key);
-        Objects.requireNonNull(values);
-        return new In(key).add(values);
-    }
-
-    /**
-     * in 多个值
-     *
-     * @return
-     */
-    public static In in(Cmd key, Collection<? extends Serializable> values) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(values);
-        return new In(key).add(values);
+        Objects.requireNonEmpty(values);
+        return new In(key).add(values.stream().map(item -> paramWrapAndConvertToCmd(key, item)).collect(Collectors.toList()));
     }
 
     /**
@@ -1394,9 +1369,14 @@ public class Methods {
      *
      * @return
      */
-    public static NotIn notIn(Cmd key, Serializable... values) {
+    @SafeVarargs
+    public final static NotIn notIn(Cmd key, Object... values) {
         Objects.requireNonNull(key);
-        Objects.requireNonNull(values);
+        Objects.requireNonEmpty(values);
+        Cmd[] cmds = new Cmd[values.length];
+        for (int i = 0; i < values.length; i++) {
+            cmds[i] = paramWrapAndConvertToCmd(key, values[i]);
+        }
         return new NotIn(key).add(values);
     }
 
@@ -1405,10 +1385,10 @@ public class Methods {
      *
      * @return
      */
-    public static NotIn notIn(Cmd key, Collection<? extends Serializable> values) {
+    public static NotIn notIn(Cmd key, Collection<?> values) {
         Objects.requireNonNull(key);
-        Objects.requireNonNull(values);
-        return new NotIn(key).add(values);
+        Objects.requireNonEmpty(values);
+        return new NotIn(key).add(values.stream().map(item -> paramWrapAndConvertToCmd(key, item)).collect(Collectors.toList()));
     }
 
     /**
@@ -1456,7 +1436,7 @@ public class Methods {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
         Objects.requireNonNull(value2);
-        return new Between(key, value, value2);
+        return new Between(key, paramWrapAndConvertToCmd(key, value), paramWrapAndConvertToCmd(key, value2));
     }
 
     /**
@@ -1471,7 +1451,7 @@ public class Methods {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
         Objects.requireNonNull(value2);
-        return new NotBetween(key, value, value2);
+        return new NotBetween(key, paramWrapAndConvertToCmd(key, value), paramWrapAndConvertToCmd(key, value2));
     }
 
     /**
@@ -1481,8 +1461,8 @@ public class Methods {
      * @param value
      * @return
      */
-    public static Like like(Cmd key, String value) {
-        return like(key, value, LikeMode.DEFAULT);
+    public static Like like(Cmd key, Object value) {
+        return like(LikeMode.DEFAULT, key, value);
     }
 
     /**
@@ -1492,9 +1472,26 @@ public class Methods {
      * @param value
      * @return
      */
-    public static Like like(Cmd key, Object value, LikeMode mode) {
+    public static Like like(LikeMode mode, Cmd key, Object value) {
         Objects.requireNonNull(key);
-        return new Like(key, value, mode);
+        Object wrapValue = likeParamWrap(key, value, mode, false);
+        if (wrapValue instanceof Object[]) {
+            Object[] values = (Object[]) wrapValue;
+            mode = (LikeMode) values[0];
+            value = values[1];
+        }
+        return new Like(mode, key, value);
+    }
+
+    /**
+     * notLike 判断
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    public static NotLike notLike(Cmd key, Object value) {
+        return notLike(LikeMode.DEFAULT, key, value);
     }
 
     /**
@@ -1504,19 +1501,14 @@ public class Methods {
      * @param value
      * @return
      */
-    public static NotLike notLike(Cmd key, String value) {
-        return notLike(key, value, LikeMode.DEFAULT);
-    }
-
-    /**
-     * not like 判断
-     *
-     * @param key
-     * @param value
-     * @return
-     */
-    public static NotLike notLike(Cmd key, Object value, LikeMode mode) {
+    public static NotLike notLike(LikeMode mode, Cmd key, Object value) {
         Objects.requireNonNull(key);
-        return new NotLike(key, value, mode);
+        Object wrapValue = likeParamWrap(key, value, mode, true);
+        if (wrapValue instanceof Object[]) {
+            Object[] values = (Object[]) wrapValue;
+            mode = (LikeMode) values[0];
+            value = values[1];
+        }
+        return new NotLike(mode, key, value);
     }
 }

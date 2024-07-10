@@ -118,7 +118,6 @@ public class TableFieldInfo {
         return readFieldInvoker;
     }
 
-
     public TableField getTableFieldAnnotation() {
         return tableFieldAnnotation;
     }

@@ -44,13 +44,8 @@ public class NotIn extends BaseCondition<Cmd, List<Cmd>> {
         return this;
     }
 
-    public NotIn add(Collection<? extends Serializable> values) {
-        for (Serializable value : values) {
-            if (Objects.isNull(value)) {
-                continue;
-            }
-            this.add(Methods.convert(value));
-        }
+    public NotIn add(Collection<? extends Cmd> values) {
+        this.values.addAll(values);
         return this;
     }
 

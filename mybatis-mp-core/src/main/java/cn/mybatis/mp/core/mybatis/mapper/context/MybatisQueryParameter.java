@@ -9,4 +9,5 @@ public class MybatisQueryParameter extends MybatisParameter {
         super(value, typeHandler, jdbcType);
     }
 
+
 }

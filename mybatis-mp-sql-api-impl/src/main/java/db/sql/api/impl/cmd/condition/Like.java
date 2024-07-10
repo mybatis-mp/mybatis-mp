@@ -12,25 +12,25 @@ import db.sql.api.impl.tookit.SqlConst;
 public class Like extends BasicCondition {
     private final LikeMode mode;
 
-    public Like(char[] operator, Cmd key, Cmd value, LikeMode mode) {
+    public Like(char[] operator, LikeMode mode, Cmd key, Cmd value) {
         super(operator, key, value);
         this.mode = mode;
     }
 
     public Like(Cmd key, Cmd value) {
-        this(key, value, LikeMode.DEFAULT);
+        this(LikeMode.DEFAULT, key, value);
     }
 
     public Like(Cmd key, Object value) {
-        this(key, Methods.convert(value), LikeMode.DEFAULT);
+        this(key, Methods.convert(value));
     }
 
-    public Like(Cmd key, Cmd value, LikeMode mode) {
-        this(SqlConst.LIKE, key, value, mode);
+    public Like(LikeMode mode, Cmd key, Cmd value) {
+        this(SqlConst.LIKE, mode, key, value);
     }
 
-    public Like(Cmd key, Object value, LikeMode mode) {
-        this(SqlConst.LIKE, key, Methods.convert(value), mode);
+    public Like(LikeMode mode, Cmd key, Object value) {
+        this(SqlConst.LIKE, mode, key, Methods.convert(value));
     }
 
     public LikeMode getMode() {

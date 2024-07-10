@@ -372,23 +372,27 @@ public interface FunctionInterface extends Cmd {
     }
 
     default Like like(String value) {
-        return like(value, LikeMode.DEFAULT);
+        return like(LikeMode.DEFAULT, value);
     }
 
-    default Like like(String value, LikeMode mode) {
-        return Methods.like(this, value, mode);
+    default Like like(LikeMode mode, String value) {
+        return Methods.like(mode, this, value);
     }
 
     default NotLike notLike(String value) {
-        return notLike(value, LikeMode.DEFAULT);
+        return notLike(LikeMode.DEFAULT, value);
     }
 
-    default NotLike notLike(String value, LikeMode mode) {
-        return Methods.notLike(this, value, mode);
+    default NotLike notLike(LikeMode mode, String value) {
+        return Methods.notLike(mode, this, value);
     }
 
     default In in(Serializable... values) {
         return Methods.in(this, values);
+    }
+
+    default NotIn notIn(Serializable... values) {
+        return Methods.notIn(this, values);
     }
 
     default IsNull isNull() {

@@ -54,7 +54,7 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
 
     @Override
     public Table asTable(String alias) {
-        return new MpTable(this.getAlias(), alias);
+        return new Table(this.getAlias(), alias);
     }
 
     @Override

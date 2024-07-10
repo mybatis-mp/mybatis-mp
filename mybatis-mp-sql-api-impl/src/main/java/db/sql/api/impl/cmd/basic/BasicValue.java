@@ -27,15 +27,20 @@ public class BasicValue extends AbstractField<BasicValue> {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        Object value = this.value;
-        if (Objects.nonNull(value) && value instanceof String && parent instanceof Like && ((Like) parent).getMode() != LikeMode.NONE) {
-            value = value.toString().replaceAll("%", "\\\\%").replaceAll("_", "\\\\_%");
+        Object originValue = this.value;
+
+        if (value instanceof ValueWrap) {
+            originValue = ((ValueWrap) value).getOriginValue();
+        }
+
+        if (Objects.nonNull(originValue) && originValue instanceof String && parent instanceof Like && ((Like) parent).getMode() != LikeMode.NONE) {
+            originValue = originValue.toString().replaceAll("%", "\\\\%").replaceAll("_", "\\\\_%");
         }
         if (context.getSqlMode() == SQLMode.PRINT || module instanceof OrderBy) {
-            if (value instanceof Number) {
-                sqlBuilder.append(value);
+            if (originValue instanceof Number) {
+                sqlBuilder.append(originValue);
             } else {
-                sqlBuilder.append(SqlConst.SINGLE_QUOT(context.getDbType())).append(value).append(SqlConst.SINGLE_QUOT(context.getDbType()));
+                sqlBuilder.append(SqlConst.SINGLE_QUOT(context.getDbType())).append(originValue).append(SqlConst.SINGLE_QUOT(context.getDbType()));
             }
         } else {
             sqlBuilder.append(context.addParam(value));

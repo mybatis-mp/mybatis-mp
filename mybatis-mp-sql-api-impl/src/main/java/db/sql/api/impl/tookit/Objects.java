@@ -1,5 +1,6 @@
 package db.sql.api.impl.tookit;
 
+import java.util.Collection;
 import java.util.List;
 
 public class Objects {
@@ -8,10 +9,25 @@ public class Objects {
         return java.util.Objects.nonNull(o);
     }
 
-    public static final void requireNonEmpty(String s) {
-        java.util.Objects.requireNonNull(s);
-        if ("".equals(s)) {
-            throw new RuntimeException("can't be blank");
+    public static final boolean isNull(Object o) {
+        return java.util.Objects.isNull(o);
+    }
+
+    public static final void requireNonEmpty(Object value) {
+        java.util.Objects.requireNonNull(value);
+        if (value instanceof String) {
+            if ("".equals(value)) {
+                throw new RuntimeException("can't be blank");
+            }
+        } else if (value instanceof Object[]) {
+            Object[] values = (Object[]) value;
+            if (values.length < 1) {
+                throw new RuntimeException("can't be empty");
+            }
+        } else if (value instanceof Collection) {
+            if (((Collection) value).isEmpty()) {
+                throw new RuntimeException("can't be empty");
+            }
         }
     }
 

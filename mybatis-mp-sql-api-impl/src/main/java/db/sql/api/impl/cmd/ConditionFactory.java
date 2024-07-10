@@ -13,7 +13,6 @@ import db.sql.api.impl.tookit.SqlConst;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Object> {
 
@@ -58,10 +57,6 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
 
     protected boolean isKeyValid(Cmd filed) {
         return filed != null;
-    }
-
-    protected <T> Object conditionParamWrap(Getter<T> column, Object param) {
-        return cmdFactory.conditionParamWrap(column, param);
     }
 
     private Object getSingleValue(Object value) {
@@ -145,21 +140,15 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         return getSingleValue(value);
     }
 
-    private Cmd convertToCmd(Object value) {
-        Cmd v1;
-        if (value instanceof Cmd) {
-            v1 = (Cmd) value;
-        } else {
-            if (isStringTrim() && value instanceof String) {
-                String str = (String) value;
-                value = str.trim();
-            }
-            v1 = cmdFactory.value(value);
+    private Object paramWrap(Object value) {
+        if (isStringTrim() && value instanceof String) {
+            String str = (String) value;
+            value = str.trim();
         }
-        return v1;
+        return value;
     }
 
-    private <T> Cmd convertToCmd(Getter<T> column, int storey) {
+    private <T> Cmd createTableField(Getter<T> column, int storey) {
         return cmdFactory.field(column, storey);
     }
 
@@ -176,7 +165,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
-        return Methods.empty(convertToCmd(column, storey));
+        return Methods.empty(createTableField(column, storey));
     }
 
     @Override
@@ -192,7 +181,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
-        return Methods.notEmpty(convertToCmd(column, storey));
+        return Methods.notEmpty(createTableField(column, storey));
     }
 
     @Override
@@ -204,7 +193,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        return Methods.eq(column, convertToCmd(value));
+        return Methods.eq(column, paramWrap(value));
     }
 
     @Override
@@ -216,7 +205,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        return Methods.ne(column, convertToCmd(value));
+        return Methods.ne(column, paramWrap(value));
     }
 
     @Override
@@ -228,7 +217,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        return Methods.gt(column, convertToCmd(value));
+        return Methods.gt(column, paramWrap(value));
     }
 
     @Override
@@ -240,7 +229,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        return Methods.gte(column, convertToCmd(value));
+        return Methods.gte(column, paramWrap(value));
     }
 
     @Override
@@ -252,7 +241,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        return Methods.lt(column, convertToCmd(value));
+        return Methods.lt(column, paramWrap(value));
     }
 
     @Override
@@ -264,7 +253,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        return Methods.lte(column, convertToCmd(value));
+        return Methods.lte(column, paramWrap(value));
     }
 
     @Override
@@ -276,7 +265,19 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        return Methods.like(column, value, mode);
+        return Methods.like(mode, column, value);
+    }
+
+    @Override
+    public <T> ICondition like(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+        if (!when) {
+            return null;
+        }
+        value = (String) checkAndGetValidValue(value);
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        return Methods.like(mode, createTableField(column, storey), value);
     }
 
     @Override
@@ -288,7 +289,19 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        return Methods.notLike(column, value, mode);
+        return Methods.notLike(mode, column, value);
+    }
+
+    @Override
+    public <T> ICondition notLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+        if (!when) {
+            return null;
+        }
+        value = (String) checkAndGetValidValue(value);
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        return Methods.notLike(mode, createTableField(column, storey), value);
     }
 
     @Override
@@ -317,10 +330,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             }
             throw new ConditionValueNullException("条件参数里包含null值");
         }
-
-        value = (Serializable) conditionParamWrap(column, value);
-        value2 = (Serializable) conditionParamWrap(column, value2);
-        return Methods.between(convertToCmd(column, storey), value, value2);
+        return Methods.between(createTableField(column, storey), value, value2);
     }
 
     @Override
@@ -353,9 +363,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             }
             throw new ConditionValueNullException("条件参数里包含null值");
         }
-        value = (Serializable) conditionParamWrap(column, value);
-        value2 = (Serializable) conditionParamWrap(column, value2);
-        return Methods.notBetween(convertToCmd(column, storey), value, value2);
+        return Methods.notBetween(createTableField(column, storey), value, value2);
     }
 
     @Override
@@ -383,8 +391,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        value = conditionParamWrap(column, value);
-        return Methods.eq(convertToCmd(column, storey), convertToCmd(value));
+        return Methods.eq(createTableField(column, storey), paramWrap(value));
     }
 
     @Override
@@ -392,7 +399,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
-        return Methods.eq(convertToCmd(column, columnStorey), convertToCmd(value, valueStorey));
+        return Methods.eq(createTableField(column, columnStorey), createTableField(value, valueStorey));
     }
 
     @Override
@@ -404,8 +411,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        value = conditionParamWrap(column, value);
-        return Methods.gt(convertToCmd(column, storey), convertToCmd(value));
+        return Methods.gt(createTableField(column, storey), paramWrap(value));
     }
 
     @Override
@@ -413,7 +419,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
-        return Methods.gt(convertToCmd(column, columnStorey), convertToCmd(value, valueStorey));
+        return Methods.gt(createTableField(column, columnStorey), createTableField(value, valueStorey));
     }
 
     @Override
@@ -425,8 +431,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        value = conditionParamWrap(column, value);
-        return Methods.gte(convertToCmd(column, storey), convertToCmd(value));
+        return Methods.gte(createTableField(column, storey), paramWrap(value));
     }
 
     @Override
@@ -434,25 +439,10 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
-        return Methods.gte(convertToCmd(column, columnStorey), convertToCmd(value, valueStorey));
+        return Methods.gte(createTableField(column, columnStorey), createTableField(value, valueStorey));
     }
 
-    @Override
-    public <T> ICondition like(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
-        if (!when) {
-            return null;
-        }
-        value = (String) checkAndGetValidValue(value);
-        if (Objects.isNull(value)) {
-            return null;
-        }
-        Object[] likeParams = cmdFactory.likeParamWrap(column, value, mode, false);
 
-        mode = (LikeMode) likeParams[0];
-        Object newValue = likeParams[1];
-
-        return Methods.like(convertToCmd(column, storey), newValue, mode);
-    }
 
     @Override
     public <T> ICondition lt(boolean when, Getter<T> column, int storey, Object value) {
@@ -463,8 +453,8 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        value = conditionParamWrap(column, value);
-        return Methods.lt(convertToCmd(column, storey), convertToCmd(value));
+
+        return Methods.lt(createTableField(column, storey), paramWrap(value));
     }
 
     @Override
@@ -472,7 +462,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
-        return Methods.lt(convertToCmd(column, columnStorey), convertToCmd(value, valueStorey));
+        return Methods.lt(createTableField(column, columnStorey), createTableField(value, valueStorey));
     }
 
     @Override
@@ -484,8 +474,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        value = conditionParamWrap(column, value);
-        return Methods.lte(convertToCmd(column, storey), convertToCmd(value));
+        return Methods.lte(createTableField(column, storey), paramWrap(value));
     }
 
     @Override
@@ -493,7 +482,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
-        return Methods.lte(convertToCmd(column, columnStorey), convertToCmd(value, valueStorey));
+        return Methods.lte(createTableField(column, columnStorey), createTableField(value, valueStorey));
     }
 
     @Override
@@ -505,8 +494,8 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(value)) {
             return null;
         }
-        value = conditionParamWrap(column, value);
-        return Methods.ne(convertToCmd(column, storey), convertToCmd(value));
+
+        return Methods.ne(createTableField(column, storey), paramWrap(value));
     }
 
     @Override
@@ -514,32 +503,18 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
-        return Methods.ne(convertToCmd(column, columnStorey), convertToCmd(value, valueStorey));
+        return Methods.ne(createTableField(column, columnStorey), createTableField(value, valueStorey));
     }
 
 
-    @Override
-    public <T> ICondition notLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
-        if (!when) {
-            return null;
-        }
-        value = (String) checkAndGetValidValue(value);
-        if (Objects.isNull(value)) {
-            return null;
-        }
-        Object[] likeParams = cmdFactory.likeParamWrap(column, value, mode, true);
 
-        mode = (LikeMode) likeParams[0];
-        Object newValue = likeParams[1];
-        return Methods.notLike(convertToCmd(column, storey), newValue, mode);
-    }
 
     @Override
     public <T> ICondition isNull(boolean when, Getter<T> column, int storey) {
         if (!when) {
             return null;
         }
-        return Methods.isNull(convertToCmd(column, storey));
+        return Methods.isNull(createTableField(column, storey));
     }
 
     @Override
@@ -547,7 +522,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
-        return Methods.isNotNull(convertToCmd(column, storey));
+        return Methods.isNotNull(createTableField(column, storey));
     }
 
     @Override
@@ -557,7 +532,8 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public ICondition in(Cmd column, Serializable... values) {
+    @SafeVarargs
+    public final ICondition in(Cmd column, Serializable... values) {
         values = (Serializable[]) checkAndGetValidValue(values);
         if (Objects.isNull(values)) {
             return null;
@@ -580,11 +556,12 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             return null;
         }
         Objects.requireNonNull(query);
-        return Methods.in(convertToCmd(column, storey), query);
+        return Methods.in(createTableField(column, storey), query);
     }
 
     @Override
-    public <T> ICondition in(boolean when, Getter<T> column, int storey, Serializable[] values) {
+    @SafeVarargs
+    public final <T> ICondition in(boolean when, Getter<T> column, int storey, Serializable... values) {
         if (!when) {
             return null;
         }
@@ -592,14 +569,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(values)) {
             return null;
         }
-
-        if (cmdFactory.isEnableConditionParamWrap()) {
-            for (int i = 0; i < values.length; i++) {
-                values[i] = (Serializable) conditionParamWrap(column, values[i]);
-            }
-        }
-
-        return Methods.in(convertToCmd(column, storey), values);
+        return Methods.in(createTableField(column, storey), values);
     }
 
     @Override
@@ -611,11 +581,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(values)) {
             return null;
         }
-
-        if (cmdFactory.isEnableConditionParamWrap()) {
-            values = values.stream().map(value -> (Serializable) conditionParamWrap(column, value)).collect(Collectors.toList());
-        }
-        return Methods.in(convertToCmd(column, storey), values);
+        return Methods.in(createTableField(column, storey), values);
     }
 
     @Override
@@ -644,7 +610,8 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public ICondition notIn(Cmd column, Serializable... values) {
+    @SafeVarargs
+    public final ICondition notIn(Cmd column, Serializable... values) {
         values = (Serializable[]) checkAndGetValidValue(values);
         if (Objects.isNull(values)) {
             return null;
@@ -667,11 +634,12 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             return null;
         }
         Objects.requireNonNull(query);
-        return Methods.notIn(convertToCmd(column, storey), query);
+        return Methods.notIn(createTableField(column, storey), query);
     }
 
     @Override
-    public <T> ICondition notIn(boolean when, Getter<T> column, int storey, Serializable[] values) {
+    @SafeVarargs
+    public final <T> ICondition notIn(boolean when, Getter<T> column, int storey, Serializable... values) {
         if (!when) {
             return null;
         }
@@ -679,12 +647,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(values)) {
             return null;
         }
-        if (cmdFactory.isEnableConditionParamWrap()) {
-            for (int i = 0; i < values.length; i++) {
-                values[i] = (Serializable) conditionParamWrap(column, values[i]);
-            }
-        }
-        return Methods.notIn(convertToCmd(column, storey), values);
+        return Methods.notIn(createTableField(column, storey), values);
     }
 
     @Override
@@ -696,9 +659,6 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(values)) {
             return null;
         }
-        if (cmdFactory.isEnableConditionParamWrap()) {
-            values = values.stream().map(value -> (Serializable) conditionParamWrap(column, value)).collect(Collectors.toList());
-        }
-        return Methods.notIn(convertToCmd(column, storey), values);
+        return Methods.notIn(createTableField(column, storey), values);
     }
 }

@@ -8,18 +8,18 @@ import db.sql.api.impl.tookit.SqlConst;
 public class NotLike extends Like {
 
     public NotLike(Cmd key, Cmd value) {
-        this(key, value, LikeMode.DEFAULT);
+        this(LikeMode.DEFAULT, key, value);
     }
 
     public NotLike(Cmd key, Object value) {
-        this(key, Methods.convert(value), LikeMode.DEFAULT);
+        this(key, Methods.convert(value));
     }
 
-    public NotLike(Cmd key, Cmd value, LikeMode mode) {
-        super(SqlConst.NOT_LIKE, key, value, mode);
+    public NotLike(LikeMode mode, Cmd key, Cmd value) {
+        super(SqlConst.NOT_LIKE, mode, key, value);
     }
 
-    public NotLike(Cmd key, Object value, LikeMode mode) {
-        super(SqlConst.NOT_LIKE, key, Methods.convert(value), mode);
+    public NotLike(LikeMode mode, Cmd key, Object value) {
+        super(SqlConst.NOT_LIKE, mode, key, Methods.convert(value));
     }
 }
