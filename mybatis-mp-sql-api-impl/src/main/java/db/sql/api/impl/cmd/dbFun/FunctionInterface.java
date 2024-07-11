@@ -388,11 +388,11 @@ public interface FunctionInterface extends Cmd {
     }
 
     default In in(Serializable... values) {
-        return Methods.in(this, values);
+        return Methods.in(this, (Object[]) values);
     }
 
     default NotIn notIn(Serializable... values) {
-        return Methods.notIn(this, values);
+        return Methods.notIn(this, (Object[]) values);
     }
 
     default IsNull isNull() {

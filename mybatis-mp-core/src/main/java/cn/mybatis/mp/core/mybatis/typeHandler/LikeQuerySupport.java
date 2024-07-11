@@ -6,7 +6,7 @@ import org.apache.ibatis.type.JdbcType;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public interface LikeQuerySupport<T> extends QuerySupport<T> {
+public interface LikeQuerySupport<T> {
 
     /**
      * likeMode 转换，用于需要转换like的方式

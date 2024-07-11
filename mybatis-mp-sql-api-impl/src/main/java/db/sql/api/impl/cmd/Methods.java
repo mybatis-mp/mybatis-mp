@@ -784,7 +784,8 @@ public class Methods {
      * @param values 数据
      * @return
      */
-    public static Field filed(Cmd key, Serializable... values) {
+    @SafeVarargs
+    public final static Field filed(Cmd key, Serializable... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new Field(key, values);
@@ -1018,7 +1019,8 @@ public class Methods {
      * @param values 数据
      * @return
      */
-    public static Concat concat(Cmd key, Serializable... values) {
+    @SafeVarargs
+    public final static Concat concat(Cmd key, Serializable... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new Concat(key, values);
@@ -1031,7 +1033,8 @@ public class Methods {
      * @param values 数据
      * @return
      */
-    public static Concat concat(Cmd key, Cmd... values) {
+    @SafeVarargs
+    public final static Concat concat(Cmd key, Cmd... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new Concat(key, values);
@@ -1044,7 +1047,8 @@ public class Methods {
      * @param values 数据
      * @return
      */
-    public static Concat concat(Cmd key, Object... values) {
+    @SafeVarargs
+    public final static Concat concat(Cmd key, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new Concat(key, values);
@@ -1058,7 +1062,8 @@ public class Methods {
      * @param values
      * @return
      */
-    public static ConcatAs concatAs(Cmd key, String split, Serializable... values) {
+    @SafeVarargs
+    public final static ConcatAs concatAs(Cmd key, String split, Serializable... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(split);
         Objects.requireNonNull(values);
@@ -1073,7 +1078,8 @@ public class Methods {
      * @param values
      * @return
      */
-    public static ConcatAs concatAs(Cmd key, String split, Cmd... values) {
+    @SafeVarargs
+    public final static ConcatAs concatAs(Cmd key, String split, Cmd... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(split);
         Objects.requireNonNull(values);
@@ -1088,7 +1094,8 @@ public class Methods {
      * @param values
      * @return
      */
-    public static ConcatAs concatAs(Cmd key, String split, Object... values) {
+    @SafeVarargs
+    public final static ConcatAs concatAs(Cmd key, String split, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(split);
         Objects.requireNonNull(values);

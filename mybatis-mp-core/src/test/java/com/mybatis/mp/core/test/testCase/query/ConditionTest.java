@@ -393,7 +393,7 @@ public class ConditionTest extends BaseTest {
                     .forSearch()
                     .select(SysUser::getId)
                     .from(SysUser.class)
-                    .in(SysUser::getId, new Integer[]{1, 2, null})
+                    .in(SysUser::getId, 1, 2, null)
                     .returnType(Integer.TYPE)
                     .list();
 
@@ -411,7 +411,7 @@ public class ConditionTest extends BaseTest {
                 List<Integer> list = QueryChain.of(sysUserMapper)
                         .select(SysUser::getId)
                         .from(SysUser.class)
-                        .in(SysUser::getId, new Integer[]{1, 2, null})
+                        .in(SysUser::getId, 1, 2, null)
                         .returnType(Integer.TYPE)
                         .list();
             }

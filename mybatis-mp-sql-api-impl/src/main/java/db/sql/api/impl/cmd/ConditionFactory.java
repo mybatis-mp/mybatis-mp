@@ -538,7 +538,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(values)) {
             return null;
         }
-        return Methods.in(column, values);
+        return Methods.in(column, (Object[]) values);
     }
 
     @Override
@@ -569,7 +569,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(values)) {
             return null;
         }
-        return Methods.in(createTableField(column, storey), values);
+        return Methods.in(createTableField(column, storey), (Object[]) values);
     }
 
     @Override
@@ -616,7 +616,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (Objects.isNull(values)) {
             return null;
         }
-        return Methods.notIn(column, values);
+        return Methods.notIn(column, (Object[]) values);
     }
 
     @Override
@@ -643,11 +643,11 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
-        values = (Serializable[]) checkAndGetValidValue(values);
-        if (Objects.isNull(values)) {
+        Object[] newValues = (Serializable[]) checkAndGetValidValue(values);
+        if (Objects.isNull(newValues)) {
             return null;
         }
-        return Methods.notIn(createTableField(column, storey), values);
+        return Methods.notIn(createTableField(column, storey), newValues);
     }
 
     @Override
