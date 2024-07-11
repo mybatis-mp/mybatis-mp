@@ -57,9 +57,10 @@ public class DefaultValueTestCase extends BaseTest {
             mapper.update(defaultValueTest);
 
             assertEquals(2, defaultValueTest.getValue2());
+            assertEquals(4, defaultValueTest.getValue4());
             defaultValueTest = mapper.getById(defaultValueTest.getId());
             assertEquals(2, defaultValueTest.getValue2());
-
+            assertEquals(4, defaultValueTest.getValue4());
         }
     }
 

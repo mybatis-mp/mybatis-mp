@@ -24,6 +24,9 @@ public class DefaultValueTest {
     @TableField(defaultValue = "1", updateDefaultValue = "2")
     private Integer value2;
 
+    @TableField(updateDefaultValue = "4")
+    private Integer value4;
+
     @TableField(defaultValue = "{NOW}")
     private LocalDateTime createTime;
 

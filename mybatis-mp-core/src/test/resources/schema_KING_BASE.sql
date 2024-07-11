@@ -135,6 +135,7 @@ CREATE TABLE default_value_test
     value1      VARCHAR(100),
     value2      INT       not NULL,
     value3      VARCHAR(100),
+    value4 INT ,
     create_time TIMESTAMP NOT NULL
 );
 
