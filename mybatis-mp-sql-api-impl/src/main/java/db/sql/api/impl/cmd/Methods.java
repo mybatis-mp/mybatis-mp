@@ -87,7 +87,7 @@ public class Methods {
      * @param value
      * @return
      */
-    public static Cmd convert(Serializable value) {
+    public static BasicValue convert(Serializable value) {
         Objects.requireNonNull(value);
         return new BasicValue(value);
     }
