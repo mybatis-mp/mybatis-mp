@@ -428,6 +428,7 @@ public class ConditionTest extends BaseTest {
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .eq(SysUser::getUserName, "")
+                    .eq(SysUser::getUserName, " ")
                     .returnType(SysUser.class)
                     .get();
             assertNotNull(sysUser);
