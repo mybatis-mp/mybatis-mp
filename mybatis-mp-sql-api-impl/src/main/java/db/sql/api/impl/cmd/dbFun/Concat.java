@@ -26,7 +26,7 @@ public class Concat extends BasicFunction<Concat> {
             if (value instanceof Cmd) {
                 vs[i++] = (Cmd) value;
             } else {
-                vs[i++] = Methods.convert(value);
+                vs[i++] = Methods.cmd(value);
             }
         }
         this.values = vs;

@@ -62,7 +62,7 @@ public class Methods {
      * @param value
      * @return
      */
-    public static Cmd convert(Object value) {
+    public static Cmd cmd(Object value) {
         Objects.requireNonNull(value);
         if (value instanceof Cmd) {
             return (Cmd) value;
@@ -77,17 +77,6 @@ public class Methods {
      * @return
      */
     public static BasicValue value(Serializable value) {
-        Objects.requireNonNull(value);
-        return new BasicValue(value);
-    }
-
-    /**
-     * value
-     *
-     * @param value
-     * @return
-     */
-    public static BasicValue convert(Serializable value) {
         Objects.requireNonNull(value);
         return new BasicValue(value);
     }

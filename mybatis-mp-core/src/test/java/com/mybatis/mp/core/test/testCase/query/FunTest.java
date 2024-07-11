@@ -459,7 +459,7 @@ public class FunTest extends BaseTest {
 //        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
 //            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 //            LocalDateTime date = QueryChain.of(sysUserMapper)
-//                    .select(Methods.fromUnixTime(Methods.convert(1697008577L)))
+//                    .select(Methods.fromUnixTime(Methods.cmd(1697008577L)))
 //                    .from(SysUser.class)
 //                    .eq(SysUser::getId, 1)
 //                    .returnType(LocalDateTime.class)

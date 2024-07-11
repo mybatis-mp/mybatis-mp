@@ -14,8 +14,8 @@ public class Replace extends BasicFunction<Replace> {
 
     public Replace(Cmd value, String target, String replacement) {
         super(SqlConst.REPLACE, value);
-        this.target = Methods.convert(target);
-        this.replacement = Methods.convert(replacement);
+        this.target = Methods.cmd(target);
+        this.replacement = Methods.cmd(replacement);
     }
 
     @Override

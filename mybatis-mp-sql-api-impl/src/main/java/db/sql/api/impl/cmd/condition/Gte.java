@@ -13,6 +13,6 @@ public class Gte extends BasicCondition {
     }
 
     public Gte(Cmd key, Serializable value) {
-        this(key, Methods.convert(value));
+        this(key, Methods.cmd(value));
     }
 }

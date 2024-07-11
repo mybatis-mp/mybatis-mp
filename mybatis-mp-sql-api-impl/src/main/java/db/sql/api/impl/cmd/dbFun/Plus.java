@@ -13,7 +13,7 @@ public class Plus extends BasicFunction<Plus> {
     private final Cmd value;
 
     public Plus(Cmd key, Number number) {
-        this(key, Methods.convert(number));
+        this(key, Methods.cmd(number));
     }
 
     public Plus(Cmd key, Cmd value) {

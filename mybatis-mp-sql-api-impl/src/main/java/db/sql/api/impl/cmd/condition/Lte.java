@@ -14,6 +14,6 @@ public class Lte extends BasicCondition {
 
 
     public Lte(Cmd key, Serializable value) {
-        this(key, Methods.convert(value));
+        this(key, Methods.cmd(value));
     }
 }

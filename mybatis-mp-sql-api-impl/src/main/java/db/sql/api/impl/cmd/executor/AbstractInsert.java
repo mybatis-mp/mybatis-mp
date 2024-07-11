@@ -156,11 +156,11 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
         for (int i = 0; i < values.size(); i++) {
             Object value = values.get(i);
             if (value instanceof Cmd) {
-                cmdValues.add(Methods.convert(value));
+                cmdValues.add(Methods.cmd(value));
                 continue;
             }
             TableField tableField = this.insertFields.getFields().get(i);
-            cmdValues.add(Methods.convert(tableField.paramWrap(value)));
+            cmdValues.add(Methods.cmd(tableField.paramWrap(value)));
         }
         this.$values(cmdValues);
         return (SELF) this;

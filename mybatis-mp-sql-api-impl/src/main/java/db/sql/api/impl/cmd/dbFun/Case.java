@@ -30,7 +30,7 @@ public class Case extends BasicFunction<Case> {
     }
 
     public Case when(Condition condition, Serializable then) {
-        return this.when(condition, Methods.convert(then));
+        return this.when(condition, Methods.cmd(then));
     }
 
     public Case when(boolean when, Condition condition, Serializable then) {
@@ -50,7 +50,7 @@ public class Case extends BasicFunction<Case> {
     }
 
     public Case else_(Serializable then) {
-        return this.else_(Methods.convert(then));
+        return this.else_(Methods.cmd(then));
     }
 
     @Override

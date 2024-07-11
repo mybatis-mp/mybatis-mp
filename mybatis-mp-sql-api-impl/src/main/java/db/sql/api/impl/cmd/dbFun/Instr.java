@@ -12,7 +12,7 @@ public class Instr extends BasicFunction<Instr> {
 
     public Instr(Cmd key, String str) {
         super(SqlConst.INSTR, key);
-        this.str = Methods.convert(str);
+        this.str = Methods.cmd(str);
     }
 
     @Override

@@ -26,7 +26,7 @@ public class Between extends BaseCondition<Cmd, Cmd[]> {
     }
 
     public Between(Cmd key, Serializable value1, Serializable value2) {
-        this(key, Methods.convert(value1), Methods.convert(value2));
+        this(key, Methods.cmd(value1), Methods.cmd(value2));
     }
 
     @Override

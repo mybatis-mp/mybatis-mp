@@ -20,7 +20,7 @@ public interface Condition<Field, Value> extends ICondition, Cmd {
     }
 
     default If if_(Cmd value, Serializable value2) {
-        return new If(this, value, Methods.convert(value2));
+        return new If(this, value, Methods.cmd(value2));
     }
 
     default If if_(Serializable value, Serializable value2) {
@@ -28,7 +28,7 @@ public interface Condition<Field, Value> extends ICondition, Cmd {
     }
 
     default Case caseThen(Serializable value) {
-        return this.caseThen(Methods.convert(value));
+        return this.caseThen(Methods.cmd(value));
     }
 
     default Case caseThen(Cmd value) {

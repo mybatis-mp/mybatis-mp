@@ -13,7 +13,7 @@ public class Subtract extends BasicFunction<Subtract> {
     private final Cmd value;
 
     public Subtract(Cmd key, Number number) {
-        this(key, Methods.convert(number));
+        this(key, Methods.cmd(number));
     }
 
     public Subtract(Cmd key, Cmd value) {

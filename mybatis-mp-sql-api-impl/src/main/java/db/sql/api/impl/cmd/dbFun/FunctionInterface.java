@@ -256,7 +256,7 @@ public interface FunctionInterface extends Cmd {
      * @return
      */
     default DateDiff dateDiff(Object another) {
-        return Methods.dateDiff(this, Methods.convert(another));
+        return Methods.dateDiff(this, Methods.cmd(another));
     }
 
     default DateAdd dateAdd(int n) {
@@ -336,31 +336,31 @@ public interface FunctionInterface extends Cmd {
     }
 
     default IfNull ifNull(Object value) {
-        return Methods.ifNull(this, Methods.convert(value));
+        return Methods.ifNull(this, Methods.cmd(value));
     }
 
     default Eq eq(Object value) {
-        return Methods.eq(this, Methods.convert(value));
+        return Methods.eq(this, Methods.cmd(value));
     }
 
     default Gt gt(Object value) {
-        return Methods.gt(this, Methods.convert(value));
+        return Methods.gt(this, Methods.cmd(value));
     }
 
     default Gte gte(Object value) {
-        return Methods.gte(this, Methods.convert(value));
+        return Methods.gte(this, Methods.cmd(value));
     }
 
     default Lt lt(Object value) {
-        return Methods.lt(this, Methods.convert(value));
+        return Methods.lt(this, Methods.cmd(value));
     }
 
     default Lte lte(Object value) {
-        return Methods.lte(this, Methods.convert(value));
+        return Methods.lte(this, Methods.cmd(value));
     }
 
     default Ne ne(Object value) {
-        return Methods.ne(this, Methods.convert(value));
+        return Methods.ne(this, Methods.cmd(value));
     }
 
     default Between between(Serializable value1, Serializable value2) {

@@ -7,7 +7,7 @@ import db.sql.api.impl.tookit.SqlConst;
 public class Md5 extends BasicFunction<Md5> {
 
     public Md5(String str) {
-        this(Methods.convert(str));
+        this(Methods.cmd(str));
     }
 
     public Md5(Cmd key) {

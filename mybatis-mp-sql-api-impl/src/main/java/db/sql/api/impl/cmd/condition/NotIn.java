@@ -54,7 +54,7 @@ public class NotIn extends BaseCondition<Cmd, List<Cmd>> {
             if (Objects.isNull(value)) {
                 continue;
             }
-            this.add(Methods.convert(value));
+            this.add(Methods.cmd(value));
         }
         return this;
     }

@@ -13,6 +13,6 @@ public class Lt extends BasicCondition {
     }
 
     public Lt(Cmd key, Serializable value) {
-        this(key, Methods.convert(value));
+        this(key, Methods.cmd(value));
     }
 }

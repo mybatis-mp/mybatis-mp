@@ -14,6 +14,6 @@ public class Gt extends BasicCondition {
     }
 
     public Gt(Cmd key, Serializable value) {
-        this(key, Methods.convert(value));
+        this(key, Methods.cmd(value));
     }
 }

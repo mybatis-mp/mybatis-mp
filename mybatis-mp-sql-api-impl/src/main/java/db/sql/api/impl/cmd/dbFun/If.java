@@ -18,15 +18,15 @@ public class If extends BasicFunction<If> {
     private final Cmd thenValue;
 
     public If(ICondition condition, Serializable value, Serializable thenValue) {
-        this(condition, Methods.convert(value), Methods.convert(thenValue));
+        this(condition, Methods.cmd(value), Methods.cmd(thenValue));
     }
 
     public If(ICondition condition, Cmd value, Serializable thenValue) {
-        this(condition, value, Methods.convert(thenValue));
+        this(condition, value, Methods.cmd(thenValue));
     }
 
     public If(ICondition condition, Serializable value, Cmd thenValue) {
-        this(condition, Methods.convert(value), thenValue);
+        this(condition, Methods.cmd(value), thenValue);
     }
 
     public If(ICondition condition, Cmd value, Cmd thenValue) {

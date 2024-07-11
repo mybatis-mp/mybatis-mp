@@ -13,7 +13,7 @@ public class Divide extends BasicFunction<Divide> {
     private final Cmd value;
 
     public Divide(Cmd key, Number number) {
-        this(key, Methods.convert(number));
+        this(key, Methods.cmd(number));
     }
 
     public Divide(Cmd key, Cmd value) {

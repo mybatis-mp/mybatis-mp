@@ -22,7 +22,7 @@ public class Like extends BasicCondition {
     }
 
     public Like(Cmd key, Object value) {
-        this(key, Methods.convert(value));
+        this(key, Methods.cmd(value));
     }
 
     public Like(LikeMode mode, Cmd key, Cmd value) {
@@ -30,7 +30,7 @@ public class Like extends BasicCondition {
     }
 
     public Like(LikeMode mode, Cmd key, Object value) {
-        this(SqlConst.LIKE, mode, key, Methods.convert(value));
+        this(SqlConst.LIKE, mode, key, Methods.cmd(value));
     }
 
     public LikeMode getMode() {

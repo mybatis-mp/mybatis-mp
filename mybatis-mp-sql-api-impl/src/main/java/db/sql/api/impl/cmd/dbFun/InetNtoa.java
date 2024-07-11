@@ -6,7 +6,7 @@ import db.sql.api.impl.tookit.SqlConst;
 
 public class InetNtoa extends BasicFunction<InetNtoa> {
     public InetNtoa(Number ipNumber) {
-        this(Methods.convert(ipNumber));
+        this(Methods.cmd(ipNumber));
     }
 
     public InetNtoa(Cmd key) {

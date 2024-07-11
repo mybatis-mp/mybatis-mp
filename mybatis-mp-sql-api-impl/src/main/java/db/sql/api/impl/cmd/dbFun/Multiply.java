@@ -14,7 +14,7 @@ public class Multiply extends BasicFunction<Multiply> {
     private final Cmd value;
 
     public Multiply(Cmd key, Number number) {
-        this(key, Methods.convert(number));
+        this(key, Methods.cmd(number));
     }
 
     public Multiply(Cmd key, Cmd value) {

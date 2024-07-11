@@ -12,7 +12,7 @@ public class DateFormat extends BasicFunction<DateFormat> {
 
     public DateFormat(Cmd key, String pattern) {
         super(null, key);
-        this.pattern = Methods.convert(pattern);
+        this.pattern = Methods.cmd(pattern);
     }
 
     public DateFormat(Cmd key, DatePattern datePattern) {

@@ -7,7 +7,7 @@ import db.sql.api.impl.tookit.SqlConst;
 public class InetAton extends BasicFunction<InetAton> {
 
     public InetAton(String ip) {
-        this(Methods.convert(ip));
+        this(Methods.cmd(ip));
     }
 
     public InetAton(Cmd key) {

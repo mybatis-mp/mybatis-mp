@@ -13,7 +13,7 @@ public class Rpad extends BasicFunction<Rpad> {
     private final Cmd pad;
 
     public Rpad(Cmd key, int length, String pad) {
-        this(key, length, Methods.convert(pad));
+        this(key, length, Methods.cmd(pad));
     }
 
     public Rpad(Cmd key, int length, Cmd pad) {

@@ -132,7 +132,7 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     @Override
     public SELF set(TableField field, Object value) {
         value = field.paramWrap(value);
-        Cmd v = Methods.convert(value);
+        Cmd v = Methods.cmd(value);
         if (this.updateSets == null) {
             this.updateSets = new UpdateSets();
             this.append(this.updateSets);

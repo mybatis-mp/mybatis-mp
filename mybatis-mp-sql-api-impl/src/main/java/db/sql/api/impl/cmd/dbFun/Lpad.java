@@ -13,13 +13,13 @@ public class Lpad extends BasicFunction<Lpad> {
     private final Cmd pad;
 
     public Lpad(Cmd key, int length, String pad) {
-        this(key, length, Methods.convert(pad));
+        this(key, length, Methods.cmd(pad));
     }
 
     public Lpad(Cmd key, int length, Cmd pad) {
         super(SqlConst.LPAD, key);
         this.length = length;
-        this.pad = Methods.convert(pad);
+        this.pad = Methods.cmd(pad);
     }
 
     @Override

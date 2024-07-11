@@ -14,6 +14,6 @@ public class Eq extends BasicCondition {
     }
 
     public Eq(Cmd key, Serializable value) {
-        this(key, Methods.convert(value));
+        this(key, Methods.cmd(value));
     }
 }

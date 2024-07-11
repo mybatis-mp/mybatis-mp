@@ -12,7 +12,7 @@ public class Strcmp extends BasicFunction<Strcmp> {
 
     public Strcmp(Cmd key, String str) {
         super(SqlConst.STRCMP, key);
-        this.str = Methods.convert(str);
+        this.str = Methods.cmd(str);
     }
 
     @Override

@@ -18,7 +18,7 @@ public class ConcatAs extends BasicFunction<ConcatAs> {
 
     public ConcatAs(Cmd key, String split, Object... values) {
         super(CONCAT_WS, key);
-        this.split = Methods.convert(split);
+        this.split = Methods.cmd(split);
         Cmd[] vs = new Cmd[values.length];
         int i = 0;
         for (Object value : values) {
@@ -28,7 +28,7 @@ public class ConcatAs extends BasicFunction<ConcatAs> {
             if (value instanceof Cmd) {
                 vs[i++] = (Cmd) value;
             } else {
-                vs[i++] = Methods.convert(value);
+                vs[i++] = Methods.cmd(value);
             }
         }
         this.values = vs;

@@ -13,6 +13,6 @@ public class Ne extends BasicCondition {
     }
 
     public Ne(Cmd key, Serializable value) {
-        this(key, Methods.convert(value));
+        this(key, Methods.cmd(value));
     }
 }

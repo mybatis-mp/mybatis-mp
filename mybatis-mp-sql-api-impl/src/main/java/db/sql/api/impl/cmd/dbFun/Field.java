@@ -21,7 +21,7 @@ public class Field extends BasicFunction<Field> {
             if (value instanceof Cmd) {
                 vs[i++] = (Cmd) value;
             } else {
-                vs[i++] = Methods.convert(value);
+                vs[i++] = Methods.cmd(value);
             }
         }
         this.values = vs;

@@ -11,7 +11,7 @@ public class FindInSet extends BasicFunction<FindInSet> {
     private final Cmd match;
 
     public FindInSet(Cmd key, String match) {
-        this(key, Methods.convert(match));
+        this(key, Methods.cmd(match));
     }
 
     public FindInSet(Cmd key, Cmd match) {
