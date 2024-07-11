@@ -57,7 +57,7 @@ public class ModelUpdateCmdCreateUtil {
                 continue;
             }
 
-            if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
+            if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValue())) {
                 //设置默认值
                 value = MybatisMpConfig.getDefaultValue(modelFieldInfo.getField().getType(), modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValue());
                 //默认值回写
