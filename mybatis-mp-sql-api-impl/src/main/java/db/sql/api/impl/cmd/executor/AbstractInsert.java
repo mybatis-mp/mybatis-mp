@@ -14,10 +14,10 @@ import db.sql.api.impl.cmd.struct.insert.InsertSelect;
 import db.sql.api.impl.cmd.struct.insert.InsertTable;
 import db.sql.api.impl.cmd.struct.insert.InsertValues;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 
 public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTORY>,
@@ -152,7 +152,17 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
 
     @Override
     public SELF values(List<Object> values) {
-        this.$values(values.stream().map(Methods::convert).collect(Collectors.toList()));
+        List<Cmd> cmdValues = new ArrayList<>(values.size());
+        for (int i = 0; i < values.size(); i++) {
+            Object value = values.get(i);
+            if (value instanceof Cmd) {
+                cmdValues.add(Methods.convert(value));
+                continue;
+            }
+            TableField tableField = this.insertFields.getFields().get(i);
+            cmdValues.add(Methods.convert(tableField.paramWrap(value)));
+        }
+        this.$values(cmdValues);
         return (SELF) this;
     }
 

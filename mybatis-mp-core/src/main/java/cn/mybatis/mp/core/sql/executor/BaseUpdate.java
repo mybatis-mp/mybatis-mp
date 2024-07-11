@@ -1,23 +1,17 @@
 package cn.mybatis.mp.core.sql.executor;
 
-import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
-import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
-import cn.mybatis.mp.core.mybatis.mapper.context.MybatisParameter;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.ForeignKeyUtil;
 import db.sql.api.Cmd;
-import db.sql.api.Getter;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.AbstractUpdate;
 import db.sql.api.impl.cmd.struct.On;
 import db.sql.api.impl.cmd.struct.Where;
-import db.sql.api.impl.tookit.LambdaUtil;
-import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,24 +28,6 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
 
     public BaseUpdate(Where where) {
         super(where);
-    }
-
-    @Override
-    public <G> T set(Getter<G> field, Object value) {
-        Objects.requireNonNull(value);
-        if (value instanceof Cmd || value instanceof MybatisParameter) {
-            return super.set(field, value);
-        }
-        LambdaUtil.LambdaFieldInfo fieldInfo = LambdaUtil.getFieldInfo(field);
-        TableInfo tableInfo = tableInfoMap.computeIfAbsent(fieldInfo.getType(), key -> {
-            return Tables.get(key);
-        });
-
-        TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(fieldInfo.getName());
-        if (tableFieldInfo.getField().getType().isAssignableFrom(value.getClass()) && tableFieldInfo.getTableFieldAnnotation().typeHandler() != UnknownTypeHandler.class) {
-            value = MybatisParameter.create(value, tableFieldInfo.getTableFieldAnnotation().typeHandler(), tableFieldInfo.getTableFieldAnnotation().jdbcType());
-        }
-        return super.set(field, value);
     }
 
     @Override
