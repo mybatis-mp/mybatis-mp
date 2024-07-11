@@ -1020,20 +1020,6 @@ public class Methods {
      * @return
      */
     @SafeVarargs
-    public final static Concat concat(Cmd key, Serializable... values) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(values);
-        return new Concat(key, values);
-    }
-
-    /**
-     * concat拼接 函数
-     *
-     * @param key
-     * @param values 数据
-     * @return
-     */
-    @SafeVarargs
     public final static Concat concat(Cmd key, Cmd... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);

@@ -379,11 +379,19 @@ public interface FunctionInterface extends Cmd {
         return Methods.like(mode, this, value);
     }
 
+    default Like like(LikeMode mode, Cmd value) {
+        return Methods.like(mode, this, value);
+    }
+
     default NotLike notLike(String value) {
         return notLike(LikeMode.DEFAULT, value);
     }
 
     default NotLike notLike(LikeMode mode, String value) {
+        return Methods.notLike(mode, this, value);
+    }
+
+    default NotLike notLike(LikeMode mode, Cmd value) {
         return Methods.notLike(mode, this, value);
     }
 
