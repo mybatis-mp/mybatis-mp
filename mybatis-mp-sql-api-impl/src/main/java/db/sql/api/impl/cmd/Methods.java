@@ -785,7 +785,7 @@ public class Methods {
      * @return
      */
     @SafeVarargs
-    public final static Field filed(Cmd key, Serializable... values) {
+    public final static Field filed(Cmd key, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new Field(key, values);
@@ -1020,56 +1020,10 @@ public class Methods {
      * @return
      */
     @SafeVarargs
-    public final static Concat concat(Cmd key, Cmd... values) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(values);
-        return new Concat(key, values);
-    }
-
-    /**
-     * concat拼接 函数
-     *
-     * @param key
-     * @param values 数据
-     * @return
-     */
-    @SafeVarargs
     public final static Concat concat(Cmd key, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new Concat(key, values);
-    }
-
-    /**
-     * concatAs拼接 函数
-     *
-     * @param key
-     * @param split
-     * @param values
-     * @return
-     */
-    @SafeVarargs
-    public final static ConcatAs concatAs(Cmd key, String split, Serializable... values) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(split);
-        Objects.requireNonNull(values);
-        return new ConcatAs(key, split, values);
-    }
-
-    /**
-     * concatAs拼接 函数
-     *
-     * @param key
-     * @param split
-     * @param values
-     * @return
-     */
-    @SafeVarargs
-    public final static ConcatAs concatAs(Cmd key, String split, Cmd... values) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(split);
-        Objects.requireNonNull(values);
-        return new ConcatAs(key, split, values);
     }
 
     /**
