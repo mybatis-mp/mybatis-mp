@@ -8,32 +8,12 @@ import db.sql.api.impl.cmd.basic.BasicValue;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-import java.io.Serializable;
-
 import static db.sql.api.impl.tookit.SqlConst.CONCAT;
 import static db.sql.api.impl.tookit.SqlConst.CONCAT_SPLIT_SYMBOL;
 
 public class Concat extends BasicFunction<Concat> {
 
     private final Cmd[] values;
-
-    public Concat(Cmd key, Serializable... values) {
-        super(CONCAT, key);
-        Cmd[] vs = new Cmd[values.length];
-        int i = 0;
-        for (Serializable value : values) {
-            if (value == null) {
-                continue;
-            }
-            vs[i++] = Methods.convert(value);
-        }
-        this.values = vs;
-    }
-
-    public Concat(Cmd key, Cmd... values) {
-        super(CONCAT, key);
-        this.values = values;
-    }
 
     public Concat(Cmd key, Object... values) {
         super(CONCAT, key);

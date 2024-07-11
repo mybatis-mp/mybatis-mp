@@ -6,31 +6,11 @@ import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-import java.io.Serializable;
-
 public class Field extends BasicFunction<Field> {
 
     private final Cmd[] values;
 
-    public Field(Cmd key, Serializable... values) {
-        super(SqlConst.FILED, key);
-        Cmd[] vs = new Cmd[values.length];
-        int i = 0;
-        for (Serializable value : values) {
-            if (value == null) {
-                continue;
-            }
-            vs[i++] = Methods.convert(value);
-        }
-        this.values = vs;
-    }
-
-    public Field(Cmd key, Cmd... values) {
-        super(SqlConst.FILED, key);
-        this.values = values;
-    }
-
-    public Field(Cmd key, Object... values) {
+    public Field(Cmd key, Object[] values) {
         super(SqlConst.FILED, key);
         Cmd[] vs = new Cmd[values.length];
         int i = 0;

@@ -8,9 +8,6 @@ import db.sql.api.impl.cmd.basic.BasicValue;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-import java.io.Serializable;
-
-import static db.sql.api.impl.tookit.SqlConst.CONCAT;
 import static db.sql.api.impl.tookit.SqlConst.CONCAT_WS;
 
 public class ConcatAs extends BasicFunction<ConcatAs> {
@@ -19,28 +16,8 @@ public class ConcatAs extends BasicFunction<ConcatAs> {
 
     private final Cmd split;
 
-    public ConcatAs(Cmd key, String split, Serializable... values) {
-        super(CONCAT_WS, key);
-        Cmd[] vs = new Cmd[values.length];
-        int i = 0;
-        for (Serializable value : values) {
-            if (value == null) {
-                continue;
-            }
-            vs[i++] = Methods.convert(value);
-        }
-        this.split = Methods.convert(split);
-        this.values = vs;
-    }
-
-    public ConcatAs(Cmd key, String split, Cmd... values) {
-        super(CONCAT_WS, key);
-        this.split = Methods.convert(split);
-        this.values = values;
-    }
-
     public ConcatAs(Cmd key, String split, Object... values) {
-        super(CONCAT, key);
+        super(CONCAT_WS, key);
         this.split = Methods.convert(split);
         Cmd[] vs = new Cmd[values.length];
         int i = 0;
