@@ -443,7 +443,6 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
 
-
     @Override
     public <T> ICondition lt(boolean when, Getter<T> column, int storey, Object value) {
         if (!when) {
@@ -505,8 +504,6 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         }
         return Methods.ne(createTableField(column, columnStorey), createTableField(value, valueStorey));
     }
-
-
 
 
     @Override

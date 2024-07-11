@@ -25,19 +25,20 @@ public class MpTableField extends TableField {
 
     @Override
     public Object paramWrap(Object param) {
-        if(Objects.isNull(param)){
+        if (Objects.isNull(param)) {
             return null;
         }
-        if(Objects.isNull(tableFieldInfo.getTypeHandler())){
+        if (Objects.isNull(tableFieldInfo.getTypeHandler())) {
             return param;
         }
-        if (!tableFieldInfo.getField().getType().isAssignableFrom(param.getClass())){
+        if (!tableFieldInfo.getField().getType().isAssignableFrom(param.getClass())) {
             return param;
         }
-        return new MybatisParameter(param,tableFieldInfo.getTableFieldAnnotation().typeHandler(),tableFieldInfo.getTableFieldAnnotation().jdbcType());
+        return new MybatisParameter(param, tableFieldInfo.getTableFieldAnnotation().typeHandler(), tableFieldInfo.getTableFieldAnnotation().jdbcType());
     }
+
     @Override
-    public Object likeParamWrap(LikeMode likeMode,Object param,  boolean isNotLike) {
+    public Object likeParamWrap(LikeMode likeMode, Object param, boolean isNotLike) {
         if (Objects.isNull(param) || param instanceof Cmd) {
             return param;
         }

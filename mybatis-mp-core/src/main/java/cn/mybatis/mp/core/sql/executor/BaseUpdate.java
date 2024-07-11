@@ -1,7 +1,5 @@
 package cn.mybatis.mp.core.sql.executor;
 
-import cn.mybatis.mp.core.db.reflect.TableInfo;
-import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.ForeignKeyUtil;
@@ -13,14 +11,11 @@ import db.sql.api.impl.cmd.executor.AbstractUpdate;
 import db.sql.api.impl.cmd.struct.On;
 import db.sql.api.impl.cmd.struct.Where;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
 public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate<T, MybatisCmdFactory> {
-
-    private Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
 
     public BaseUpdate() {
         super(new MybatisCmdFactory());
@@ -61,6 +56,7 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
         }
         return consumer;
     }
+
     /**************以下为去除警告************/
 
     @Override
