@@ -17,8 +17,6 @@ import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.tookit.LambdaUtil;
 import org.apache.ibatis.util.MapUtil;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 
@@ -27,8 +25,6 @@ import java.util.Objects;
  * 增加了对实体类的映射
  */
 public class MybatisCmdFactory extends CmdFactory {
-
-    private Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
 
     public MybatisCmdFactory() {
         super();
