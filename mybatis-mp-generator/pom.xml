@@ -42,6 +42,11 @@
                 <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
                 <version>${swagger3.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.freemarker</groupId>
+                <artifactId>freemarker</artifactId>
+                <version>${freemarker.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -102,8 +107,6 @@
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
-            <version>${freemarker.version}</version>
-            <optional>true</optional>
         </dependency>
 
         <dependency>
