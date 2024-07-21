@@ -56,17 +56,15 @@ public final class WhereUtil {
             Serializable id = TableInfoUtil.getEntityIdValue(tableInfo, entity);
             where.eq($.field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName(), 1), id);
         } else {
-            tableInfo.getTableFieldInfos().stream().forEach(item -> {
-                if (item.isTableId()) {
-                    Object id;
-                    try {
-                        id = item.getReadFieldInvoker().invoke(entity, null);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                    Objects.requireNonNull(id, "id can't be null");
-                    where.eq($.field(tableInfo.getType(), item.getField().getName(), 1), id);
+            tableInfo.getIdFieldInfos().stream().forEach(item -> {
+                Object id;
+                try {
+                    id = item.getReadFieldInvoker().invoke(entity, null);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
                 }
+                Objects.requireNonNull(id, "id can't be null");
+                where.eq($.field(tableInfo.getType(), item.getField().getName(), 1), id);
             });
         }
     }
