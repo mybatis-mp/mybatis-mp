@@ -54,6 +54,7 @@ public final class WhereUtil {
         if (!tableInfo.isHasMultiId()) {
             TableInfoUtil.checkId(tableInfo);
             Serializable id = TableInfoUtil.getEntityIdValue(tableInfo, entity);
+            Objects.requireNonNull(id, "id can't be null");
             where.eq($.field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName(), 1), id);
         } else {
             tableInfo.getIdFieldInfos().stream().forEach(item -> {
