@@ -228,3 +228,13 @@ insert all
     into nested_muti_third(id,nested_second_id,th_name) values (1,2,'嵌套BAA')
     into nested_muti_third(id,nested_second_id,th_name) values  (2,2,'嵌套BAB')
 select * from dual;
+
+drop table multi_pk;
+
+CREATE TABLE IF NOT EXISTS multi_pk
+(
+    id1 INT NOT NULL,
+    id2 INT NOT NULL,
+    name VARCHAR(100) not null,
+    PRIMARY KEY(id1,id2)
+);

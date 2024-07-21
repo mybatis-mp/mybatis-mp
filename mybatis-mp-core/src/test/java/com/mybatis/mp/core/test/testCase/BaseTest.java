@@ -91,6 +91,8 @@ public class BaseTest {
         configuration.addMapper(UUIDMapper.class);
         configuration.addMapper(SysUserEncryptMapper.class);
 
+        configuration.addMapper(MultiPkMapper.class);
+
         String mapperLocations = "classpath:/mappers/**.xml";
 
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();

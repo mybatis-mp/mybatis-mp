@@ -38,7 +38,37 @@ public final class WhereUtil {
     public static void appendIdWhere(Where where, TableInfo tableInfo, Serializable id) {
         TableInfoUtil.checkId(tableInfo);
         CmdFactory $ = where.getConditionFactory().getCmdFactory();
+        Objects.requireNonNull(id, "id can't be null");
         where.eq($.field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName(), 1), id);
+    }
+
+    /**
+     * 拼接id条件
+     *
+     * @param where
+     * @param tableInfo
+     * @param entity
+     */
+    public static void appendIdWhereWithEntity(Where where, TableInfo tableInfo, Object entity) {
+        CmdFactory $ = where.getConditionFactory().getCmdFactory();
+        if (!tableInfo.isHasMultiId()) {
+            TableInfoUtil.checkId(tableInfo);
+            Serializable id = TableInfoUtil.getEntityIdValue(tableInfo, entity);
+            where.eq($.field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName(), 1), id);
+        } else {
+            tableInfo.getTableFieldInfos().stream().forEach(item -> {
+                if (item.isTableId()) {
+                    Object id;
+                    try {
+                        id = item.getReadFieldInvoker().invoke(entity, null);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Objects.requireNonNull(id, "id can't be null");
+                    where.eq($.field(tableInfo.getType(), item.getField().getName(), 1), id);
+                }
+            });
+        }
     }
 
     /**
@@ -62,6 +92,10 @@ public final class WhereUtil {
     public static void appendIdsWhere(Where where, TableInfo tableInfo, List<Serializable> ids) {
         TableInfoUtil.checkId(tableInfo);
         CmdFactory $ = where.getConditionFactory().getCmdFactory();
+        Objects.requireNonNull(ids, "id can't be null");
+        ids.stream().forEach(id -> {
+            Objects.requireNonNull(id, "id can't be null");
+        });
         where.in($.field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName(), 1), ids);
     }
 

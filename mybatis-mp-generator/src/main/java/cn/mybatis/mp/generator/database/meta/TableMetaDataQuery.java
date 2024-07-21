@@ -109,11 +109,7 @@ public class TableMetaDataQuery {
                 ColumnInfo columnInfo = new ColumnInfo();
                 columnInfo.setTableInfo(tableInfo);
                 columnInfo.setName(columnName);
-                if(primaryKeys.size() == 1){
-                    columnInfo.setPrimaryKey(primaryKeys.contains(columnInfo.getName()));
-                }else{
-                    columnInfo.setPrimaryKey(false);
-                }
+                columnInfo.setPrimaryKey(primaryKeys.contains(columnInfo.getName()));
 
                 columnInfo.setTypeName(resultSet.getString("TYPE_NAME"));
                 columnInfo.setJdbcType(JdbcType.forCode(resultSet.getInt("DATA_TYPE")));

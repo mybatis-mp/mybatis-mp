@@ -39,6 +39,7 @@ public class IdentifierGenerateTest extends BaseTest {
             assertNotNull(idTest.getId());
 
             idTestMapper.saveOrUpdate(idTest);
+            idTestMapper.saveOrUpdate(idTest);
         }
     }
 

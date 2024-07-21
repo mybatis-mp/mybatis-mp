@@ -7,14 +7,12 @@ import cn.mybatis.mp.core.mybatis.mapper.context.*;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.Delete;
 import cn.mybatis.mp.core.sql.executor.Query;
-import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.core.util.WhereUtil;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.basic.Table;
-import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.Selector;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
@@ -271,9 +269,13 @@ public interface BasicMapper extends BaseMapper {
         Class<?> entityType = entity.getClass();
         TableInfo tableInfo = Tables.get(entityType);
 
+        if (tableInfo.getIdFieldInfos().isEmpty()) {
+            throw new RuntimeException(entityType.getName() + " has no id");
+        }
+
         Object id;
         try {
-            id = tableInfo.getIdFieldInfo().getReadFieldInvoker().invoke(entity, null);
+            id = tableInfo.getIdFieldInfos().get(0).getReadFieldInvoker().invoke(entity, null);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -284,16 +286,9 @@ public interface BasicMapper extends BaseMapper {
 
         Query<E> query = Query.create();
         Table table = query.$(entityType);
+        query.select1().from(table);
 
-        TableField idTableField = query.$().field(table, tableInfo.getIdFieldInfo().getColumnName());
-        query.select1()
-                .from(table)
-                .where(where -> where.eq(idTableField, id))
-                .dbAdapt((q, selector) -> {
-                    selector.when(DbType.SQL_SERVER, () -> {
-                        q.orderBy(idTableField);
-                    }).otherwise();
-                });
+        WhereUtil.appendIdWhereWithEntity(query.$where(), tableInfo, entity);
 
         boolean exists = this.exists(query);
         if (exists) {
@@ -347,7 +342,7 @@ public interface BasicMapper extends BaseMapper {
         TableInfo tableInfo = Tables.get(entityType);
 
         return this.delete(entityType, where -> {
-            WhereUtil.appendIdWhere(where, tableInfo, TableInfoUtil.getEntityIdValue(tableInfo, entity));
+            WhereUtil.appendIdWhereWithEntity(where, tableInfo, entity);
             WhereUtil.appendVersionWhere(where, tableInfo, entity);
         });
     }
@@ -362,14 +357,11 @@ public interface BasicMapper extends BaseMapper {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        int length = list.size();
-        Class<?> entityType = list.get(0).getClass();
-        List<Serializable> ids = new LinkedList<>();
-        TableInfo tableInfo = Tables.get(entityType);
-        for (int i = 0; i < length; i++) {
-            ids.add(TableInfoUtil.getEntityIdValue(tableInfo, list.get(i)));
+        int count = 0;
+        for (E entity : list) {
+            count += this.delete(entity);
         }
-        return this.deleteByIds(entityType, ids);
+        return count;
     }
 
 

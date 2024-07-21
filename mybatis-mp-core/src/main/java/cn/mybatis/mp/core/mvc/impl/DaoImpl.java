@@ -112,48 +112,65 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
 
     @Override
     public int update(T entity) {
-        this.checkIdType();
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
         return getMapper().update(entity);
     }
 
     @Override
     public int saveOrUpdate(T entity) {
-        this.checkIdType();
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
         return getMapper().saveOrUpdate(entity);
     }
 
     @Override
     public int update(List<T> list) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
         return getMapper().update(list);
     }
 
     @Override
     public int update(T entity, Getter<T>... forceUpdateFields) {
-        this.checkIdType();
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
         return getMapper().update(entity, forceUpdateFields);
     }
 
     @Override
     public int update(Model<T> model) {
-        if (getIdType() == Void.class) {
-            throw new RuntimeException("Not Supported");
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
         }
         return getMapper().update(model);
     }
 
     @Override
     public int update(Model<T> model, Getter<T>... forceUpdateFields) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
         return getMapper().update(model, forceUpdateFields);
     }
 
     @Override
     public int delete(T entity) {
-        this.checkIdType();
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
         return getMapper().delete(entity);
     }
 
     @Override
     public int delete(List<T> list) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
         return getMapper().delete(list);
     }
 

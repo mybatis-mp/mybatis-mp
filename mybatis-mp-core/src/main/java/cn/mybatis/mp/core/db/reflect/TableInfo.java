@@ -46,6 +46,10 @@ public class TableInfo {
      */
     private final TableFieldInfo idFieldInfo;
 
+    private final List<TableFieldInfo> idFieldInfos;
+
+    private final boolean hasMutilId;
+
     /**
      * 乐观锁字段
      */
@@ -96,8 +100,13 @@ public class TableInfo {
         List<TableFieldInfo> tableFieldInfos = new LinkedList<>();
         Map<String, TableFieldInfo> tableFieldInfoMap = new HashMap<>();
         Map<Class<?>, ForeignInfo> foreignInfoMap = new HashMap<>();
+        boolean hasMutilId = false;
+
+        List<TableFieldInfo> idFieldInfos = new ArrayList<>(6);
 
         List<Field> fieldList = FieldUtil.getResultMappingFields(entity);
+
+
         for (Field field : fieldList) {
             TableFieldInfo tableFieldInfo = new TableFieldInfo(field);
             tableFieldInfos.add(tableFieldInfo);
@@ -107,8 +116,14 @@ public class TableInfo {
                 ForeignKey foreignKey = field.getAnnotation(ForeignKey.class);
                 foreignInfoMap.put(foreignKey.value(), new ForeignInfo(foreignKey.value(), tableFieldInfo));
             }
-            if (idFieldInfo == null && tableFieldInfo.isTableId()) {
-                idFieldInfo = tableFieldInfo;
+            if (tableFieldInfo.isTableId()) {
+                idFieldInfos.add(tableFieldInfo);
+                if (Objects.isNull(idFieldInfo)) {
+                    idFieldInfo = tableFieldInfo;
+                } else {
+                    idFieldInfo = null;
+                    hasMutilId = true;
+                }
             }
             if (tableFieldInfo.isVersion()) {
                 if (versionFieldInfo != null) {
@@ -137,6 +152,8 @@ public class TableInfo {
         this.tableFieldInfos = Collections.unmodifiableList(tableFieldInfos);
         this.fieldSize = this.tableFieldInfos.size();
         this.idFieldInfo = idFieldInfo;
+        this.hasMutilId = hasMutilId;
+        this.idFieldInfos = Collections.unmodifiableList(idFieldInfos);
         this.versionFieldInfo = versionFieldInfo;
         this.tenantIdFieldInfo = tenantIdFieldInfo;
         this.logicDeleteFieldInfo = logicDeleteFieldInfo;
@@ -235,5 +252,13 @@ public class TableInfo {
 
     public boolean isHasIgnoreField() {
         return hasIgnoreField;
+    }
+
+    public boolean isHasMultiId() {
+        return hasMutilId;
+    }
+
+    public List<TableFieldInfo> getIdFieldInfos() {
+        return idFieldInfos;
     }
 }

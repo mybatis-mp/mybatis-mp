@@ -100,9 +100,11 @@ public class EntityUpdateCmdCreateUtil {
 
     public static Update create(Object entity, Set<String> forceUpdateFields) {
         TableInfo tableInfo = Tables.get(entity.getClass());
-        Object id = TableInfoUtil.getEntityIdValue(tableInfo, entity, true);
-        if (Objects.isNull(id)) {
-            throw new RuntimeException(" can't found id value");
+        if (!tableInfo.isHasMultiId()) {
+            Object id = TableInfoUtil.getEntityIdValue(tableInfo, entity, true);
+            if (Objects.isNull(id)) {
+                throw new RuntimeException(" can't found id value");
+            }
         }
         return warp(new Update(), tableInfo, entity, forceUpdateFields);
     }

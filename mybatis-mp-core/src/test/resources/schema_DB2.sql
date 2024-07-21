@@ -213,3 +213,13 @@ insert into nested_muti_third(id,nested_second_id,th_name)
 values
     (1,2,'嵌套BAA'),
     (2,2,'嵌套BAB');
+
+drop table if exists multi_pk;
+
+CREATE TABLE IF NOT EXISTS multi_pk
+(
+    id1 INT NOT NULL,
+    id2 INT NOT NULL,
+    name VARCHAR(100) not null,
+    PRIMARY KEY(id1,id2)
+);
