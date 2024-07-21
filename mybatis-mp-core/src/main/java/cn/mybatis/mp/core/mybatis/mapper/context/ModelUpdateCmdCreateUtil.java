@@ -90,9 +90,11 @@ public class ModelUpdateCmdCreateUtil {
     public static Update create(Model model, Set<String> forceUpdateFields) {
         ModelInfo modelInfo = Models.get(model.getClass());
         TableInfo tableInfo = Tables.get(modelInfo.getEntityType());
-        Object id = ModelInfoUtil.getEntityIdValue(modelInfo, tableInfo, model, true);
-        if (Objects.isNull(id)) {
-            throw new RuntimeException(" can't found id value");
+        if (!tableInfo.isHasMultiId()) {
+            Object id = ModelInfoUtil.getEntityIdValue(modelInfo, tableInfo, model, true);
+            if (Objects.isNull(id)) {
+                throw new RuntimeException(" can't found id value");
+            }
         }
         return warp(new Update(), modelInfo, model, forceUpdateFields);
     }

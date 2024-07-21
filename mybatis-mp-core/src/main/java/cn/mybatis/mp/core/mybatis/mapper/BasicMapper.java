@@ -340,7 +340,9 @@ public interface BasicMapper extends BaseMapper {
         }
         Class entityType = entity.getClass();
         TableInfo tableInfo = Tables.get(entityType);
-
+        if (tableInfo.getIdFieldInfos().isEmpty()) {
+            throw new RuntimeException(entityType.getName() + " has no id");
+        }
         return this.delete(entityType, where -> {
             WhereUtil.appendIdWhereWithEntity(where, tableInfo, entity);
             WhereUtil.appendVersionWhere(where, tableInfo, entity);
