@@ -181,16 +181,16 @@ public class GeneratorUtil {
         classList.add(entityInfo.getDaoPackage() + "." + entityInfo.getDaoName());
 
         if (generatorConfig.getContainerType() == ContainerType.SPRING) {
-            classList.add(org.springframework.stereotype.Repository.class.getName());
-            classList.add(org.springframework.beans.factory.annotation.Autowired.class.getName());
-            data.put("repositoryAnnotationName", org.springframework.stereotype.Repository.class.getSimpleName());
-            data.put("autowiredAnnotationName", org.springframework.beans.factory.annotation.Autowired.class.getSimpleName());
+            classList.add("org.springframework.stereotype.Repository");
+            classList.add("org.springframework.beans.factory.annotation.Autowired");
+            data.put("repositoryAnnotationName", "Repository");
+            data.put("autowiredAnnotationName", "Autowired");
         } else if (generatorConfig.getContainerType() == ContainerType.SOLON) {
-            classList.add(org.noear.solon.annotation.Component.class.getName());
-            classList.add(org.noear.solon.annotation.Inject.class.getName());
-            classList.add(org.noear.solon.annotation.Init.class.getName());
-            data.put("repositoryAnnotationName", org.noear.solon.annotation.Component.class.getSimpleName());
-            data.put("autowiredAnnotationName", org.noear.solon.annotation.Inject.class.getSimpleName());
+            classList.add("org.noear.solon.annotation.Component");
+            classList.add("org.noear.solon.annotation.Inject");
+            classList.add("org.noear.solon.annotation.Init");
+            data.put("repositoryAnnotationName", "Component");
+            data.put("autowiredAnnotationName", "Inject");
         }
         data.put("imports", buildImports(classList));
     }
@@ -245,15 +245,15 @@ public class GeneratorUtil {
         }
 
         if (generatorConfig.getContainerType() == ContainerType.SPRING) {
-            classList.add(org.springframework.stereotype.Service.class.getName());
-            classList.add(org.springframework.beans.factory.annotation.Autowired.class.getName());
-            data.put("serviceAnnotationName", org.springframework.stereotype.Service.class.getSimpleName());
-            data.put("autowiredAnnotationName", org.springframework.beans.factory.annotation.Autowired.class.getSimpleName());
+            classList.add("org.springframework.stereotype.Service");
+            classList.add("org.springframework.beans.factory.annotation.Autowired");
+            data.put("serviceAnnotationName", "Service");
+            data.put("autowiredAnnotationName", "Autowired");
         } else if (generatorConfig.getContainerType() == ContainerType.SOLON) {
-            classList.add(org.noear.solon.annotation.Component.class.getName());
-            classList.add(org.noear.solon.annotation.Inject.class.getName());
-            data.put("serviceAnnotationName", org.noear.solon.annotation.Component.class.getSimpleName());
-            data.put("autowiredAnnotationName", org.noear.solon.annotation.Inject.class.getSimpleName());
+            classList.add("org.noear.solon.annotation.Component");
+            classList.add("org.noear.solon.annotation.Inject");
+            data.put("serviceAnnotationName", "Component");
+            data.put("autowiredAnnotationName", "Inject");
         }
         data.put("imports", buildImports(classList));
     }
@@ -284,33 +284,33 @@ public class GeneratorUtil {
         classList.add(entityInfo.getServicePackage() + "." + entityInfo.getServiceName());
 
         if (generatorConfig.getContainerType() == ContainerType.SPRING) {
-            classList.add(org.springframework.web.bind.annotation.RestController.class.getName());
-            classList.add(org.springframework.web.bind.annotation.RequestMapping.class.getName());
-            classList.add(org.springframework.beans.factory.annotation.Autowired.class.getName());
+            classList.add("org.springframework.web.bind.annotation.RestController");
+            classList.add("org.springframework.web.bind.annotation.RequestMapping");
+            classList.add("org.springframework.beans.factory.annotation.Autowired");
 
-            data.put("controllerAnnotationName", org.springframework.web.bind.annotation.RestController.class.getSimpleName());
-            data.put("requestMappingAnnotationName", org.springframework.web.bind.annotation.RequestMapping.class.getSimpleName());
-            data.put("autowiredAnnotationName", org.springframework.beans.factory.annotation.Autowired.class.getSimpleName());
+            data.put("controllerAnnotationName", "RestController");
+            data.put("requestMappingAnnotationName", "RequestMapping");
+            data.put("autowiredAnnotationName", "Autowired");
         } else if (generatorConfig.getContainerType() == ContainerType.SOLON) {
-            classList.add(org.noear.solon.annotation.Controller.class.getName());
-            classList.add(org.noear.solon.annotation.Mapping.class.getName());
-            classList.add(org.noear.solon.core.handle.MethodType.class.getName());
-            classList.add(org.noear.solon.annotation.Inject.class.getName());
+            classList.add("org.noear.solon.annotation.Controller");
+            classList.add("org.noear.solon.annotation.Mapping");
+            classList.add("org.noear.solon.core.handle.MethodType");
+            classList.add("org.noear.solon.annotation.Inject");
 
-            data.put("controllerAnnotationName", org.noear.solon.annotation.Controller.class.getSimpleName());
-            data.put("requestMappingAnnotationName", org.noear.solon.annotation.Mapping.class.getSimpleName());
-            data.put("autowiredAnnotationName", org.noear.solon.annotation.Inject.class.getSimpleName());
+            data.put("controllerAnnotationName", "Controller");
+            data.put("requestMappingAnnotationName", "Mapping");
+            data.put("autowiredAnnotationName", "Inject");
         }
 
         if (generatorConfig.getActionConfig().isSave() || generatorConfig.getActionConfig().isUpdate()) {
             if (generatorConfig.getContainerType() == ContainerType.SPRING) {
-                classList.add(org.springframework.web.bind.annotation.PostMapping.class.getName());
-                data.put("postMappingAnnotationName", org.springframework.web.bind.annotation.PostMapping.class.getSimpleName());
+                classList.add("org.springframework.web.bind.annotation.PostMapping");
+                data.put("postMappingAnnotationName", "PostMapping");
             } else {
-                classList.add(org.noear.solon.annotation.Post.class.getName());
-                classList.add(org.noear.solon.annotation.Mapping.class.getName());
-                classList.add(org.noear.solon.core.handle.MethodType.class.getName());
-                data.put("postMappingAnnotationName", org.noear.solon.annotation.Mapping.class.getSimpleName());
+                classList.add("org.noear.solon.annotation.Post");
+                classList.add("org.noear.solon.annotation.Mapping");
+                classList.add("org.noear.solon.core.handle.MethodType");
+                data.put("postMappingAnnotationName", "Mapping");
             }
         }
 
@@ -320,24 +320,24 @@ public class GeneratorUtil {
             }
 
             if (generatorConfig.getContainerType() == ContainerType.SPRING) {
-                classList.add(org.springframework.web.bind.annotation.GetMapping.class.getName());
-                data.put("getMappingAnnotationName", org.springframework.web.bind.annotation.GetMapping.class.getSimpleName());
+                classList.add("org.springframework.web.bind.annotation.GetMapping");
+                data.put("getMappingAnnotationName", "GetMapping");
             } else {
-                classList.add(org.noear.solon.annotation.Get.class.getName());
-                classList.add(org.noear.solon.annotation.Mapping.class.getName());
-                data.put("getMappingAnnotationName", org.noear.solon.annotation.Mapping.class.getSimpleName());
+                classList.add("org.noear.solon.annotation.Get");
+                classList.add("org.noear.solon.annotation.Mapping");
+                data.put("getMappingAnnotationName", "Mapping");
             }
         }
 
 
         if (generatorConfig.getActionConfig().isDeleteById()) {
             if (generatorConfig.getContainerType() == ContainerType.SPRING) {
-                classList.add(org.springframework.web.bind.annotation.DeleteMapping.class.getName());
-                data.put("deleteMappingAnnotationName", org.springframework.web.bind.annotation.DeleteMapping.class.getSimpleName());
+                classList.add("org.springframework.web.bind.annotation.DeleteMapping");
+                data.put("deleteMappingAnnotationName", "DeleteMapping");
             } else {
-                classList.add(org.noear.solon.annotation.Delete.class.getName());
-                classList.add(org.noear.solon.annotation.Mapping.class.getName());
-                data.put("deleteMappingAnnotationName", org.noear.solon.annotation.Mapping.class.getSimpleName());
+                classList.add("org.noear.solon.annotation.Delete");
+                classList.add("org.noear.solon.annotation.Mapping");
+                data.put("deleteMappingAnnotationName", "Mapping");
             }
         }
 

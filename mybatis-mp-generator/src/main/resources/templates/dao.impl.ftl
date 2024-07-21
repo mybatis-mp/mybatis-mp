@@ -23,14 +23,18 @@ public class ${entityInfo.daoImplName} ${superExtend}<#if daoConfig.isGeneric()>
     public void init(){
         this.setMapper(${util.firstToLower(entityInfo.mapperName)});
     }
+
+    private ${entityInfo.mapperName} getMapper(){
+        return this.${util.firstToLower(entityInfo.mapperName)};
+    }
 <#else>
     @${autowiredAnnotationName}
     public ${entityInfo.daoImplName} (${entityInfo.mapperName} ${util.firstToLower(entityInfo.mapperName)}){
         super(${util.firstToLower(entityInfo.mapperName)});
     }
-</#if>
 
     private ${entityInfo.mapperName} getMapper(){
         return (${entityInfo.mapperName}) this.mapper;
     }
+</#if>
 }
