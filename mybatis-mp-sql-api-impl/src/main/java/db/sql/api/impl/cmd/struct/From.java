@@ -14,7 +14,7 @@ import java.util.List;
 
 public class From implements IFrom {
 
-    private final List<IDataset> tables = new LinkedList<>();
+    private final List<IDataset> tables = new ArrayList<>();
 
     public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> From append(DATASET... tables) {
         Lists.merge(this.tables, tables);

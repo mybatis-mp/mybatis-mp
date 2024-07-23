@@ -19,7 +19,7 @@ public class UpdateSets implements IUpdateSets<TableField, Cmd, UpdateSet> {
 
     public UpdateSets set(TableField field, Cmd value) {
         if (this.updateSets == null) {
-            this.updateSets = new LinkedList<>();
+            this.updateSets = new ArrayList<>();
         }
         this.updateSets.add(new UpdateSet(field, value));
         return this;

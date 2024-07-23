@@ -51,11 +51,11 @@ public final class SelectClassUtil {
 
 
     public static void select(AbstractQuery query, Class clazz, int storey) {
-        query.select(buildSelect(query, clazz, storey, new LinkedList<>()));
+        query.select(buildSelect(query, clazz, storey, new ArrayList<>()));
     }
 
     public static void select(AbstractQuery query, int storey, Class[] entities) {
-        List<Cmd> list = new LinkedList<>();
+        List<Cmd> list = new ArrayList<>();
         for (Class entity : entities) {
             buildSelect(query, entity, storey, list);
         }

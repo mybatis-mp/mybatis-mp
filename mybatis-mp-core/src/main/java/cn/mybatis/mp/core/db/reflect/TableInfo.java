@@ -97,7 +97,7 @@ public class TableInfo {
         TableFieldInfo tenantIdFieldInfo = null;
         TableFieldInfo logicDeleteFieldInfo = null;
 
-        List<TableFieldInfo> tableFieldInfos = new LinkedList<>();
+        List<TableFieldInfo> tableFieldInfos = new ArrayList<>();
         Map<String, TableFieldInfo> tableFieldInfoMap = new HashMap<>();
         Map<Class<?>, ForeignInfo> foreignInfoMap = new HashMap<>();
         boolean hasMutilId = false;

@@ -10,7 +10,7 @@ public class DataSourceHolder {
     public static void add(String type) {
         Deque<String> list = dataSource.get();
         if (list == null) {
-            list = new LinkedList<>();
+            list = new ArrayList<>();
         }
         list.addFirst(type);
         dataSource.set(list);

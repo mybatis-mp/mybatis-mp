@@ -22,7 +22,7 @@ public final class FieldUtil {
     }
 
     public static List<Field> getResultMappingFields(Class clazz) {
-        List<Field> fieldList = new LinkedList<>();
+        List<Field> fieldList = new ArrayList<>();
         Class parseClass = clazz;
         while (true) {
             if (parseClass == null) {

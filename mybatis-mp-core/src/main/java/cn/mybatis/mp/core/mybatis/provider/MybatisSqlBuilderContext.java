@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class MybatisSqlBuilderContext extends SqlBuilderContext {
 
-    private final List<Object> paramList = new LinkedList<>();
+    private final List<Object> paramList = new ArrayList<>();
 
     private Object[] params;
 

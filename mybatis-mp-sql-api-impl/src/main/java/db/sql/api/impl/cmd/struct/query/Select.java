@@ -16,7 +16,7 @@ import java.util.List;
 
 public class Select implements ISelect<Select> {
 
-    private final List<Cmd> selectFields = new LinkedList<>();
+    private final List<Cmd> selectFields = new ArrayList<>();
     private boolean distinct = false;
 
     @Override

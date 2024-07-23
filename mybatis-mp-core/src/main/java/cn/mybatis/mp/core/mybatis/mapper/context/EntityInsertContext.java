@@ -52,7 +52,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
         MybatisCmdFactory $ = insert.$();
         Table table = $.table(tableInfo.getSchemaAndTableName());
         insert.insert(table);
-        List<Object> values = new LinkedList<>();
+        List<Object> values = new ArrayList<>();
         for (int i = 0; i < tableInfo.getFieldSize(); i++) {
             TableFieldInfo tableFieldInfo = tableInfo.getTableFieldInfos().get(i);
 

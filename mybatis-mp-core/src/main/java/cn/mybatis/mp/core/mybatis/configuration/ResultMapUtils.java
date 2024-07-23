@@ -81,7 +81,7 @@ public final class ResultMapUtils {
     private static List<ResultMapping> getResultEntityResultMappings(MybatisConfiguration configuration, Class clazz) {
         ResultInfo resultInfo = ResultInfos.get(clazz);
 
-        List<ResultMapping> resultMappings = new LinkedList<>();
+        List<ResultMapping> resultMappings = new ArrayList<>();
 
         //普通字段（多个） 构建
         resultMappings.addAll(createResultMapping(configuration, resultInfo.getResultFieldInfos()));
@@ -99,7 +99,7 @@ public final class ResultMapUtils {
      * @return
      */
     private static List<ResultMapping> createNestedResultMapping(MybatisConfiguration configuration, List<NestedResultInfo> nestedResultInfos, String path) {
-        List<ResultMapping> resultMappings = new LinkedList<>();
+        List<ResultMapping> resultMappings = new ArrayList<>();
         nestedResultInfos.stream().forEach(item -> {
             resultMappings.add(createNestedResultMapping(configuration, item, path));
         });
@@ -118,7 +118,7 @@ public final class ResultMapUtils {
         // 内嵌ID
         String nestedPath = parentPath + "." + nestedResultInfo.getField().getName();
 
-        List<ResultMapping> nestedMappings = new LinkedList<>();
+        List<ResultMapping> nestedMappings = new ArrayList<>();
 
         //处理普通字段
         nestedMappings.addAll(createResultMapping(configuration, nestedResultInfo.getResultFieldInfos()));
@@ -155,7 +155,7 @@ public final class ResultMapUtils {
      * @return
      */
     private static List<ResultMapping> createResultMapping(MybatisConfiguration configuration, List<ResultFieldInfo> resultFieldInfos) {
-        List<ResultMapping> resultMappings = new LinkedList<>();
+        List<ResultMapping> resultMappings = new ArrayList<>();
         //  字段 构建
         resultFieldInfos.stream().filter(item -> item.isResultMapping())
                 .forEach(item -> {

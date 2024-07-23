@@ -79,7 +79,7 @@ public class ResultInfo {
             if (field.isAnnotationPresent(NestedResultEntity.class)) {
                 //内嵌类字段
                 NestedResultEntity nestedResultEntity = field.getAnnotation(NestedResultEntity.class);
-                NestedResultInfo nestedResultInfo = new NestedResultInfo(field, nestedResultEntity, new LinkedList<>(), new LinkedList<>());
+                NestedResultInfo nestedResultInfo = new NestedResultInfo(field, nestedResultEntity, new ArrayList<>(), new ArrayList<>());
 
                 parseResult.nestedResultInfos.add(nestedResultInfo);
 
@@ -228,7 +228,7 @@ public class ResultInfo {
                 //内嵌类字段
                 NestedResultEntity newNestedResultEntity = field.getAnnotation(NestedResultEntity.class);
 
-                NestedResultInfo newNestedResultInfo = new NestedResultInfo(field, newNestedResultEntity, new LinkedList<>(), new LinkedList<>());
+                NestedResultInfo newNestedResultInfo = new NestedResultInfo(field, newNestedResultEntity, new ArrayList<>(), new ArrayList<>());
                 nestedResultInfo.getNestedResultInfos().add(newNestedResultInfo);
 
                 tableCount = parseNestedResultEntity(parseResult, newNestedResultInfo, field, newNestedResultEntity, tableCount);
@@ -367,7 +367,7 @@ public class ResultInfo {
             targetMatchField = fetchTargetFieldInfo.getField();
         }
 
-        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new LinkedList<>()).add(new FetchInfo(field, fetch, returnType, valueColumn, valueTypeHandler, targetMatchField, targetMatchColumn, targetSelectColumn, orderBy));
+        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(field, fetch, returnType, valueColumn, valueTypeHandler, targetMatchField, targetMatchColumn, targetSelectColumn, orderBy));
         return tableCount;
     }
 
@@ -440,9 +440,9 @@ public class ResultInfo {
 
         public Map<Class, List<FetchInfo>> fetchInfoMap = new HashMap<>();
 
-        public List<ResultFieldInfo> resultFieldInfos = new LinkedList<>();
+        public List<ResultFieldInfo> resultFieldInfos = new ArrayList<>();
 
-        public List<NestedResultInfo> nestedResultInfos = new LinkedList<>();
+        public List<NestedResultInfo> nestedResultInfos = new ArrayList<>();
 
         public Map<Class, Map<Integer, String>> tablePrefixes = new HashMap<>();
     }

@@ -23,7 +23,7 @@ public class InsertValues implements IInsertValues<Cmd> {
 
     public InsertValues add(List<Cmd> values) {
         if (this.values == null) {
-            this.values = new LinkedList<>();
+            this.values = new ArrayList<>();
         }
         this.values.add(values);
         return this;

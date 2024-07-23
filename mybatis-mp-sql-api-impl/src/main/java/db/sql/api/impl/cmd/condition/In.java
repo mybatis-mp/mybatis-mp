@@ -17,7 +17,7 @@ public class In extends BaseCondition<Cmd, List<Cmd>> {
 
     private final Cmd key;
 
-    private final List<Cmd> values = new LinkedList<>();
+    private final List<Cmd> values = new ArrayList<>();
 
     public In(Cmd key) {
         super(SqlConst.IN);

@@ -53,7 +53,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
         CmdFactory $ = insert.$();
         Table table = $.table(modelInfo.getTableInfo().getSchemaAndTableName());
         insert.insert(table);
-        List<Object> values = new LinkedList<>();
+        List<Object> values = new ArrayList<>();
         for (int i = 0; i < modelInfo.getFieldSize(); i++) {
             ModelFieldInfo modelFieldInfo = modelInfo.getModelFieldInfos().get(i);
             boolean isNeedInsert = false;

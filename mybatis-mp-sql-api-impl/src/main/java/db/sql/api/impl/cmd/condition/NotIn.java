@@ -17,7 +17,7 @@ public class NotIn extends BaseCondition<Cmd, List<Cmd>> {
 
     private final Cmd key;
 
-    private final List<Cmd> values = new LinkedList<>();
+    private final List<Cmd> values = new ArrayList<>();
 
     public NotIn(Cmd key) {
         super(SqlConst.NOT_IN);

@@ -12,7 +12,7 @@ import java.util.List;
 
 public class OrderBy implements IOrderBy<OrderBy> {
 
-    private final List<OrderByValue> orderByValues = new LinkedList<>();
+    private final List<OrderByValue> orderByValues = new ArrayList<>();
 
     @Override
     public OrderBy orderBy(IOrderByDirection orderByDirection, Cmd column) {

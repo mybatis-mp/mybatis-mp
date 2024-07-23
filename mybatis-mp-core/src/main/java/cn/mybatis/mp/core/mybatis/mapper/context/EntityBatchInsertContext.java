@@ -87,7 +87,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
         int fieldSize = saveFieldInfoSet.size();
 
         for (Object t : list) {
-            List<Object> values = new LinkedList<>();
+            List<Object> values = new ArrayList<>();
             for (int i = 0; i < fieldSize; i++) {
                 TableFieldInfo tableFieldInfo = saveFieldInfoSet.get(i);
                 Object value = tableFieldInfo.getValue(t);

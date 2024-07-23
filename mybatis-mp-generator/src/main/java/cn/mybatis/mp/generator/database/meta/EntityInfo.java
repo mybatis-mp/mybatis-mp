@@ -82,7 +82,7 @@ public class EntityInfo {
     }
 
     public List<EntityFieldInfo> allFieldInfoList() {
-        List<EntityFieldInfo> list = new LinkedList<>();
+        List<EntityFieldInfo> list = new ArrayList<>();
         if (this.idFieldInfo != null) {
             list.add(this.idFieldInfo);
         }

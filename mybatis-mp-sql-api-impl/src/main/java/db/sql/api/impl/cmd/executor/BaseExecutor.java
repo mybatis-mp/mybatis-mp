@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
 
 public abstract class BaseExecutor<SELF extends BaseExecutor<SELF, CMD_FACTORY>, CMD_FACTORY extends CmdFactory> implements Executor<SELF, CMD_FACTORY> {
 
-    protected final List<Cmd> cmds = new LinkedList<>();
+    protected final List<Cmd> cmds = new ArrayList<>();
 
     private final Map<Class<? extends Cmd>, Integer> cmdSorts = new HashMap<>();
 
