@@ -7,7 +7,7 @@ import db.sql.api.cmd.struct.query.IOrderBy;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderBy implements IOrderBy<OrderBy> {

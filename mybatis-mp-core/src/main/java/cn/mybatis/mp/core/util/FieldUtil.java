@@ -4,7 +4,7 @@ import cn.mybatis.mp.db.annotations.Ignore;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class FieldUtil {

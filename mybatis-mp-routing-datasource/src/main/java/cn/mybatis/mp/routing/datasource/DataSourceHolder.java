@@ -1,7 +1,7 @@
 package cn.mybatis.mp.routing.datasource;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.LinkedList;
 
 public class DataSourceHolder {
 
@@ -10,7 +10,7 @@ public class DataSourceHolder {
     public static void add(String type) {
         Deque<String> list = dataSource.get();
         if (list == null) {
-            list = new ArrayList<>();
+            list = new ArrayDeque<>();
         }
         list.addFirst(type);
         dataSource.set(list);

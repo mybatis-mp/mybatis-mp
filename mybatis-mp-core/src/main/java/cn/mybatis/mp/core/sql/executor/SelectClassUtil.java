@@ -7,7 +7,7 @@ import cn.mybatis.mp.db.annotations.Table;
 import db.sql.api.Cmd;
 import db.sql.api.impl.cmd.executor.AbstractQuery;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class SelectClassUtil {

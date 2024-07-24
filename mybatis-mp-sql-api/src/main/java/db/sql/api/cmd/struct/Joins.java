@@ -5,8 +5,8 @@ import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.tookit.CmdUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Joins<JOIN extends IJoin> implements Cmd {

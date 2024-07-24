@@ -6,7 +6,7 @@ import db.sql.api.cmd.struct.query.IGroupBy;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GroupBy implements IGroupBy<GroupBy, Cmd> {

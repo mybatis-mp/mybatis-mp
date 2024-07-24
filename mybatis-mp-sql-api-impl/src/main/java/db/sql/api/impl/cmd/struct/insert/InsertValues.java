@@ -9,7 +9,7 @@ import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class InsertValues implements IInsertValues<Cmd> {
