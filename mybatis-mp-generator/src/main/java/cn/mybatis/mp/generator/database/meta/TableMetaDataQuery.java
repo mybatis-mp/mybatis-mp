@@ -44,27 +44,9 @@ public class TableMetaDataQuery {
         return true;
     }
 
-    public List<TableInfo> getTableInfoList(boolean includeTable, boolean includeView) {
-        Set<String> types = new HashSet<>();
-        if (includeTable) {
-            types.add("TABLE");
-        }
-        if (includeView) {
-            types.add("VIEW");
-        }
-
+    private List<TableInfo> getTableInfoList(String databaseName, String schema, String tableNamePattern, String[] types) {
         List<TableInfo> tables = new ArrayList<>();
-
-        String databaseName = generatorConfig.getDataBaseConfig().getDatabaseName();
-        if (databaseName == null) {
-            databaseName = this.connDatabaseName;
-        }
-
-        String schema = generatorConfig.getDataBaseConfig().getSchema();
-
-        schema = Objects.isNull(schema) ? connSchema : schema;
-
-        try (ResultSet resultSet = metaData.getTables(databaseName, schema, null, types.toArray(new String[2]))) {
+        try (ResultSet resultSet = metaData.getTables(databaseName, schema, tableNamePattern, types)) {
             TableInfo tableInfo;
             while (resultSet.next()) {
                 String TABLE_NAME = resultSet.getString("TABLE_NAME");
@@ -95,7 +77,46 @@ public class TableMetaDataQuery {
         } catch (SQLException e) {
             throw new RuntimeException("读取数据库表信息出现错误", e);
         }
+
         return tables;
+    }
+
+    public List<TableInfo> getTableInfoList(boolean includeTable, boolean includeView) {
+        String[] types;
+        if (includeTable && includeView) {
+            types = new String[]{"TABLE", "VIEW"};
+        } else {
+            if (includeTable) {
+                types = new String[]{"TABLE"};
+            } else if (includeView) {
+                types = new String[]{"VIEW"};
+            } else {
+                throw new RuntimeException("includeTable or includeView must be true");
+            }
+        }
+
+        String databaseName = generatorConfig.getDataBaseConfig().getDatabaseName();
+        if (databaseName == null) {
+            databaseName = this.connDatabaseName;
+        }
+
+        String schema = generatorConfig.getDataBaseConfig().getSchema();
+
+        schema = Objects.isNull(schema) ? connSchema : schema;
+
+        if (generatorConfig.getTableConfig().getIncludeTables().isEmpty()) {
+            return this.getTableInfoList(databaseName, schema, null, types);
+        } else {
+            List<TableInfo> tables = new ArrayList<>();
+            for (String table : generatorConfig.getTableConfig().getIncludeTables()) {
+                List<TableInfo> list = this.getTableInfoList(databaseName, schema, table, types);
+                if (list.isEmpty()) {
+                    list = this.getTableInfoList(databaseName, schema, table.toUpperCase(), types);
+                }
+                tables.addAll(list);
+            }
+            return tables;
+        }
     }
 
     private List<ColumnInfo> getColumnInfo(TableInfo tableInfo, String tableName) {

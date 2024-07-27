@@ -19,7 +19,7 @@ public class Test {
                 .swaggerVersion(3)
                 .containerType(ContainerType.SPRING)
                 .tableConfig(tableConfig -> {
-                    tableConfig.includeTable("T_SYS_USER");
+                    tableConfig.includeTable("t_sys_user", "t_sys_user", "t_sys_user", "t_sys_user");
                 })
                 .columnConfig(columnConfig -> {
                     columnConfig.disableUpdateColumns("create_time");
@@ -111,6 +111,8 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        h2Test();
+        Long start = System.currentTimeMillis();
+        oracleTest();
+        System.out.println(System.currentTimeMillis() - start);
     }
 }
