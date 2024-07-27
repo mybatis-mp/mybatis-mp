@@ -29,6 +29,9 @@ public class EntityFieldInfo {
 
     private final String defaultTableIdCode;
 
+    private final boolean alwaysAnnotation;
+
+
     public EntityFieldInfo(GeneratorConfig generatorConfig, EntityInfo entityInfo, ColumnInfo columnInfo) {
         this.entityInfo = entityInfo;
         this.columnInfo = columnInfo;
@@ -43,14 +46,18 @@ public class EntityFieldInfo {
         }
         this.typeName = this.type.getSimpleName();
         this.defaultTableIdCode = generatorConfig.getEntityConfig().getDefaultTableIdCode();
+        this.alwaysAnnotation = generatorConfig.getEntityConfig().isAlwaysAnnotation();
     }
 
     public boolean isNeedTableField() {
-        return !select || !update || this.getColumnInfo().getDefaultValue() != null;
+        return alwaysAnnotation || !select || !update || this.getColumnInfo().getDefaultValue() != null;
     }
 
     public String buildTableField() {
         StringBuilder stringBuilder = new StringBuilder("@TableField(");
+        if (alwaysAnnotation) {
+            stringBuilder.append("value =\"").append(this.getColumnInfo().getName()).append("\",");
+        }
         if (!select) {
             stringBuilder.append("select = false,");
         }

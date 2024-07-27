@@ -30,6 +30,7 @@ public class Test {
                 .entityConfig(entityConfig -> {
                     entityConfig.lombok(false);
                     entityConfig.swagger(true);
+                    entityConfig.alwaysAnnotation(false);
                     entityConfig.logicDeleteCode("@LogicDelete(beforeValue=\"0\",afterValue=\"1\",deleteTimeField=\"create_time\")");
                 })
                 .mapperXmlConfig(mapperXmlConfig -> {

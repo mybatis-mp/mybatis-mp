@@ -71,6 +71,8 @@ public class EntityConfig {
      */
     private Function<ColumnInfo, String> remarksConverter;
 
+    private boolean alwaysAnnotation;
+
     {
         typeMapping.put(JdbcType.BIT, Boolean.class);
         typeMapping.put(JdbcType.TINYINT, Byte.class);
@@ -221,4 +223,12 @@ public class EntityConfig {
         return this;
     }
 
+    public EntityConfig alwaysAnnotation(boolean alwaysAnnotation) {
+        this.alwaysAnnotation = alwaysAnnotation;
+        return this;
+    }
+
+    public boolean isAlwaysAnnotation() {
+        return alwaysAnnotation;
+    }
 }

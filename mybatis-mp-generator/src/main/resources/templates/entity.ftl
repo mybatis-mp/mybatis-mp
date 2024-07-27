@@ -41,7 +41,12 @@ public class ${entityInfo.name} ${superExtend}{
 </#if>
 <#if field.columnInfo.primaryKey>
     ${field.buildTableIdCode()!}
+    <#if field.isNeedTableField()>
+        ${field.buildTableField()}
     private ${field.typeName} ${field.name};
+    <#else>
+        private ${field.typeName} ${field.name};
+    </#if>
 <#else>
 <#if field.columnInfo.isVersion()>
     @Version
