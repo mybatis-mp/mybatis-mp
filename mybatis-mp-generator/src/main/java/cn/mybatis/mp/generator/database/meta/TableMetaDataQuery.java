@@ -1,7 +1,7 @@
 package cn.mybatis.mp.generator.database.meta;
 
 import cn.mybatis.mp.generator.config.GeneratorConfig;
-import db.sql.api.DbType;
+import db.sql.api.impl.tookit.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
 
@@ -62,13 +62,7 @@ public class TableMetaDataQuery {
 
         String schema = generatorConfig.getDataBaseConfig().getSchema();
 
-        if (schema == null && generatorConfig.getDataBaseConfig().getDbType() == DbType.H2) {
-            schema = "PUBLIC";
-        }
-
-        if (schema == null) {
-            schema = connSchema;
-        }
+        schema = Objects.isNull(schema) ? connSchema : schema;
 
         try (ResultSet resultSet = metaData.getTables(databaseName, schema, null, types.toArray(new String[2]))) {
             TableInfo tableInfo;
