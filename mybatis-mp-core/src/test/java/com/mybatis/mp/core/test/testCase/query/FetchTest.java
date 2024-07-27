@@ -30,7 +30,9 @@ public class FetchTest extends BaseTest {
             List<FetchSysRoleVoWhenHasNested> list = QueryChain.of(sysUserMapper)
                     .select(FetchSysRoleVoWhenHasNested.class)
                     .from(SysUser.class)
-                    //.eq(SysUser::getId, 2)
+                    .fetchFilter(FetchSysRoleVoWhenHasNested::getSysRole, where -> {
+                        where.eq(SysRole::getId, 0);
+                    })
                     .returnType(FetchSysRoleVoWhenHasNested.class)
                     .list();
             System.out.println(list);

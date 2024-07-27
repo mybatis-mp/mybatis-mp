@@ -17,8 +17,10 @@ import db.sql.api.impl.cmd.ConditionFactory;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.struct.*;
 import db.sql.api.impl.cmd.struct.query.*;
+import db.sql.api.impl.tookit.LambdaUtil;
 import db.sql.api.impl.tookit.SqlConst;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -77,6 +79,8 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     protected Unions unions;
 
+    protected Map<String, Consumer<Where>> fetchFilters;
+
     public AbstractQuery(CMD_FACTORY $) {
         this.$ = $;
         this.conditionFactory = new ConditionFactory($);
@@ -124,6 +128,22 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     public <E, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD $(IDataset<DATASET, DATASET_FIELD> dataset, Getter<E> getter) {
         return this.$().field(dataset, getter);
+    }
+
+    @Override
+    public <T> SELF fetchFilter(Getter<T> getter, Consumer<Where> where) {
+        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(getter);
+        String key = lambdaFieldInfo.getType().getName() + "." + lambdaFieldInfo.getName();
+        if (Objects.isNull(fetchFilters)) {
+            this.fetchFilters = new HashMap<>();
+        }
+        fetchFilters.put(key, where);
+        return (SELF) this;
+    }
+
+    @Override
+    public Map<String, Consumer<Where>> getFetchFilters() {
+        return fetchFilters;
     }
 
     @Override

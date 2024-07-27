@@ -5,11 +5,13 @@ import cn.mybatis.mp.core.db.reflect.ResultInfos;
 import cn.mybatis.mp.core.mybatis.configuration.FetchObject;
 import cn.mybatis.mp.core.mybatis.configuration.SqlSessionThreadLocalUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
+import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdQueryContext;
 import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.db.annotations.ResultEntity;
 import db.sql.api.impl.cmd.basic.Column;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
+import db.sql.api.impl.cmd.struct.Where;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.executor.Executor;
@@ -27,6 +29,7 @@ import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
@@ -39,6 +42,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     private Class<?> returnType;
 
+    private Map<String, Consumer<Where>> fetchFilters;
+
     public MybatisDefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
         if (mappedStatement.getResultMaps().size() == 1) {
@@ -47,6 +52,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 this.fetchInfosMap = ResultInfos.get(returnType).getFetchInfoMap();
                 if (Objects.nonNull(this.fetchInfosMap) && !this.fetchInfosMap.isEmpty()) {
                     this.needFetchValuesMap = new HashMap<>();
+                }
+
+                if (boundSql.getParameterObject() instanceof SQLCmdQueryContext) {
+                    fetchFilters = ((SQLCmdQueryContext) boundSql.getParameterObject()).getExecution().getFetchFilters();
                 }
             }
         }
@@ -100,6 +109,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             if (Objects.isNull(onValue)) {
                 continue;
             }
+
             if (Objects.isNull(fetchInfo.getEqGetFieldInvoker()) || fetchInfo.getFetch().limit() > 0) {
                 this.singleConditionFetch(rowValue, fetchInfo, onValue);
             } else {
@@ -140,6 +150,13 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
         });
 
+        String fetchKey = fetchInfo.getField().getDeclaringClass().getName() + "." + fetchInfo.getField().getName();
+        boolean hasFetchFilter = Objects.isNull(fetchFilters) ? false : fetchFilters.containsKey(fetchKey);
+
+        if (hasFetchFilter) {
+            fetchFilters.get(fetchKey).accept(query.$where());
+        }
+
         return basicMapper.list(query, false);
     }
 
@@ -177,6 +194,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         int batchSize = 100;
         List queryValueList = new ArrayList<>(100);
         Query query = Query.create().returnType(fetchInfo.getReturnType());
+
         if (Objects.isNull(fetchInfo.getTargetSelectColumn()) || StringPool.EMPTY.equals(fetchInfo.getTargetSelectColumn())) {
             query.select(fetchInfo.getReturnType());
         } else {
@@ -186,6 +204,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (Objects.nonNull(fetchInfo.getOrderBy()) && !StringPool.EMPTY.equals(fetchInfo.getOrderBy())) {
             query.orderBy(OrderByDirection.NONE, fetchInfo.getOrderBy());
         }
+
         List<Object> resultList = new ArrayList<>(conditionList.size());
         int size = conditionList.size();
         for (int i = 0; i < size; i++) {

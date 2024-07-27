@@ -12,6 +12,7 @@ import db.sql.api.cmd.struct.conditionChain.IConditionChain;
 import db.sql.api.cmd.struct.query.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -72,6 +73,8 @@ public interface IQuery<SELF extends IQuery
     LIMIT $limit();
 
     FORUPDATE $forUpdate();
+
+    <T> SELF fetchFilter(Getter<T> getter, Consumer<WHERE> where);
 
     @Override
     default SELF with(IWithQuery... withQuerys) {
@@ -207,4 +210,6 @@ public interface IQuery<SELF extends IQuery
     default CONDITION_CHAIN conditionChain() {
         return $where().conditionChain();
     }
+
+    Map<String, Consumer<WHERE>> getFetchFilters();
 }
