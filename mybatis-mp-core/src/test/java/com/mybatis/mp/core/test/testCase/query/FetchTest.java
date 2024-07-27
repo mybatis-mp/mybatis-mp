@@ -30,9 +30,6 @@ public class FetchTest extends BaseTest {
             List<FetchSysRoleVoWhenHasNested> list = QueryChain.of(sysUserMapper)
                     .select(FetchSysRoleVoWhenHasNested.class)
                     .from(SysUser.class)
-                    .fetchFilter(FetchSysRoleVoWhenHasNested::getSysRole, where -> {
-                        where.eq(SysRole::getId, 0);
-                    })
                     .returnType(FetchSysRoleVoWhenHasNested.class)
                     .list();
             System.out.println(list);
@@ -42,6 +39,24 @@ public class FetchTest extends BaseTest {
             assertEquals("admin", list.get(0).getSysUser().getUserName());
             assertEquals("test1", list.get(1).getSysUser().getUserName());
             assertEquals("test2", list.get(2).getSysUser().getUserName());
+        }
+    }
+
+    @Test
+    public void fetchFilterByAllNested() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
+            List<FetchSysRoleVoWhenHasNested> list = QueryChain.of(sysUserMapper)
+                    .select(FetchSysRoleVoWhenHasNested.class)
+                    .from(SysUser.class)
+                    .fetchFilter(FetchSysRoleVoWhenHasNested::getSysRole, where -> {
+                        where.eq(SysRole::getId, 0);
+                    })
+                    .returnType(FetchSysRoleVoWhenHasNested.class)
+                    .list();
+            System.out.println(list);
+            list.forEach(item -> assertEquals(null, item.getSysRole()));
         }
     }
 
