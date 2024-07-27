@@ -104,7 +104,7 @@ public class TableMetaDataQuery {
 
         schema = Objects.isNull(schema) ? connSchema : schema;
 
-        if (generatorConfig.getTableConfig().getIncludeTables().isEmpty()) {
+        if (generatorConfig.getTableConfig().getIncludeTables().isEmpty() || generatorConfig.getTableConfig().getIncludeTables().size() > 5) {
             return this.getTableInfoList(databaseName, schema, null, types);
         } else {
             List<TableInfo> tables = new ArrayList<>();
