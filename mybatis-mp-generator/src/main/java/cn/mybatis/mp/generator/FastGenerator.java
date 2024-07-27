@@ -29,13 +29,6 @@ public class FastGenerator {
         try (Connection connection = generatorConfig.getDataBaseConfig().getConnection()) {
             TableMetaDataQuery tableMetaDataQuery = new TableMetaDataQuery(generatorConfig, connection);
             List<TableInfo> tableInfoList = tableMetaDataQuery.getTableInfoList(!generatorConfig.isIgnoreTable(), !generatorConfig.isIgnoreView());
-            if (!generatorConfig.getTableConfig().getExcludeTables().isEmpty() || !generatorConfig.getTableConfig().getIncludeTables().isEmpty()) {
-                tableInfoList = tableInfoList.stream().filter(tableInfo -> {
-                    return !generatorConfig.getTableConfig().getExcludeTables().stream().anyMatch(item -> item.equalsIgnoreCase(tableInfo.getName()) || Pattern.matches(item, tableInfo.getName().toLowerCase()));
-                }).filter(tableInfo -> {
-                    return generatorConfig.getTableConfig().getIncludeTables().stream().anyMatch(item -> item.equalsIgnoreCase(tableInfo.getName()) || Pattern.matches(item, tableInfo.getName().toLowerCase()));
-                }).collect(Collectors.toList());
-            }
             entityInfoList = tableInfoList.stream().map(item -> new EntityInfo(generatorConfig, item)).collect(Collectors.toList());
         } catch (SQLException e) {
             throw new RuntimeException(e);

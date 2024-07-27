@@ -24,10 +24,24 @@ public class TableMetaDataQuery {
 
     protected final String connDatabaseName;
 
+    protected final String connSchema;
+
     public TableMetaDataQuery(GeneratorConfig generatorConfig, Connection connection) throws SQLException {
         this.metaData = connection.getMetaData();
+        this.connSchema = connection.getSchema();
         this.generatorConfig = generatorConfig;
         this.connDatabaseName = connection.getCatalog();
+    }
+
+    private boolean isTableNeedInclude(String tableName) {
+        if (generatorConfig.getTableConfig().getExcludeTables().contains(tableName)) {
+            return false;
+        }
+
+        if (!generatorConfig.getTableConfig().getIncludeTables().isEmpty() && !generatorConfig.getTableConfig().getIncludeTables().contains(tableName)) {
+            return false;
+        }
+        return true;
     }
 
     public List<TableInfo> getTableInfoList(boolean includeTable, boolean includeView) {
@@ -45,9 +59,15 @@ public class TableMetaDataQuery {
         if (databaseName == null) {
             databaseName = this.connDatabaseName;
         }
+
         String schema = generatorConfig.getDataBaseConfig().getSchema();
+
         if (schema == null && generatorConfig.getDataBaseConfig().getDbType() == DbType.H2) {
             schema = "PUBLIC";
+        }
+
+        if (schema == null) {
+            schema = connSchema;
         }
 
         try (ResultSet resultSet = metaData.getTables(databaseName, schema, null, types.toArray(new String[2]))) {
@@ -55,9 +75,15 @@ public class TableMetaDataQuery {
             while (resultSet.next()) {
                 String TABLE_NAME = resultSet.getString("TABLE_NAME");
                 String tableName = TABLE_NAME;
+
                 if (tableName.toUpperCase().equals(tableName)) {
                     tableName = tableName.toLowerCase();
                 }
+
+                if (!isTableNeedInclude(TABLE_NAME) && !isTableNeedInclude(tableName)) {
+                    continue;
+                }
+
                 tableInfo = new TableInfo();
                 tableInfo.setName(tableName);
                 tableInfo.setRemarks(resultSet.getString("REMARKS"));
