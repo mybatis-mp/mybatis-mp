@@ -49,9 +49,14 @@ public final class SelectClassUtil {
         return cmdList;
     }
 
+    public static boolean select(AbstractQuery query, Class clazz) {
+        return select(query, clazz, 1);
+    }
 
-    public static void select(AbstractQuery query, Class clazz, int storey) {
-        query.select(buildSelect(query, clazz, storey, new ArrayList<>()));
+    public static boolean select(AbstractQuery query, Class clazz, int storey) {
+        List<Cmd> list = new ArrayList<>();
+        query.select(buildSelect(query, clazz, storey, list));
+        return !list.isEmpty();
     }
 
     public static void select(AbstractQuery query, int storey, Class[] entities) {

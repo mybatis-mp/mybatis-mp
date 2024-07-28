@@ -3,6 +3,7 @@ package cn.mybatis.mp.core.sql.executor.chain;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
+import cn.mybatis.mp.core.sql.executor.SelectClassUtil;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.struct.Where;
 import org.apache.ibatis.cursor.Cursor;
@@ -71,7 +72,13 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
             if (forCount) {
                 this.selectCountAll();
             } else {
-                this.select(mapper.getEntityType());
+                boolean hasSetSelect = false;
+                if (Objects.nonNull(this.returnType)) {
+                    hasSetSelect = SelectClassUtil.select(this, this.returnType);
+                }
+                if (!hasSetSelect) {
+                    this.select(mapper.getEntityType());
+                }
             }
         }
         if (Objects.isNull(this.from)) {

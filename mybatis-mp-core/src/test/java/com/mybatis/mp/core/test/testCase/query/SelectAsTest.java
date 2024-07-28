@@ -200,7 +200,7 @@ public class SelectAsTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             QueryChain<SysUserRoleAutoSelectVo> queryChain = QueryChain.of(sysUserMapper)
-                    .select(SysUserRoleAutoSelectVo.class)
+                    //.select(SysUserRoleAutoSelectVo.class)
                     .from(SysUser.class)
                     .join(SysUser.class, SysRole.class)
                     .eq(SysUser::getId, 2)
