@@ -24,6 +24,7 @@ public class ${entityInfo.daoImplName} ${superExtend}<#if daoConfig.isGeneric()>
         this.setMapper(${util.firstToLower(entityInfo.mapperName)});
     }
 
+    @Override
     protected ${entityInfo.mapperName} getMapper(){
         return this.${util.firstToLower(entityInfo.mapperName)};
     }
@@ -32,7 +33,8 @@ public class ${entityInfo.daoImplName} ${superExtend}<#if daoConfig.isGeneric()>
     public ${entityInfo.daoImplName} (${entityInfo.mapperName} ${util.firstToLower(entityInfo.mapperName)}){
         super(${util.firstToLower(entityInfo.mapperName)});
     }
-
+    
+    @Override
     protected ${entityInfo.mapperName} getMapper(){
         return (${entityInfo.mapperName}) this.mapper;
     }
