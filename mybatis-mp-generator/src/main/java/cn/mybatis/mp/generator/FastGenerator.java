@@ -13,7 +13,6 @@ import cn.mybatis.mp.generator.util.RuntimeUtils;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class FastGenerator {
