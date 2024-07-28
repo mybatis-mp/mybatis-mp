@@ -136,8 +136,8 @@ public class TableMetaDataQuery {
             }
         }
 
-        if (primaryKeys.size() > 1) {
-            log.warn("当前表:{}，存在多主键情况！", tableInfo.getName());
+        if (primaryKeys.isEmpty()) {
+            log.warn("当前表:{}，存在主键情况！", tableInfo.getName());
         }
 
         List<ColumnInfo> columnsInfoList = new ArrayList<>();
