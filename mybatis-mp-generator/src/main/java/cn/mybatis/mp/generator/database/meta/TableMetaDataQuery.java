@@ -69,7 +69,7 @@ public class TableMetaDataQuery {
 
                 tableInfo.setColumnInfoList(getColumnInfo(tableInfo, TABLE_NAME));
                 List<ColumnInfo> idColumnInfoList = tableInfo.getColumnInfoList().stream().filter(item -> item.isPrimaryKey()).collect(Collectors.toList());
-                if (!idColumnInfoList.isEmpty()) {
+                if (!idColumnInfoList.isEmpty() && idColumnInfoList.size() == 1) {
                     tableInfo.setIdColumnInfo(idColumnInfoList.get(0));
                 }
                 tables.add(tableInfo);
