@@ -30,7 +30,7 @@ public class SelectAsTest extends BaseTest {
                     .get();
             SysUserVo eqSysUser = new SysUserVo();
             eqSysUser.setId(1);
-            eqSysUser.setUserName("admin");
+            eqSysUser.setUserName("com/sys/admin");
             assertEquals(eqSysUser, sysUser, "@ResultEntity注解测试");
         }
     }
@@ -49,7 +49,7 @@ public class SelectAsTest extends BaseTest {
                     .get();
             SysUserVo eqSysUser = new SysUserVo();
             eqSysUser.setId(1);
-            eqSysUser.setUserName("admin");
+            eqSysUser.setUserName("com/sys/admin");
             eqSysUser.setPwd("123");
             assertEquals(eqSysUser, sysUser, "@ResultEntityField注解测试");
         }
@@ -69,7 +69,7 @@ public class SelectAsTest extends BaseTest {
                     .get();
             SysUserVo eqSysUser = new SysUserVo();
             eqSysUser.setId(1);
-            eqSysUser.setUserName("admin");
+            eqSysUser.setUserName("com/sys/admin");
             eqSysUser.setPwd("123");
             eqSysUser.setKkName("1kk");
             eqSysUser.setKkName2("1kk");

@@ -39,21 +39,25 @@ public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric(
     private ${entityInfo.serviceName} ${util.firstToLower(entityInfo.serviceName)};
 
 </#if>
-<#if actionConfig.isGetById()  && entityInfo.idFieldInfo??>
+<#if actionConfig.isGetById()  && entityInfo.hasId()>
 <#if generatorConfig.getContainerType().is("solon")>
     @Get
 </#if>
-    @${getMappingAnnotationName}("/get")
+    @${getMappingAnnotationName}("${actionConfig.getGetByIdUriPath()}")
 <#if actionConfig.isSwagger()>
     <#if generatorConfig.getSwaggerVersion() == 3>
     @Operation(summary = "根据ID查询")
-    @Parameter(name = "id", description = "ID", required = true)
+    <#list entityInfo.idFieldInfoList as field>
+    @Parameter(name = "${field.name}", description = "${field.remarks}", required = true)
+    </#list>
     <#else >
     @ApiOperation("根据ID查询")
-    @ApiParam(name = "id", value = "ID", required = true)
+    <#list entityInfo.idFieldInfoList as field>
+    @ApiParam(name = "${field.name}", value = "${field.remarks}", required = true)
+    </#list>
     </#if>
 </#if>
-    public ${actionConfig.returnClassName} get(${entityInfo.idFieldInfo.typeName} id){
+    public ${actionConfig.returnClassName} ${actionConfig.getGetByIdMethodName()}(<#list entityInfo.idFieldInfoList as field>${field.typeName} ${field.name}<#if field_has_next>, </#if></#list>){
         // TODO 代码自动生成 未实现（注意）
         return null;
     }
@@ -63,7 +67,7 @@ public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric(
 <#if generatorConfig.getContainerType().is("solon")>
     @Post
 </#if>
-    @${postMappingAnnotationName}("/save")
+    @${postMappingAnnotationName}("${actionConfig.getSaveUriPath()}")
 <#if actionConfig.isSwagger()>
     <#if generatorConfig.getSwaggerVersion() == 3>
     @Operation(summary = "新增")
@@ -71,7 +75,7 @@ public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric(
     @ApiOperation("新增")
     </#if>
 </#if>
-    public ${actionConfig.returnClassName} save(${entityInfo.name} ${util.firstToLower(entityInfo.name)}){
+    public ${actionConfig.returnClassName} ${actionConfig.getSaveMethodName()}(${entityInfo.name} ${util.firstToLower(entityInfo.name)}){
         // TODO 代码自动生成 未实现（注意）
         return null;
     }
@@ -81,7 +85,7 @@ public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric(
 <#if generatorConfig.getContainerType().is("solon")>
     @Post
 </#if>
-    @${postMappingAnnotationName}("/update")
+    @${postMappingAnnotationName}("${actionConfig.getUpdateUriPath()}")
 <#if actionConfig.isSwagger()>
     <#if generatorConfig.getSwaggerVersion() == 3>
     @Operation(summary = "修改")
@@ -89,27 +93,31 @@ public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric(
     @ApiOperation("修改")
     </#if>
 </#if>
-    public ${actionConfig.returnClassName} update(${entityInfo.name} ${util.firstToLower(entityInfo.name)}){
+    public ${actionConfig.returnClassName} ${actionConfig.getUpdateMethodName()}(${entityInfo.name} ${util.firstToLower(entityInfo.name)}){
         // TODO 代码自动生成 未实现（注意）
         return null;
     }
 
 </#if>
-<#if actionConfig.isDeleteById() && entityInfo.idFieldInfo??>
+<#if actionConfig.isDeleteById() && entityInfo.hasId()>
 <#if generatorConfig.getContainerType().is("solon")>
     @Delete
 </#if>
-    @${deleteMappingAnnotationName}("/delete")
+    @${deleteMappingAnnotationName}("${actionConfig.getDeleteByIdUriPath()}")
 <#if actionConfig.isSwagger()>
     <#if generatorConfig.getSwaggerVersion() == 3>
     @Operation(summary = "根据ID删除")
-    @Parameter(name = "id", description = "ID", required = true)
+    <#list entityInfo.idFieldInfoList as field>
+    @Parameter(name = "${field.name}", description = "${field.remarks}", required = true)
+    </#list>
     <#else >
     @ApiOperation("根据ID删除")
-    @ApiParam(name = "id", value = "ID", required = true)
+    <#list entityInfo.idFieldInfoList as field>
+    @ApiParam(name = "${field.name}", value = "${field.remarks}", required = true)
+    </#list>
     </#if>
 </#if>
-    public ${actionConfig.returnClassName} delete(${entityInfo.idFieldInfo.typeName} id){
+    public ${actionConfig.returnClassName} ${actionConfig.getDeleteByIdMethodName()}(<#list entityInfo.idFieldInfoList as field>${field.typeName} ${field.name}<#if field_has_next>, </#if></#list>){
         // TODO 代码自动生成 未实现（注意）
         return null;
     }
@@ -119,7 +127,7 @@ public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric(
 <#if generatorConfig.getContainerType().is("solon")>
     @Get
 </#if>
-    @${getMappingAnnotationName}("/find")
+    @${getMappingAnnotationName}("${actionConfig.getFindUriPath()}")
 <#if actionConfig.isSwagger()>
     <#if generatorConfig.getSwaggerVersion() == 3>
     @Operation(summary = "分页查询")
@@ -129,7 +137,7 @@ public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric(
     @ApiParam(name = "pager", value = "分页信息")
     </#if>
 </#if>
-    public ${actionConfig.returnClassName} find(Pager<${entityInfo.name}> pager){
+    public ${actionConfig.returnClassName} ${actionConfig.getFindMethodName()}(Pager<${entityInfo.name}> pager){
         // TODO 代码自动生成 未实现（注意）
         return null;
     }

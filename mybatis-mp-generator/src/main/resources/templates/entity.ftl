@@ -42,10 +42,10 @@ public class ${entityInfo.name} ${superExtend}{
 <#if field.columnInfo.primaryKey>
     ${field.buildTableIdCode()!}
     <#if field.isNeedTableField()>
-        ${field.buildTableField()}
+    ${field.buildTableField()}
     private ${field.typeName} ${field.name};
     <#else>
-        private ${field.typeName} ${field.name};
+    private ${field.typeName} ${field.name};
     </#if>
 <#else>
 <#if field.columnInfo.isVersion()>

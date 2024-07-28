@@ -72,6 +72,7 @@ public class TableMetaDataQuery {
                 if (!idColumnInfoList.isEmpty() && idColumnInfoList.size() == 1) {
                     tableInfo.setIdColumnInfo(idColumnInfoList.get(0));
                 }
+                tableInfo.setIdColumnInfoList(idColumnInfoList);
                 tables.add(tableInfo);
             }
         } catch (SQLException e) {

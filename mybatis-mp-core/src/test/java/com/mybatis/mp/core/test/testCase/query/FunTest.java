@@ -563,7 +563,7 @@ public class FunTest extends BaseTest {
             String upper = QueryChain.of(sysUserMapper)
                     .selectWithFun(SysUser::getUserName, c -> c.upper())
                     .from(SysUser.class)
-                    .eq(SysUser::getUserName, "admin")
+                    .eq(SysUser::getUserName, "com/sys/admin")
                     .returnType(String.class)
                     .get();
             assertEquals(upper, "ADMIN");
@@ -577,10 +577,10 @@ public class FunTest extends BaseTest {
             String lower = QueryChain.of(sysUserMapper)
                     .selectWithFun(SysUser::getUserName, c -> c.upper().lower())
                     .from(SysUser.class)
-                    .eq(SysUser::getUserName, "admin")
+                    .eq(SysUser::getUserName, "com/sys/admin")
                     .returnType(String.class)
                     .get();
-            assertEquals(lower, "admin");
+            assertEquals(lower, "com/sys/admin");
         }
     }
 
@@ -591,7 +591,7 @@ public class FunTest extends BaseTest {
             String trim = QueryChain.of(sysUserMapper)
                     .selectWithFun(SysUser::getUserName, c -> c.concat("ad   ").trim())
                     .from(SysUser.class)
-                    .eq(SysUser::getUserName, "admin")
+                    .eq(SysUser::getUserName, "com/sys/admin")
                     .returnType(String.class)
                     .get();
             assertEquals(trim, "adminad");
@@ -608,7 +608,7 @@ public class FunTest extends BaseTest {
             String left = QueryChain.of(sysUserMapper)
                     .selectWithFun(SysUser::getUserName, c -> c.left(2))
                     .from(SysUser.class)
-                    .eq(SysUser::getUserName, "admin")
+                    .eq(SysUser::getUserName, "com/sys/admin")
                     .returnType(String.class)
                     .get();
             assertEquals(left, "ad");

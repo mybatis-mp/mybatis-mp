@@ -94,7 +94,7 @@ public class GeneratorUtil {
     public static List<String> buildEntityImports(GeneratorConfig generatorConfig, EntityInfo entityInfo) {
         List<String> classList = new ArrayList<>();
         classList.add(Table.class.getName());
-        if (entityInfo.getIdFieldInfo() != null) {
+        if (!entityInfo.getIdFieldInfoList().isEmpty()) {
             classList.add(TableId.class.getName());
             classList.add(IdAutoType.class.getName());
         }

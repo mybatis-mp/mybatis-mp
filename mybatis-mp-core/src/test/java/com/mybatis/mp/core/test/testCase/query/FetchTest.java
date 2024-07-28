@@ -36,7 +36,7 @@ public class FetchTest extends BaseTest {
             assertEquals("测试", list.get(1).getSysRole().getName());
             assertEquals("测试", list.get(2).getSysRole().getName());
 
-            assertEquals("admin", list.get(0).getSysUser().getUserName());
+            assertEquals("com/sys/admin", list.get(0).getSysUser().getUserName());
             assertEquals("test1", list.get(1).getSysUser().getUserName());
             assertEquals("test2", list.get(2).getSysUser().getUserName());
         }
