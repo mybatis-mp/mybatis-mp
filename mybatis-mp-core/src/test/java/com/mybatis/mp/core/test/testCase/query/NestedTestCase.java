@@ -64,7 +64,7 @@ public class NestedTestCase extends BaseTest {
             assertEquals(nestedFirstVo.getNestedSecondVo().getNestedThirdVo().getNestedSecondId(), 1);
 
 
-            assertEquals(nestedFirstVo.getNestedSecondVo().getNestedThirdVo().getSysUser().getUserName(), "com/sys/admin");
+            assertEquals(nestedFirstVo.getNestedSecondVo().getNestedThirdVo().getSysUser().getUserName(), "admin");
             assertEquals(nestedFirstVo.getNestedSecondVo().getNestedThirdVo().getSysRole().getName(), "测试");
 
             nestedFirstVo = list.get(1);
@@ -155,7 +155,7 @@ public class NestedTestCase extends BaseTest {
             assertEquals(nestedFirstVo.getNestedSecondVo().get(1).getNestedThirdVo().get(1).getThName(), "嵌套BAB");
             assertEquals(nestedFirstVo.getNestedSecondVo().get(1).getNestedThirdVo().get(1).getNestedSecondId(), 2);
 
-            assertEquals(nestedFirstVo.getNestedSecondVo().get(1).getNestedThirdVo().get(0).getSysUser().getUserName(), "com/sys/admin");
+            assertEquals(nestedFirstVo.getNestedSecondVo().get(1).getNestedThirdVo().get(0).getSysUser().getUserName(), "admin");
             assertEquals(nestedFirstVo.getNestedSecondVo().get(1).getNestedThirdVo().get(0).getSysRole().getName(), "测试");
 
             assertEquals(nestedFirstVo.getNestedSecondVo().get(1).getNestedThirdVo().get(1).getSysUser().getUserName(), "test1");

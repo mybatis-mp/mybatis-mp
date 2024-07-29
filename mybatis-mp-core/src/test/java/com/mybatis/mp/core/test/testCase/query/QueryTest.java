@@ -78,7 +78,7 @@ public class QueryTest extends BaseTest {
                     .get();
             SysUser eqSysUser = new SysUser();
             eqSysUser.setId(1);
-            eqSysUser.setUserName("com/sys/admin");
+            eqSysUser.setUserName("admin");
             eqSysUser.setRole_id(0);
             assertEquals(eqSysUser, sysUser, "单表部分select检测");
 
@@ -99,7 +99,7 @@ public class QueryTest extends BaseTest {
                     .get();
             SysUser eqSysUser = new SysUser();
             eqSysUser.setId(1);
-            eqSysUser.setUserName("com/sys/admin");
+            eqSysUser.setUserName("admin");
             eqSysUser.setRole_id(0);
             assertEquals(eqSysUser, sysUser, "单表部分select检测");
 
@@ -119,7 +119,7 @@ public class QueryTest extends BaseTest {
             SysUser sysUser = sysUserMapper.getById(1);
             SysUser eqSysUser = new SysUser();
             eqSysUser.setId(1);
-            eqSysUser.setUserName("com/sys/admin");
+            eqSysUser.setUserName("admin");
             eqSysUser.setRole_id(0);
             eqSysUser.setPassword("123");
             eqSysUser.setCreate_time(LocalDateTime.parse("2023-10-11T15:16:17"));
@@ -578,7 +578,7 @@ public class QueryTest extends BaseTest {
                     .get();
             System.out.println(map);
             assertNotNull(map);
-            assertEquals(map.get("userName"), "com/sys/admin");
+            assertEquals(map.get("userName"), "admin");
             assertTrue(map instanceof Map);
         }
 
