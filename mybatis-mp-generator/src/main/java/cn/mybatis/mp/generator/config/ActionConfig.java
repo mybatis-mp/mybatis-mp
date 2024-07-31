@@ -64,12 +64,12 @@ public class ActionConfig {
     /**
      * 删除的方法名
      */
-    private String deleteByIdMethodName = "deleteById";
+    private String deleteByIdMethodName = "delete";
 
     /**
      * 删除的path
      */
-    private String deleteByIdUriPath = "/deleteById";
+    private String deleteByIdUriPath = "/delete";
 
     /**
      * 分页
@@ -94,12 +94,12 @@ public class ActionConfig {
     /**
      * 单个查询的方法名
      */
-    private String getByIdMethodName = "getById";
+    private String getByIdMethodName = "get";
 
     /**
      * 单个查询的path
      */
-    private String getByIdUriPath = "/getById";
+    private String getByIdUriPath = "/get";
 
     /**
      * 实体类包名
