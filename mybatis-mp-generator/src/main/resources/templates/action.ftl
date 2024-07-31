@@ -39,11 +39,11 @@ public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric(
     private ${entityInfo.serviceName} ${util.firstToLower(entityInfo.serviceName)};
 
 </#if>
-<#if actionConfig.isGetById()  && entityInfo.hasId()>
+<#if actionConfig.isEnableGet()  && entityInfo.hasId()>
 <#if generatorConfig.getContainerType().is("solon")>
     @Get
 </#if>
-    @${getMappingAnnotationName}("${actionConfig.getGetByIdUriPath()}")
+    @${getMappingAnnotationName}("${actionConfig.getGetUriPath()}")
 <#if actionConfig.isSwagger()>
     <#if generatorConfig.getSwaggerVersion() == 3>
     @Operation(summary = "根据ID查询")
@@ -57,13 +57,13 @@ public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric(
     </#list>
     </#if>
 </#if>
-    public ${actionConfig.returnClassName} ${actionConfig.getGetByIdMethodName()}(<#list entityInfo.idFieldInfoList as field>${field.typeName} ${field.name}<#if field_has_next>, </#if></#list>){
+    public ${actionConfig.returnClassName} ${actionConfig.getGetMethodName()}(<#list entityInfo.idFieldInfoList as field>${field.typeName} ${field.name}<#if field_has_next>, </#if></#list>){
         // TODO 代码自动生成 未实现（注意）
         return null;
     }
 
 </#if>
-<#if actionConfig.isSave()>
+<#if actionConfig.isEnableSave()>
 <#if generatorConfig.getContainerType().is("solon")>
     @Post
 </#if>
@@ -81,7 +81,7 @@ public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric(
     }
 
 </#if>
-<#if actionConfig.isUpdate()>
+<#if actionConfig.isEnableUpdate()>
 <#if generatorConfig.getContainerType().is("solon")>
     @Post
 </#if>
@@ -99,11 +99,11 @@ public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric(
     }
 
 </#if>
-<#if actionConfig.isDeleteById() && entityInfo.hasId()>
+<#if actionConfig.isEnableDelete() && entityInfo.hasId()>
 <#if generatorConfig.getContainerType().is("solon")>
     @Delete
 </#if>
-    @${deleteMappingAnnotationName}("${actionConfig.getDeleteByIdUriPath()}")
+    @${deleteMappingAnnotationName}("${actionConfig.getDeleteUriPath()}")
 <#if actionConfig.isSwagger()>
     <#if generatorConfig.getSwaggerVersion() == 3>
     @Operation(summary = "根据ID删除")
@@ -117,13 +117,13 @@ public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric(
     </#list>
     </#if>
 </#if>
-    public ${actionConfig.returnClassName} ${actionConfig.getDeleteByIdMethodName()}(<#list entityInfo.idFieldInfoList as field>${field.typeName} ${field.name}<#if field_has_next>, </#if></#list>){
+    public ${actionConfig.returnClassName} ${actionConfig.getDeleteMethodName()}(<#list entityInfo.idFieldInfoList as field>${field.typeName} ${field.name}<#if field_has_next>, </#if></#list>){
         // TODO 代码自动生成 未实现（注意）
         return null;
     }
 
 </#if>
-<#if actionConfig.isFind()>
+<#if actionConfig.isEnableFind()>
 <#if generatorConfig.getContainerType().is("solon")>
     @Get
 </#if>

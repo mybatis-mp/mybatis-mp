@@ -41,11 +41,11 @@ public class Test {
                 })
                 .actionConfig(actionConfig -> {
                     actionConfig
-                            .save(true)
-                            .update(true)
-                            .find(true)
-                            .getById(true)
-                            .deleteById(true)
+                            .enableSave(true)
+                            .enableUpdate(true)
+                            .enableFind(true)
+                            .enableGet(true)
+                            .enableDelete(true)
                             .swagger(true)
                             .returnClass(Object.class.getName());
                 })
@@ -82,11 +82,11 @@ public class Test {
                 })
                 .actionConfig(actionConfig -> {
                     actionConfig
-                            .save(true)
-                            .update(true)
-                            .find(true)
-                            .getById(true)
-                            .deleteById(true)
+                            .enableSave(true)
+                            .enableUpdate(true)
+                            .enableFind(true)
+                            .enableGet(true)
+                            .enableDelete(true)
                             .swagger(true)
                             .returnClass(Object.class.getName());
                 })
@@ -113,7 +113,7 @@ public class Test {
 
     public static void main(String[] args) {
         Long start = System.currentTimeMillis();
-        oracleTest();
+        mysqlTest();
         System.out.println(System.currentTimeMillis() - start);
     }
 }
