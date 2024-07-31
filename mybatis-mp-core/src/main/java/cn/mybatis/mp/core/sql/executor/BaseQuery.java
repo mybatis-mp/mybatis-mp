@@ -2,8 +2,9 @@ package cn.mybatis.mp.core.sql.executor;
 
 import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
+import cn.mybatis.mp.core.sql.util.SelectClassUtil;
 import cn.mybatis.mp.core.tenant.TenantUtil;
-import cn.mybatis.mp.core.util.ForeignKeyUtil;
+import cn.mybatis.mp.core.sql.util.ForeignKeyUtil;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.GetterColumnField;

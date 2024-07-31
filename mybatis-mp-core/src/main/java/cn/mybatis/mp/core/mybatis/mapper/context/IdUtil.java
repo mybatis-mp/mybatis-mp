@@ -2,7 +2,7 @@ package cn.mybatis.mp.core.mybatis.mapper.context;
 
 import cn.mybatis.mp.core.db.reflect.ModelFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
-import cn.mybatis.mp.core.util.IdValueConverter;
+import cn.mybatis.mp.core.sql.util.IdValueConverter;
 import cn.mybatis.mp.core.util.ModelInfoUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;

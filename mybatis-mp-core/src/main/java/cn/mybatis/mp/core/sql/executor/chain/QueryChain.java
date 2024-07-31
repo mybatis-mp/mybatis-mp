@@ -3,7 +3,7 @@ package cn.mybatis.mp.core.sql.executor.chain;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
-import cn.mybatis.mp.core.sql.executor.SelectClassUtil;
+import cn.mybatis.mp.core.sql.util.SelectClassUtil;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.struct.Where;
 import org.apache.ibatis.cursor.Cursor;

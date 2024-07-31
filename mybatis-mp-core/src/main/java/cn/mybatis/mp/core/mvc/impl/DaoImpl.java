@@ -11,7 +11,7 @@ import cn.mybatis.mp.core.sql.executor.chain.InsertChain;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import cn.mybatis.mp.core.sql.executor.chain.UpdateChain;
 import cn.mybatis.mp.core.util.GenericUtil;
-import cn.mybatis.mp.core.util.WhereUtil;
+import cn.mybatis.mp.core.sql.util.WhereUtil;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;

@@ -1,7 +1,8 @@
-package cn.mybatis.mp.core.util;
+package cn.mybatis.mp.core.sql.util;
 
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
+import cn.mybatis.mp.core.util.TableInfoUtil;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.struct.Where;
 
