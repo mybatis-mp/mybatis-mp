@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiParam;
  * @since ${date}
  */
 @${controllerAnnotationName}
-@${requestMappingAnnotationName}("/${util.firstToLower(entityInfo.daoName)}")
+@${requestMappingAnnotationName}("/${util.firstToLower(entityInfo.name)}")
 <#if actionConfig.isSwagger()>
     <#if generatorConfig.getSwaggerVersion() == 3>
 @Tag(name = "${entityInfo.tableInfo.remarks!}")
