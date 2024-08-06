@@ -62,7 +62,7 @@ public interface ICmdFactory<TABLE extends ITable<TABLE, TABLE_FIELD>
 
     <T> TABLE_FIELD[] fields(int storey, Getter<T>... columns);
 
-    TABLE_FIELD[] fields(GetterColumnField... getterColumnFields);
+    TABLE_FIELD[] fields(GetterField... getterFields);
 
     default TABLE_FIELD field(Class<?> entity, String filedName) {
         return this.field(entity, filedName, 1);

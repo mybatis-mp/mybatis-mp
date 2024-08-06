@@ -3,7 +3,7 @@ package db.sql.api.cmd.executor.method.groupByMethod;
 
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
-import db.sql.api.cmd.GetterColumnField;
+import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
 
@@ -18,7 +18,7 @@ public interface IGroupByMultiGetterFunMethod<SELF extends IGroupByMultiGetterFu
     <T> SELF groupByWithFun(Function<TABLE_FIELD[], Cmd> f, int storey, Getter<T>... columns);
 
 
-    SELF groupByWithFun(Function<TABLE_FIELD[], Cmd> f, GetterColumnField... getterColumnFields);
+    SELF groupByWithFun(Function<TABLE_FIELD[], Cmd> f, GetterField... getterFields);
 
     default <T> SELF groupByWithFun(boolean when, Function<TABLE_FIELD[], Cmd> f, Getter<T>... columns) {
         if (!when) {
@@ -35,10 +35,10 @@ public interface IGroupByMultiGetterFunMethod<SELF extends IGroupByMultiGetterFu
         return this.groupByWithFun(f, storey, columns);
     }
 
-    default SELF groupByWithFun(boolean when, Function<TABLE_FIELD[], Cmd> f, GetterColumnField... getterColumnFields) {
+    default SELF groupByWithFun(boolean when, Function<TABLE_FIELD[], Cmd> f, GetterField... getterFields) {
         if (!when) {
             return (SELF) this;
         }
-        return this.groupByWithFun(f, getterColumnFields);
+        return this.groupByWithFun(f, getterFields);
     }
 }

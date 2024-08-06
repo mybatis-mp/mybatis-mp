@@ -1,7 +1,7 @@
 package db.sql.api.cmd.executor.method.havingMethod;
 
 import db.sql.api.Getter;
-import db.sql.api.cmd.GetterColumnField;
+import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.IColumnField;
 import db.sql.api.cmd.basic.*;
 
@@ -56,12 +56,12 @@ public interface IHavingMethods<SELF extends IHavingMethods,
         return this.havingAnd(when, f, storey, columns);
     }
 
-    default SELF having(Function<TABLE_FIELD[], ICondition> f, GetterColumnField... getterColumnFields) {
-        return this.havingAnd(f, getterColumnFields);
+    default SELF having(Function<TABLE_FIELD[], ICondition> f, GetterField... getterFields) {
+        return this.havingAnd(f, getterFields);
     }
 
-    default SELF having(boolean when, Function<TABLE_FIELD[], ICondition> f, GetterColumnField... getterColumnFields) {
-        return this.havingAnd(when, f, getterColumnFields);
+    default SELF having(boolean when, Function<TABLE_FIELD[], ICondition> f, GetterField... getterFields) {
+        return this.havingAnd(when, f, getterFields);
     }
 
 

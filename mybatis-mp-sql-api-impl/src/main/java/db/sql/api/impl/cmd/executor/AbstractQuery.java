@@ -3,7 +3,7 @@ package db.sql.api.impl.cmd.executor;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.ColumnField;
-import db.sql.api.cmd.GetterColumnField;
+import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.IColumnField;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.*;
@@ -230,8 +230,8 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF selectWithFun(Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
-        return this.select(f.apply($.fields(getterColumnFields)));
+    public SELF selectWithFun(Function<TableField[], Cmd> f, GetterField... getterFields) {
+        return this.select(f.apply($.fields(getterFields)));
     }
 
     @Override
@@ -437,8 +437,8 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF groupByWithFun(Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
-        return this.groupBy(f.apply($.fields(getterColumnFields)));
+    public SELF groupByWithFun(Function<TableField[], Cmd> f, GetterField... getterFields) {
+        return this.groupBy(f.apply($.fields(getterFields)));
     }
 
     @Override
@@ -602,19 +602,19 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF havingAnd(boolean when, Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
+    public SELF havingAnd(boolean when, Function<TableField[], ICondition> f, GetterField... getterFields) {
         if (!when) {
             return (SELF) this;
         }
-        return this.havingAnd(f.apply($.fields(getterColumnFields)));
+        return this.havingAnd(f.apply($.fields(getterFields)));
     }
 
     @Override
-    public SELF havingOr(boolean when, Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
+    public SELF havingOr(boolean when, Function<TableField[], ICondition> f, GetterField... getterFields) {
         if (!when) {
             return (SELF) this;
         }
-        return this.havingOr(f.apply($.fields(getterColumnFields)));
+        return this.havingOr(f.apply($.fields(getterFields)));
     }
 
     private <T, R, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> R apply(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], R> f, Getter<T>... columns) {
@@ -632,8 +632,8 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
             IColumnField columnField = columnFields[i];
             if (columnField instanceof ColumnField) {
                 datasetFields[i] = this.$(dataset, ((ColumnField) columnField).getColumnName());
-            } else if (columnField instanceof GetterColumnField) {
-                datasetFields[i] = this.$(dataset, ((GetterColumnField<?>) columnField).getGetter());
+            } else if (columnField instanceof GetterField) {
+                datasetFields[i] = this.$(dataset, ((GetterField<?>) columnField).getGetter());
             } else {
                 throw new RuntimeException("Not Supported");
             }
@@ -745,8 +745,8 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF orderByWithFun(IOrderByDirection orderByDirection, Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
-        return this.orderBy(orderByDirection, f.apply($.fields(getterColumnFields)));
+    public SELF orderByWithFun(IOrderByDirection orderByDirection, Function<TableField[], Cmd> f, GetterField... getterFields) {
+        return this.orderBy(orderByDirection, f.apply($.fields(getterFields)));
     }
 
     @Override

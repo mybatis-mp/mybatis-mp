@@ -2,12 +2,12 @@ package cn.mybatis.mp.core.sql.executor;
 
 import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
+import cn.mybatis.mp.core.sql.util.ForeignKeyUtil;
 import cn.mybatis.mp.core.sql.util.SelectClassUtil;
 import cn.mybatis.mp.core.tenant.TenantUtil;
-import cn.mybatis.mp.core.sql.util.ForeignKeyUtil;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
-import db.sql.api.cmd.GetterColumnField;
+import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.IColumnField;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.basic.IDataset;
@@ -157,8 +157,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final Q selectWithFun(Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
-        return super.selectWithFun(f, getterColumnFields);
+    public final Q selectWithFun(Function<TableField[], Cmd> f, GetterField... getterFields) {
+        return super.selectWithFun(f, getterFields);
     }
 
     @Override
@@ -193,8 +193,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final Q selectWithFun(boolean when, Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
-        return super.selectWithFun(when, f, getterColumnFields);
+    public final Q selectWithFun(boolean when, Function<TableField[], Cmd> f, GetterField... getterFields) {
+        return super.selectWithFun(when, f, getterFields);
     }
 
     @Override
@@ -283,8 +283,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final Q groupByWithFun(Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
-        return super.groupByWithFun(f, getterColumnFields);
+    public final Q groupByWithFun(Function<TableField[], Cmd> f, GetterField... getterFields) {
+        return super.groupByWithFun(f, getterFields);
     }
 
     @Override
@@ -313,8 +313,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final Q groupByWithFun(boolean when, Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
-        return super.groupByWithFun(when, f, getterColumnFields);
+    public final Q groupByWithFun(boolean when, Function<TableField[], Cmd> f, GetterField... getterFields) {
+        return super.groupByWithFun(when, f, getterFields);
     }
 
     @Override
@@ -343,8 +343,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final Q having(Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
-        return super.having(f, getterColumnFields);
+    public final Q having(Function<TableField[], ICondition> f, GetterField... getterFields) {
+        return super.having(f, getterFields);
     }
 
     @Override
@@ -373,8 +373,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final Q having(boolean when, Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
-        return super.having(when, f, getterColumnFields);
+    public final Q having(boolean when, Function<TableField[], ICondition> f, GetterField... getterFields) {
+        return super.having(when, f, getterFields);
     }
 
     @Override
@@ -397,8 +397,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final Q havingAnd(Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
-        return super.havingAnd(f, getterColumnFields);
+    public final Q havingAnd(Function<TableField[], ICondition> f, GetterField... getterFields) {
+        return super.havingAnd(f, getterFields);
     }
 
     @Override
@@ -427,8 +427,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final Q havingAnd(boolean when, Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
-        return super.havingAnd(when, f, getterColumnFields);
+    public final Q havingAnd(boolean when, Function<TableField[], ICondition> f, GetterField... getterFields) {
+        return super.havingAnd(when, f, getterFields);
     }
 
     @Override
@@ -457,8 +457,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final Q havingOr(Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
-        return super.havingOr(f, getterColumnFields);
+    public final Q havingOr(Function<TableField[], ICondition> f, GetterField... getterFields) {
+        return super.havingOr(f, getterFields);
     }
 
     @Override
@@ -487,8 +487,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final Q havingOr(boolean when, Function<TableField[], ICondition> f, GetterColumnField... getterColumnFields) {
-        return super.havingOr(when, f, getterColumnFields);
+    public final Q havingOr(boolean when, Function<TableField[], ICondition> f, GetterField... getterFields) {
+        return super.havingOr(when, f, getterFields);
     }
 
     @Override
@@ -644,8 +644,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final Q orderByDescWithFun(Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
-        return super.orderByDescWithFun(f, getterColumnFields);
+    public final Q orderByDescWithFun(Function<TableField[], Cmd> f, GetterField... getterFields) {
+        return super.orderByDescWithFun(f, getterFields);
     }
 
     @Override
@@ -674,8 +674,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     @Override
     @SafeVarargs
-    public final Q orderByDescWithFun(boolean when, Function<TableField[], Cmd> f, GetterColumnField... getterColumnFields) {
-        return super.orderByDescWithFun(when, f, getterColumnFields);
+    public final Q orderByDescWithFun(boolean when, Function<TableField[], Cmd> f, GetterField... getterFields) {
+        return super.orderByDescWithFun(when, f, getterFields);
     }
 
     @Override
