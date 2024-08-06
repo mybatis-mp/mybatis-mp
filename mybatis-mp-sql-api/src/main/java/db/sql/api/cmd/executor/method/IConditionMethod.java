@@ -141,6 +141,16 @@ public interface IConditionMethod<SELF extends IConditionMethod,
         return (SELF) this;
     }
 
+    default SELF and(GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> function) {
+        conditionChain().and(getterFields, function);
+        return (SELF) this;
+    }
+
+    default SELF or(GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> function) {
+        conditionChain().or(getterFields, function);
+        return (SELF) this;
+    }
+
     default SELF and(boolean when, Function<TABLE_FIELD[], ICondition> function, GetterField... getterFields) {
         conditionChain().and(when, function, getterFields);
         return (SELF) this;
@@ -148,6 +158,16 @@ public interface IConditionMethod<SELF extends IConditionMethod,
 
     default SELF or(boolean when, Function<TABLE_FIELD[], ICondition> function, GetterField... getterFields) {
         conditionChain().or(when, function, getterFields);
+        return (SELF) this;
+    }
+
+    default SELF and(boolean when, GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> function) {
+        conditionChain().and(when, getterFields, function);
+        return (SELF) this;
+    }
+
+    default SELF or(boolean when, GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> function) {
+        conditionChain().or(when, getterFields, function);
         return (SELF) this;
     }
 

@@ -17,8 +17,16 @@ public interface ISelectMultiGetterFunMethod<SELF extends ISelectMultiGetterFunM
 
     <T> SELF selectWithFun(Function<TABLE_FIELD[], Cmd> f, int storey, Getter<T>... columns);
 
+    default SELF selectWithFun(Function<TABLE_FIELD[], Cmd> f, GetterField... getterFields) {
+        return this.selectWithFun(getterFields, f);
+    }
 
-    SELF selectWithFun(Function<TABLE_FIELD[], Cmd> f, GetterField... getterFields);
+    /**
+     * @param getterFields 利用 GetterFields 进行 数组构建
+     * @param f
+     * @return
+     */
+    SELF selectWithFun(GetterField[] getterFields, Function<TABLE_FIELD[], Cmd> f);
 
     default <T> SELF selectWithFun(boolean when, Function<TABLE_FIELD[], Cmd> f, Getter<T>... columns) {
         if (!when) {

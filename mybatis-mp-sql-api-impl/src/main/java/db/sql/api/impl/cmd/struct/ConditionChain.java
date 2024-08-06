@@ -146,19 +146,19 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
-    public ConditionChain and(boolean when, Function<TableField[], ICondition> function, GetterField... getterFields) {
+    public ConditionChain and(boolean when, GetterField[] getterFields, Function<TableField[], ICondition> f) {
         if (!when) {
             return this;
         }
-        return this.and(function.apply(this.conditionFactory.getCmdFactory().fields(getterFields)));
+        return this.and(f.apply(this.conditionFactory.getCmdFactory().fields(getterFields)));
     }
 
     @Override
-    public ConditionChain or(boolean when, Function<TableField[], ICondition> function, GetterField... getterFields) {
+    public ConditionChain or(boolean when, GetterField[] getterFields, Function<TableField[], ICondition> f) {
         if (!when) {
             return this;
         }
-        return this.or(function.apply(this.conditionFactory.getCmdFactory().fields(getterFields)));
+        return this.or(f.apply(this.conditionFactory.getCmdFactory().fields(getterFields)));
     }
 
 

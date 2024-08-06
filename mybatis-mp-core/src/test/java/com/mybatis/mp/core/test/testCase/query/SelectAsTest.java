@@ -9,6 +9,7 @@ import com.mybatis.mp.core.test.vo.NestedSysRoleVo;
 import com.mybatis.mp.core.test.vo.SysUserRoleAutoSelectVo;
 import com.mybatis.mp.core.test.vo.SysUserRoleVo;
 import com.mybatis.mp.core.test.vo.SysUserVo;
+import db.sql.api.cmd.GetterFields;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -63,6 +64,28 @@ public class SelectAsTest extends BaseTest {
                     .select(SysUser::getId, SysUser::getUserName, SysUser::getPassword)
                     .selectWithFun(SysUser::getId, c -> c.concat("kk").as("kk"))
                     .selectWithFun(SysUser::getId, c -> c.concat("kk").as(SysUserVo::getKkName2))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1)
+                    .returnType(SysUserVo.class)
+                    .get();
+            SysUserVo eqSysUser = new SysUserVo();
+            eqSysUser.setId(1);
+            eqSysUser.setUserName("admin");
+            eqSysUser.setPwd("123");
+            eqSysUser.setKkName("1kk");
+            eqSysUser.setKkName2("1kk");
+            assertEquals(eqSysUser, sysUser, "@ResultEntity 之 @ResultField注解 ，返回Vo测试");
+        }
+    }
+
+    @Test
+    public void simpleReturnResultFieldAs2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUserVo sysUser = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, SysUser::getUserName, SysUser::getPassword)
+                    .selectWithFun(GetterFields.of(SysUser::getId), cs -> cs[0].concat("kk").as("kk"))
+                    .selectWithFun(GetterFields.of(SysUser::getId), cs -> cs[0].concat("kk").as(SysUserVo::getKkName2))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(SysUserVo.class)

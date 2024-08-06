@@ -18,7 +18,11 @@ public interface IGroupByMultiGetterFunMethod<SELF extends IGroupByMultiGetterFu
     <T> SELF groupByWithFun(Function<TABLE_FIELD[], Cmd> f, int storey, Getter<T>... columns);
 
 
-    SELF groupByWithFun(Function<TABLE_FIELD[], Cmd> f, GetterField... getterFields);
+    default SELF groupByWithFun(Function<TABLE_FIELD[], Cmd> f, GetterField... getterFields) {
+        return this.groupByWithFun(getterFields, f);
+    }
+
+    SELF groupByWithFun(GetterField[] getterFields, Function<TABLE_FIELD[], Cmd> f);
 
     default <T> SELF groupByWithFun(boolean when, Function<TABLE_FIELD[], Cmd> f, Getter<T>... columns) {
         if (!when) {
@@ -40,5 +44,12 @@ public interface IGroupByMultiGetterFunMethod<SELF extends IGroupByMultiGetterFu
             return (SELF) this;
         }
         return this.groupByWithFun(f, getterFields);
+    }
+
+    default SELF groupByWithFun(boolean when, GetterField[] getterFields, Function<TABLE_FIELD[], Cmd> f) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.groupByWithFun(getterFields, f);
     }
 }

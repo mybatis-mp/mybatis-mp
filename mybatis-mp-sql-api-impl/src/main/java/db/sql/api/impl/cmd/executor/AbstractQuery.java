@@ -230,7 +230,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF selectWithFun(Function<TableField[], Cmd> f, GetterField... getterFields) {
+    public SELF selectWithFun(GetterField[] getterFields, Function<TableField[], Cmd> f) {
         return this.select(f.apply($.fields(getterFields)));
     }
 
@@ -437,7 +437,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF groupByWithFun(Function<TableField[], Cmd> f, GetterField... getterFields) {
+    public SELF groupByWithFun(GetterField[] getterFields, Function<TableField[], Cmd> f) {
         return this.groupBy(f.apply($.fields(getterFields)));
     }
 
@@ -602,7 +602,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF havingAnd(boolean when, Function<TableField[], ICondition> f, GetterField... getterFields) {
+    public SELF havingAnd(boolean when, GetterField[] getterFields, Function<TableField[], ICondition> f) {
         if (!when) {
             return (SELF) this;
         }
@@ -610,7 +610,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF havingOr(boolean when, Function<TableField[], ICondition> f, GetterField... getterFields) {
+    public SELF havingOr(boolean when, GetterField[] getterFields, Function<TableField[], ICondition> f) {
         if (!when) {
             return (SELF) this;
         }
@@ -745,7 +745,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF orderByWithFun(IOrderByDirection orderByDirection, Function<TableField[], Cmd> f, GetterField... getterFields) {
+    public SELF orderByWithFun(IOrderByDirection orderByDirection, GetterField[] getterFields, Function<TableField[], Cmd> f) {
         return this.orderBy(orderByDirection, f.apply($.fields(getterFields)));
     }
 

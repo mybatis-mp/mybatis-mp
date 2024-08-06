@@ -60,10 +60,17 @@ public interface IHavingMethods<SELF extends IHavingMethods,
         return this.havingAnd(f, getterFields);
     }
 
+    default SELF having(GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f) {
+        return this.havingAnd(getterFields, f);
+    }
+
     default SELF having(boolean when, Function<TABLE_FIELD[], ICondition> f, GetterField... getterFields) {
         return this.havingAnd(when, f, getterFields);
     }
 
+    default SELF having(boolean when, GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f) {
+        return this.havingAnd(when, getterFields, f);
+    }
 
     default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF having(IDataset<DATASET, DATASET_FIELD> dataset, String columnName, Function<DATASET_FIELD, ICondition> f) {
         return this.havingAnd(dataset, columnName, f);

@@ -129,10 +129,6 @@ public class MybatisConfiguration extends Configuration {
 
     @Override
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-//        T t = super.getMapper(type, sqlSession);
-//        if (MybatisMapper.class.isAssignableFrom(type)) {
-//            return (T) Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, new MybatisMapperProxy2<>(sqlSession, type, t));
-//        }
         return super.getMapper(type, sqlSession);
     }
 

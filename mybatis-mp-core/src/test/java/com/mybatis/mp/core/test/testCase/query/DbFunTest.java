@@ -4,6 +4,7 @@ import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
+import db.sql.api.cmd.GetterFields;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -65,6 +66,23 @@ public class DbFunTest extends BaseTest {
                     .orderByWithFun(c -> c[0], SysUser::getId)
                     .groupByWithFun(c -> c[0], SysUser::getId)
                     .havingAnd(c -> c[0].count().gt(0), SysUser::getId, SysUser::getUserName)
+                    .returnType(Integer.TYPE)
+                    .count();
+
+            assertEquals(id, 1);
+        }
+    }
+
+    @Test
+    public void whereAndGetterTest3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Integer id = QueryChain.of(sysUserMapper)
+                    .from(SysUser.class)
+                    .and(GetterFields.of(SysUser::getId, SysUser::getUserName), cs -> cs[0].eq(1))
+                    .orderByWithFun(GetterFields.of(SysUser::getId), cs -> cs[0])
+                    .groupByWithFun(GetterFields.of(SysUser::getId), cs -> cs[0])
+                    .havingAnd(GetterFields.of(SysUser::getId, SysUser::getUserName), cs -> cs[0].count().gt(0))
                     .returnType(Integer.TYPE)
                     .count();
 

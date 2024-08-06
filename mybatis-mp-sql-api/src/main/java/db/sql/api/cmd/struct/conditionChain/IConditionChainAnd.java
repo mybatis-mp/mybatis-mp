@@ -51,5 +51,13 @@ public interface IConditionChainAnd<SELF extends IConditionChainAnd, TABLE_FIELD
         return and(true, function, getterFields);
     }
 
-    SELF and(boolean when, Function<TABLE_FIELD[], ICondition> function, GetterField... getterFields);
+    default SELF and(GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f) {
+        return and(true, getterFields, f);
+    }
+
+    default SELF and(boolean when, Function<TABLE_FIELD[], ICondition> f, GetterField... getterFields) {
+        return and(when, getterFields, f);
+    }
+
+    SELF and(boolean when, GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f);
 }

@@ -51,6 +51,13 @@ public interface IHavingOrMethod<SELF extends IHavingOrMethod, TABLE extends ITa
         return this.havingOr(true, f, getterFields);
     }
 
-    SELF havingOr(boolean when, Function<TABLE_FIELD[], ICondition> f, GetterField... getterFields);
+    default SELF havingOr(GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f) {
+        return this.havingOr(true, getterFields, f);
+    }
 
+    default SELF havingOr(boolean when, Function<TABLE_FIELD[], ICondition> f, GetterField... getterFields) {
+        return this.havingOr(when, getterFields, f);
+    }
+
+    SELF havingOr(boolean when, GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f);
 }
