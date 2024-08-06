@@ -29,27 +29,77 @@ public class ActionConfig {
     /**
      * 新增
      */
-    private boolean save = true;
+    private boolean enableSave = true;
+
+    /**
+     * 新增的方法名
+     */
+    private String saveMethodName = "save";
+
+    /**
+     * 新增的path
+     */
+    private String saveUriPath = "/save";
 
     /**
      * 修改
      */
-    private boolean update = true;
+    private boolean enableUpdate = true;
+
+    /**
+     * 修改的方法名
+     */
+    private String updateMethodName = "update";
+
+    /**
+     * 修改的path
+     */
+    private String updateUriPath = "/update";
 
     /**
      * 删除
      */
-    private boolean deleteById = true;
+    private boolean enableDelete = true;
+
+    /**
+     * 删除的方法名
+     */
+    private String deleteMethodName = "delete";
+
+    /**
+     * 删除的path
+     */
+    private String deleteUriPath = "/delete";
 
     /**
      * 分页
      */
-    private boolean find = true;
+    private boolean enableFind = true;
+
+    /**
+     * 分页的方法名
+     */
+    private String findMethodName = "find";
+
+    /**
+     * 分页的path
+     */
+    private String findUriPath = "/find";
 
     /**
      * 单个查询
      */
-    private boolean getById = true;
+    private boolean enableGet = true;
+
+    /**
+     * 单个查询的方法名
+     */
+    private String getMethodName = "get";
+
+    /**
+     * 单个查询的path
+     */
+    private String getUriPath = "/get";
 
     /**
      * 实体类包名
@@ -74,7 +124,7 @@ public class ActionConfig {
     /**
      * 是否开启 swagger
      */
-    private boolean swagger = true;
+    private boolean swagger = false;
 
     /**
      * 设置是否启用
@@ -114,55 +164,101 @@ public class ActionConfig {
     /**
      * 是否生成save方法
      *
-     * @param save
+     * @param enable
      * @return
      */
-    public ActionConfig save(boolean save) {
-        this.save = save;
+    public ActionConfig enableSave(boolean enable) {
+        this.enableSave = enable;
+        return this;
+    }
+
+    public ActionConfig saveMethodName(String saveMethodName){
+        this.saveMethodName = saveMethodName;
+        return this;
+    }
+
+    public ActionConfig saveUriPath(String saveUriPath) {
+        this.saveUriPath = saveUriPath;
         return this;
     }
 
     /**
      * 是否生成update方法
      *
-     * @param update
+     * @param enable
      * @return
      */
-    public ActionConfig update(boolean update) {
-        this.update = update;
+    public ActionConfig enableUpdate(boolean enable) {
+        this.enableUpdate = enable;
+        return this;
+    }
+    public ActionConfig updateMethodName(String updateMethodName) {
+        this.updateMethodName = updateMethodName;
         return this;
     }
 
+    public ActionConfig updateUriPath(String updateUriPath) {
+        this.updateUriPath = updateUriPath;
+        return this;
+    }
     /**
      * 是否生成deleteById方法
      *
-     * @param deleteById
+     * @param enable
      * @return
      */
-    public ActionConfig deleteById(boolean deleteById) {
-        this.deleteById = deleteById;
+    public ActionConfig enableDelete(boolean enable) {
+        this.enableDelete = enable;
+        return this;
+    }
+
+    public ActionConfig deleteMethodName(String deleteMethodName) {
+        this.deleteMethodName = deleteMethodName;
+        return this;
+    }
+
+    public ActionConfig deleteUriPath(String deleteUriPath) {
+        this.deleteUriPath = deleteUriPath;
         return this;
     }
 
     /**
      * 是否生成find方法
      *
-     * @param find
+     * @param enable
      * @return
      */
-    public ActionConfig find(boolean find) {
-        this.find = find;
+    public ActionConfig enableFind(boolean enable) {
+        this.enableFind = enable;
+        return this;
+    }
+    public ActionConfig findMethodName(String findMethodName) {
+        this.findMethodName = findMethodName;
+        return this;
+    }
+
+    public ActionConfig findUriPath(String findUriPath) {
+        this.findUriPath = findUriPath;
         return this;
     }
 
     /**
-     * 是否生成getById方法
+     * 是否生成get方法
      *
-     * @param getById
+     * @param enable
      * @return
      */
-    public ActionConfig getById(boolean getById) {
-        this.getById = getById;
+    public ActionConfig enableGet(boolean enable) {
+        this.enableGet = enable;
+        return this;
+    }
+    public ActionConfig getMethodName(String getMethodName) {
+        this.getMethodName = getMethodName;
+        return this;
+    }
+
+    public ActionConfig getUriPath(String getUriPath) {
+        this.getUriPath =getUriPath;
         return this;
     }
 

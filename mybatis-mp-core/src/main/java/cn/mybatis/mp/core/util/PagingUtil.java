@@ -1,5 +1,6 @@
 package cn.mybatis.mp.core.util;
 
+import cn.mybatis.mp.core.mybatis.MappedStatementUtil;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.mybatis.provider.PagingCountSqlSource;
 import cn.mybatis.mp.core.mybatis.provider.PagingListSqlSource;

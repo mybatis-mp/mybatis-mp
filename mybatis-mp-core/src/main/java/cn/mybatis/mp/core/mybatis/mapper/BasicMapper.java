@@ -7,7 +7,7 @@ import cn.mybatis.mp.core.mybatis.mapper.context.*;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.Delete;
 import cn.mybatis.mp.core.sql.executor.Query;
-import cn.mybatis.mp.core.util.WhereUtil;
+import cn.mybatis.mp.core.sql.util.WhereUtil;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.DbType;
 import db.sql.api.Getter;

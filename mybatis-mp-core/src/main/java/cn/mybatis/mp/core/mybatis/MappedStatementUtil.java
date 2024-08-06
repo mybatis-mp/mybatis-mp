@@ -1,4 +1,4 @@
-package cn.mybatis.mp.core.util;
+package cn.mybatis.mp.core.mybatis;
 
 import org.apache.ibatis.mapping.MappedStatement;
 

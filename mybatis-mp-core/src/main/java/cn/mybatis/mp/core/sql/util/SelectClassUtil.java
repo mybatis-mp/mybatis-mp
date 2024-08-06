@@ -1,4 +1,4 @@
-package cn.mybatis.mp.core.sql.executor;
+package cn.mybatis.mp.core.sql.util;
 
 
 import cn.mybatis.mp.core.db.reflect.*;

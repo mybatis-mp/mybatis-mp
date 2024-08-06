@@ -19,11 +19,12 @@ public class TableInfo {
 
     private ColumnInfo idColumnInfo;
 
+    private List<ColumnInfo> idColumnInfoList;
+
     private List<ColumnInfo> columnInfoList;
 
     public boolean isView() {
         return "VIEW".equals(tableType);
     }
-
 
 }

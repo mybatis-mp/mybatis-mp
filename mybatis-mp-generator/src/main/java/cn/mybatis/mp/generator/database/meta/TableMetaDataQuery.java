@@ -69,9 +69,10 @@ public class TableMetaDataQuery {
 
                 tableInfo.setColumnInfoList(getColumnInfo(tableInfo, TABLE_NAME));
                 List<ColumnInfo> idColumnInfoList = tableInfo.getColumnInfoList().stream().filter(item -> item.isPrimaryKey()).collect(Collectors.toList());
-                if (!idColumnInfoList.isEmpty()) {
+                if (!idColumnInfoList.isEmpty() && idColumnInfoList.size() == 1) {
                     tableInfo.setIdColumnInfo(idColumnInfoList.get(0));
                 }
+                tableInfo.setIdColumnInfoList(idColumnInfoList);
                 tables.add(tableInfo);
             }
         } catch (SQLException e) {
@@ -135,8 +136,8 @@ public class TableMetaDataQuery {
             }
         }
 
-        if (primaryKeys.size() > 1) {
-            log.warn("当前表:{}，存在多主键情况！", tableInfo.getName());
+        if (primaryKeys.isEmpty()) {
+            log.warn("当前表:{}，存在主键情况！", tableInfo.getName());
         }
 
         List<ColumnInfo> columnsInfoList = new ArrayList<>();

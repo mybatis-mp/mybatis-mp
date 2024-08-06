@@ -1,4 +1,4 @@
-package cn.mybatis.mp.core.util;
+package cn.mybatis.mp.core.sql.util;
 
 import cn.mybatis.mp.core.db.reflect.ForeignInfo;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;

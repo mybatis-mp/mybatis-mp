@@ -1,4 +1,4 @@
-package cn.mybatis.mp.core.util;
+package cn.mybatis.mp.core.sql.util;
 
 import java.math.BigInteger;
 import java.util.Objects;

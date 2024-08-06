@@ -9,7 +9,7 @@ import cn.mybatis.mp.core.sql.executor.BaseUpdate;
 import cn.mybatis.mp.core.sql.executor.Update;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.StringPool;
-import cn.mybatis.mp.core.util.WhereUtil;
+import cn.mybatis.mp.core.sql.util.WhereUtil;
 import cn.mybatis.mp.db.annotations.LogicDelete;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.TableField;

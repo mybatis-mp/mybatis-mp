@@ -458,7 +458,7 @@ public class ConditionTest extends BaseTest {
                     .forSearch()
                     .select(SysUser::getId)
                     .from(SysUser.class)
-                    .eq(SysUser::getUserName, " admin ")
+                    .eq(SysUser::getUserName, "admin ")
                     .returnType(SysUser.class)
                     .get();
             assertNotNull(sysUser);
@@ -473,7 +473,7 @@ public class ConditionTest extends BaseTest {
                     .trimStringInCondition(false)
                     .select(SysUser::getId)
                     .from(SysUser.class)
-                    .eq(SysUser::getUserName, " admin ")
+                    .eq(SysUser::getUserName, "admin ")
                     .returnType(SysUser.class)
                     .get();
             assertNull(sysUser);

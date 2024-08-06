@@ -24,7 +24,8 @@ public class ${entityInfo.daoImplName} ${superExtend}<#if daoConfig.isGeneric()>
         this.setMapper(${util.firstToLower(entityInfo.mapperName)});
     }
 
-    private ${entityInfo.mapperName} getMapper(){
+    @Override
+    protected ${entityInfo.mapperName} getMapper(){
         return this.${util.firstToLower(entityInfo.mapperName)};
     }
 <#else>
@@ -33,8 +34,20 @@ public class ${entityInfo.daoImplName} ${superExtend}<#if daoConfig.isGeneric()>
         super(${util.firstToLower(entityInfo.mapperName)});
     }
 
-    private ${entityInfo.mapperName} getMapper(){
+    @Override
+    protected ${entityInfo.mapperName} getMapper(){
         return (${entityInfo.mapperName}) this.mapper;
+    }
+</#if>
+
+<#if entityInfo.hasMultiId()>
+    @Override
+    public ${entityInfo.name} getById(<#list entityInfo.idFieldInfoList as field>${field.typeName} ${field.name}<#if field_has_next>, </#if></#list>){
+        return getMapper().getById(<#list entityInfo.idFieldInfoList as field>${field.name}<#if field_has_next>, </#if></#list>);
+    }
+
+    protected int deleteById(<#list entityInfo.idFieldInfoList as field>${field.typeName} ${field.name}<#if field_has_next>, </#if></#list>){
+        return getMapper().deleteById(<#list entityInfo.idFieldInfoList as field>${field.name}<#if field_has_next>, </#if></#list>);
     }
 </#if>
 }

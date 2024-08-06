@@ -3,7 +3,7 @@ package db.sql.api.cmd.executor.method.selectMethod;
 
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
-import db.sql.api.cmd.GetterColumnField;
+import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
 
@@ -17,8 +17,16 @@ public interface ISelectMultiGetterFunMethod<SELF extends ISelectMultiGetterFunM
 
     <T> SELF selectWithFun(Function<TABLE_FIELD[], Cmd> f, int storey, Getter<T>... columns);
 
+    default SELF selectWithFun(Function<TABLE_FIELD[], Cmd> f, GetterField... getterFields) {
+        return this.selectWithFun(getterFields, f);
+    }
 
-    SELF selectWithFun(Function<TABLE_FIELD[], Cmd> f, GetterColumnField... getterColumnFields);
+    /**
+     * @param getterFields 利用 GetterFields 进行 数组构建
+     * @param f
+     * @return
+     */
+    SELF selectWithFun(GetterField[] getterFields, Function<TABLE_FIELD[], Cmd> f);
 
     default <T> SELF selectWithFun(boolean when, Function<TABLE_FIELD[], Cmd> f, Getter<T>... columns) {
         if (!when) {
@@ -35,10 +43,10 @@ public interface ISelectMultiGetterFunMethod<SELF extends ISelectMultiGetterFunM
         return this.selectWithFun(f, storey, columns);
     }
 
-    default SELF selectWithFun(boolean when, Function<TABLE_FIELD[], Cmd> f, GetterColumnField... getterColumnFields) {
+    default SELF selectWithFun(boolean when, Function<TABLE_FIELD[], Cmd> f, GetterField... getterFields) {
         if (!when) {
             return (SELF) this;
         }
-        return this.selectWithFun(f, getterColumnFields);
+        return this.selectWithFun(f, getterFields);
     }
 }

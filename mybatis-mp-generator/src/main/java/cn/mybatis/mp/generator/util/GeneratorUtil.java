@@ -94,7 +94,7 @@ public class GeneratorUtil {
     public static List<String> buildEntityImports(GeneratorConfig generatorConfig, EntityInfo entityInfo) {
         List<String> classList = new ArrayList<>();
         classList.add(Table.class.getName());
-        if (entityInfo.getIdFieldInfo() != null) {
+        if (!entityInfo.getIdFieldInfoList().isEmpty()) {
             classList.add(TableId.class.getName());
             classList.add(IdAutoType.class.getName());
         }
@@ -302,7 +302,7 @@ public class GeneratorUtil {
             data.put("autowiredAnnotationName", "Inject");
         }
 
-        if (generatorConfig.getActionConfig().isSave() || generatorConfig.getActionConfig().isUpdate()) {
+        if (generatorConfig.getActionConfig().isEnableSave() || generatorConfig.getActionConfig().isEnableUpdate()) {
             if (generatorConfig.getContainerType() == ContainerType.SPRING) {
                 classList.add("org.springframework.web.bind.annotation.PostMapping");
                 data.put("postMappingAnnotationName", "PostMapping");
@@ -314,8 +314,8 @@ public class GeneratorUtil {
             }
         }
 
-        if (generatorConfig.getActionConfig().isGetById() || generatorConfig.getActionConfig().isFind()) {
-            if (generatorConfig.getActionConfig().isFind()) {
+        if (generatorConfig.getActionConfig().isEnableGet() || generatorConfig.getActionConfig().isEnableFind()) {
+            if (generatorConfig.getActionConfig().isEnableFind()) {
                 classList.add(Pager.class.getName());
             }
 
@@ -330,7 +330,7 @@ public class GeneratorUtil {
         }
 
 
-        if (generatorConfig.getActionConfig().isDeleteById()) {
+        if (generatorConfig.getActionConfig().isEnableDelete()) {
             if (generatorConfig.getContainerType() == ContainerType.SPRING) {
                 classList.add("org.springframework.web.bind.annotation.DeleteMapping");
                 data.put("deleteMappingAnnotationName", "DeleteMapping");

@@ -4,7 +4,7 @@ package db.sql.api.impl.cmd.struct;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
-import db.sql.api.cmd.GetterColumnField;
+import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.executor.IQuery;
@@ -146,19 +146,19 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
-    public ConditionChain and(boolean when, Function<TableField[], ICondition> function, GetterColumnField... getterColumnFields) {
+    public ConditionChain and(boolean when, GetterField[] getterFields, Function<TableField[], ICondition> f) {
         if (!when) {
             return this;
         }
-        return this.and(function.apply(this.conditionFactory.getCmdFactory().fields(getterColumnFields)));
+        return this.and(f.apply(this.conditionFactory.getCmdFactory().fields(getterFields)));
     }
 
     @Override
-    public ConditionChain or(boolean when, Function<TableField[], ICondition> function, GetterColumnField... getterColumnFields) {
+    public ConditionChain or(boolean when, GetterField[] getterFields, Function<TableField[], ICondition> f) {
         if (!when) {
             return this;
         }
-        return this.or(function.apply(this.conditionFactory.getCmdFactory().fields(getterColumnFields)));
+        return this.or(f.apply(this.conditionFactory.getCmdFactory().fields(getterFields)));
     }
 
 

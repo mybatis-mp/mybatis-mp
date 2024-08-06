@@ -5,7 +5,7 @@ import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.Query;
-import cn.mybatis.mp.core.util.WhereUtil;
+import cn.mybatis.mp.core.sql.util.WhereUtil;
 
 import java.util.Objects;
 import java.util.function.Consumer;
