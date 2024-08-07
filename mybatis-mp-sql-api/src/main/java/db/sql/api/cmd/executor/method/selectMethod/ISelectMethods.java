@@ -16,7 +16,7 @@ public interface ISelectMethods<SELF extends ISelectMethods,
         extends
         ISelectCmdMethod<SELF, COLUMN>,
         ISelectGetterMethod<SELF>,
-        ISelectGetterFunMethod<SELF, TABLE, TABLE_FIELD>,
+        ISelectGetterFunctionMethod<SELF, TABLE, TABLE_FIELD>,
         ISelectMultiGetterMethod<SELF>,
         ISelectMultiGetterFunMethod<SELF, TABLE, TABLE_FIELD>,
         ISelectDatasetMethod<SELF>,

@@ -17,7 +17,7 @@ public interface IGroupByMethods<SELF extends IGroupByMethods,
         extends
         IGroupByCmdMethod<SELF, COLUMN>,
         IGroupByGetterMethod<SELF>,
-        IGroupByGetterFunMethod<SELF, TABLE, TABLE_FIELD>,
+        IGroupByGetterFunctionMethod<SELF, TABLE, TABLE_FIELD>,
         IGroupByMultiGetterMethod<SELF>,
         IGroupByMultiGetterFunMethod<SELF, TABLE, TABLE_FIELD>,
         IGroupByDatasetMethod<SELF>,

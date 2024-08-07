@@ -60,18 +60,4 @@ public interface IOrderByGetterFunMethod<SELF extends IOrderByGetterFunMethod, T
     }
 
     <T> SELF orderByWithFun(IOrderByDirection orderByDirection, Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f);
-
-    default <T> SELF orderBy(boolean when, IOrderByDirection orderByDirection, Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderByWithFun(orderByDirection, column, 1, f);
-    }
-
-    default <T> SELF orderBy(boolean when, IOrderByDirection orderByDirection, Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderByWithFun(orderByDirection, column, storey, f);
-    }
 }

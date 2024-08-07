@@ -29,19 +29,4 @@ public interface ISelectGetterFunMethod<SELF extends ISelectGetterFunMethod, TAB
         }
         return this.selectWithFun(column, storey, f);
     }
-
-    default <T> SELF select(boolean when, Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.selectWithFun(column, 1, f);
-    }
-
-
-    default <T> SELF select(boolean when, Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.selectWithFun(column, storey, f);
-    }
 }
