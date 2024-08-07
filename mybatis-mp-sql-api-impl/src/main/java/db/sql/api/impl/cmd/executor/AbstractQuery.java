@@ -230,7 +230,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF selectWithFun(GetterField[] getterFields, Function<TableField[], Cmd> f) {
+    public SELF select(GetterField[] getterFields, Function<TableField[], Cmd> f) {
         return this.select(f.apply($.fields(getterFields)));
     }
 
@@ -437,7 +437,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF groupByWithFun(GetterField[] getterFields, Function<TableField[], Cmd> f) {
+    public SELF groupBy(GetterField[] getterFields, Function<TableField[], Cmd> f) {
         return this.groupBy(f.apply($.fields(getterFields)));
     }
 
@@ -745,7 +745,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public SELF orderByWithFun(IOrderByDirection orderByDirection, GetterField[] getterFields, Function<TableField[], Cmd> f) {
+    public SELF orderBy(IOrderByDirection orderByDirection, GetterField[] getterFields, Function<TableField[], Cmd> f) {
         return this.orderBy(orderByDirection, f.apply($.fields(getterFields)));
     }
 

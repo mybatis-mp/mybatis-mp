@@ -80,8 +80,8 @@ public class DbFunTest extends BaseTest {
             Integer id = QueryChain.of(sysUserMapper)
                     .from(SysUser.class)
                     .and(GetterFields.of(SysUser::getId, SysUser::getUserName), cs -> cs[0].eq(1))
-                    .orderByWithFun(GetterFields.of(SysUser::getId), cs -> cs[0])
-                    .groupByWithFun(GetterFields.of(SysUser::getId), cs -> cs[0])
+                    .orderBy(GetterFields.of(SysUser::getId), cs -> cs[0])
+                    .groupBy(GetterFields.of(SysUser::getId), cs -> cs[0])
                     .havingAnd(GetterFields.of(SysUser::getId, SysUser::getUserName), cs -> cs[0].count().gt(0))
                     .returnType(Integer.TYPE)
                     .count();

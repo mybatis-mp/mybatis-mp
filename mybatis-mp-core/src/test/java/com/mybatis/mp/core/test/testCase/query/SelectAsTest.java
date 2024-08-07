@@ -84,8 +84,8 @@ public class SelectAsTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserVo sysUser = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId, SysUser::getUserName, SysUser::getPassword)
-                    .selectWithFun(GetterFields.of(SysUser::getId), cs -> cs[0].concat("kk").as("kk"))
-                    .selectWithFun(GetterFields.of(SysUser::getId), cs -> cs[0].concat("kk").as(SysUserVo::getKkName2))
+                    .select(GetterFields.of(SysUser::getId), cs -> cs[0].concat("kk").as("kk"))
+                    .select(GetterFields.of(SysUser::getId), cs -> cs[0].concat("kk").as(SysUserVo::getKkName2))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(SysUserVo.class)
