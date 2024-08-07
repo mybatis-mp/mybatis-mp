@@ -1,6 +1,7 @@
 package cn.mybatis.mp.core.mybatis.configuration;
 
 
+import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdContext;
@@ -27,6 +28,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -103,9 +105,14 @@ public class MybatisConfiguration extends Configuration {
         }
 
         if (MybatisMapper.class.isAssignableFrom(type)) {
-            Optional<Class<?>> entityOptional = GenericUtil.getGenericInterfaceClass(type).stream().filter(item -> item.isAnnotationPresent(Table.class)).findFirst();
+            List<Class<?>> list = GenericUtil.getGenericInterfaceClass(type);
+            Optional<Class<?>> entityOptional = list.stream().filter(item -> item.isAnnotationPresent(Table.class)).findFirst();
             if (!entityOptional.isPresent()) {
-                throw new RuntimeException(type + " did not add a generic");
+                if (list.isEmpty() || list.size() > 1) {
+                    throw new RuntimeException(type + " did not add a generic");
+                } else {
+                    throw new NotTableClassException(list.get(0));
+                }
             }
             ResultMapUtils.getResultMap(this, entityOptional.get());
         }
