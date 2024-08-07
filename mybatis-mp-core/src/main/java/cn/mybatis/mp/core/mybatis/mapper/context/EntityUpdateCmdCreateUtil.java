@@ -10,6 +10,8 @@ import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.db.annotations.TableField;
+import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.struct.Where;
 
@@ -39,7 +41,7 @@ public class EntityUpdateCmdCreateUtil {
 
             if (tableFieldInfo.isTableId()) {
                 if (Objects.nonNull(value)) {
-                    update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), $.value(value));
+                    update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), Methods.cmd(value));
                     hasIdCondition = true;
                 }
                 continue;
@@ -58,10 +60,10 @@ public class EntityUpdateCmdCreateUtil {
                 }
                 Integer version = (Integer) value + 1;
                 //乐观锁设置
-                update.set($.field(table, tableFieldInfo.getColumnName()), $.value(version));
+                update.set($.field(table, tableFieldInfo.getColumnName()), Methods.value(version));
 
                 //乐观锁条件
-                update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), $.value(value));
+                update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), Methods.cmd(value));
 
                 //乐观锁回写
                 TableInfoUtil.setValue(tableFieldInfo, t, version);
@@ -77,7 +79,7 @@ public class EntityUpdateCmdCreateUtil {
 
             if (isForceUpdate) {
                 if (Objects.isNull(value)) {
-                    update.set($.field(table, tableFieldInfo.getColumnName()), $.NULL());
+                    update.set($.field(table, tableFieldInfo.getColumnName()), NULL.NULL);
                     continue;
                 }
             }
@@ -85,7 +87,7 @@ public class EntityUpdateCmdCreateUtil {
             if (Objects.nonNull(value)) {
                 TableField tableField = tableFieldInfo.getTableFieldAnnotation();
                 MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                update.set($.field(table, tableFieldInfo.getColumnName()), $.value(mybatisParameter));
+                update.set($.field(table, tableFieldInfo.getColumnName()), Methods.value(mybatisParameter));
             }
         }
 

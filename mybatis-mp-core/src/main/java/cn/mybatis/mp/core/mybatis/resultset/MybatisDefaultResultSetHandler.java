@@ -35,19 +35,19 @@ import java.util.stream.Collectors;
 public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     private final Map<FetchInfo, Map<Object, List<Object>>> singleFetchCache = new HashMap<>();
+
     private volatile BasicMapper basicMapper;
+
     private Map<FetchInfo, List<FetchObject>> needFetchValuesMap;
     //Fetch 信息
     private Map<Class, List<FetchInfo>> fetchInfosMap;
-
-    private Class<?> returnType;
 
     private Map<String, Consumer<Where>> fetchFilters;
 
     public MybatisDefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
         if (mappedStatement.getResultMaps().size() == 1) {
-            returnType = mappedStatement.getResultMaps().get(0).getType();
+            Class<?> returnType = mappedStatement.getResultMaps().get(0).getType();
             if (returnType.isAnnotationPresent(ResultEntity.class)) {
                 this.fetchInfosMap = ResultInfos.get(returnType).getFetchInfoMap();
                 if (Objects.nonNull(this.fetchInfosMap) && !this.fetchInfosMap.isEmpty()) {
@@ -151,7 +151,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         });
 
         String fetchKey = fetchInfo.getField().getDeclaringClass().getName() + "." + fetchInfo.getField().getName();
-        boolean hasFetchFilter = Objects.isNull(fetchFilters) ? false : fetchFilters.containsKey(fetchKey);
+        boolean hasFetchFilter = !Objects.isNull(fetchFilters) && fetchFilters.containsKey(fetchKey);
 
         if (hasFetchFilter) {
             fetchFilters.get(fetchKey).accept(query.$where());

@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-public class CmdUtils {
+public final class CmdUtils {
 
     public static StringBuilder join(SqlBuilderContext context, StringBuilder builder, List<? extends Cmd> cmdList) {
         return join(null, null, context, builder, cmdList);
@@ -68,7 +68,7 @@ public class CmdUtils {
     }
 
     @SafeVarargs
-    public final static boolean contain(Cmd cmd, Object... params) {
+    public static boolean contain(Cmd cmd, Object... params) {
         if (Objects.isNull(params)) {
             return false;
         }

@@ -43,7 +43,7 @@ public class ResultInfo {
         this.nestedResultInfos = Collections.unmodifiableList(parseResult.nestedResultInfos);
     }
 
-    private static final ParseResult parse(Class<?> clazz) {
+    private static ParseResult parse(Class<?> clazz) {
         ResultEntity resultEntity = clazz.getAnnotation(ResultEntity.class);
         Objects.requireNonNull(resultEntity);
         ParseResult parseResult = new ParseResult();
@@ -116,7 +116,7 @@ public class ResultInfo {
                     tableInfo = resultEntityTableInfo;
                 }
                 tableFieldName = resultEntityField.property();
-                if (tableFieldName.equals("")) {
+                if (tableFieldName.isEmpty()) {
                     tableFieldName = field.getName();
                 }
             } else {
@@ -204,7 +204,7 @@ public class ResultInfo {
                 }
 
                 String tableFieldName = resultEntityField.property();
-                if (tableFieldName.equals("")) {
+                if (tableFieldName.isEmpty()) {
                     tableFieldName = field.getName();
                 }
 
@@ -280,11 +280,11 @@ public class ResultInfo {
             }
             TableInfo fetchTableInfo = Tables.get(fetch.source());
             TableFieldInfo fetchFieldInfo = fetchTableInfo.getFieldInfo(fetch.property());
-            valueTypeHandler = fetchFieldInfo.getTypeHandler();
+
             if (Objects.isNull(fetchFieldInfo)) {
                 throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the property: " + fetch.property() + " is not a entity field");
             }
-
+            valueTypeHandler = fetchFieldInfo.getTypeHandler();
             //以字段为基础的查询
             //创建前缀
             tableCount = createPrefix(fetch.source(), fetch.storey(), parseResult.tablePrefixes, tableCount);
@@ -438,12 +438,12 @@ public class ResultInfo {
 
     static class ParseResult {
 
-        public Map<Class, List<FetchInfo>> fetchInfoMap = new HashMap<>();
+        public final Map<Class, List<FetchInfo>> fetchInfoMap = new HashMap<>();
 
-        public List<ResultFieldInfo> resultFieldInfos = new ArrayList<>();
+        public final List<ResultFieldInfo> resultFieldInfos = new ArrayList<>();
 
-        public List<NestedResultInfo> nestedResultInfos = new ArrayList<>();
+        public final List<NestedResultInfo> nestedResultInfos = new ArrayList<>();
 
-        public Map<Class, Map<Integer, String>> tablePrefixes = new HashMap<>();
+        public final Map<Class, Map<Integer, String>> tablePrefixes = new HashMap<>();
     }
 }

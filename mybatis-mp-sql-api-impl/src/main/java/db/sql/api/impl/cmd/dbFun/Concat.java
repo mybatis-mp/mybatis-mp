@@ -5,6 +5,7 @@ import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.BasicValue;
+import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
@@ -33,7 +34,7 @@ public class Concat extends BasicFunction<Concat> {
     }
 
     private static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, Cmd[] cmds, char[] delimiter) {
-        if (cmds == null || cmds.length < 1) {
+        if (Objects.isNull(cmds) || cmds.length < 1) {
             return builder;
         }
         int length = cmds.length;

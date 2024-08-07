@@ -63,8 +63,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     private <K, V> Map<K, V> mapWithKey(Method method, Object[] args) {
         MapKeySQLCmdQueryContext queryContext = (MapKeySQLCmdQueryContext) args[0];
         String statementId = mapperInterface.getName() + "." + method.getName();
-        Map result = sqlSession.selectMap(statementId, queryContext, queryContext.getKey());
-        return result;
+        return sqlSession.selectMap(statementId, queryContext, queryContext.getKey());
     }
 
     private Pager paging(Method method, Object[] args) {
@@ -80,7 +79,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
         List list;
         if (pager.isExecuteCount()) {
-            if (count > 0) {
+            if (Objects.nonNull(count) && count > 0) {
                 list = sqlSession.selectList(statementId + "-list", params);
             } else {
                 list = new ArrayList<>();

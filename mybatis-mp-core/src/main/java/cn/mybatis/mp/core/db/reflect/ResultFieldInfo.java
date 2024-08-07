@@ -56,7 +56,7 @@ public class ResultFieldInfo {
 
     static String getColumnName(Field field, ResultField resultField) {
         String name = resultField.value();
-        if (name.equals("")) {
+        if (name.isEmpty()) {
             name = SqlUtil.getAsName(field);
         }
         return name;

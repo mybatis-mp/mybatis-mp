@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * 数据库方法集合
  */
-public class Methods {
+public final class Methods {
 
     public static Cmd paramWrapAndConvertToCmd(Cmd key, Object param) {
         if (java.util.Objects.isNull(param)) {
@@ -799,7 +799,7 @@ public class Methods {
      * @return
      */
     @SafeVarargs
-    public final static Field filed(Cmd key, Object... values) {
+    public static Field filed(Cmd key, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new Field(key, values);
@@ -1034,7 +1034,7 @@ public class Methods {
      * @return
      */
     @SafeVarargs
-    public final static Concat concat(Cmd key, Object... values) {
+    public static Concat concat(Cmd key, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new Concat(key, values);
@@ -1049,7 +1049,7 @@ public class Methods {
      * @return
      */
     @SafeVarargs
-    public final static ConcatAs concatAs(Cmd key, String split, Object... values) {
+    public static ConcatAs concatAs(Cmd key, String split, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(split);
         Objects.requireNonNull(values);
@@ -1292,7 +1292,7 @@ public class Methods {
      * @return
      */
     @SafeVarargs
-    public final static In in(Cmd key, Object... values) {
+    public static In in(Cmd key, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonEmpty(values);
         Cmd[] cmds = new Cmd[values.length];
@@ -1330,14 +1330,14 @@ public class Methods {
      * @return
      */
     @SafeVarargs
-    public final static NotIn notIn(Cmd key, Object... values) {
+    public static NotIn notIn(Cmd key, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonEmpty(values);
         Cmd[] cmds = new Cmd[values.length];
         for (int i = 0; i < values.length; i++) {
             cmds[i] = paramWrapAndConvertToCmd(key, values[i]);
         }
-        return new NotIn(key).add(values);
+        return new NotIn(key).add(cmds);
     }
 
     /**

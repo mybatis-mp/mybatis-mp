@@ -23,12 +23,8 @@ public final class GetterFields {
 
     public static <T> GetterField[] merge(GetterField[] arr1, GetterField<T>[] arr2) {
         GetterField[] getterFields = new GetterField[arr1.length + arr2.length];
-        for (int i = 0; i < arr1.length; i++) {
-            getterFields[i] = arr1[i];
-        }
-        for (int i = arr1.length; i < arr2.length; i++) {
-            getterFields[i] = arr2[i];
-        }
+        System.arraycopy(arr1, 0, getterFields, 0, arr1.length);
+        System.arraycopy(arr2, 0, getterFields, arr1.length, arr2.length);
         return getterFields;
     }
 
@@ -110,5 +106,12 @@ public final class GetterFields {
 
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> GetterField[] of(Getter<T1> getter1, int storey1, Getter<T2> getter2, int storey2, Getter<T3> getter3, int storey3, Getter<T4> getter4, int storey4, Getter<T5> getter5, int storey5, Getter<T6> getter6, int storey6, Getter<T7> getter7, int storey7, Getter<T8> getter8, int storey8, Getter<T9> getter9, int storey9, Getter<T10> getter10, int storey10) {
         return new GetterField[]{GetterField.create(getter1, storey1), GetterField.create(getter2, storey2), GetterField.create(getter3, storey3), GetterField.create(getter4, storey4), GetterField.create(getter5, storey5), GetterField.create(getter6, storey6), GetterField.create(getter7, storey7), GetterField.create(getter8, storey8), GetterField.create(getter9, storey9), GetterField.create(getter10, storey10)};
+    }
+
+    public static void main(String[] args) {
+
+        GetterField[] arr = GetterFields.merge(GetterFields.of(ColumnField::getColumnName), GetterFields.of(ColumnField::getColumnName, ColumnField::getColumnName));
+        System.out.println(arr.length);
+        System.out.println(arr[arr.length - 1]);
     }
 }

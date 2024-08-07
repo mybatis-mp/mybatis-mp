@@ -14,6 +14,7 @@ import db.sql.api.cmd.struct.query.Unions;
 import db.sql.api.cmd.struct.query.Withs;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.ConditionFactory;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.struct.*;
 import db.sql.api.impl.cmd.struct.query.*;
@@ -235,13 +236,13 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     @Override
     public SELF select(String columnName) {
-        return this.select($.column(columnName));
+        return this.select(Methods.column(columnName));
     }
 
 
     @Override
     public SELF select(String columnName, Function<IDatasetField, Cmd> f) {
-        return this.select(f.apply($.column(columnName)));
+        return this.select(f.apply(Methods.column(columnName)));
     }
 
     /**
@@ -416,12 +417,12 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     @Override
     public SELF groupBy(String columnName) {
-        return this.groupBy($.column(columnName));
+        return this.groupBy(Methods.column(columnName));
     }
 
     @Override
     public SELF groupBy(String columnName, Function<IDatasetField, Cmd> f) {
-        return this.groupBy(f.apply($.column(columnName)));
+        return this.groupBy(f.apply(Methods.column(columnName)));
     }
 
     /**
@@ -659,12 +660,12 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     @Override
     public SELF orderBy(IOrderByDirection orderByDirection, String columnName) {
-        return this.orderBy(orderByDirection, $.column(columnName));
+        return this.orderBy(orderByDirection, Methods.column(columnName));
     }
 
     @Override
     public SELF orderBy(IOrderByDirection orderByDirection, String columnName, Function<IDatasetField, Cmd> f) {
-        return this.orderBy(orderByDirection, f.apply(this.$().column(columnName)));
+        return this.orderBy(orderByDirection, f.apply(Methods.column(columnName)));
     }
 
     /**

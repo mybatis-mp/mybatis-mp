@@ -24,10 +24,7 @@ public final class FieldUtil {
     public static List<Field> getResultMappingFields(Class clazz) {
         List<Field> fieldList = new ArrayList<>();
         Class parseClass = clazz;
-        while (true) {
-            if (parseClass == null) {
-                break;
-            }
+        while (parseClass != null) {
             Field[] fields = parseClass.getDeclaredFields();
             for (Field field : fields) {
                 if (isResultMappingField(field)) {

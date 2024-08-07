@@ -17,6 +17,7 @@ import cn.mybatis.mp.db.IdAutoType;
 import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;
 import db.sql.api.DbType;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.Table;
 
 import java.util.ArrayList;
@@ -99,7 +100,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
                 insert.field($.field(table, tableFieldInfo.getColumnName()));
                 TableField tableField = tableFieldInfo.getTableFieldAnnotation();
                 MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                values.add($.value(mybatisParameter));
+                values.add(Methods.value(mybatisParameter));
             }
         }
         insert.values(values);

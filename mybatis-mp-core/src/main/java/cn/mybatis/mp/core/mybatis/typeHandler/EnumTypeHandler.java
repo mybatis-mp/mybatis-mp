@@ -19,9 +19,9 @@ public class EnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 
     private final Class enumSupportType;
 
-    private final Map<Class<?>, Class<?>> CODE_TYPE_CACHE = new ConcurrentHashMap<>();
+    private final static Map<Class<?>, Class<?>> CODE_TYPE_CACHE = new ConcurrentHashMap<>();
 
-    private final Map<Class<?>, Map<Object, EnumSupport<?>>> TYPE_CODE_ENUM_CACHE = new ConcurrentHashMap<>();
+    private final static Map<Class<?>, Map<Object, EnumSupport<?>>> TYPE_CODE_ENUM_CACHE = new ConcurrentHashMap<>();
 
     public EnumTypeHandler(Class<E> type) {
         if (type == null) {

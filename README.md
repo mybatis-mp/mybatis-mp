@@ -97,7 +97,9 @@ https://gitee.com/mybatis-mp/mybatis-mp-spring-boot-demo
         </dependency>
     </dependencies>
 </dependencyManagement>
+```
 
+```xml
 <dependencies>
     <dependency>
         <groupId>cn.mybatis-mp</groupId>
@@ -120,7 +122,9 @@ https://gitee.com/mybatis-mp/mybatis-mp-spring-boot-demo
         </dependency>
     </dependencies>
 </dependencyManagement>
+```
 
+```xml
 <dependencies>
     <dependency>
         <groupId>cn.mybatis-mp</groupId>
