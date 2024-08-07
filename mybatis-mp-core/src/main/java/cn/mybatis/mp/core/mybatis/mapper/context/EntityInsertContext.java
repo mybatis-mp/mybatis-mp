@@ -91,7 +91,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
                 isNeedInsert = true;
 
                 //乐观锁设置 默认值1
-                value = Integer.valueOf(1);
+                value = 1;
                 //乐观锁回写
                 TableInfoUtil.setValue(tableFieldInfo, entity, value);
             }

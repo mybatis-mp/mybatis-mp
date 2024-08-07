@@ -70,7 +70,7 @@ public final class ResultMapUtils {
         List<Field> list = FieldUtil.getResultMappingFields(clazz);
 
         List<ResultMapping> resultMappings = new ArrayList<>(list.size() * 2);
-        list.stream().forEach(field -> {
+        list.forEach(field -> {
             resultMappings.add(configuration.buildResultMapping(false, field, field.getName(), JdbcType.UNDEFINED, UnknownTypeHandler.class));
             resultMappings.add(configuration.buildResultMapping(false, field, SqlUtil.getFiledLambdaAsName(field), JdbcType.UNDEFINED, UnknownTypeHandler.class));
         });
@@ -100,7 +100,7 @@ public final class ResultMapUtils {
      */
     private static List<ResultMapping> createNestedResultMapping(MybatisConfiguration configuration, List<NestedResultInfo> nestedResultInfos, String path) {
         List<ResultMapping> resultMappings = new ArrayList<>();
-        nestedResultInfos.stream().forEach(item -> {
+        nestedResultInfos.forEach(item -> {
             resultMappings.add(createNestedResultMapping(configuration, item, path));
         });
         return resultMappings;

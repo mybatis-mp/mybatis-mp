@@ -115,8 +115,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
                         TableInfoUtil.setValue(tableFieldInfo, t, value);
                     } else if (tableFieldInfo.isVersion()) {
                         //乐观锁设置 默认值1
-                        value = Integer.valueOf(1);
-
+                        value = 1;
                         //乐观锁回写
                         TableInfoUtil.setValue(tableFieldInfo, t, value);
                     }

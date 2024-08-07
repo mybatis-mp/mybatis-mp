@@ -25,7 +25,7 @@ public final class SelectClassUtil {
     }
 
     private static List<Cmd> buildNestedSelect(AbstractQuery query, List<NestedResultInfo> nestedResultInfos, List<Cmd> cmdList) {
-        nestedResultInfos.stream().forEach(item -> {
+        nestedResultInfos.forEach(item -> {
             buildSelect(query, item.getResultFieldInfos(), cmdList);
             buildNestedSelect(query, item.getNestedResultInfos(), cmdList);
         });

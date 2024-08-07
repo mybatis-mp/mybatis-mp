@@ -91,8 +91,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             return;
         }
 
-        for (int i = 0; i < fetchInfos.size(); i++) {
-            FetchInfo fetchInfo = fetchInfos.get(i);
+        for (FetchInfo fetchInfo : fetchInfos) {
             Object onValue;
             try {
                 if (Objects.nonNull(fetchInfo.getValueTypeHandler())) {
@@ -166,7 +165,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
 
         Map<String, List<Object>> map = new HashMap<>();
-        fetchData.stream().forEach(item -> {
+        fetchData.forEach(item -> {
             Object eqValue;
             try {
                 eqValue = fetchInfo.getEqGetFieldInvoker().invoke(item, new Object[]{});
@@ -181,7 +180,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
         });
 
-        values.stream().forEach(item -> {
+        values.forEach(item -> {
             List<Object> matchValues = map.get(item.getMatchKey());
             this.setValue(item.getValue(), matchValues, fetchInfo);
         });

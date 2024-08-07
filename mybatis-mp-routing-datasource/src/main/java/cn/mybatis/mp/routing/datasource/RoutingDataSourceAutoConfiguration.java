@@ -80,7 +80,7 @@ public class RoutingDataSourceAutoConfiguration implements ApplicationContextAwa
             jdbcConfigDecryptor = null;
         }
 
-        routingDataSourceProperties.getRouting().entrySet().stream().forEach(entry -> {
+        routingDataSourceProperties.getRouting().entrySet().forEach(entry -> {
 
             ConfigType configType = entry.getValue().getConfigType();
             if (entry.getValue().getName() == null) {
@@ -110,7 +110,7 @@ public class RoutingDataSourceAutoConfiguration implements ApplicationContextAwa
                 } else if (SeataMode.AT == routingDataSourceProperties.getSeataMode()) {
                     dataSource = new DataSourceProxy(dataSource);
                 }
-                logger.info("开启 seata 事务：" + routingDataSourceProperties.getSeataMode());
+                logger.info("开启 seata 事务：{}", routingDataSourceProperties.getSeataMode());
             }
 
             if (entry.getKey().contains(Config.GROUP_SPLIT)) {
@@ -121,7 +121,7 @@ public class RoutingDataSourceAutoConfiguration implements ApplicationContextAwa
                     Integer.parseInt(no);
                     groupDataSourceMap.computeIfAbsent(groupName, key -> new ArrayList<>()).add(dataSource);
                 } catch (NumberFormatException e) {
-
+                    //ignore
                 }
             }
             routingDataSources.put(entry.getKey(), dataSource);
@@ -131,7 +131,7 @@ public class RoutingDataSourceAutoConfiguration implements ApplicationContextAwa
             beanDefinitionRegistry.registerBeanDefinition(entry.getKey(), beanDefinition);
         });
 
-        groupDataSourceMap.entrySet().stream().forEach(groupEntry -> {
+        groupDataSourceMap.entrySet().forEach(groupEntry -> {
             if (routingDataSources.containsKey(groupEntry.getKey())) {
                 throw new RuntimeException("重复的ds：" + groupEntry.getKey());
             }
