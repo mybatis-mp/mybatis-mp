@@ -614,4 +614,56 @@ public class FunTest extends BaseTest {
             assertEquals(left, "ad");
         }
     }
+
+    @Test
+    public void right() {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            String left = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getUserName, c -> c.right(2))
+                    .from(SysUser.class)
+                    .eq(SysUser::getUserName, "admin")
+                    .returnType(String.class)
+                    .get();
+            assertEquals(left, "in");
+        }
+    }
+
+    @Test
+    public void subStr() {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            String left = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getUserName, c -> c.subStr(2))
+                    .from(SysUser.class)
+                    .eq(SysUser::getUserName, "admin")
+                    .returnType(String.class)
+                    .get();
+            assertEquals(left, "dmin");
+        }
+    }
+
+    @Test
+    public void subStr2() {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            String left = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getUserName, c -> c.subStr(2, 2))
+                    .from(SysUser.class)
+                    .eq(SysUser::getUserName, "admin")
+                    .returnType(String.class)
+                    .get();
+            assertEquals(left, "dm");
+        }
+    }
+
 }

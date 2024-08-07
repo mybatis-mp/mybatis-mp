@@ -633,9 +633,34 @@ public class Methods {
      * @param key
      * @return
      */
-    public static Right right(Cmd key, int length) {
+    public static Right right(Cmd key, int start) {
         Objects.requireNonNull(key);
-        return new Right(key, length);
+        return new Right(key, start);
+    }
+
+    /**
+     * 字符截取
+     *
+     * @param key
+     * @param start
+     * @return SubStr
+     */
+    public static SubStr subStr(Cmd key, int start) {
+        Objects.requireNonNull(key);
+        return new SubStr(key, start);
+    }
+
+    /**
+     * 字符截取
+     *
+     * @param key
+     * @param start
+     * @param length
+     * @return SubStr
+     */
+    public static SubStr subStr(Cmd key, int start, int length) {
+        Objects.requireNonNull(key);
+        return new SubStr(key, start, length);
     }
 
     /**

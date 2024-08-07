@@ -155,6 +155,27 @@ public interface FunctionInterface extends Cmd {
         return Methods.right(this, length);
     }
 
+    /**
+     * 字段串截取
+     *
+     * @param start 默认从1开始
+     * @return
+     */
+    default SubStr subStr(int start) {
+        return Methods.subStr(this, start);
+    }
+
+    /**
+     * 字段串截取
+     *
+     * @param start  默认从1开始
+     * @param length 截取长度
+     * @return
+     */
+    default SubStr subStr(int start, int length) {
+        return Methods.subStr(this, start, length);
+    }
+
     default Upper upper() {
         return Methods.upper(this);
     }

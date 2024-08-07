@@ -113,6 +113,7 @@ public final class SqlConst {
     public static final char[] UPPER = " UPPER".toCharArray();
     public static final char[] LOWER = " LOWER".toCharArray();
     public static final char[] LEFT = " LEFT".toCharArray();
+    public static final char[] SUBSTR = " SUBSTR".toCharArray();
     public static final char[] RIGHT = " RIGHT".toCharArray();
     public static final char[] LPAD = " LPAD".toCharArray();
     public static final char[] RPAD = " RPAD".toCharArray();
@@ -156,6 +157,8 @@ public final class SqlConst {
     public static final char[] SELF_FROM_DUAL = "SELECT * FROM DUAL".toCharArray();
 
     public static final char[] RECURSIVE = " RECURSIVE ".toCharArray();
+
+    public static final char[] GROUP_CONCAT = " GROUP_CONCAT".toCharArray();
 
     public static String FORCE_INDEX(DbType dbType, String indexName) {
         switch (dbType) {
