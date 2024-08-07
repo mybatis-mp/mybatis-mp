@@ -18,4 +18,15 @@ public interface IGroupByDatasetGetterFunMethod<SELF extends IGroupByDatasetGett
         }
         return this.groupByWithFun(dataset, column, f);
     }
+
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column, Function<DATASET_FIELD, Cmd> f) {
+        return this.groupByWithFun(dataset, column, f);
+    }
+
+    default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(boolean when, IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column, Function<DATASET_FIELD, Cmd> f) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return this.groupBy(dataset, column, f);
+    }
 }

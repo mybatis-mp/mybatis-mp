@@ -19,7 +19,7 @@ public interface IOrderByMethods<SELF extends IOrderByMethods,
         IOrderByMultiGetterFunMethod<SELF, TABLE, TABLE_FIELD>,
         IOrderByDatasetMethod<SELF>,
         IOrderByDatasetGetterMethod<SELF>,
-        IOrderByDatasetGetterFunMethod<SELF>,
+        IOrderByDatasetGetterFunctionMethod<SELF>,
         IOrderByDatasetMultiGetterMethod<SELF>,
         IOrderByDatasetMultiGetterFunMethod<SELF> {
 
