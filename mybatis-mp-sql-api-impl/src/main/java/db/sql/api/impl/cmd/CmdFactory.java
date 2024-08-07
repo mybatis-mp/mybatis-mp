@@ -81,7 +81,8 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, TableField
     }
 
     @Override
-    public TableField[] fields(GetterField... getterFields) {
+    @SafeVarargs
+    public final TableField[] fields(GetterField... getterFields) {
         TableField[] tableFields = new TableField[getterFields.length];
         for (int i = 0; i < getterFields.length; i++) {
             GetterField columnField = getterFields[i];

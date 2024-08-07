@@ -15,15 +15,12 @@ public interface ISelectMethods<SELF extends ISelectMethods,
         COLUMN extends Cmd>
         extends
         ISelectCmdMethod<SELF, COLUMN>,
-        ISelectGetterMethod<SELF>,
-        ISelectGetterFunctionMethod<SELF, TABLE, TABLE_FIELD>,
-        ISelectMultiGetterMethod<SELF>,
-        ISelectMultiGetterFunMethod<SELF, TABLE, TABLE_FIELD>,
+        ISelectGetterMethod<SELF, TABLE, TABLE_FIELD>,
+        ISelectMultiGetterMethod<SELF, TABLE, TABLE_FIELD>,
+
         ISelectDatasetMethod<SELF>,
         ISelectDatasetGetterMethod<SELF>,
-        ISelectDatasetGetterFunMethod<SELF>,
-        ISelectDatasetMultiGetterMethod<SELF>,
-        ISelectDatasetMultiGetterFunMethod<SELF> {
+        ISelectDatasetMultiGetterMethod<SELF> {
 
     @Override
     default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF select(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
@@ -35,7 +32,7 @@ public interface ISelectMethods<SELF extends ISelectMethods,
 
     SELF select(String columnName);
 
-    SELF selectWithFun(String columnName, Function<IDatasetField, Cmd> f);
+    SELF select(String columnName, Function<IDatasetField, Cmd> f);
 
     default SELF select(boolean when, String columnName) {
         if (!when) {
@@ -44,10 +41,10 @@ public interface ISelectMethods<SELF extends ISelectMethods,
         return this.select(columnName);
     }
 
-    default SELF selectWithFun(boolean when, String columnName, Function<IDatasetField, Cmd> f) {
+    default SELF select(boolean when, String columnName, Function<IDatasetField, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }
-        return this.selectWithFun(columnName, f);
+        return this.select(columnName, f);
     }
 }

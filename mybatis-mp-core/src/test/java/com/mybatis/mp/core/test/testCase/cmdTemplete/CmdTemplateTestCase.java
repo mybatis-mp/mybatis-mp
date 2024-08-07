@@ -8,6 +8,7 @@ import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
 import com.mybatis.mp.core.test.vo.SysUserRoleAutoSelectVo;
 import db.sql.api.DbType;
+import db.sql.api.cmd.GetterFields;
 import db.sql.api.impl.cmd.basic.CmdTemplate;
 import db.sql.api.impl.cmd.basic.ConditionTemplate;
 import db.sql.api.impl.cmd.basic.FunTemplate;
@@ -25,9 +26,9 @@ public class CmdTemplateTestCase extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String str = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getRole_id, c -> CmdTemplate.create("count({0})+{1}", c, 1).as("cnt"))
+                    .select(SysUser::getRole_id, c -> CmdTemplate.create("count({0})+{1}", c, 1).as("cnt"))
                     .from(SysUser.class)
-                    .and(cs -> ConditionTemplate.create("{0}+{1}={2}", cs[0], cs[1], 2).as("xx"), SysUser::getId, SysUser::getId)
+                    .and(GetterFields.of(SysUser::getId, SysUser::getId), cs -> ConditionTemplate.create("{0}+{1}={2}", cs[0], cs[1], 2).as("xx"))
                     .returnType(String.class)
                     .get();
 
@@ -44,9 +45,9 @@ public class CmdTemplateTestCase extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String str = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getRole_id, c -> FunTemplate.create("count({0})", c).as("xx").plus(1).concat(1, "2", 3).length())
+                    .select(SysUser::getRole_id, c -> FunTemplate.create("count({0})", c).as("xx").plus(1).concat(1, "2", 3).length())
                     .from(SysUser.class)
-                    .and(cs -> ConditionTemplate.create("{0}+{1}={2}", cs[0], cs[1], 2).as("xx2"), SysUser::getId, SysUser::getId)
+                    .and(GetterFields.of(SysUser::getId, SysUser::getId), cs -> ConditionTemplate.create("{0}+{1}={2}", cs[0], cs[1], 2).as("xx2"))
                     .returnType(String.class)
                     .get();
 
@@ -60,8 +61,8 @@ public class CmdTemplateTestCase extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserRoleAutoSelectVo vo = QueryChain.of(sysUserMapper)
                     .select(SysUserRoleAutoSelectVo.class)
-                    .selectWithFun(SysRole::getId, c -> CmdTemplate.create(" RANK() OVER( ORDER BY {0}) ", c).as("RANK2"))
-                    .selectWithFun(SysRole::getId, c -> CmdTemplate.create(" RANK() OVER( ORDER BY {0}) as RANK3", c))
+                    .select(SysRole::getId, c -> CmdTemplate.create(" RANK() OVER( ORDER BY {0}) ", c).as("RANK2"))
+                    .select(SysRole::getId, c -> CmdTemplate.create(" RANK() OVER( ORDER BY {0}) as RANK3", c))
                     .from(SysUser.class)
                     .join(SysUser.class, SysRole.class)
                     .returnType(SysUserRoleAutoSelectVo.class)

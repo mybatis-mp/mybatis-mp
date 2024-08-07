@@ -3,8 +3,10 @@ package db.sql.api.cmd.executor.method.orderByMethod;
 
 import db.sql.api.Getter;
 import db.sql.api.cmd.basic.IOrderByDirection;
+import db.sql.api.cmd.basic.ITable;
+import db.sql.api.cmd.basic.ITableField;
 
-public interface IOrderByGetterMethod<SELF extends IOrderByGetterMethod> extends IBaseOrderByMethods {
+public interface IOrderByGetterMethod<SELF extends IOrderByGetterMethod, TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> extends IBaseOrderByMethods, IOrderByGetterFunMethod<SELF, TABLE, TABLE_FIELD> {
 
     default <T> SELF orderBy(Getter<T> column) {
         return this.orderBy(ascOrderByDirection(), column, 1);

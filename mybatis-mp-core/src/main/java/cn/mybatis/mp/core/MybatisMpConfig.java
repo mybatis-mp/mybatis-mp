@@ -159,9 +159,9 @@ public final class MybatisMpConfig {
         return key.startsWith("{") && key.endsWith("}");
     }
 
-    public static void setDefaultValue(String key, Function<Class<?>, Object> function) {
+    public static void setDefaultValue(String key, Function<Class<?>, Object> f) {
         checkDefaultValueKey(key);
-        ((Map<String, Function<Class<?>, Object>>) CACHE.get(DEFAULT_VALUE_MANAGER)).computeIfAbsent(key, mapKey -> function);
+        ((Map<String, Function<Class<?>, Object>>) CACHE.get(DEFAULT_VALUE_MANAGER)).computeIfAbsent(key, mapKey -> f);
     }
 
     private static void checkDefaultValueKey(String key) {
@@ -183,10 +183,10 @@ public final class MybatisMpConfig {
             return TypeConvertUtil.convert(key, clazz);
         }
         Map<String, Function<Class<?>, T>> map = (Map<String, Function<Class<?>, T>>) CACHE.get(DEFAULT_VALUE_MANAGER);
-        Function<Class<?>, T> function = map.get(key);
-        if (function == null) {
+        Function<Class<?>, T> f = map.get(key);
+        if (f == null) {
             throw new RuntimeException(String.format("key: %s not set", key));
         }
-        return function.apply(clazz);
+        return f.apply(clazz);
     }
 }

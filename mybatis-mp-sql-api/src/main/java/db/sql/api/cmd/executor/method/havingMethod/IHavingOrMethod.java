@@ -19,6 +19,8 @@ public interface IHavingOrMethod<SELF extends IHavingOrMethod, TABLE extends ITa
         return this.havingOr(condition);
     }
 
+    //---
+
     default <T> SELF havingOr(Getter<T> column, Function<TABLE_FIELD, ICondition> f) {
         return this.havingOr(true, column, f);
     }
@@ -33,31 +35,10 @@ public interface IHavingOrMethod<SELF extends IHavingOrMethod, TABLE extends ITa
 
     <T> SELF havingOr(boolean when, Getter<T> column, int storey, Function<TABLE_FIELD, ICondition> f);
 
-    default <T> SELF havingOr(Function<TABLE_FIELD[], ICondition> f, Getter<T>... columns) {
-        return this.havingOr(true, f, columns);
-    }
-
-    default <T> SELF havingOr(boolean when, Function<TABLE_FIELD[], ICondition> f, Getter<T>... columns) {
-        return this.havingOr(when, f, 1, columns);
-    }
-
-    default <T> SELF havingOr(Function<TABLE_FIELD[], ICondition> f, int storey, Getter<T>... columns) {
-        return this.havingOr(true, f, storey, columns);
-    }
-
-    <T> SELF havingOr(boolean when, Function<TABLE_FIELD[], ICondition> f, int storey, Getter<T>... columns);
-
-    default SELF havingOr(Function<TABLE_FIELD[], ICondition> f, GetterField... getterFields) {
-        return this.havingOr(true, f, getterFields);
-    }
-
     default SELF havingOr(GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f) {
         return this.havingOr(true, getterFields, f);
     }
 
-    default SELF havingOr(boolean when, Function<TABLE_FIELD[], ICondition> f, GetterField... getterFields) {
-        return this.havingOr(when, getterFields, f);
-    }
-
     SELF havingOr(boolean when, GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f);
+
 }

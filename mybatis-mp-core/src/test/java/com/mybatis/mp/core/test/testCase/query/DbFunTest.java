@@ -62,10 +62,10 @@ public class DbFunTest extends BaseTest {
             Integer id = QueryChain.of(sysUserMapper)
 
                     .from(SysUser.class)
-                    .and(c -> c[0].eq(1), SysUser::getId, SysUser::getUserName)
-                    .orderByWithFun(c -> c[0], SysUser::getId)
-                    .groupByWithFun(c -> c[0], SysUser::getId)
-                    .havingAnd(c -> c[0].count().gt(0), SysUser::getId, SysUser::getUserName)
+                    .and(GetterFields.of(SysUser::getId, SysUser::getUserName), c -> c[0].eq(1))
+                    .orderBy(GetterFields.of(SysUser::getId), c -> c[0])
+                    .groupBy(GetterFields.of(SysUser::getId), c -> c[0])
+                    .havingAnd(GetterFields.of(SysUser::getId, SysUser::getUserName), c -> c[0].count().gt(0))
                     .returnType(Integer.TYPE)
                     .count();
 

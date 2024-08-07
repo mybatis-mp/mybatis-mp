@@ -110,39 +110,21 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
-    public <T> ConditionChain and(boolean when, Getter<T> column, int storey, Function<TableField, ICondition> function) {
+    public <T> ConditionChain and(boolean when, Getter<T> column, int storey, Function<TableField, ICondition> f) {
         this.and();
         if (!when) {
             return this;
         }
-        return this.and(function.apply(this.conditionFactory.getCmdFactory().field(column, storey)));
+        return this.and(f.apply(this.conditionFactory.getCmdFactory().field(column, storey)));
     }
 
     @Override
-    public <T> ConditionChain or(boolean when, Getter<T> column, int storey, Function<TableField, ICondition> function) {
+    public <T> ConditionChain or(boolean when, Getter<T> column, int storey, Function<TableField, ICondition> f) {
         this.or();
         if (!when) {
             return this;
         }
-        return this.or(function.apply(this.conditionFactory.getCmdFactory().field(column, storey)));
-    }
-
-    @Override
-    public <T> ConditionChain and(boolean when, Function<TableField[], ICondition> function, int storey, Getter<T>... columns) {
-        this.and();
-        if (!when) {
-            return this;
-        }
-        return this.and(function.apply(this.conditionFactory.getCmdFactory().fields(storey, columns)));
-    }
-
-    @Override
-    public <T> ConditionChain or(boolean when, Function<TableField[], ICondition> function, int storey, Getter<T>... columns) {
-        this.or();
-        if (!when) {
-            return this;
-        }
-        return this.or(function.apply(this.conditionFactory.getCmdFactory().fields(storey, columns)));
+        return this.or(f.apply(this.conditionFactory.getCmdFactory().field(column, storey)));
     }
 
     @Override

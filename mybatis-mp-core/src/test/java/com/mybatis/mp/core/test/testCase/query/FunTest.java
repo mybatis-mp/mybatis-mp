@@ -33,7 +33,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer count = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getId, c -> c.count())
+                    .select(SysUser::getId, c -> c.count())
                     .from(SysUser.class)
                     .like(LikeMode.RIGHT, SysUser::getUserName, "test")
                     .and()
@@ -49,7 +49,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer count = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getId, c -> c.min())
+                    .select(SysUser::getId, c -> c.min())
                     .from(SysUser.class)
                     .like(LikeMode.RIGHT, SysUser::getUserName, "test")
                     .returnType(Integer.TYPE)
@@ -64,7 +64,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer count = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getId, c -> c.max())
+                    .select(SysUser::getId, c -> c.max())
                     .from(SysUser.class)
                     .like(LikeMode.RIGHT, SysUser::getUserName, "test")
                     .returnType(Integer.TYPE)
@@ -79,7 +79,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             BigDecimal avg = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getId, c -> c.avg())
+                    .select(SysUser::getId, c -> c.avg())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1).or().eq(SysUser::getId, 3)
                     .returnType(BigDecimal.class)
@@ -93,7 +93,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             BigDecimal multiply = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getId, c -> c.multiply(-1))
+                    .select(SysUser::getId, c -> c.multiply(-1))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(BigDecimal.class)
@@ -108,7 +108,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             BigDecimal divide = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getId, c -> c.divide(-2))
+                    .select(SysUser::getId, c -> c.divide(-2))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 2)
                     .returnType(BigDecimal.class)
@@ -124,7 +124,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             BigDecimal divide = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getId, c -> c.plus(1))
+                    .select(SysUser::getId, c -> c.plus(1))
                     .eq(SysUser::getId, 2)
                     .returnType(BigDecimal.class)
                     .get();
@@ -138,7 +138,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             BigDecimal divide = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getId, c -> c.subtract(1))
+                    .select(SysUser::getId, c -> c.subtract(1))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 3)
                     .returnType(BigDecimal.class)
@@ -153,7 +153,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             BigDecimal divide = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getId, c -> c.multiply(-2).abs())
+                    .select(SysUser::getId, c -> c.multiply(-2).abs())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 3)
                     .returnType(BigDecimal.class)
@@ -165,7 +165,7 @@ public class FunTest extends BaseTest {
     @Test
     public void pow() {
         Query query = Query.create().
-                selectWithFun(SysUser::getId, c -> c.pow(2)).
+                select(SysUser::getId, c -> c.pow(2)).
                 from(SysUser.class).
                 eq(SysUser::getId, 3);
 
@@ -179,7 +179,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String str = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getId, c -> c.concat("2", "4"))
+                    .select(SysUser::getId, c -> c.concat("2", "4"))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 3)
                     .returnType(String.class)
@@ -194,7 +194,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String str = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getId, c -> c.concatAs("a", "2", "3"))
+                    .select(SysUser::getId, c -> c.concatAs("a", "2", "3"))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 3)
                     .returnType(String.class)
@@ -209,7 +209,7 @@ public class FunTest extends BaseTest {
             SysUserScoreMapper sysUserScoreMapper = session.getMapper(SysUserScoreMapper.class);
             {
                 BigDecimal divide = QueryChain.of(sysUserScoreMapper)
-                        .selectWithFun(SysUserScore::getScore, c -> c.multiply(BigDecimal.valueOf(2.12)).round(1))
+                        .select(SysUserScore::getScore, c -> c.multiply(BigDecimal.valueOf(2.12)).round(1))
                         .from(SysUserScore.class)
                         .eq(SysUserScore::getUserId, 3)
                         .returnType(BigDecimal.class)
@@ -218,7 +218,7 @@ public class FunTest extends BaseTest {
             }
             {
                 BigDecimal divide = QueryChain.of(sysUserScoreMapper)
-                        .selectWithFun(SysUserScore::getScore, c -> c.multiply(BigDecimal.valueOf(2.3)).round(1))
+                        .select(SysUserScore::getScore, c -> c.multiply(BigDecimal.valueOf(2.3)).round(1))
                         .from(SysUserScore.class)
                         .eq(SysUserScore::getUserId, 3)
                         .returnType(BigDecimal.class)
@@ -232,7 +232,7 @@ public class FunTest extends BaseTest {
     @Test
     public void if_() {
         Query query = Query.create().
-                selectWithFun(SysUser::getId, c -> c.eq(3).if_("abc", "")).
+                select(SysUser::getId, c -> c.eq(3).if_("abc", "")).
                 from(SysUser.class).
                 eq(SysUser::getId, 3);
 
@@ -247,7 +247,7 @@ public class FunTest extends BaseTest {
             String str = QueryChain.of(sysUserMapper)
                     .connect(self -> {
                         MybatisCmdFactory $ = self.$();
-                        self.selectWithFun(SysUser::getId, c -> {
+                        self.select(SysUser::getId, c -> {
                             return c.eq(1).caseThen(1)
                                     .when(self.$().create(SysUser::getId, c2 -> c2.eq(1)), 3)
                                     .else_(4);
@@ -268,7 +268,7 @@ public class FunTest extends BaseTest {
             String str = QueryChain.of(sysUserMapper)
                     .connect(self -> {
                         MybatisCmdFactory $ = self.$();
-                        self.selectWithFun(SysUser::getId, c -> {
+                        self.select(SysUser::getId, c -> {
                             return c.eq(1)
                                     .caseThen(1)
                                     .when(Methods.eq($.field(SysUser::getId), 2), 3)
@@ -344,7 +344,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String date = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getCreate_time, c -> c.dateFormat(DatePattern.YYYY_MM_DD))
+                    .select(SysUser::getCreate_time, c -> c.dateFormat(DatePattern.YYYY_MM_DD))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(String.class)
@@ -358,7 +358,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String date = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getCreate_time, c -> c.dateFormat(DatePattern.YYYY_MM_DD_HH_MM_SS))
+                    .select(SysUser::getCreate_time, c -> c.dateFormat(DatePattern.YYYY_MM_DD_HH_MM_SS))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(String.class)
@@ -372,7 +372,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer date = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getCreate_time, c -> c.year())
+                    .select(SysUser::getCreate_time, c -> c.year())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(Integer.class)
@@ -386,7 +386,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer date = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getCreate_time, c -> c.month())
+                    .select(SysUser::getCreate_time, c -> c.month())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(Integer.class)
@@ -400,7 +400,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer date = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getCreate_time, c -> c.day())
+                    .select(SysUser::getCreate_time, c -> c.day())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(Integer.class)
@@ -414,7 +414,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer date = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getCreate_time, c -> c.hour())
+                    .select(SysUser::getCreate_time, c -> c.hour())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(Integer.class)
@@ -428,7 +428,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer date = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getCreate_time, c -> c.weekday())
+                    .select(SysUser::getCreate_time, c -> c.weekday())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(Integer.class)
@@ -442,7 +442,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String date = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getCreate_time, c -> c.date())
+                    .select(SysUser::getCreate_time, c -> c.date())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(String.class)
@@ -484,7 +484,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             LocalDateTime date = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getCreate_time, c -> c.dateAdd(1))
+                    .select(SysUser::getCreate_time, c -> c.dateAdd(1))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(LocalDateTime.class)
@@ -498,7 +498,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             LocalDateTime date = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getCreate_time, c -> c.dateSub(1))
+                    .select(SysUser::getCreate_time, c -> c.dateSub(1))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(LocalDateTime.class)
@@ -512,7 +512,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             LocalDateTime date = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getCreate_time, c -> c.dateAdd(1, TimeUnit.HOURS).as("xx"))
+                    .select(SysUser::getCreate_time, c -> c.dateAdd(1, TimeUnit.HOURS).as("xx"))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(LocalDateTime.class)
@@ -527,7 +527,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer length = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getUserName, c -> c.concat("好").charLength())
+                    .select(SysUser::getUserName, c -> c.concat("好").charLength())
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(Integer.class)
@@ -547,7 +547,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer diff = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getCreate_time, c -> c.dateDiff("2023-10-10 18:12:11"))
+                    .select(SysUser::getCreate_time, c -> c.dateDiff("2023-10-10 18:12:11"))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
                     .returnType(Integer.class)
@@ -561,7 +561,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String upper = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getUserName, c -> c.upper())
+                    .select(SysUser::getUserName, c -> c.upper())
                     .from(SysUser.class)
                     .eq(SysUser::getUserName, "admin")
                     .returnType(String.class)
@@ -575,7 +575,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String lower = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getUserName, c -> c.upper().lower())
+                    .select(SysUser::getUserName, c -> c.upper().lower())
                     .from(SysUser.class)
                     .eq(SysUser::getUserName, "admin")
                     .returnType(String.class)
@@ -589,7 +589,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String trim = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getUserName, c -> c.concat("ad   ").trim())
+                    .select(SysUser::getUserName, c -> c.concat("ad   ").trim())
                     .from(SysUser.class)
                     .eq(SysUser::getUserName, "admin")
                     .returnType(String.class)
@@ -606,7 +606,7 @@ public class FunTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String left = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getUserName, c -> c.left(2))
+                    .select(SysUser::getUserName, c -> c.left(2))
                     .from(SysUser.class)
                     .eq(SysUser::getUserName, "admin")
                     .returnType(String.class)

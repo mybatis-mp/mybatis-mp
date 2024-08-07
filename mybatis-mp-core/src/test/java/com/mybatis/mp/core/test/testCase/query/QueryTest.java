@@ -195,7 +195,7 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             List<Integer> counts = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getId, c -> c.count())
+                    .select(SysUser::getId, c -> c.count())
                     .from(SysUser.class)
                     .groupBy(SysUser::getRole_id)
                     .orderBy(SysUser::getRole_id)
@@ -248,7 +248,7 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer count = QueryChain.of(sysUserMapper)
-                    .selectWithFun(SysUser::getRole_id, FunctionInterface::count)
+                    .select(SysUser::getRole_id, FunctionInterface::count)
                     .from(SysUser.class)
                     .groupBy(SysUser::getRole_id)
                     .having(SysUser::getRole_id, c -> c.gt(0))
@@ -444,8 +444,8 @@ public class QueryTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             List<SysUser> list = QueryChain.of(sysUserMapper)
                     .selectDistinct()
-                    .selectWithFun(SysUser::getRole_id, c -> c.as("role_id"))
-                    .selectWithFun(SysUser::getId, c -> c.as("id"))
+                    .select(SysUser::getRole_id, c -> c.as("role_id"))
+                    .select(SysUser::getId, c -> c.as("id"))
                     .from(SysUser.class)
                     .orderBy(SysUser::getId)
                     .list();

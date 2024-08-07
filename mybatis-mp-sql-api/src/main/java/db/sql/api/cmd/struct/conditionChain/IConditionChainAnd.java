@@ -19,45 +19,24 @@ public interface IConditionChainAnd<SELF extends IConditionChainAnd, TABLE_FIELD
         return this.and(condition);
     }
 
-    default <T> SELF and(Getter<T> column, Function<TABLE_FIELD, ICondition> function) {
-        return this.and(true, column, function);
+    default <T> SELF and(Getter<T> column, Function<TABLE_FIELD, ICondition> f) {
+        return this.and(true, column, f);
     }
 
-    default <T> SELF and(boolean when, Getter<T> column, Function<TABLE_FIELD, ICondition> function) {
-        return this.and(when, column, 1, function);
+    default <T> SELF and(boolean when, Getter<T> column, Function<TABLE_FIELD, ICondition> f) {
+        return this.and(when, column, 1, f);
     }
 
-    default <T> SELF and(Getter<T> column, int storey, Function<TABLE_FIELD, ICondition> function) {
-        return this.and(true, column, storey, function);
+    default <T> SELF and(Getter<T> column, int storey, Function<TABLE_FIELD, ICondition> f) {
+        return this.and(true, column, storey, f);
     }
 
-    <T> SELF and(boolean when, Getter<T> column, int storey, Function<TABLE_FIELD, ICondition> function);
-
-    default <T> SELF and(Function<TABLE_FIELD[], ICondition> function, Getter<T>... columns) {
-        return this.and(true, function, columns);
-    }
-
-    default <T> SELF and(boolean when, Function<TABLE_FIELD[], ICondition> function, Getter<T>... columns) {
-        return this.and(when, function, 1, columns);
-    }
-
-    default <T> SELF and(Function<TABLE_FIELD[], ICondition> function, int storey, Getter<T>... columns) {
-        return this.and(true, function, storey, columns);
-    }
-
-    <T> SELF and(boolean when, Function<TABLE_FIELD[], ICondition> function, int storey, Getter<T>... columns);
-
-    default SELF and(Function<TABLE_FIELD[], ICondition> function, GetterField... getterFields) {
-        return and(true, function, getterFields);
-    }
+    <T> SELF and(boolean when, Getter<T> column, int storey, Function<TABLE_FIELD, ICondition> f);
 
     default SELF and(GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f) {
         return and(true, getterFields, f);
     }
 
-    default SELF and(boolean when, Function<TABLE_FIELD[], ICondition> f, GetterField... getterFields) {
-        return and(when, getterFields, f);
-    }
 
     SELF and(boolean when, GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f);
 }
