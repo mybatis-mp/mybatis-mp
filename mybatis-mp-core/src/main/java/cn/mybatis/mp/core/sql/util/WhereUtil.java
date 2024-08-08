@@ -58,7 +58,7 @@ public final class WhereUtil {
             Objects.requireNonNull(id, "id can't be null");
             where.eq($.field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName(), 1), id);
         } else {
-            tableInfo.getIdFieldInfos().stream().forEach(item -> {
+            tableInfo.getIdFieldInfos().forEach(item -> {
                 Object id;
                 try {
                     id = item.getReadFieldInvoker().invoke(entity, null);
@@ -93,7 +93,7 @@ public final class WhereUtil {
         TableInfoUtil.checkId(tableInfo);
         CmdFactory $ = where.getConditionFactory().getCmdFactory();
         Objects.requireNonNull(ids, "id can't be null");
-        ids.stream().forEach(id -> {
+        ids.forEach(id -> {
             Objects.requireNonNull(id, "id can't be null");
         });
         where.in($.field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName(), 1), ids);

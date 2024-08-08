@@ -21,7 +21,7 @@ public class PagingListSqlSource implements SqlSource {
     public PagingListSqlSource(Configuration configuration, SqlSource sqlSource) {
         this.configuration = configuration;
         this.sqlSource = sqlSource;
-        this.dbType = DbTypeUtil.getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
+        this.dbType = DbTypeUtil.getDbType(configuration);
     }
 
     @Override

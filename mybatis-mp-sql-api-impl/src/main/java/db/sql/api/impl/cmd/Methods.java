@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * 数据库方法集合
  */
-public class Methods {
+public final class Methods {
 
     public static Cmd paramWrapAndConvertToCmd(Cmd key, Object param) {
         if (java.util.Objects.isNull(param)) {
@@ -633,9 +633,34 @@ public class Methods {
      * @param key
      * @return
      */
-    public static Right right(Cmd key, int length) {
+    public static Right right(Cmd key, int start) {
         Objects.requireNonNull(key);
-        return new Right(key, length);
+        return new Right(key, start);
+    }
+
+    /**
+     * 字符截取
+     *
+     * @param key
+     * @param start
+     * @return SubStr
+     */
+    public static SubStr subStr(Cmd key, int start) {
+        Objects.requireNonNull(key);
+        return new SubStr(key, start);
+    }
+
+    /**
+     * 字符截取
+     *
+     * @param key
+     * @param start
+     * @param length
+     * @return SubStr
+     */
+    public static SubStr subStr(Cmd key, int start, int length) {
+        Objects.requireNonNull(key);
+        return new SubStr(key, start, length);
     }
 
     /**
@@ -774,7 +799,7 @@ public class Methods {
      * @return
      */
     @SafeVarargs
-    public final static Field filed(Cmd key, Object... values) {
+    public static Field filed(Cmd key, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new Field(key, values);
@@ -806,18 +831,6 @@ public class Methods {
     public static CurrentDateTime currentDateTime() {
         return new CurrentDateTime();
     }
-
-
-//    /**
-//     * 将UNIX时间戳转成时间
-//     *
-//     * @param key
-//     * @return
-//     */
-//    public static FromUnixTime fromUnixTime(Cmd key) {
-//        Objects.requireNonNull(key);
-//        return new FromUnixTime(key);
-//    }
 
     /**
      * 获取年份
@@ -1009,7 +1022,7 @@ public class Methods {
      * @return
      */
     @SafeVarargs
-    public final static Concat concat(Cmd key, Object... values) {
+    public static Concat concat(Cmd key, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new Concat(key, values);
@@ -1024,7 +1037,7 @@ public class Methods {
      * @return
      */
     @SafeVarargs
-    public final static ConcatAs concatAs(Cmd key, String split, Object... values) {
+    public static ConcatAs concatAs(Cmd key, String split, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(split);
         Objects.requireNonNull(values);
@@ -1267,7 +1280,7 @@ public class Methods {
      * @return
      */
     @SafeVarargs
-    public final static In in(Cmd key, Object... values) {
+    public static In in(Cmd key, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonEmpty(values);
         Cmd[] cmds = new Cmd[values.length];
@@ -1305,14 +1318,14 @@ public class Methods {
      * @return
      */
     @SafeVarargs
-    public final static NotIn notIn(Cmd key, Object... values) {
+    public static NotIn notIn(Cmd key, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonEmpty(values);
         Cmd[] cmds = new Cmd[values.length];
         for (int i = 0; i < values.length; i++) {
             cmds[i] = paramWrapAndConvertToCmd(key, values[i]);
         }
-        return new NotIn(key).add(values);
+        return new NotIn(key).add(cmds);
     }
 
     /**

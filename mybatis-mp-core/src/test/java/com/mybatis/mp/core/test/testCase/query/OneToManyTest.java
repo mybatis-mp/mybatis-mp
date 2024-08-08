@@ -24,7 +24,7 @@ public class OneToManyTest extends BaseTest {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
             List<OneToManyVo> list = QueryChain.of(sysRoleMapper)
                     .select(SysUser.class)
-                    .selectWithFun(SysUser::getUserName, c -> c.as(OneToManyVo::getAsName))
+                    .select(SysUser::getUserName, c -> c.as(OneToManyVo::getAsName))
                     .select(SysRole.class)
                     .from(SysRole.class)
                     .join(SysRole.class, SysUser.class, on -> on.eq(SysUser::getRole_id, SysRole::getId))
@@ -51,8 +51,8 @@ public class OneToManyTest extends BaseTest {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
             List<OneToManyTypeHandlerVo> list = QueryChain.of(sysRoleMapper)
                     .select(SysUser.class)
-                    .selectWithFun(SysUser::getUserName, c -> c.as("kk"))
-                    .selectWithFun(SysUser::getUserName, c -> c.as("kk2"))
+                    .select(SysUser::getUserName, c -> c.as("kk"))
+                    .select(SysUser::getUserName, c -> c.as("kk2"))
                     .select(SysRole.class)
                     .from(SysRole.class)
                     .join(SysRole.class, SysUser.class, on -> on.eq(SysUser::getRole_id, SysRole::getId))

@@ -34,7 +34,7 @@ public class TableConfig {
      * @return
      */
     public TableConfig tablePrefixs(String... prefixs) {
-        this.tablePrefixs.addAll(Arrays.asList(prefixs).stream()
+        this.tablePrefixs.addAll(Arrays.stream(prefixs)
                 .map(item -> {
                     if (item.toLowerCase().equals(item)) {
                         return item.toLowerCase();

@@ -62,15 +62,11 @@ public class ConcatAs extends BasicFunction<ConcatAs> {
         if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.DB2) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             this.key.sql(module, parent, context, sqlBuilder);
-            for (int i = 0; i < this.values.length; i++) {
-
+            for (Cmd value : this.values) {
                 sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL);
                 this.split.sql(module, parent, context, sqlBuilder);
                 sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL);
-
-
-                this.values[i].sql(module, parent, context, sqlBuilder);
-
+                value.sql(module, parent, context, sqlBuilder);
             }
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;

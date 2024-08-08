@@ -48,7 +48,7 @@ public abstract class BaseExecutor<SELF extends BaseExecutor<SELF, CMD_FACTORY>,
         if (Objects.isNull(this.selectors)) {
             return;
         }
-        selectors.stream().forEach(dbSelector -> dbSelector.dbExecute(dbType));
+        selectors.forEach(dbSelector -> dbSelector.dbExecute(dbType));
     }
 
     @Override

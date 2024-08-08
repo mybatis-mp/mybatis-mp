@@ -325,7 +325,7 @@ public interface BasicMapper extends BaseMapper {
         if (ids == null || ids.isEmpty()) {
             throw new RuntimeException("ids list can't be empty");
         }
-        return this.deleteByIds(entityType, ids.toArray(new Serializable[ids.size()]));
+        return this.deleteByIds(entityType, ids.toArray(new Serializable[0]));
     }
 
     /**

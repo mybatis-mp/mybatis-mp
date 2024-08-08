@@ -6,7 +6,6 @@ import cn.mybatis.mp.db.annotations.ResultEntity;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.AbstractQuery;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -25,9 +24,7 @@ public final class TablePrefixUtil {
 
         Map<Class, Map<Integer, String>> entityPrefixMap = ResultInfos.get(returnType).getTablePrefixes();
         if (Objects.nonNull(entityPrefixMap)) {
-            Iterator<Map.Entry<Class, Map<Integer, String>>> iterator = entityPrefixMap.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<Class, Map<Integer, String>> entry = iterator.next();
+            for (Map.Entry<Class, Map<Integer, String>> entry : entityPrefixMap.entrySet()) {
                 Class<?> entityType = entry.getKey();
                 entry.getValue().forEach((storey, prefix) -> {
                     if (storey == -1) {

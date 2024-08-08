@@ -16,6 +16,8 @@ import cn.mybatis.mp.db.IdAutoType;
 import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;
 import db.sql.api.DbType;
+import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 
 import java.util.ArrayList;
@@ -91,7 +93,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
             for (int i = 0; i < fieldSize; i++) {
                 TableFieldInfo tableFieldInfo = saveFieldInfoSet.get(i);
                 Object value = tableFieldInfo.getValue(t);
-                boolean hasValue = Objects.nonNull(value) || (tableFieldInfo.isTableId() && IdUtil.isIdExists(value));
+                boolean hasValue = (!tableFieldInfo.isTableId() && Objects.nonNull(value)) || (tableFieldInfo.isTableId() && IdUtil.isIdExists(value));
                 if (!hasValue) {
                     if (tableFieldInfo.isTableId()) {
                         if (tableId.value() == IdAutoType.GENERATOR) {
@@ -113,8 +115,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
                         TableInfoUtil.setValue(tableFieldInfo, t, value);
                     } else if (tableFieldInfo.isVersion()) {
                         //乐观锁设置 默认值1
-                        value = Integer.valueOf(1);
-
+                        value = 1;
                         //乐观锁回写
                         TableInfoUtil.setValue(tableFieldInfo, t, value);
                     }
@@ -122,10 +123,10 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
 
                 TableField tableField = tableFieldInfo.getTableFieldAnnotation();
                 if (Objects.isNull(value)) {
-                    values.add(insert.$().NULL());
+                    values.add(NULL.NULL);
                 } else {
                     MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                    values.add(insert.$().value(mybatisParameter));
+                    values.add(Methods.value(mybatisParameter));
                 }
             }
             insert.values(values);

@@ -16,15 +16,12 @@ public interface IGroupByMethods<SELF extends IGroupByMethods,
         COLUMN extends Cmd>
         extends
         IGroupByCmdMethod<SELF, COLUMN>,
-        IGroupByGetterMethod<SELF>,
-        IGroupByGetterFunMethod<SELF, TABLE, TABLE_FIELD>,
-        IGroupByMultiGetterMethod<SELF>,
-        IGroupByMultiGetterFunMethod<SELF, TABLE, TABLE_FIELD>,
+        IGroupByGetterMethod<SELF, TABLE, TABLE_FIELD>,
+        IGroupByMultiGetterMethod<SELF, TABLE, TABLE_FIELD>,
+
         IGroupByDatasetMethod<SELF>,
         IGroupByDatasetGetterMethod<SELF>,
-        IGroupByDatasetGetterFunMethod<SELF>,
-        IGroupByDatasetMultiGetterMethod<SELF>,
-        IGroupByDatasetMultiGetterFunMethod<SELF> {
+        IGroupByDatasetMultiGetterMethod<SELF> {
 
     @Override
     default <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T>... columns) {
@@ -36,7 +33,7 @@ public interface IGroupByMethods<SELF extends IGroupByMethods,
 
     SELF groupBy(String columnName);
 
-    SELF groupByWithFun(String columnName, Function<IDatasetField, Cmd> f);
+    SELF groupBy(String columnName, Function<IDatasetField, Cmd> f);
 
     default SELF groupBy(boolean when, String columnName) {
         if (!when) {
@@ -45,10 +42,10 @@ public interface IGroupByMethods<SELF extends IGroupByMethods,
         return this.groupBy(columnName);
     }
 
-    default SELF groupByWithFun(boolean when, String columnName, Function<IDatasetField, Cmd> f) {
+    default SELF groupBy(boolean when, String columnName, Function<IDatasetField, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }
-        return this.groupByWithFun(columnName, f);
+        return this.groupBy(columnName, f);
     }
 }

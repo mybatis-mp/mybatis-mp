@@ -38,7 +38,7 @@ public class WithTest extends BaseTest {
             queryChain
                     .with(withQuery)
                     .select(withQuery, SysRole::getId, c -> c.as("xx"))
-                    .selectWithFun(withQuery, "id", c -> c.plus(1).as("xx2"))
+                    .select(withQuery, "id", c -> c.plus(1).as("xx2"))
                     .select(SysUser.class)
                     .from(SysUser.class)
                     .from(withQuery)
@@ -70,7 +70,7 @@ public class WithTest extends BaseTest {
             queryChain
                     .with(withQuery)
                     .select(aaa, SysRole::getId, c -> c.as("xx"))
-                    .selectWithFun(bbb, "id", c -> c.plus(1).as("xx2"))
+                    .select(bbb, "id", c -> c.plus(1).as("xx2"))
                     .select(SysUser.class)
                     .from(SysUser.class)
                     .from(aaa, bbb)
@@ -101,7 +101,7 @@ public class WithTest extends BaseTest {
             queryChain
                     .with(withQuery)
                     .select(withQuery, SysRole::getId, c -> c.as("xx"))
-                    .selectWithFun(withQuery, "id", c -> c.plus(1).as("xx2"))
+                    .select(withQuery, "id", c -> c.plus(1).as("xx2"))
                     .select(SysUser.class)
                     .from(SysUser.class)
                     .join(SysUser.class, withQuery, on -> on.eq(SysUser::getRole_id, withQuery.$(withQuery, SysRole::getId)))
@@ -141,7 +141,7 @@ public class WithTest extends BaseTest {
             queryChain
                     .with(withQuery1, withQuery2)
                     .select(withQuery1, SysRole::getId, c -> c.as("xx"))
-                    .selectWithFun(withQuery2, "id", c -> c.plus(1).as("xx2"))
+                    .select(withQuery2, "id", c -> c.plus(1).as("xx2"))
                     .select(SysUser.class)
                     .from(SysUser.class)
                     .from(withQuery1, withQuery2)

@@ -19,7 +19,7 @@ public class MpTable extends db.sql.api.impl.cmd.basic.Table {
     public <E> TableField $(Getter<E> column) {
         LambdaUtil.LambdaFieldInfo fieldInfo = LambdaUtil.getFieldInfo(column);
         if (fieldInfo.getType() == tableInfo.getType()) {
-
+            return new MpTableField(this, tableInfo.getFieldInfo(fieldInfo.getName()));
         }
         return super.$(TableInfoUtil.getColumnName(column));
     }

@@ -3,6 +3,7 @@ package cn.mybatis.mp.core.mybatis.configuration;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.util.DbTypeUtil;
 import cn.mybatis.mp.db.annotations.Paging;
+import db.sql.api.DbType;
 import db.sql.api.impl.cmd.executor.DbSelector;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.reflection.ParamNameResolver;
@@ -27,10 +28,19 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     protected final Class<T> mapperInterface;
 
+    private volatile DbType dbType;
+
     public BaseMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache) {
         super(sqlSession, mapperInterface, methodCache);
         this.sqlSession = sqlSession;
         this.mapperInterface = mapperInterface;
+    }
+
+    private DbType getDbType() {
+        if (Objects.isNull(dbType)) {
+            dbType = DbTypeUtil.getDbType(sqlSession.getConfiguration());
+        }
+        return dbType;
     }
 
     @Override
@@ -44,14 +54,14 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 Consumer<Object> consumer = (Consumer<Object>) args[0];
                 DbSelector dbSelector = new DbSelector();
                 consumer.accept(dbSelector);
-                dbSelector.dbExecute(DbTypeUtil.getDbType(sqlSession.getConnection()));
+                dbSelector.dbExecute(this.getDbType());
                 return Void.class;
             } else if (method.getName().equals(MAP_WITH_KEY_METHOD_NAME)) {
                 return mapWithKey(method, args);
             } else if (method.isAnnotationPresent(Paging.class)) {
                 return paging(method, args);
             } else if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
-                return DbTypeUtil.getDbType(sqlSession.getConnection());
+                return this.getDbType();
             }
             return super.invoke(proxy, method, args);
         } finally {
@@ -63,8 +73,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     private <K, V> Map<K, V> mapWithKey(Method method, Object[] args) {
         MapKeySQLCmdQueryContext queryContext = (MapKeySQLCmdQueryContext) args[0];
         String statementId = mapperInterface.getName() + "." + method.getName();
-        Map result = sqlSession.selectMap(statementId, queryContext, queryContext.getKey());
-        return result;
+        return sqlSession.selectMap(statementId, queryContext, queryContext.getKey());
     }
 
     private Pager paging(Method method, Object[] args) {
@@ -80,7 +89,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
         List list;
         if (pager.isExecuteCount()) {
-            if (count > 0) {
+            if (Objects.nonNull(count) && count > 0) {
                 list = sqlSession.selectList(statementId + "-list", params);
             } else {
                 list = new ArrayList<>();

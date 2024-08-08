@@ -11,6 +11,8 @@ public class NestedResultInfo {
      * 内嵌信息
      */
     public final List<NestedResultInfo> nestedResultInfos;
+
+
     private final Field field;
     /**
      * 目标实体类
@@ -35,6 +37,10 @@ public class NestedResultInfo {
 
     public Field getField() {
         return field;
+    }
+
+    public int getStorey() {
+        return storey;
     }
 
     public Class<?> getTargetEntityType() {

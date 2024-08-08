@@ -54,14 +54,14 @@ public class Where implements IWhere<Where, TableField, Cmd, Object, ConditionCh
     }
 
     @Override
-    public <T> Where and(Getter<T> column, int storey, Function<TableField, ICondition> function) {
-        conditionChain().and(column, storey, function);
+    public <T> Where and(Getter<T> column, int storey, Function<TableField, ICondition> f) {
+        conditionChain().and(column, storey, f);
         return this;
     }
 
     @Override
-    public <T> Where or(Getter<T> column, int storey, Function<TableField, ICondition> function) {
-        conditionChain().or(column, storey, function);
+    public <T> Where or(Getter<T> column, int storey, Function<TableField, ICondition> f) {
+        conditionChain().or(column, storey, f);
         return this;
     }
 

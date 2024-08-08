@@ -54,7 +54,7 @@ public class EntityInfo {
         } else {
             this.idFieldInfo = null;
         }
-        this.idFieldInfoList=tableInfo.getIdColumnInfoList().stream().map(item->new EntityFieldInfo(generatorConfig, this, item)).collect(Collectors.toList());
+        this.idFieldInfoList = tableInfo.getIdColumnInfoList().stream().map(item -> new EntityFieldInfo(generatorConfig, this, item)).collect(Collectors.toList());
         List<EntityFieldInfo> fieldInfoList = tableInfo.getColumnInfoList().stream().map(item -> new EntityFieldInfo(generatorConfig, this, item)).collect(Collectors.toList());
 
         this.excludeFieldInfoList = fieldInfoList.stream().filter(item -> generatorConfig.getColumnConfig().getExcludeColumns().contains(item.getColumnInfo().getName()) || generatorConfig.getColumnConfig().getExcludeColumns().contains(item.getColumnInfo().getName().toUpperCase())).collect(Collectors.toList());
@@ -83,12 +83,12 @@ public class EntityInfo {
         this.actionPackage = generatorConfig.getBasePackage() + "." + generatorConfig.getActionConfig().getPackageName();
     }
 
-    public boolean hasId(){
+    public boolean hasId() {
         return !idFieldInfoList.isEmpty();
     }
 
-    public boolean hasMultiId(){
-        return idFieldInfoList.size()>1;
+    public boolean hasMultiId() {
+        return idFieldInfoList.size() > 1;
     }
 
     public List<EntityFieldInfo> allFieldInfoList() {

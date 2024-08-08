@@ -11,67 +11,53 @@ import java.util.function.Function;
 
 public interface IOrderByGetterFunMethod<SELF extends IOrderByGetterFunMethod, TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> extends IBaseOrderByMethods {
 
-    default <T> SELF orderByWithFun(Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
-        return this.orderByWithFun(ascOrderByDirection(), column, 1, f);
+    default <T> SELF orderBy(Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
+        return this.orderBy(ascOrderByDirection(), column, 1, f);
     }
 
-    default <T> SELF orderByWithFun(Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f) {
-        return this.orderByWithFun(ascOrderByDirection(), column, storey, f);
+    default <T> SELF orderBy(Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f) {
+        return this.orderBy(ascOrderByDirection(), column, storey, f);
     }
 
-    default <T> SELF orderByDescWithFun(Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
-        return this.orderByWithFun(descOrderByDirection(), column, 1, f);
+    default <T> SELF orderByDesc(Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
+        return this.orderBy(descOrderByDirection(), column, 1, f);
     }
 
-    default <T> SELF orderByDescWithFun(Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f) {
-        return this.orderByWithFun(descOrderByDirection(), column, storey, f);
+    default <T> SELF orderByDesc(Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f) {
+        return this.orderBy(descOrderByDirection(), column, storey, f);
     }
 
-    default <T> SELF orderByWithFun(boolean when, Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
+    default <T> SELF orderBy(boolean when, Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }
-        return this.orderByWithFun(ascOrderByDirection(), column, 1, f);
+        return this.orderBy(ascOrderByDirection(), column, 1, f);
     }
 
-    default <T> SELF orderByWithFun(boolean when, Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f) {
+    default <T> SELF orderBy(boolean when, Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }
-        return this.orderByWithFun(ascOrderByDirection(), column, storey, f);
+        return this.orderBy(ascOrderByDirection(), column, storey, f);
     }
 
-    default <T> SELF orderByDescWithFun(boolean when, Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
+    default <T> SELF orderByDesc(boolean when, Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }
-        return this.orderByWithFun(descOrderByDirection(), column, 1, f);
+        return this.orderBy(descOrderByDirection(), column, 1, f);
     }
 
-    default <T> SELF orderByDescWithFun(boolean when, Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f) {
+    default <T> SELF orderByDesc(boolean when, Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f) {
         if (!when) {
             return (SELF) this;
         }
-        return this.orderByWithFun(descOrderByDirection(), column, storey, f);
+        return this.orderBy(descOrderByDirection(), column, storey, f);
     }
 
-    default <T> SELF orderByWithFun(IOrderByDirection orderByDirection, Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
-        return this.orderByWithFun(orderByDirection, column, 1, f);
+    default <T> SELF orderBy(IOrderByDirection orderByDirection, Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
+        return this.orderBy(orderByDirection, column, 1, f);
     }
 
-    <T> SELF orderByWithFun(IOrderByDirection orderByDirection, Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f);
-
-    default <T> SELF orderBy(boolean when, IOrderByDirection orderByDirection, Getter<T> column, Function<TABLE_FIELD, Cmd> f) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderByWithFun(orderByDirection, column, 1, f);
-    }
-
-    default <T> SELF orderBy(boolean when, IOrderByDirection orderByDirection, Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f) {
-        if (!when) {
-            return (SELF) this;
-        }
-        return this.orderByWithFun(orderByDirection, column, storey, f);
-    }
+    <T> SELF orderBy(IOrderByDirection orderByDirection, Getter<T> column, int storey, Function<TABLE_FIELD, Cmd> f);
 }

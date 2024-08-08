@@ -50,8 +50,8 @@ public class GroupDataSource implements DataSource {
     }
 
     @Override
-    public void setLogWriter(PrintWriter out) throws SQLException {
-        delegateList.stream().forEach(item -> {
+    public void setLogWriter(PrintWriter out) {
+        delegateList.forEach(item -> {
             try {
                 item.setLogWriter(out);
             } catch (SQLException e) {
@@ -66,8 +66,8 @@ public class GroupDataSource implements DataSource {
     }
 
     @Override
-    public void setLoginTimeout(int seconds) throws SQLException {
-        delegateList.stream().forEach(item -> {
+    public void setLoginTimeout(int seconds) {
+        delegateList.forEach(item -> {
             try {
                 item.setLoginTimeout(seconds);
             } catch (SQLException e) {

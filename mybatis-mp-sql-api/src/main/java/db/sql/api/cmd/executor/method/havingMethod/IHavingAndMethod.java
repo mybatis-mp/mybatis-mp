@@ -19,6 +19,8 @@ public interface IHavingAndMethod<SELF extends IHavingAndMethod, TABLE extends I
         return this.havingAnd(condition);
     }
 
+    //---
+
     default <T> SELF havingAnd(Getter<T> column, Function<TABLE_FIELD, ICondition> f) {
         return this.havingAnd(true, column, f);
     }
@@ -32,28 +34,6 @@ public interface IHavingAndMethod<SELF extends IHavingAndMethod, TABLE extends I
     }
 
     <T> SELF havingAnd(boolean when, Getter<T> column, int storey, Function<TABLE_FIELD, ICondition> f);
-
-    default <T> SELF havingAnd(Function<TABLE_FIELD[], ICondition> f, Getter<T>... columns) {
-        return this.havingAnd(true, f, columns);
-    }
-
-    default <T> SELF havingAnd(boolean when, Function<TABLE_FIELD[], ICondition> f, Getter<T>... columns) {
-        return this.havingAnd(when, f, 1, columns);
-    }
-
-    default <T> SELF havingAnd(Function<TABLE_FIELD[], ICondition> f, int storey, Getter<T>... columns) {
-        return this.havingAnd(true, f, storey, columns);
-    }
-
-    <T> SELF havingAnd(boolean when, Function<TABLE_FIELD[], ICondition> f, int storey, Getter<T>... columns);
-
-    default SELF havingAnd(Function<TABLE_FIELD[], ICondition> f, GetterField... getterFields) {
-        return this.havingAnd(true, f, getterFields);
-    }
-
-    default SELF havingAnd(boolean when, Function<TABLE_FIELD[], ICondition> f, GetterField... getterFields) {
-        return this.havingAnd(when, getterFields, f);
-    }
 
     default SELF havingAnd(GetterField[] getterFields, Function<TABLE_FIELD[], ICondition> f) {
         return this.havingAnd(true, getterFields, f);

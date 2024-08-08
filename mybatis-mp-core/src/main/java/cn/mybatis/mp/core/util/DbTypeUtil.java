@@ -14,7 +14,7 @@ public final class DbTypeUtil {
     }
 
     public static DbType getDbType(String databaseId, DataSource dataSource) {
-        if (Objects.isNull(databaseId) || StringPool.EMPTY.equals(databaseId)) {
+        if (Objects.isNull(databaseId) || databaseId.isEmpty()) {
             return DbTypeUtil.getDbType(dataSource);
         }
         return DbType.getByName(databaseId);
@@ -64,7 +64,7 @@ public final class DbTypeUtil {
         try (Connection connection = dataSource.getConnection()) {
             return getJdbcUrl(connection);
         } catch (Exception e) {
-            throw new RuntimeException("无法解析到 数据库的url");
+            throw new RuntimeException("无法解析到 数据库的url", e);
         }
     }
 
@@ -72,7 +72,7 @@ public final class DbTypeUtil {
         try {
             return connection.getMetaData().getURL();
         } catch (Exception e) {
-            throw new RuntimeException("无法解析到 数据库的url");
+            throw new RuntimeException("无法解析到 数据库的url", e);
         }
     }
 

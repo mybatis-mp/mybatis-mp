@@ -25,26 +25,24 @@ public final class MybatisTypeHandlerUtil {
             Constructor constructor = typeHandlerClass.getConstructor(Class.class, Type.class);
             return (TypeHandler<?>) constructor.newInstance(field.getType(), field.getGenericType());
         } catch (ReflectiveOperationException e) {
+            //exception = e;
+        }
+
+
+        try {
+            Constructor constructor = typeHandlerClass.getConstructor(Class.class);
+            return (TypeHandler<?>) constructor.newInstance(field.getType());
+        } catch (ReflectiveOperationException e) {
+            //exception = e;
+        }
+
+        try {
+            Constructor constructor = typeHandlerClass.getConstructor();
+            return (TypeHandler<?>) constructor.newInstance();
+        } catch (ReflectiveOperationException e) {
             exception = e;
         }
 
-        if (Objects.nonNull(exception)) {
-            try {
-                Constructor constructor = typeHandlerClass.getConstructor(Class.class);
-                return (TypeHandler<?>) constructor.newInstance(field.getType());
-            } catch (ReflectiveOperationException e) {
-                exception = e;
-            }
-        }
-
-        if (Objects.nonNull(exception)) {
-            try {
-                Constructor constructor = typeHandlerClass.getConstructor();
-                return (TypeHandler<?>) constructor.newInstance();
-            } catch (ReflectiveOperationException e) {
-                exception = e;
-            }
-        }
 
         throw new RuntimeException(exception);
     }

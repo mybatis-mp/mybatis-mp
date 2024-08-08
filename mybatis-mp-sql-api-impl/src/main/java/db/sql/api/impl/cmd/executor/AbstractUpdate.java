@@ -158,9 +158,9 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     }
 
     @Override
-    public <T> SELF set(Getter<T> field, Function<TableField, Cmd> function) {
+    public <T> SELF set(Getter<T> field, Function<TableField, Cmd> f) {
         TableField tableField = $.field(field);
-        return this.set(tableField, function.apply(tableField));
+        return this.set(tableField, f.apply(tableField));
     }
 
     @Override
@@ -195,14 +195,14 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     }
 
     @Override
-    public <T> SELF and(Getter<T> column, int storey, Function<TableField, ICondition> function) {
-        $where().and(column, storey, function);
+    public <T> SELF and(Getter<T> column, int storey, Function<TableField, ICondition> f) {
+        $where().and(column, storey, f);
         return (SELF) this;
     }
 
     @Override
-    public <T> SELF or(Getter<T> column, int storey, Function<TableField, ICondition> function) {
-        $where().or(column, storey, function);
+    public <T> SELF or(Getter<T> column, int storey, Function<TableField, ICondition> f) {
+        $where().or(column, storey, f);
         return (SELF) this;
     }
 

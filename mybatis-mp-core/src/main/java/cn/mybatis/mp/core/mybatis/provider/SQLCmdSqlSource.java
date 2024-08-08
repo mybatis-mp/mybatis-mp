@@ -39,7 +39,7 @@ public class SQLCmdSqlSource implements SqlSource {
         this.configuration = configuration;
         this.providerMethod = providerMethod;
         this.providerContext = providerContext;
-        this.dbType = DbTypeUtil.getDbType(providerContext.getDatabaseId(), configuration.getEnvironment().getDataSource());
+        this.dbType = DbTypeUtil.getDbType(configuration);
     }
 
 

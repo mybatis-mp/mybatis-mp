@@ -160,14 +160,14 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
     }
 
     @Override
-    public <T> SELF and(Getter<T> column, int storey, Function<TableField, ICondition> function) {
-        $where().and(column, storey, function);
+    public <T> SELF and(Getter<T> column, int storey, Function<TableField, ICondition> f) {
+        $where().and(column, storey, f);
         return (SELF) this;
     }
 
     @Override
-    public <T> SELF or(Getter<T> column, int storey, Function<TableField, ICondition> function) {
-        $where().or(column, storey, function);
+    public <T> SELF or(Getter<T> column, int storey, Function<TableField, ICondition> f) {
+        $where().or(column, storey, f);
         return (SELF) this;
     }
 

@@ -156,13 +156,11 @@ public final class SQLOptimizeUtils {
             List<IUnion> unionList = unions.getUnions();
             int size = unionList.size();
             List<CmdList> cmdListList = new ArrayList<>(size);
-            for (int i = 0; i < size; i++) {
-                IUnion union = unionList.get(i);
+            for (IUnion union : unionList) {
                 Map<Class, Cmd> unionCmdClassMap = new HashMap<>();
                 List<Cmd> unionCmdList = union.getUnionQuery().cmds();
-                int unionCmdSize = unionCmdList.size();
-                for (int j = 0; j < unionCmdSize; j++) {
-                    Cmd unionCmd = unionCmdList.get(j);
+
+                for (Cmd unionCmd : unionCmdList) {
                     unionCmdClassMap.put(unionCmd.getClass(), unionCmd);
                 }
                 optimizedCmdList(dbType, unionCmdClassMap, false, optimizeOrderBy, optimizeJoins, true);
@@ -206,8 +204,7 @@ public final class SQLOptimizeUtils {
         Map<Class, Cmd> classCmdMap = new HashMap<>();
         List<Cmd> cmdList = query.cmds();
         int size = cmdList.size();
-        for (int i = 0; i < size; i++) {
-            Cmd cmd = cmdList.get(i);
+        for (Cmd cmd : cmdList) {
             classCmdMap.put(cmd.getClass(), cmd);
         }
         optimizedCmdList(context.getDbType(), classCmdMap, false, false, true, classCmdMap.containsKey(Unions.class));
@@ -248,8 +245,7 @@ public final class SQLOptimizeUtils {
         Map<Class, Cmd> classCmdMap = new HashMap<>();
         List<Cmd> cmdList = query.cmds();
         int size = cmdList.size();
-        for (int i = 0; i < size; i++) {
-            Cmd cmd = cmdList.get(i);
+        for (Cmd cmd : cmdList) {
             classCmdMap.put(cmd.getClass(), cmd);
         }
 

@@ -17,6 +17,7 @@ import cn.mybatis.mp.db.IdAutoType;
 import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;
 import db.sql.api.DbType;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.Table;
 
 import java.util.ArrayList;
@@ -71,7 +72,6 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
                         Object id = identifierGenerator.nextId(tableInfo.getType());
                         if (IdUtil.setId(entity, tableFieldInfo, id)) {
                             value = id;
-                            isNeedInsert = true;
                         }
                     }
                 } else {
@@ -90,7 +90,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
                 isNeedInsert = true;
 
                 //乐观锁设置 默认值1
-                value = Integer.valueOf(1);
+                value = 1;
                 //乐观锁回写
                 TableInfoUtil.setValue(tableFieldInfo, entity, value);
             }
@@ -99,7 +99,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
                 insert.field($.field(table, tableFieldInfo.getColumnName()));
                 TableField tableField = tableFieldInfo.getTableFieldAnnotation();
                 MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                values.add($.value(mybatisParameter));
+                values.add(Methods.value(mybatisParameter));
             }
         }
         insert.values(values);

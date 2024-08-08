@@ -61,15 +61,13 @@ public class UpdateTable implements IUpdateTable<Table> {
                     } else {
                         sqlBuilder.append(table.getName());
                     }
-                    sqlBuilder.append(SqlConst.BLANK);
-                    return sqlBuilder;
                 } else {
                     //没有 from 不加别名
                     table.setAlias(null);
                     sqlBuilder.append(table.getName());
-                    sqlBuilder.append(SqlConst.BLANK);
-                    return sqlBuilder;
                 }
+                sqlBuilder.append(SqlConst.BLANK);
+                return sqlBuilder;
             }
 
             sqlBuilder.append(table.getName());

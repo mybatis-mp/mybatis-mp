@@ -155,6 +155,27 @@ public interface FunctionInterface extends Cmd {
         return Methods.right(this, length);
     }
 
+    /**
+     * 字段串截取
+     *
+     * @param start 默认从1开始
+     * @return
+     */
+    default SubStr subStr(int start) {
+        return Methods.subStr(this, start);
+    }
+
+    /**
+     * 字段串截取
+     *
+     * @param start  默认从1开始
+     * @param length 截取长度
+     * @return
+     */
+    default SubStr subStr(int start, int length) {
+        return Methods.subStr(this, start, length);
+    }
+
     default Upper upper() {
         return Methods.upper(this);
     }
@@ -202,10 +223,6 @@ public interface FunctionInterface extends Cmd {
     default FindInSet findInSet(String str) {
         return Methods.findInSet(this, str);
     }
-
-//    default FromUnixTime fromUnixTime() {
-//        return Methods.fromUnixTime(this);
-//    }
 
     default Year year() {
         return Methods.year(this);
@@ -320,19 +337,19 @@ public interface FunctionInterface extends Cmd {
     }
 
     default Concat concat(Serializable... values) {
-        return Methods.concat(this, values);
+        return Methods.concat(this, (Object[]) values);
     }
 
     default Concat concat(Cmd... values) {
-        return Methods.concat(this, values);
+        return Methods.concat(this, (Object[]) values);
     }
 
     default ConcatAs concatAs(String split, Serializable... values) {
-        return Methods.concatAs(this, split, values);
+        return Methods.concatAs(this, split, (Object[]) values);
     }
 
     default ConcatAs concatAs(String split, Cmd... values) {
-        return Methods.concatAs(this, split, values);
+        return Methods.concatAs(this, split, (Object[]) values);
     }
 
     default IfNull ifNull(Object value) {

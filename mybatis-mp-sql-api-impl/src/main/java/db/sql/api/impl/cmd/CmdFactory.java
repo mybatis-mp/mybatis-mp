@@ -7,7 +7,10 @@ import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.ICmdFactory;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
-import db.sql.api.impl.cmd.basic.*;
+import db.sql.api.impl.cmd.basic.AllField;
+import db.sql.api.impl.cmd.basic.DatasetField;
+import db.sql.api.impl.cmd.basic.Table;
+import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.tookit.LambdaUtil;
 
 import java.util.HashMap;
@@ -15,7 +18,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 
-public class CmdFactory extends Methods implements ICmdFactory<Table, TableField> {
+public class CmdFactory implements ICmdFactory<Table, TableField> {
 
     protected final Map<String, Table> tableCache = new HashMap<>(5);
 
@@ -31,14 +34,9 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, TableField
         this.tableAsPrefix = tableAsPrefix;
     }
 
-    public NULL NULL() {
-        return NULL.NULL;
-    }
-
     protected String tableAs(int storey, int tableNums) {
-        String as = this.tableAsPrefix +
+        return this.tableAsPrefix +
                 (tableNums == 1 ? "" : tableNums);
-        return as;
     }
 
     public Table cacheTable(Class<?> entity, int storey) {
@@ -81,11 +79,11 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, TableField
     }
 
     @Override
-    public TableField[] fields(GetterField... getterFields) {
+    @SafeVarargs
+    public final TableField[] fields(GetterField... getterFields) {
         TableField[] tableFields = new TableField[getterFields.length];
         for (int i = 0; i < getterFields.length; i++) {
-            GetterField columnField = getterFields[i];
-            GetterField getterField = columnField;
+            GetterField getterField = getterFields[i];
             tableFields[i] = field(getterField.getGetter(), getterField.getStorey());
         }
         return tableFields;
@@ -132,9 +130,4 @@ public class CmdFactory extends Methods implements ICmdFactory<Table, TableField
         Table table = table(clazz, storey);
         return new TableField(table, filedName);
     }
-
-    public BasicValue value(Object value) {
-        return new BasicValue(value);
-    }
-
 }

@@ -20,7 +20,7 @@ public class MybatisParameter implements Serializable {
         this.value = value;
     }
 
-    public static final MybatisParameter create(Object value, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType) {
+    public static MybatisParameter create(Object value, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType) {
         return new MybatisParameter(value, typeHandler, jdbcType);
     }
 

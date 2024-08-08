@@ -15,7 +15,7 @@ public interface IUpdateMethod<SELF extends IUpdateMethod, TABLE, TABLE_FILED, V
 
     <T> SELF set(Getter<T> field, V value);
 
-    <T> SELF set(Getter<T> field, Function<TABLE_FILED, Cmd> function);
+    <T> SELF set(Getter<T> field, Function<TABLE_FILED, Cmd> f);
 
     /**
      * 实体类修改拦截
