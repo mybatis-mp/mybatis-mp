@@ -11,11 +11,11 @@ public class SubStr extends BasicFunction<SubStr> {
 
     private final Integer length;
 
-    public SubStr(Cmd key,int start) {
-        this(key,start,null);
+    public SubStr(Cmd key, int start) {
+        this(key, start, null);
     }
 
-    public SubStr(Cmd key, int start,Integer length) {
+    public SubStr(Cmd key, int start, Integer length) {
         super(SqlConst.SUBSTR, key);
         this.start = start;
         this.length = length;
@@ -26,7 +26,7 @@ public class SubStr extends BasicFunction<SubStr> {
         sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
         this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER).append(this.start);
-        if(Objects.nonNull(length)){
+        if (Objects.nonNull(length)) {
             sqlBuilder.append(SqlConst.DELIMITER).append(this.length);
         }
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);

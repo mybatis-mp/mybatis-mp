@@ -22,9 +22,9 @@ public class RoutingDataSourceAbstractPointcutAdvisor extends AbstractPointcutAd
                 return true;
             }
             Method specificMethod = AopUtils.getMostSpecificMethod(method, targetClass);
-                if (methodMatch(specificMethod)) {
-                    return true;
-                }
+            if (methodMatch(specificMethod)) {
+                return true;
+            }
 
             return method.getDeclaringClass().isAnnotationPresent(DS.class);
         }

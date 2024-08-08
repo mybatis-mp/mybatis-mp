@@ -3,6 +3,7 @@ package cn.mybatis.mp.core.mybatis.configuration;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.util.DbTypeUtil;
 import cn.mybatis.mp.db.annotations.Paging;
+import db.sql.api.DbType;
 import db.sql.api.impl.cmd.executor.DbSelector;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.reflection.ParamNameResolver;
@@ -26,6 +27,8 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     protected final SqlSession sqlSession;
 
     protected final Class<T> mapperInterface;
+
+    private volatile DbType dbType;
 
     public BaseMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache) {
         super(sqlSession, mapperInterface, methodCache);
@@ -51,7 +54,10 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             } else if (method.isAnnotationPresent(Paging.class)) {
                 return paging(method, args);
             } else if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
-                return DbTypeUtil.getDbType(sqlSession.getConnection());
+                if (Objects.isNull(dbType)) {
+                    dbType = DbTypeUtil.getDbType(sqlSession.getConnection());
+                }
+                return dbType;
             }
             return super.invoke(proxy, method, args);
         } finally {

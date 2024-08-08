@@ -494,7 +494,7 @@ public interface MybatisMapper<T> extends CommonMapper {
         final T first = list.get(0);
         TableInfo tableInfo = Tables.get(first.getClass());
 
-        DbType dbType=getCurrentDbType();
+        DbType dbType = getCurrentDbType();
 
         for (TableFieldInfo tableFieldInfo : tableInfo.getTableFieldInfos()) {
             if (!tableFieldInfo.getTableFieldAnnotation().insert()) {

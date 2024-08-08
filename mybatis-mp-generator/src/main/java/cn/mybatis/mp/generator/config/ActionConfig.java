@@ -172,7 +172,7 @@ public class ActionConfig {
         return this;
     }
 
-    public ActionConfig saveMethodName(String saveMethodName){
+    public ActionConfig saveMethodName(String saveMethodName) {
         this.saveMethodName = saveMethodName;
         return this;
     }
@@ -192,6 +192,7 @@ public class ActionConfig {
         this.enableUpdate = enable;
         return this;
     }
+
     public ActionConfig updateMethodName(String updateMethodName) {
         this.updateMethodName = updateMethodName;
         return this;
@@ -201,6 +202,7 @@ public class ActionConfig {
         this.updateUriPath = updateUriPath;
         return this;
     }
+
     /**
      * 是否生成deleteById方法
      *
@@ -232,6 +234,7 @@ public class ActionConfig {
         this.enableFind = enable;
         return this;
     }
+
     public ActionConfig findMethodName(String findMethodName) {
         this.findMethodName = findMethodName;
         return this;
@@ -252,13 +255,14 @@ public class ActionConfig {
         this.enableGet = enable;
         return this;
     }
+
     public ActionConfig getMethodName(String getMethodName) {
         this.getMethodName = getMethodName;
         return this;
     }
 
     public ActionConfig getUriPath(String getUriPath) {
-        this.getUriPath =getUriPath;
+        this.getUriPath = getUriPath;
         return this;
     }
 
