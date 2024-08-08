@@ -224,10 +224,6 @@ public interface FunctionInterface extends Cmd {
         return Methods.findInSet(this, str);
     }
 
-//    default FromUnixTime fromUnixTime() {
-//        return Methods.fromUnixTime(this);
-//    }
-
     default Year year() {
         return Methods.year(this);
     }

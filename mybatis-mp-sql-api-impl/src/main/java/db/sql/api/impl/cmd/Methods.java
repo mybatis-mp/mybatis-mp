@@ -832,18 +832,6 @@ public final class Methods {
         return new CurrentDateTime();
     }
 
-
-    /**
-     * 将UNIX时间戳转成时间
-     *
-     * @param key
-     * @return
-     */
-//    public static FromUnixTime fromUnixTime(Cmd key) {
-//        Objects.requireNonNull(key);
-//        return new FromUnixTime(key);
-//    }
-
     /**
      * 获取年份
      *

@@ -500,6 +500,7 @@ public interface MybatisMapper<T> extends CommonMapper {
             }
             if (tableFieldInfo.isTableId()) {
                 TableId tableId = TableInfoUtil.getTableIdAnnotation(tableFieldInfo.getField(), getCurrentDbType());
+                Objects.requireNonNull(tableId.value());
                 if (tableId.value() == IdAutoType.AUTO) {
                     Object id;
                     try {

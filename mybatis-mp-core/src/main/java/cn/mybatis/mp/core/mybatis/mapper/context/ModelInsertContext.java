@@ -71,7 +71,6 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
                         }
                         if (IdUtil.setId(model, modelFieldInfo, id)) {
                             value = id;
-                            isNeedInsert = true;
                         }
                     }
                 } else {

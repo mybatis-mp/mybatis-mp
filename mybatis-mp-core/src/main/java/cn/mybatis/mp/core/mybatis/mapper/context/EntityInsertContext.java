@@ -72,7 +72,6 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
                         Object id = identifierGenerator.nextId(tableInfo.getType());
                         if (IdUtil.setId(entity, tableFieldInfo, id)) {
                             value = id;
-                            isNeedInsert = true;
                         }
                     }
                 } else {
