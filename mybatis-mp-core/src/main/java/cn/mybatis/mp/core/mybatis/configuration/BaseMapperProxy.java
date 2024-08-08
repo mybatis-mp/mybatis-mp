@@ -36,6 +36,13 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         this.mapperInterface = mapperInterface;
     }
 
+    private DbType getDbType() {
+        if (Objects.isNull(dbType)) {
+            dbType = DbTypeUtil.getDbType(sqlSession.getConfiguration());
+        }
+        return dbType;
+    }
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.isDefault()) {
@@ -47,17 +54,14 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 Consumer<Object> consumer = (Consumer<Object>) args[0];
                 DbSelector dbSelector = new DbSelector();
                 consumer.accept(dbSelector);
-                dbSelector.dbExecute(DbTypeUtil.getDbType(sqlSession.getConnection()));
+                dbSelector.dbExecute(this.getDbType());
                 return Void.class;
             } else if (method.getName().equals(MAP_WITH_KEY_METHOD_NAME)) {
                 return mapWithKey(method, args);
             } else if (method.isAnnotationPresent(Paging.class)) {
                 return paging(method, args);
             } else if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
-                if (Objects.isNull(dbType)) {
-                    dbType = DbTypeUtil.getDbType(sqlSession.getConnection());
-                }
-                return dbType;
+                return this.getDbType();
             }
             return super.invoke(proxy, method, args);
         } finally {

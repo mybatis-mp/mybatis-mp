@@ -20,7 +20,7 @@ public class PagingCountSqlSource implements SqlSource {
     public PagingCountSqlSource(Configuration configuration, SqlSource sqlSource, boolean optimize) {
         this.configuration = configuration;
         this.sqlSource = sqlSource;
-        this.dbType = DbTypeUtil.getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
+        this.dbType = DbTypeUtil.getDbType(configuration);
         this.optimize = optimize;
     }
 
