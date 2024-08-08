@@ -494,12 +494,14 @@ public interface MybatisMapper<T> extends CommonMapper {
         final T first = list.get(0);
         TableInfo tableInfo = Tables.get(first.getClass());
 
+        DbType dbType=getCurrentDbType();
+
         for (TableFieldInfo tableFieldInfo : tableInfo.getTableFieldInfos()) {
             if (!tableFieldInfo.getTableFieldAnnotation().insert()) {
                 continue;
             }
             if (tableFieldInfo.isTableId()) {
-                TableId tableId = TableInfoUtil.getTableIdAnnotation(tableFieldInfo.getField(), getCurrentDbType());
+                TableId tableId = TableInfoUtil.getTableIdAnnotation(tableFieldInfo.getField(), dbType);
                 Objects.requireNonNull(tableId.value());
                 if (tableId.value() == IdAutoType.AUTO) {
                     Object id;
