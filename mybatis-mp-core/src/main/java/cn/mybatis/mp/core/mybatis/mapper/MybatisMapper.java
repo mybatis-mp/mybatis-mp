@@ -128,7 +128,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param ids 多个ID
      * @return 影响数量
      */
-    default int deleteByIds(List<Serializable> ids) {
+    default <ID extends Serializable> int deleteByIds(List<ID> ids) {
         return getBasicMapper().deleteByIds(getEntityType(), ids);
     }
 
