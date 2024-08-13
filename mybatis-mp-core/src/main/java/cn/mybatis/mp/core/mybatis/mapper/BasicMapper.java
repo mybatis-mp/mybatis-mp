@@ -321,7 +321,7 @@ public interface BasicMapper extends BaseMapper {
      * @param ids        多个ID
      * @return 影响的数量
      */
-    default <E> int deleteByIds(Class<E> entityType, List<Serializable> ids) {
+    default <E, ID extends Serializable> int deleteByIds(Class<E> entityType, List<ID> ids) {
         if (ids == null || ids.isEmpty()) {
             throw new RuntimeException("ids list can't be empty");
         }
