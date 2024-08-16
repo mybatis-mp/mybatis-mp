@@ -13,6 +13,8 @@ import java.util.Objects;
 
 public class DynamicsMappedStatement {
 
+    public final static String MAPPED_STATEMENT_DB_KEY_NAME = "(dbType)";
+
     public static MappedStatement wrapMappedStatement(MappedStatement ms, Object parameterObject) {
         if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
             //这里是通用mapper 需要在运行时处理
@@ -26,7 +28,7 @@ public class DynamicsMappedStatement {
 
             SQLCmdSqlSource sqlCmdSqlSource = (SQLCmdSqlSource) ms.getSqlSource();
 
-            String id = ms.getId() + sqlCmdSqlSource.getDbType() + sqlCmdInsertContext.getEntityType();
+            String id = ms.getId() + "-" + MAPPED_STATEMENT_DB_KEY_NAME + "-" + sqlCmdSqlSource.getDbType() + "-" + sqlCmdInsertContext.getEntityType().getName();
 
             if (ms.getConfiguration().hasStatement(id)) {
                 return ms.getConfiguration().getMappedStatement(id);
@@ -49,8 +51,13 @@ public class DynamicsMappedStatement {
                 if (ms.getConfiguration().hasStatement(id)) {
                     return ms.getConfiguration().getMappedStatement(id);
                 }
-                ms.getConfiguration().addMappedStatement(newMappedStatement);
-                return newMappedStatement;
+                synchronized (id) {
+                    if (ms.getConfiguration().hasStatement(id)) {
+                        return ms.getConfiguration().getMappedStatement(id);
+                    }
+                    ms.getConfiguration().addMappedStatement(newMappedStatement);
+                    return newMappedStatement;
+                }
             } catch (IllegalArgumentException e) {
                 ms.getStatementLog().warn(e.getMessage());
             }
@@ -97,7 +104,12 @@ public class DynamicsMappedStatement {
             if (ms.getConfiguration().hasStatement(id)) {
                 return ms.getConfiguration().getMappedStatement(id);
             }
-            ms.getConfiguration().addMappedStatement(newMappedStatement);
+            synchronized (id) {
+                if (ms.getConfiguration().hasStatement(id)) {
+                    return ms.getConfiguration().getMappedStatement(id);
+                }
+                ms.getConfiguration().addMappedStatement(newMappedStatement);
+            }
         } catch (IllegalArgumentException e) {
             ms.getStatementLog().warn(e.getMessage());
         }

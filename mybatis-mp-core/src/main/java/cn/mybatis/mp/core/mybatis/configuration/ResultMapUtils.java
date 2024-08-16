@@ -22,7 +22,7 @@ public final class ResultMapUtils {
     }
 
     public static ResultMap getResultMap(MybatisConfiguration configuration, Class clazz) {
-        String id = "mp-" + clazz.getSimpleName();
+        String id = "mp-" + clazz.getName();
         if (configuration.hasResultMap(id)) {
             return configuration.getResultMap(id);
         }
