@@ -67,7 +67,7 @@ public class DynamicsMappedStatement {
             if (ms.getConfiguration().hasStatement(id)) {
                 return ms.getConfiguration().getMappedStatement(id);
             }
-            synchronized (id) {
+            synchronized (id.intern()) {
                 if (ms.getConfiguration().hasStatement(id)) {
                     return ms.getConfiguration().getMappedStatement(id);
                 }
@@ -108,7 +108,7 @@ public class DynamicsMappedStatement {
             if (ms.getConfiguration().hasStatement(id)) {
                 return ms.getConfiguration().getMappedStatement(id);
             }
-            synchronized (id) {
+            synchronized (id.intern()) {
                 if (ms.getConfiguration().hasStatement(id)) {
                     return ms.getConfiguration().getMappedStatement(id);
                 }
