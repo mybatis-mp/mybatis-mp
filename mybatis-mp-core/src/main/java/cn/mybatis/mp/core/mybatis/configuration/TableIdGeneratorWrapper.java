@@ -69,13 +69,22 @@ public class TableIdGeneratorWrapper {
 
     public static void addEntityKeyGenerator(MappedStatement ms, Class entityClass) {
         String selectKeyId = ms.getId() + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-        try {
-            TableInfo tableInfo = Tables.get(entityClass);
-            if (Objects.nonNull(tableInfo.getIdFieldInfo())) {
-                addEntityKeyGenerator(ms, selectKeyId, tableInfo);
+        if (ms.getConfiguration().hasKeyGenerator(selectKeyId)) {
+            return;
+        }
+
+        synchronized (selectKeyId) {
+            if (ms.getConfiguration().hasKeyGenerator(selectKeyId)) {
+                return;
             }
-        } catch (NotTableClassException e) {
-            //忽略
+            try {
+                TableInfo tableInfo = Tables.get(entityClass);
+                if (Objects.nonNull(tableInfo.getIdFieldInfo())) {
+                    addEntityKeyGenerator(ms, selectKeyId, tableInfo);
+                }
+            } catch (NotTableClassException e) {
+                //忽略
+            }
         }
     }
 
@@ -120,6 +129,8 @@ public class TableIdGeneratorWrapper {
             msMetaObject.setValue("keyProperties", new String[]{"id"});
             msMetaObject.setValue("keyColumns", new String[]{tableInfo.getIdFieldInfo().getColumnName()});
         }
-        ms.getConfiguration().addKeyGenerator(selectKeyId, keyGenerator);
+        if (ms.getConfiguration().hasKeyGenerator(selectKeyId)) {
+            ms.getConfiguration().addKeyGenerator(selectKeyId, keyGenerator);
+        }
     }
 }
