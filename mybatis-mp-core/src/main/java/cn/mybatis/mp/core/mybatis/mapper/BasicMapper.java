@@ -138,7 +138,7 @@ public interface BasicMapper extends BaseMapper {
      * @param list
      * @return 影响条数
      */
-    default <E> int update(List<E> list) {
+    default <E> int update(Collection<E> list) {
         int cnt = 0;
         for (E entity : list) {
             cnt += this.update(entity);
@@ -152,7 +152,7 @@ public interface BasicMapper extends BaseMapper {
      * @param list
      * @return 修改条数
      */
-    default <E> int update(List<E> list, Getter<E>... forceUpdateFields) {
+    default <E> int update(Collection<E> list, Getter<E>... forceUpdateFields) {
         Set<String> forceUpdateFieldsSet = new HashSet<>();
         if (Objects.nonNull(forceUpdateFields)) {
             for (Getter<?> column : forceUpdateFields) {
@@ -321,7 +321,7 @@ public interface BasicMapper extends BaseMapper {
      * @param ids        多个ID
      * @return 影响的数量
      */
-    default <E, ID extends Serializable> int deleteByIds(Class<E> entityType, List<ID> ids) {
+    default <E, ID extends Serializable> int deleteByIds(Class<E> entityType, Collection<ID> ids) {
         if (ids == null || ids.isEmpty()) {
             throw new RuntimeException("ids list can't be empty");
         }
@@ -355,7 +355,7 @@ public interface BasicMapper extends BaseMapper {
      * @param list 实体类实例list
      * @return 修改条数
      */
-    default <E> int delete(List<E> list) {
+    default <E> int delete(Collection<E> list) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
@@ -551,7 +551,7 @@ public interface BasicMapper extends BaseMapper {
      * @param <K>    map的key的类型
      * @return 一个map
      */
-    default <E, K> Map<K, E> mapWithKey(GetterFun<E, K> mapKey, List<Serializable> ids) {
+    default <E, K, ID extends Serializable> Map<K, E> mapWithKey(GetterFun<E, K> mapKey, Collection<ID> ids) {
         if (Objects.isNull(ids) || ids.isEmpty()) {
             return Collections.emptyMap();
         }

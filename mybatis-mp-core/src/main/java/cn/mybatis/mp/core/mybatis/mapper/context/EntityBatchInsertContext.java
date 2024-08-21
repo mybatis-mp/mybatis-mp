@@ -20,27 +20,24 @@ import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert> {
 
-    private final List<T> list;
+    private final Collection<T> list;
 
     private final Set<String> saveFieldSet;
 
 
-    public EntityBatchInsertContext(List<T> list, Set<String> saveFieldSet) {
+    public EntityBatchInsertContext(Collection<T> list, Set<String> saveFieldSet) {
         this.list = list;
         this.saveFieldSet = saveFieldSet;
     }
 
-    private static Insert createCmd(List<?> list, Set<String> saveFieldSet, DbType dbType) {
+    private static Insert createCmd(Collection<?> list, Set<String> saveFieldSet, DbType dbType) {
         Insert insert = new Insert();
-        Class<?> entityType = list.get(0).getClass();
+        Class<?> entityType = list.stream().findFirst().get().getClass();
         TableInfo tableInfo = Tables.get(entityType);
         Table table = insert.$().table(tableInfo.getSchemaAndTableName());
         insert.insert(table);

@@ -97,7 +97,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param list 实体类实例list
      * @return 修改条数
      */
-    default int delete(List<T> list) {
+    default int delete(Collection<T> list) {
         return getBasicMapper().delete(list);
     }
 
@@ -128,7 +128,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param ids 多个ID
      * @return 影响数量
      */
-    default <ID extends Serializable> int deleteByIds(List<ID> ids) {
+    default <ID extends Serializable> int deleteByIds(Collection<ID> ids) {
         return getBasicMapper().deleteByIds(getEntityType(), ids);
     }
 
@@ -199,7 +199,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param list
      * @return 影响条数
      */
-    default int update(List<T> list) {
+    default int update(Collection<T> list) {
         return getBasicMapper().update(list);
     }
 
@@ -209,7 +209,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param list
      * @return 修改条数
      */
-    default int update(List<T> list, Getter<T>... forceUpdateFields) {
+    default int update(Collection<T> list, Getter<T>... forceUpdateFields) {
         return getBasicMapper().update(list, forceUpdateFields);
     }
 
@@ -388,7 +388,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param <K>    map的key的类型
      * @return 一个map
      */
-    default <K> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, List<Serializable> ids) {
+    default <K> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, Collection<Serializable> ids) {
         return getBasicMapper().mapWithKey(mapKey, ids);
     }
 
@@ -470,7 +470,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param list
      * @return 插入条数
      */
-    default int save(List<T> list) {
+    default int save(Collection<T> list) {
         int cnt = 0;
         for (T entity : list) {
             cnt += this.save(entity);
@@ -485,13 +485,13 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param list
      * @return 插入的条数
      */
-    default int saveBatch(List<T> list) {
+    default int saveBatch(Collection<T> list) {
         Objects.requireNonNull(list);
         if (list.isEmpty()) {
             return 0;
         }
         Set<String> saveFieldSet = new HashSet<>();
-        final T first = list.get(0);
+        final T first = list.stream().findFirst().get();
         TableInfo tableInfo = Tables.get(first.getClass());
 
         DbType dbType = getCurrentDbType();
@@ -531,7 +531,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param saveFields 指定那些列插入
      * @return 插入的条数
      */
-    default int saveBatch(List<T> list, Getter<T>... saveFields) {
+    default int saveBatch(Collection<T> list, Getter<T>... saveFields) {
         Objects.requireNonNull(list);
         if (list.isEmpty()) {
             return 0;
