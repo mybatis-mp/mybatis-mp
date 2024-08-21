@@ -13,6 +13,7 @@ import db.sql.api.cmd.basic.IOrderByDirection;
 import db.sql.api.impl.cmd.executor.AbstractQuery;
 import db.sql.api.impl.cmd.struct.On;
 import db.sql.api.impl.cmd.struct.Where;
+import db.sql.api.impl.tookit.OptimizeOptions;
 
 import java.util.Map;
 import java.util.Objects;
@@ -21,6 +22,8 @@ import java.util.function.Consumer;
 public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQuery<Q, MybatisCmdFactory> {
 
     protected Class returnType;
+
+    protected OptimizeOptions optimizeOptions = new OptimizeOptions();
 
     public BaseQuery() {
         this(new MybatisCmdFactory());
@@ -32,6 +35,15 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     public BaseQuery(Where where) {
         super(where);
+    }
+
+    public Q optimizeOptions(Consumer<OptimizeOptions> consumer) {
+        consumer.accept(this.optimizeOptions);
+        return (Q) this;
+    }
+
+    public OptimizeOptions getOptimizeOptions() {
+        return optimizeOptions;
     }
 
     protected void addTenantCondition(Class entity, int storey) {

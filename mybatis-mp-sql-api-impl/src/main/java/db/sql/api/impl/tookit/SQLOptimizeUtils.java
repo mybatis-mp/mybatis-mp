@@ -195,9 +195,13 @@ public final class SQLOptimizeUtils {
      *
      * @param query   查询语句
      * @param context 构建SQL上下文
+     * @param optimizeOptions 优化配置
      * @return
      */
-    public static StringBuilder getOptimizedSql(IQuery query, SqlBuilderContext context) {
+    public static StringBuilder getOptimizedSql(IQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
+        if (!optimizeOptions.isOptimizeJoin()) {
+            return query.sql(context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(query.cmds())));
+        }
         if (query.getJoins() == null) {
             return query.sql(context, new StringBuilder(getStringBuilderCapacity(query.cmds())));
         }
@@ -212,27 +216,7 @@ public final class SQLOptimizeUtils {
         return CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList);
     }
 
-    /**
-     * 从一个query里获取count SQL
-     *
-     * @param query    查询语句
-     * @param context  构建SQL上下文
-     * @param optimize 是否优化
-     * @return SQL StringBuilder
-     */
-    public static StringBuilder getCountSqlFromQuery(IQuery query, SqlBuilderContext context, boolean optimize) {
-        if (!optimize) {
-            return SQLOptimizeUtils.getOptimizedCountSql(query, context, true, false);
 
-//            if (context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.ORACLE) {
-//                //需要去掉order by
-//                return SQLOptimizeUtils.getOptimizedCountSql(query, context, true, false);
-//            }
-//            //不优化直接包裹一层
-//            return new StringBuilder("SELECT COUNT(*) FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(query.cmds())), query.sortedCmds())).append(") T");
-        }
-        return getOptimizedCountSql(query, context);
-    }
 
     /**
      * 获取优化后的count sql
@@ -277,15 +261,34 @@ public final class SQLOptimizeUtils {
         return CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList);
     }
 
+    /**
+     * 从一个query里获取count SQL
+     *
+     * @param query           查询语句
+     * @param context         构建SQL上下文
+     * @param optimizeOptions 优化配置
+     * @return SQL StringBuilder
+     */
+    public static StringBuilder getCountSqlFromQuery(IQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
+        if (optimizeOptions.isAllDisable()) {
+            return query.sql(context, new StringBuilder(getStringBuilderCapacity(query.cmds())));
+        }
+        return SQLOptimizeUtils.getOptimizedCountSql(query, context, optimizeOptions.isOptimizeOrderBy(), optimizeOptions.isOptimizeJoin());
+    }
+
 
     /**
      * 获取优化后的count sql
      *
      * @param query   查询语句
      * @param context 构建SQL上下文
+     * @param optimizeOptions 优化配置
      * @return SQL StringBuilder
      */
-    public static StringBuilder getOptimizedCountSql(IQuery query, SqlBuilderContext context) {
-        return getOptimizedCountSql(query, context, true, true);
+    public static StringBuilder getOptimizedCountSql(IQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
+        if (optimizeOptions.isAllDisable()) {
+            return query.sql(context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(query.cmds())));
+        }
+        return getOptimizedCountSql(query, context, optimizeOptions.isOptimizeOrderBy(), optimizeOptions.isOptimizeJoin());
     }
 }

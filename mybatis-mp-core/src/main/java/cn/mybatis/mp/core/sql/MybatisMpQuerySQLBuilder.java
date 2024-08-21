@@ -1,7 +1,8 @@
 package cn.mybatis.mp.core.sql;
 
+import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import db.sql.api.SqlBuilderContext;
-import db.sql.api.cmd.executor.IQuery;
+import db.sql.api.impl.tookit.OptimizeOptions;
 import db.sql.api.impl.tookit.SQLOptimizeUtils;
 
 public class MybatisMpQuerySQLBuilder implements QuerySQLBuilder {
@@ -11,15 +12,12 @@ public class MybatisMpQuerySQLBuilder implements QuerySQLBuilder {
      *
      * @param query    查询
      * @param context  上下文
-     * @param optimize 是否优化
+     * @param optimizeOptions 优化配置
      * @return
      */
     @Override
-    public StringBuilder buildQuerySQl(IQuery query, SqlBuilderContext context, boolean optimize) {
-        if (optimize) {
-            return SQLOptimizeUtils.getOptimizedSql(query, context);
-        }
-        return query.sql(context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(query.cmds())));
+    public StringBuilder buildQuerySQl(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
+        return SQLOptimizeUtils.getOptimizedSql(query, context, optimizeOptions);
     }
 
     /**
@@ -27,15 +25,12 @@ public class MybatisMpQuerySQLBuilder implements QuerySQLBuilder {
      *
      * @param query    查询
      * @param context  上下文
-     * @param optimize 是否优化
+     * @param optimizeOptions 优化配置
      * @return
      */
     @Override
-    public StringBuilder buildCountQuerySQl(IQuery query, SqlBuilderContext context, boolean optimize) {
-        if (optimize) {
-            return SQLOptimizeUtils.getOptimizedCountSql(query, context);
-        }
-        return query.sql(context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(query.cmds())));
+    public StringBuilder buildCountQuerySQl(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
+        return SQLOptimizeUtils.getOptimizedCountSql(query, context, optimizeOptions);
     }
 
     /**
@@ -43,11 +38,11 @@ public class MybatisMpQuerySQLBuilder implements QuerySQLBuilder {
      *
      * @param query    查询
      * @param context  上下文
-     * @param optimize 是否优化
+     * @param optimizeOptions 优化配置
      * @return
      */
     @Override
-    public StringBuilder buildCountSQLFromQuery(IQuery query, SqlBuilderContext context, boolean optimize) {
-        return SQLOptimizeUtils.getCountSqlFromQuery(query, context, optimize);
+    public StringBuilder buildCountSQLFromQuery(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
+        return SQLOptimizeUtils.getCountSqlFromQuery(query, context, optimizeOptions);
     }
 }

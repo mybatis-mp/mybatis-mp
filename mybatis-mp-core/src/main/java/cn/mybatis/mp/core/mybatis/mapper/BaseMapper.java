@@ -54,7 +54,10 @@ public interface BaseMapper extends CommonMapper {
             });
         }
 
-        return this.$get(new SQLCmdQueryContext(query, optimize), new RowBounds(0, 2));
+        if (!optimize) {
+            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
+        }
+        return this.$get(new SQLCmdQueryContext(query), new RowBounds(0, 2));
     }
 
     /**
@@ -82,6 +85,10 @@ public interface BaseMapper extends CommonMapper {
         }
         query.limit(1);
         query.setReturnType(Integer.TYPE);
+
+        if (!optimize) {
+            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
+        }
         Integer obj = (Integer) this.get(query, optimize);
         return Objects.nonNull(obj) && obj >= 1;
     }
@@ -195,7 +202,10 @@ public interface BaseMapper extends CommonMapper {
      * @return 返回查询列表
      */
     default <E> List<E> list(BaseQuery<? extends BaseQuery, E> query, boolean optimize) {
-        return this.$list(new SQLCmdQueryContext(query, optimize));
+        if (!optimize) {
+            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
+        }
+        return this.$list(new SQLCmdQueryContext(query));
     }
 
     /**
@@ -216,7 +226,10 @@ public interface BaseMapper extends CommonMapper {
      * @return 返回游标
      */
     default <E> Cursor<E> cursor(BaseQuery<? extends BaseQuery, E> query, boolean optimize) {
-        return this.$cursor(new SQLCmdQueryContext(query, optimize));
+        if (!optimize) {
+            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
+        }
+        return this.$cursor(new SQLCmdQueryContext(query));
     }
 
     /**
@@ -238,7 +251,10 @@ public interface BaseMapper extends CommonMapper {
      */
     default Integer count(BaseQuery<? extends BaseQuery, ?> query, boolean optimize) {
         query.setReturnType(Integer.TYPE);
-        return this.$count(new SQLCmdCountQueryContext(query, optimize));
+        if (!optimize) {
+            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
+        }
+        return this.$count(new SQLCmdCountQueryContext(query));
     }
 
 
@@ -250,11 +266,14 @@ public interface BaseMapper extends CommonMapper {
      * @return 分页结果
      */
     default <E, P extends Pager<E>> P paging(BaseQuery<? extends BaseQuery, E> query, P pager) {
+        if (!pager.isOptimize()) {
+            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
+        }
         if (pager.isExecuteCount()) {
             Class returnType = query.getReturnType();
             TablePrefixUtil.prefixMapping(query, returnType);
             query.setReturnType(Integer.TYPE);
-            Integer count = this.$countFromQuery(new SQLCmdCountFromQueryContext(query, pager.isOptimize()));
+            Integer count = this.$countFromQuery(new SQLCmdCountFromQueryContext(query));
             query.setReturnType(returnType);
 
             pager.setTotal(Optional.of(count).orElse(0));
@@ -306,7 +325,10 @@ public interface BaseMapper extends CommonMapper {
      * @return
      */
     default <K, V> Map<K, V> mapWithKey(String mapKey, BaseQuery<? extends BaseQuery, V> query, boolean optimize) {
-        return this.$mapWithKey(new MapKeySQLCmdQueryContext(mapKey, query, optimize));
+        if (!optimize) {
+            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
+        }
+        return this.$mapWithKey(new MapKeySQLCmdQueryContext(mapKey, query));
     }
 
     /**

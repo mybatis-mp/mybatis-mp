@@ -8,6 +8,7 @@ import db.sql.api.DbType;
 import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.JoinMode;
+import db.sql.api.impl.tookit.OptimizeOptions;
 import db.sql.api.impl.tookit.SQLOptimizeUtils;
 import db.sql.api.impl.tookit.SQLPrinter;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ public class OptimizeQueryTest extends BaseTest {
         //创建构建SQL的上下文 数据库:MYSQL SQL模式 打印
         SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(DbType.MYSQL, SQLMode.PRINT);
         String sql = SQLPrinter.sql(query);
-        String str = SQLOptimizeUtils.getOptimizedSql(query, sqlBuilderContext).toString();
+        String str = SQLOptimizeUtils.getOptimizedSql(query, sqlBuilderContext, new OptimizeOptions()).toString();
         assertEquals(sql, SQLPrinter.sql(query), "sql 优化破坏了原来有query");
         return str;
     }
