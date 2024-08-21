@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public final class SQLOptimizeUtils {
 
     public static int getStringBuilderCapacity(List<Cmd> cmds) {
-        return 60;
+        return 100;
     }
 
     private static boolean isCanRemoveLeftJoin(Join current, List<Join> joinList, boolean forClass, Map<Class, Cmd> classCmdMap) {
