@@ -8,7 +8,6 @@ import db.sql.api.DbType;
 import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.JoinMode;
-import db.sql.api.impl.tookit.OptimizeOptions;
 import db.sql.api.impl.tookit.SQLOptimizeUtils;
 import db.sql.api.impl.tookit.SQLPrinter;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,10 @@ public class CountFromQueryTest extends BaseTest {
         //创建构建SQL的上下文 数据库:MYSQL SQL模式 打印
         SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(DbType.MYSQL, SQLMode.PRINT);
         String sql = SQLPrinter.sql(query);
-        String str = SQLOptimizeUtils.getCountSqlFromQuery(query, sqlBuilderContext, new OptimizeOptions().optimizeJoin(optimize)).toString();
+        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
+            query.getOptimizeOptions().optimizeJoin(optimize);
+        }
+        String str = SQLOptimizeUtils.getCountSqlFromQuery(query, sqlBuilderContext, query.getOptimizeOptions()).toString();
         assertEquals(sql, SQLPrinter.sql(query), "sql count优化破坏了原来有query");
         return str;
     }
@@ -38,6 +40,18 @@ public class CountFromQueryTest extends BaseTest {
                                 .select(SysUser::getId, SysUser::getUserName)
                                 .from(SysUser.class)
                                 .eq(SysUser::getId, 1)
+                                .orderBy(SysUser::getId)
+                                .limit(1)
+                        , false)
+        );
+
+        check("关闭 order by 优化后的count SQL",
+                "select count(*) from (select t.id,t.user_name from t_sys_user t where t.id=1 order by t.id asc limit 1 offset 0) t",
+                getCountSql(Query.create()
+                                .select(SysUser::getId, SysUser::getUserName)
+                                .from(SysUser.class)
+                                .eq(SysUser::getId, 1)
+                                .optimizeOptions(optimizeOptions -> optimizeOptions.optimizeOrderBy(false))
                                 .orderBy(SysUser::getId)
                                 .limit(1)
                         , false)
@@ -124,6 +138,19 @@ public class CountFromQueryTest extends BaseTest {
                         .from(SysUser.class)
                         .join(JoinMode.LEFT, SysUser.class, SysRole.class)
                         .eq(SysUser::getId, 1)
+                        .orderBy(SysUser::getId)
+                )
+        );
+
+        check("关闭 left 优化后的count SQL",
+                "select count(*) from t_sys_user t left join sys_role t2 on t2.id=t.role_id where t.id=1",
+                getCountSql(Query.create()
+                        .select(SysUser::getId, SysUser::getUserName)
+                        .select(SysRole::getId)
+                        .from(SysUser.class)
+                        .join(JoinMode.LEFT, SysUser.class, SysRole.class)
+                        .eq(SysUser::getId, 1)
+                        .optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false))
                         .orderBy(SysUser::getId)
                 )
         );
