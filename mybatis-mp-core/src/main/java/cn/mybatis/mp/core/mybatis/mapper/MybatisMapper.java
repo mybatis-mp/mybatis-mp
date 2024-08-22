@@ -15,7 +15,7 @@ import cn.mybatis.mp.db.annotations.TableId;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
-import db.sql.api.impl.cmd.executor.Selector;
+import db.sql.api.impl.cmd.executor.SelectorCall;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
 import org.apache.ibatis.cursor.Cursor;
@@ -37,8 +37,8 @@ public interface MybatisMapper<T> extends CommonMapper {
      *
      * @param consumer
      */
-    default void dbAdapt(Consumer<Selector> consumer) {
-        this.getBasicMapper().dbAdapt(consumer);
+    default <R> R dbAdapt(Consumer<SelectorCall<R>> consumer) {
+        return this.getBasicMapper().dbAdapt(consumer);
     }
 
     /**

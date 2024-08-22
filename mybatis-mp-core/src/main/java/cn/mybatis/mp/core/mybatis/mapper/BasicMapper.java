@@ -13,7 +13,7 @@ import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.basic.Table;
-import db.sql.api.impl.cmd.executor.Selector;
+import db.sql.api.impl.cmd.executor.SelectorCall;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
 import org.apache.ibatis.cursor.Cursor;
@@ -29,7 +29,7 @@ public interface BasicMapper extends BaseMapper {
      *
      * @param consumer
      */
-    void dbAdapt(Consumer<Selector> consumer);
+    <R> R dbAdapt(Consumer<SelectorCall<R>> consumer);
 
     /**
      * 获取当前数据库的类型
