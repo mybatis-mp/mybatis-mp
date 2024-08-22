@@ -4,8 +4,6 @@ import java.util.List;
 
 public class Pager<T> {
 
-    private boolean optimize = true;
-
     private boolean executeCount = true;
 
     private List<T> results;
@@ -82,15 +80,6 @@ public class Pager<T> {
         this.size = size;
     }
 
-    public boolean isOptimize() {
-        return optimize;
-    }
-
-    public <T> Pager<T> setOptimize(boolean optimize) {
-        this.optimize = optimize;
-        return (Pager<T>) this;
-    }
-
     public Integer getTotalPage() {
         if (total == null) {
             total = 1;
@@ -103,8 +92,7 @@ public class Pager<T> {
     @Override
     public String toString() {
         return "Pager{" +
-                "optimize=" + optimize +
-                ", executeCount=" + executeCount +
+                "executeCount=" + executeCount +
                 ", results=" + results +
                 ", total=" + total +
                 ", number=" + number +

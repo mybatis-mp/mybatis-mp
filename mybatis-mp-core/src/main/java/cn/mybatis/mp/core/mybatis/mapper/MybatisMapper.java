@@ -416,19 +416,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @return 单个对象
      */
     default <E, Q extends BaseQuery<Q, E>> E get(BaseQuery<Q, E> query) {
-        return this.get(query, true);
-    }
-
-    /**
-     * 动态查询
-     *
-     * @param query    查询query
-     * @param optimize 是否优化
-     * @param <E>      query设置的返回的类型
-     * @return 返回单个当前实体
-     */
-    default <E, Q extends BaseQuery<Q, E>> E get(BaseQuery<Q, E> query, boolean optimize) {
-        return this.getBasicMapper().get(query, optimize);
+        return getBasicMapper().get(query);
     }
 
     /**
@@ -439,19 +427,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @return 是否存在
      */
     default <E, Q extends BaseQuery<Q, E>> boolean exists(BaseQuery<Q, E> query) {
-        return this.exists(query, true);
-    }
-
-    /**
-     * 是否存在
-     *
-     * @param query    子查询
-     * @param optimize 是否优化
-     * @param <E>      query设置的返回的类型
-     * @return 是否存在
-     */
-    default <E, Q extends BaseQuery<Q, E>> boolean exists(BaseQuery<Q, E> query, boolean optimize) {
-        return this.getBasicMapper().exists(query, optimize);
+        return getBasicMapper().exists(query);
     }
 
     /**
@@ -593,19 +569,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @return 返回结果列表
      */
     default <E, Q extends BaseQuery<Q, E>> List<E> list(BaseQuery<Q, E> query) {
-        return this.list(query, true);
-    }
-
-
-    /**
-     * 列表查询
-     *
-     * @param query    查询query
-     * @param optimize 是否优化
-     * @return 返回查询列表
-     */
-    default <E, Q extends BaseQuery<Q, E>> List<E> list(BaseQuery<Q, E> query, boolean optimize) {
-        return this.getBasicMapper().list(query, optimize);
+        return getBasicMapper().list(query);
     }
 
     /**
@@ -615,18 +579,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @return 返回游标
      */
     default <E, Q extends BaseQuery<Q, E>> Cursor<E> cursor(BaseQuery<Q, E> query) {
-        return this.cursor(query, true);
-    }
-
-    /**
-     * 游标查询
-     *
-     * @param query    查询query
-     * @param optimize 是否优化
-     * @return 返回游标
-     */
-    default <E, Q extends BaseQuery<Q, E>> Cursor<E> cursor(BaseQuery<Q, E> query, boolean optimize) {
-        return this.getBasicMapper().cursor(query, optimize);
+        return getBasicMapper().cursor(query);
     }
 
     /**
@@ -636,20 +589,8 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @return 返回count 数
      */
     default <E, Q extends BaseQuery<Q, E>> Integer count(BaseQuery<Q, E> query) {
-        return this.count(query, false);
+        return getBasicMapper().count(query);
     }
-
-    /**
-     * count查询
-     *
-     * @param query    上下文
-     * @param optimize 是否优化
-     * @return 返回count 数
-     */
-    default <E, Q extends BaseQuery<Q, E>> Integer count(BaseQuery<Q, E> query, boolean optimize) {
-        return this.getBasicMapper().count(query, optimize);
-    }
-
 
     /**
      * 分页查询
@@ -672,7 +613,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @return
      */
     default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(GetterFun<V, K> mapKey, BaseQuery<Q, V> query) {
-        return this.mapWithKey(mapKey, query, true);
+        return getBasicMapper().mapWithKey(mapKey, query);
     }
 
     /**
@@ -680,26 +621,11 @@ public interface MybatisMapper<T> extends CommonMapper {
      *
      * @param mapKey   指定的map的key属性
      * @param query    查询对象
-     * @param optimize 是否优化sql
      * @param <K>      map的key
      * @param <V>      map的value
      * @return
      */
-    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(GetterFun<V, K> mapKey, BaseQuery<Q, V> query, boolean optimize) {
-        return this.mapWithKey(LambdaUtil.getName(mapKey), query, optimize);
-    }
-
-    /**
-     * 将结果转成map
-     *
-     * @param mapKey   指定的map的key属性
-     * @param query    查询对象
-     * @param optimize 是否优化sql
-     * @param <K>      map的key
-     * @param <V>      map的value
-     * @return
-     */
-    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(String mapKey, BaseQuery<Q, V> query, boolean optimize) {
-        return getBasicMapper().mapWithKey(mapKey, query, optimize);
+    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(String mapKey, BaseQuery<Q, V> query) {
+        return getBasicMapper().mapWithKey(mapKey, query);
     }
 }

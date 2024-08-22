@@ -22,28 +22,14 @@ import org.apache.ibatis.session.RowBounds;
 import java.util.*;
 
 public interface BaseMapper extends CommonMapper {
-
-
-    /**
-     * 动态查询 返回单个当前实体
-     *
-     * @param query 查询query
-     * @param <E>   返回类
-     * @return 单个当前实体
-     */
-    default <E> E get(BaseQuery<? extends BaseQuery, E> query) {
-        return this.get(query, true);
-    }
-
     /**
      * 动态查询
      *
      * @param query    查询query
-     * @param optimize 是否优化
      * @param <E>      返回类
      * @return 返回单个对象
      */
-    default <E> E get(BaseQuery<? extends BaseQuery, E> query, boolean optimize) {
+    default <E> E get(BaseQuery<? extends BaseQuery, E> query) {
         if (Objects.isNull(query.getLimit())) {
             query.dbAdapt((q, selector) -> {
                 selector.when(DbType.SQL_SERVER, () -> {
@@ -53,43 +39,23 @@ public interface BaseMapper extends CommonMapper {
                 });
             });
         }
-
-        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
-            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
-        }
         return this.$get(new SQLCmdQueryContext(query), new RowBounds(0, 2));
     }
 
     /**
      * 是否存在
      *
-     * @param query
-     * @param <E>   返回类
-     * @return 是否存在
-     */
-    default <E> boolean exists(BaseQuery<? extends BaseQuery, E> query) {
-        return this.exists(query, true);
-    }
-
-    /**
-     * 是否存在
-     *
      * @param query    子查询
-     * @param optimize 是否优化
      * @param <E>      返回类
      * @return 是否存在
      */
-    default <E> boolean exists(BaseQuery<? extends BaseQuery, E> query, boolean optimize) {
+    default <E> boolean exists(BaseQuery<? extends BaseQuery, E> query) {
         if (Objects.isNull(query.getSelect())) {
             query.select1();
         }
         query.limit(1);
         query.setReturnType(Integer.TYPE);
-
-        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
-            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
-        }
-        Integer obj = (Integer) this.get(query, optimize);
+        Integer obj = (Integer) this.get(query);
         return Objects.nonNull(obj) && obj >= 1;
     }
 
@@ -183,77 +149,36 @@ public interface BaseMapper extends CommonMapper {
         return this.$delete(new SQLCmdDeleteContext(delete));
     }
 
-    /**
-     * 列表查询
-     *
-     * @param query 查询query
-     * @return 返回结果列表
-     */
-    default <E> List<E> list(BaseQuery<? extends BaseQuery, E> query) {
-        return this.list(query, true);
-    }
-
 
     /**
      * 列表查询
      *
      * @param query    查询query
-     * @param optimize 是否优化
      * @return 返回查询列表
      */
-    default <E> List<E> list(BaseQuery<? extends BaseQuery, E> query, boolean optimize) {
-        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
-            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
-        }
+    default <E> List<E> list(BaseQuery<? extends BaseQuery, E> query) {
         return this.$list(new SQLCmdQueryContext(query));
     }
 
     /**
      * 游标查询
      *
-     * @param query 查询query
+     * @param query    查询query
      * @return 返回游标
      */
     default <E> Cursor<E> cursor(BaseQuery<? extends BaseQuery, E> query) {
-        return this.cursor(query, true);
-    }
-
-    /**
-     * 游标查询
-     *
-     * @param query    查询query
-     * @param optimize 是否优化
-     * @return 返回游标
-     */
-    default <E> Cursor<E> cursor(BaseQuery<? extends BaseQuery, E> query, boolean optimize) {
-        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
-            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
-        }
         return this.$cursor(new SQLCmdQueryContext(query));
     }
 
-    /**
-     * count查询
-     *
-     * @param query 上下文
-     * @return 返回count 数
-     */
-    default Integer count(BaseQuery<? extends BaseQuery, ?> query) {
-        return this.count(query, false);
-    }
 
     /**
      * count查询
      *
      * @param query    上下文
-     * @param optimize 是否优化
      * @return 返回count 数
      */
-    default Integer count(BaseQuery<? extends BaseQuery, ?> query, boolean optimize) {
+    default Integer count(BaseQuery<? extends BaseQuery, ?> query) {
         query.setReturnType(Integer.TYPE);
-        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
-            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
-        }
         return this.$count(new SQLCmdCountQueryContext(query));
     }
 
@@ -266,9 +191,6 @@ public interface BaseMapper extends CommonMapper {
      * @return 分页结果
      */
     default <E, P extends Pager<E>> P paging(BaseQuery<? extends BaseQuery, E> query, P pager) {
-        if (!pager.isOptimize()) {
-            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
-        }
         if (pager.isExecuteCount()) {
             Class returnType = query.getReturnType();
             TablePrefixUtil.prefixMapping(query, returnType);
@@ -283,21 +205,21 @@ public interface BaseMapper extends CommonMapper {
             }
         }
         query.limit(pager.getOffset(), pager.getSize());
-        pager.setResults(this.list(query, pager.isOptimize()));
+        pager.setResults(this.list(query));
         return pager;
     }
 
     /**
      * 将结果转成map
      *
-     * @param mapKey 指定的map的key属性
-     * @param query  查询对象
-     * @param <K>    map的key
-     * @param <V>    map的value
+     * @param mapKey   指定的map的key属性
+     * @param query    查询对象
+     * @param <K>      map的key
+     * @param <V>      map的value
      * @return
      */
     default <K, V> Map<K, V> mapWithKey(GetterFun<V, K> mapKey, BaseQuery<? extends BaseQuery, V> query) {
-        return this.mapWithKey(mapKey, query, true);
+        return this.mapWithKey(LambdaUtil.getName(mapKey), query);
     }
 
     /**
@@ -305,29 +227,11 @@ public interface BaseMapper extends CommonMapper {
      *
      * @param mapKey   指定的map的key属性
      * @param query    查询对象
-     * @param optimize 是否优化sql
      * @param <K>      map的key
      * @param <V>      map的value
      * @return
      */
-    default <K, V> Map<K, V> mapWithKey(GetterFun<V, K> mapKey, BaseQuery<? extends BaseQuery, V> query, boolean optimize) {
-        return this.mapWithKey(LambdaUtil.getName(mapKey), query, optimize);
-    }
-
-    /**
-     * 将结果转成map
-     *
-     * @param mapKey   指定的map的key属性
-     * @param query    查询对象
-     * @param optimize 是否优化sql
-     * @param <K>      map的key
-     * @param <V>      map的value
-     * @return
-     */
-    default <K, V> Map<K, V> mapWithKey(String mapKey, BaseQuery<? extends BaseQuery, V> query, boolean optimize) {
-        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
-            query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
-        }
+    default <K, V> Map<K, V> mapWithKey(String mapKey, BaseQuery<? extends BaseQuery, V> query) {
         return this.$mapWithKey(new MapKeySQLCmdQueryContext(mapKey, query));
     }
 

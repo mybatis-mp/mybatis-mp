@@ -199,6 +199,7 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
         this.checkIdType();
         Where where = WhereUtil.create();
         BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(getMapper().getEntityType(), where);
-        return getMapper().mapWithKey(getTableInfo().getIdFieldInfo().getField().getName(), query, false);
+        query.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
+        return getMapper().mapWithKey(getTableInfo().getIdFieldInfo().getField().getName(), query);
     }
 }
