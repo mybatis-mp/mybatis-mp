@@ -54,7 +54,7 @@ public interface BaseMapper extends CommonMapper {
             });
         }
 
-        if (!optimize) {
+        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
             query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
         }
         return this.$get(new SQLCmdQueryContext(query), new RowBounds(0, 2));
@@ -86,7 +86,7 @@ public interface BaseMapper extends CommonMapper {
         query.limit(1);
         query.setReturnType(Integer.TYPE);
 
-        if (!optimize) {
+        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
             query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
         }
         Integer obj = (Integer) this.get(query, optimize);
@@ -202,7 +202,7 @@ public interface BaseMapper extends CommonMapper {
      * @return 返回查询列表
      */
     default <E> List<E> list(BaseQuery<? extends BaseQuery, E> query, boolean optimize) {
-        if (!optimize) {
+        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
             query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
         }
         return this.$list(new SQLCmdQueryContext(query));
@@ -226,7 +226,7 @@ public interface BaseMapper extends CommonMapper {
      * @return 返回游标
      */
     default <E> Cursor<E> cursor(BaseQuery<? extends BaseQuery, E> query, boolean optimize) {
-        if (!optimize) {
+        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
             query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
         }
         return this.$cursor(new SQLCmdQueryContext(query));
@@ -251,7 +251,7 @@ public interface BaseMapper extends CommonMapper {
      */
     default Integer count(BaseQuery<? extends BaseQuery, ?> query, boolean optimize) {
         query.setReturnType(Integer.TYPE);
-        if (!optimize) {
+        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
             query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
         }
         return this.$count(new SQLCmdCountQueryContext(query));
@@ -325,7 +325,7 @@ public interface BaseMapper extends CommonMapper {
      * @return
      */
     default <K, V> Map<K, V> mapWithKey(String mapKey, BaseQuery<? extends BaseQuery, V> query, boolean optimize) {
-        if (!optimize) {
+        if (!optimize && query.getOptimizeOptions().isOptimizeJoin()) {
             query.optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false));
         }
         return this.$mapWithKey(new MapKeySQLCmdQueryContext(mapKey, query));

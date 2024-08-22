@@ -269,7 +269,12 @@ public final class SQLOptimizeUtils {
      */
     public static StringBuilder getCountSqlFromQuery(IQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
         if (optimizeOptions.isAllDisable()) {
-            return query.sql(context, new StringBuilder(getStringBuilderCapacity(query.cmds())));
+            if (context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.ORACLE) {
+                //需要去掉order by
+                return SQLOptimizeUtils.getOptimizedCountSql(query, context, true, false);
+            }
+            //不优化直接包裹一层
+            return new StringBuilder("SELECT COUNT(*) FROM (").append(CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(query.cmds())), query.sortedCmds())).append(") T");
         }
         return SQLOptimizeUtils.getOptimizedCountSql(query, context, optimizeOptions.isOptimizeOrderBy(), optimizeOptions.isOptimizeJoin());
     }
