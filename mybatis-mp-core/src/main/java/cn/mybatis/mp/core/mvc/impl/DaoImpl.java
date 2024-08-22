@@ -17,10 +17,7 @@ import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public abstract class DaoImpl<T, K> implements Dao<T, K> {
 
@@ -101,7 +98,7 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     @Override
-    public int save(List<T> list) {
+    public int save(Collection<T> list) {
         return getMapper().save(list);
     }
 
@@ -127,7 +124,7 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     @Override
-    public int update(List<T> list) {
+    public int update(Collection<T> list) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
@@ -167,7 +164,7 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     @Override
-    public int delete(List<T> list) {
+    public int delete(Collection<T> list) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
@@ -187,9 +184,9 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     @Override
-    public int deleteByIds(List<K> ids) {
+    public int deleteByIds(Collection<K> ids) {
         this.checkIdType();
-        return getMapper().deleteByIds((List<Serializable>) ids);
+        return getMapper().deleteByIds((Collection<Serializable>) ids);
     }
 
     @Override
@@ -198,10 +195,11 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     @Override
-    public Map<K, T> map(List<K> ids) {
+    public Map<K, T> map(Collection<K> ids) {
         this.checkIdType();
         Where where = WhereUtil.create();
         BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(getMapper().getEntityType(), where);
-        return getMapper().mapWithKey(getTableInfo().getIdFieldInfo().getField().getName(), query, false);
+        query.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
+        return getMapper().mapWithKey(getTableInfo().getIdFieldInfo().getField().getName(), query);
     }
 }

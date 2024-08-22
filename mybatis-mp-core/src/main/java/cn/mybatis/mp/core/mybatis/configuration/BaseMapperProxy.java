@@ -4,7 +4,7 @@ import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.util.DbTypeUtil;
 import cn.mybatis.mp.db.annotations.Paging;
 import db.sql.api.DbType;
-import db.sql.api.impl.cmd.executor.DbSelector;
+import db.sql.api.impl.cmd.executor.DbSelectorCall;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.reflection.ParamNameResolver;
 import org.apache.ibatis.session.SqlSession;
@@ -52,10 +52,9 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             SqlSessionThreadLocalUtil.set(sqlSession);
             if (method.getName().equals(DB_ADAPT_METHOD_NAME)) {
                 Consumer<Object> consumer = (Consumer<Object>) args[0];
-                DbSelector dbSelector = new DbSelector();
+                DbSelectorCall dbSelector = new DbSelectorCall();
                 consumer.accept(dbSelector);
-                dbSelector.dbExecute(this.getDbType());
-                return Void.class;
+                return dbSelector.dbExecute(this.getDbType());
             } else if (method.getName().equals(MAP_WITH_KEY_METHOD_NAME)) {
                 return mapWithKey(method, args);
             } else if (method.isAnnotationPresent(Paging.class)) {

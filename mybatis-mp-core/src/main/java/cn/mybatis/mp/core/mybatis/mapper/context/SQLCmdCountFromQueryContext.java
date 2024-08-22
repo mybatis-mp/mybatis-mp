@@ -11,8 +11,8 @@ import java.util.Objects;
 public class SQLCmdCountFromQueryContext extends SQLCmdQueryContext {
 
 
-    public SQLCmdCountFromQueryContext(BaseQuery execution, boolean optimize) {
-        super(execution, optimize);
+    public SQLCmdCountFromQueryContext(BaseQuery execution) {
+        super(execution);
     }
 
     @Override
@@ -21,7 +21,7 @@ public class SQLCmdCountFromQueryContext extends SQLCmdQueryContext {
             return sql;
         }
         sqlBuilderContext = new MybatisSqlBuilderContext(dbType, SQLMode.PREPARED);
-        sql = MybatisMpConfig.getQuerySQLBuilder().buildCountSQLFromQuery(getExecution(), sqlBuilderContext, this.isOptimize()).toString();
+        sql = MybatisMpConfig.getQuerySQLBuilder().buildCountSQLFromQuery(getExecution(), sqlBuilderContext, getExecution().getOptimizeOptions()).toString();
         return sql;
     }
 }

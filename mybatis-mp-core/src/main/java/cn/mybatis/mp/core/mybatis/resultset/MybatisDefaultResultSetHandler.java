@@ -155,8 +155,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (hasFetchFilter) {
             fetchFilters.get(fetchKey).accept(query.$where());
         }
-
-        return basicMapper.list(query, false);
+        query.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
+        return basicMapper.list(query);
     }
 
     public void fillFetchData(FetchInfo fetchInfo, List<FetchObject> values, List<Object> fetchData) {

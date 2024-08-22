@@ -15,7 +15,7 @@ import cn.mybatis.mp.db.annotations.TableId;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
-import db.sql.api.impl.cmd.executor.Selector;
+import db.sql.api.impl.cmd.executor.SelectorCall;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
 import org.apache.ibatis.cursor.Cursor;
@@ -37,8 +37,8 @@ public interface MybatisMapper<T> extends CommonMapper {
      *
      * @param consumer
      */
-    default void dbAdapt(Consumer<Selector> consumer) {
-        this.getBasicMapper().dbAdapt(consumer);
+    default <R> R dbAdapt(Consumer<SelectorCall<R>> consumer) {
+        return this.getBasicMapper().dbAdapt(consumer);
     }
 
     /**
@@ -97,7 +97,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param list 实体类实例list
      * @return 修改条数
      */
-    default int delete(List<T> list) {
+    default int delete(Collection<T> list) {
         return getBasicMapper().delete(list);
     }
 
@@ -128,7 +128,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param ids 多个ID
      * @return 影响数量
      */
-    default <ID extends Serializable> int deleteByIds(List<ID> ids) {
+    default <ID extends Serializable> int deleteByIds(Collection<ID> ids) {
         return getBasicMapper().deleteByIds(getEntityType(), ids);
     }
 
@@ -199,7 +199,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param list
      * @return 影响条数
      */
-    default int update(List<T> list) {
+    default int update(Collection<T> list) {
         return getBasicMapper().update(list);
     }
 
@@ -209,7 +209,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param list
      * @return 修改条数
      */
-    default int update(List<T> list, Getter<T>... forceUpdateFields) {
+    default int update(Collection<T> list, Getter<T>... forceUpdateFields) {
         return getBasicMapper().update(list, forceUpdateFields);
     }
 
@@ -388,7 +388,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param <K>    map的key的类型
      * @return 一个map
      */
-    default <K> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, List<Serializable> ids) {
+    default <K> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, Collection<Serializable> ids) {
         return getBasicMapper().mapWithKey(mapKey, ids);
     }
 
@@ -416,19 +416,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @return 单个对象
      */
     default <E, Q extends BaseQuery<Q, E>> E get(BaseQuery<Q, E> query) {
-        return this.get(query, true);
-    }
-
-    /**
-     * 动态查询
-     *
-     * @param query    查询query
-     * @param optimize 是否优化
-     * @param <E>      query设置的返回的类型
-     * @return 返回单个当前实体
-     */
-    default <E, Q extends BaseQuery<Q, E>> E get(BaseQuery<Q, E> query, boolean optimize) {
-        return this.getBasicMapper().get(query, optimize);
+        return getBasicMapper().get(query);
     }
 
     /**
@@ -439,19 +427,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @return 是否存在
      */
     default <E, Q extends BaseQuery<Q, E>> boolean exists(BaseQuery<Q, E> query) {
-        return this.exists(query, true);
-    }
-
-    /**
-     * 是否存在
-     *
-     * @param query    子查询
-     * @param optimize 是否优化
-     * @param <E>      query设置的返回的类型
-     * @return 是否存在
-     */
-    default <E, Q extends BaseQuery<Q, E>> boolean exists(BaseQuery<Q, E> query, boolean optimize) {
-        return this.getBasicMapper().exists(query, optimize);
+        return getBasicMapper().exists(query);
     }
 
     /**
@@ -470,7 +446,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param list
      * @return 插入条数
      */
-    default int save(List<T> list) {
+    default int save(Collection<T> list) {
         int cnt = 0;
         for (T entity : list) {
             cnt += this.save(entity);
@@ -485,13 +461,13 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param list
      * @return 插入的条数
      */
-    default int saveBatch(List<T> list) {
+    default int saveBatch(Collection<T> list) {
         Objects.requireNonNull(list);
         if (list.isEmpty()) {
             return 0;
         }
         Set<String> saveFieldSet = new HashSet<>();
-        final T first = list.get(0);
+        final T first = list.stream().findFirst().get();
         TableInfo tableInfo = Tables.get(first.getClass());
 
         DbType dbType = getCurrentDbType();
@@ -531,7 +507,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param saveFields 指定那些列插入
      * @return 插入的条数
      */
-    default int saveBatch(List<T> list, Getter<T>... saveFields) {
+    default int saveBatch(Collection<T> list, Getter<T>... saveFields) {
         Objects.requireNonNull(list);
         if (list.isEmpty()) {
             return 0;
@@ -593,19 +569,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @return 返回结果列表
      */
     default <E, Q extends BaseQuery<Q, E>> List<E> list(BaseQuery<Q, E> query) {
-        return this.list(query, true);
-    }
-
-
-    /**
-     * 列表查询
-     *
-     * @param query    查询query
-     * @param optimize 是否优化
-     * @return 返回查询列表
-     */
-    default <E, Q extends BaseQuery<Q, E>> List<E> list(BaseQuery<Q, E> query, boolean optimize) {
-        return this.getBasicMapper().list(query, optimize);
+        return getBasicMapper().list(query);
     }
 
     /**
@@ -615,18 +579,7 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @return 返回游标
      */
     default <E, Q extends BaseQuery<Q, E>> Cursor<E> cursor(BaseQuery<Q, E> query) {
-        return this.cursor(query, true);
-    }
-
-    /**
-     * 游标查询
-     *
-     * @param query    查询query
-     * @param optimize 是否优化
-     * @return 返回游标
-     */
-    default <E, Q extends BaseQuery<Q, E>> Cursor<E> cursor(BaseQuery<Q, E> query, boolean optimize) {
-        return this.getBasicMapper().cursor(query, optimize);
+        return getBasicMapper().cursor(query);
     }
 
     /**
@@ -636,20 +589,8 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @return 返回count 数
      */
     default <E, Q extends BaseQuery<Q, E>> Integer count(BaseQuery<Q, E> query) {
-        return this.count(query, false);
+        return getBasicMapper().count(query);
     }
-
-    /**
-     * count查询
-     *
-     * @param query    上下文
-     * @param optimize 是否优化
-     * @return 返回count 数
-     */
-    default <E, Q extends BaseQuery<Q, E>> Integer count(BaseQuery<Q, E> query, boolean optimize) {
-        return this.getBasicMapper().count(query, optimize);
-    }
-
 
     /**
      * 分页查询
@@ -672,34 +613,19 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @return
      */
     default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(GetterFun<V, K> mapKey, BaseQuery<Q, V> query) {
-        return this.mapWithKey(mapKey, query, true);
+        return getBasicMapper().mapWithKey(mapKey, query);
     }
 
     /**
      * 将结果转成map
      *
-     * @param mapKey   指定的map的key属性
-     * @param query    查询对象
-     * @param optimize 是否优化sql
-     * @param <K>      map的key
-     * @param <V>      map的value
+     * @param mapKey 指定的map的key属性
+     * @param query  查询对象
+     * @param <K>    map的key
+     * @param <V>    map的value
      * @return
      */
-    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(GetterFun<V, K> mapKey, BaseQuery<Q, V> query, boolean optimize) {
-        return this.mapWithKey(LambdaUtil.getName(mapKey), query, optimize);
-    }
-
-    /**
-     * 将结果转成map
-     *
-     * @param mapKey   指定的map的key属性
-     * @param query    查询对象
-     * @param optimize 是否优化sql
-     * @param <K>      map的key
-     * @param <V>      map的value
-     * @return
-     */
-    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(String mapKey, BaseQuery<Q, V> query, boolean optimize) {
-        return getBasicMapper().mapWithKey(mapKey, query, optimize);
+    default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(String mapKey, BaseQuery<Q, V> query) {
+        return getBasicMapper().mapWithKey(mapKey, query);
     }
 }

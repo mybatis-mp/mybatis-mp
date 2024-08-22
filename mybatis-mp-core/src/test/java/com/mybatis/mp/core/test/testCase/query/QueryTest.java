@@ -33,37 +33,23 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
-            sysUserMapper.dbAdapt(selector -> {
+            SysUser sysUser = sysUserMapper.dbAdapt(selector -> {
                 selector.when(DbType.H2, () -> {
-                    sysUserMapper.getById(1);
+                    return sysUserMapper.getById(1);
                 }).when(DbType.MYSQL, () -> {
-                    sysUserMapper.getById(2);
+                    return sysUserMapper.getById(2);
                 }).otherwise(() -> {
-                    sysUserMapper.getById(3);
+                    return sysUserMapper.getById(3);
                 });
             });
 
-            SysUser sysUser = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getId)
-                    .dbAdapt((queryChain, selector) -> {
-                        selector.when(DbType.H2, () -> {
-                            queryChain.eq(SysUser::getId, 3);
-                        }).when(DbType.MYSQL, () -> {
-                            queryChain.eq(SysUser::getId, 2);
-                        }).otherwise(() -> {
-                            queryChain.eq(SysUser::getId, 1);
-                        });
-                    })
-                    .get();
-
             if (TestDataSource.DB_TYPE == DbType.H2) {
-                assertEquals(sysUser.getId(), 3);
+                assertEquals(sysUser.getId(), 1);
             } else if (TestDataSource.DB_TYPE == DbType.MYSQL) {
                 assertEquals(sysUser.getId(), 2);
             } else {
-                assertEquals(sysUser.getId(), 1);
+                assertEquals(sysUser.getId(), 3);
             }
-
         }
     }
 
@@ -337,7 +323,8 @@ public class QueryTest extends BaseTest {
                     .select(SysUser.class)
                     .from(SysUser.class)
                     .orderBy(SysUser::getId)
-                    .paging(Pager.of(2).setOptimize(false));
+                    .optimizeOptions(optimizeOptions -> optimizeOptions.disableAll())
+                    .paging(Pager.of(2));
 
             assertEquals(pager.getTotal(), Integer.valueOf(3), "paging Total");
             assertEquals(pager.getResults().size(), 2, "paging Results size");

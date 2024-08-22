@@ -3,7 +3,7 @@ package cn.mybatis.mp.core.mvc;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 public interface Dao<T, K> {
@@ -16,7 +16,7 @@ public interface Dao<T, K> {
 
     int save(T entity);
 
-    int save(List<T> list);
+    int save(Collection<T> list);
 
     int save(Model<T> model);
 
@@ -24,7 +24,7 @@ public interface Dao<T, K> {
 
     int saveOrUpdate(T entity);
 
-    int update(List<T> list);
+    int update(Collection<T> list);
 
     int update(T entity, Getter<T>... forceUpdateFields);
 
@@ -34,15 +34,15 @@ public interface Dao<T, K> {
 
     int delete(T entity);
 
-    int delete(List<T> list);
+    int delete(Collection<T> list);
 
     int deleteById(K id);
 
     int deleteByIds(K... ids);
 
-    int deleteByIds(List<K> ids);
+    int deleteByIds(Collection<K> ids);
 
     Map<K, T> map(K... ids);
 
-    Map<K, T> map(List<K> ids);
+    Map<K, T> map(Collection<K> ids);
 }

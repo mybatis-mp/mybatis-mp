@@ -13,7 +13,7 @@ import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.basic.Table;
-import db.sql.api.impl.cmd.executor.Selector;
+import db.sql.api.impl.cmd.executor.SelectorCall;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
 import org.apache.ibatis.cursor.Cursor;
@@ -29,7 +29,7 @@ public interface BasicMapper extends BaseMapper {
      *
      * @param consumer
      */
-    void dbAdapt(Consumer<Selector> consumer);
+    <R> R dbAdapt(Consumer<SelectorCall<R>> consumer);
 
     /**
      * 获取当前数据库的类型
@@ -59,6 +59,7 @@ public interface BasicMapper extends BaseMapper {
      */
     default <E> E getById(Class<E> entityType, Serializable id, Getter<E>... selectFields) {
         return this.getWithQueryFun(entityType, (baseQuery -> {
+            baseQuery.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
             TableInfo tableInfo = Tables.get(entityType);
             WhereUtil.appendIdWhere(baseQuery.$where(), tableInfo, id);
             if (Objects.nonNull(selectFields) && selectFields.length > 0) {
@@ -77,9 +78,9 @@ public interface BasicMapper extends BaseMapper {
     default <E> E get(Class<E> entityType, Consumer<Where> consumer) {
         Where where = WhereUtil.create();
         consumer.accept(where);
-
         BaseQuery<?, E> query = MapperCmdBuilderUtil.buildQuery(entityType, where);
-        return this.get(query, false);
+        query.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
+        return this.get(query);
     }
 
 
@@ -91,7 +92,9 @@ public interface BasicMapper extends BaseMapper {
      * @return 当个当前实体
      */
     default <E> E getWithQueryFun(Class<E> entityType, Consumer<BaseQuery<? extends BaseQuery, E>> consumer) {
-        return this.get(MapperCmdBuilderUtil.buildQuery(entityType, consumer), false);
+        BaseQuery<?, E> query = MapperCmdBuilderUtil.buildQuery(entityType, consumer);
+        query.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
+        return this.get(query);
     }
 
 
@@ -138,7 +141,7 @@ public interface BasicMapper extends BaseMapper {
      * @param list
      * @return 影响条数
      */
-    default <E> int update(List<E> list) {
+    default <E> int update(Collection<E> list) {
         int cnt = 0;
         for (E entity : list) {
             cnt += this.update(entity);
@@ -152,7 +155,7 @@ public interface BasicMapper extends BaseMapper {
      * @param list
      * @return 修改条数
      */
-    default <E> int update(List<E> list, Getter<E>... forceUpdateFields) {
+    default <E> int update(Collection<E> list, Getter<E>... forceUpdateFields) {
         Set<String> forceUpdateFieldsSet = new HashSet<>();
         if (Objects.nonNull(forceUpdateFields)) {
             for (Getter<?> column : forceUpdateFields) {
@@ -321,7 +324,7 @@ public interface BasicMapper extends BaseMapper {
      * @param ids        多个ID
      * @return 影响的数量
      */
-    default <E, ID extends Serializable> int deleteByIds(Class<E> entityType, List<ID> ids) {
+    default <E, ID extends Serializable> int deleteByIds(Class<E> entityType, Collection<ID> ids) {
         if (ids == null || ids.isEmpty()) {
             throw new RuntimeException("ids list can't be empty");
         }
@@ -355,7 +358,7 @@ public interface BasicMapper extends BaseMapper {
      * @param list 实体类实例list
      * @return 修改条数
      */
-    default <E> int delete(List<E> list) {
+    default <E> int delete(Collection<E> list) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
@@ -421,7 +424,8 @@ public interface BasicMapper extends BaseMapper {
                 baseQuery.select(selectFields);
             }
         });
-        return this.list(query, false);
+        query.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
+        return this.list(query);
     }
 
     /**
@@ -432,7 +436,7 @@ public interface BasicMapper extends BaseMapper {
      * @return 当个当前实体
      */
     default <E> List<E> listWithQueryFun(Class<E> entityType, Consumer<BaseQuery<? extends BaseQuery, E>> consumer) {
-        return this.list(MapperCmdBuilderUtil.buildQuery(entityType, consumer), false);
+        return this.list(MapperCmdBuilderUtil.buildQuery(entityType, consumer));
     }
 
 
@@ -450,11 +454,13 @@ public interface BasicMapper extends BaseMapper {
     }
 
     default <E> Cursor<E> cursor(Class<E> entityType, Where where, Getter<E>... selectFields) {
-        return this.cursor(MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
+        BaseQuery<?, E> query = MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
             if (Objects.nonNull(selectFields) && selectFields.length > 0) {
                 baseQuery.select(selectFields);
             }
-        }), false);
+        });
+        query.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
+        return this.cursor(query);
     }
 
     /**
@@ -465,7 +471,7 @@ public interface BasicMapper extends BaseMapper {
      * @return 当个当前实体
      */
     default <E> Cursor<E> cursorWithQueryFun(Class<E> entityType, Consumer<BaseQuery<? extends BaseQuery, E>> consumer) {
-        return this.cursor(MapperCmdBuilderUtil.buildQuery(entityType, consumer), false);
+        return this.cursor(MapperCmdBuilderUtil.buildQuery(entityType, consumer));
     }
 
     /**
@@ -479,8 +485,9 @@ public interface BasicMapper extends BaseMapper {
         Where where = WhereUtil.create();
         consumer.accept(where);
         return this.count(MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
+            baseQuery.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
             baseQuery.selectCount1();
-        }), false);
+        }));
     }
 
     /**
@@ -491,7 +498,7 @@ public interface BasicMapper extends BaseMapper {
      * @return 返回count数
      */
     default <E> Integer countWithQueryFun(Class<E> entityType, Consumer<BaseQuery<? extends BaseQuery, E>> consumer) {
-        return this.count(MapperCmdBuilderUtil.buildQuery(entityType, consumer), false);
+        return this.count(MapperCmdBuilderUtil.buildQuery(entityType, consumer));
     }
 
     /**
@@ -506,11 +513,10 @@ public interface BasicMapper extends BaseMapper {
     }
 
     default <E, P extends Pager<E>> P paging(Class<E> entityType, Consumer<Where> consumer, P pager, Getter<E>... selectFields) {
-        pager.setOptimize(false);
         Where where = WhereUtil.create();
         consumer.accept(where);
-
         return this.paging(MapperCmdBuilderUtil.buildQuery(entityType, where, baseQuery -> {
+            baseQuery.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
             if (Objects.nonNull(selectFields) && selectFields.length > 0) {
                 baseQuery.select(selectFields);
             }
@@ -551,7 +557,7 @@ public interface BasicMapper extends BaseMapper {
      * @param <K>    map的key的类型
      * @return 一个map
      */
-    default <E, K> Map<K, E> mapWithKey(GetterFun<E, K> mapKey, List<Serializable> ids) {
+    default <E, K, ID extends Serializable> Map<K, E> mapWithKey(GetterFun<E, K> mapKey, Collection<ID> ids) {
         if (Objects.isNull(ids) || ids.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -559,7 +565,9 @@ public interface BasicMapper extends BaseMapper {
         Where where = WhereUtil.create();
         TableInfo tableInfo = Tables.get(lambdaFieldInfo.getType());
         WhereUtil.appendIdsWhere(where, tableInfo, ids);
-        return this.mapWithKey(mapKey, MapperCmdBuilderUtil.buildQuery(lambdaFieldInfo.getType(), where), false);
+        BaseQuery<? extends BaseQuery, E> query = MapperCmdBuilderUtil.buildQuery(lambdaFieldInfo.getType(), where);
+        query.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
+        return this.mapWithKey(mapKey, query);
     }
 
 
@@ -575,6 +583,8 @@ public interface BasicMapper extends BaseMapper {
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(mapKey);
         Where where = WhereUtil.create();
         consumer.accept(where);
-        return this.mapWithKey(mapKey, MapperCmdBuilderUtil.buildQuery(lambdaFieldInfo.getType(), where), false);
+        BaseQuery<? extends BaseQuery, E> query = MapperCmdBuilderUtil.buildQuery(lambdaFieldInfo.getType(), where);
+        query.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
+        return this.mapWithKey(mapKey, query);
     }
 }

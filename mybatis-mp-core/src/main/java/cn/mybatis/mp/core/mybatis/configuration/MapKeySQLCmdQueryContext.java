@@ -7,8 +7,8 @@ public class MapKeySQLCmdQueryContext extends SQLCmdQueryContext {
 
     private String key;
 
-    public MapKeySQLCmdQueryContext(String key, BaseQuery execution, boolean optimize) {
-        super(execution, optimize);
+    public MapKeySQLCmdQueryContext(String key, BaseQuery execution) {
+        super(execution);
         this.key = key;
     }
 

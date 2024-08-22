@@ -8,7 +8,7 @@ import db.sql.api.impl.cmd.struct.Where;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -89,7 +89,7 @@ public final class WhereUtil {
      * @param tableInfo 表信息
      * @param ids
      */
-    public static void appendIdsWhere(Where where, TableInfo tableInfo, List<Serializable> ids) {
+    public static <ID extends Serializable> void appendIdsWhere(Where where, TableInfo tableInfo, Collection<ID> ids) {
         TableInfoUtil.checkId(tableInfo);
         CmdFactory $ = where.getConditionFactory().getCmdFactory();
         Objects.requireNonNull(ids, "id can't be null");
