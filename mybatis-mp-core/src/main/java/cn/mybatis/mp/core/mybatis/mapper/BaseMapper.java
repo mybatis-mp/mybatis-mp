@@ -25,8 +25,8 @@ public interface BaseMapper extends CommonMapper {
     /**
      * 动态查询
      *
-     * @param query    查询query
-     * @param <E>      返回类
+     * @param query 查询query
+     * @param <E>   返回类
      * @return 返回单个对象
      */
     default <E> E get(BaseQuery<? extends BaseQuery, E> query) {
@@ -45,8 +45,8 @@ public interface BaseMapper extends CommonMapper {
     /**
      * 是否存在
      *
-     * @param query    子查询
-     * @param <E>      返回类
+     * @param query 子查询
+     * @param <E>   返回类
      * @return 是否存在
      */
     default <E> boolean exists(BaseQuery<? extends BaseQuery, E> query) {
@@ -153,7 +153,7 @@ public interface BaseMapper extends CommonMapper {
     /**
      * 列表查询
      *
-     * @param query    查询query
+     * @param query 查询query
      * @return 返回查询列表
      */
     default <E> List<E> list(BaseQuery<? extends BaseQuery, E> query) {
@@ -163,7 +163,7 @@ public interface BaseMapper extends CommonMapper {
     /**
      * 游标查询
      *
-     * @param query    查询query
+     * @param query 查询query
      * @return 返回游标
      */
     default <E> Cursor<E> cursor(BaseQuery<? extends BaseQuery, E> query) {
@@ -174,7 +174,7 @@ public interface BaseMapper extends CommonMapper {
     /**
      * count查询
      *
-     * @param query    上下文
+     * @param query 上下文
      * @return 返回count 数
      */
     default Integer count(BaseQuery<? extends BaseQuery, ?> query) {
@@ -212,10 +212,10 @@ public interface BaseMapper extends CommonMapper {
     /**
      * 将结果转成map
      *
-     * @param mapKey   指定的map的key属性
-     * @param query    查询对象
-     * @param <K>      map的key
-     * @param <V>      map的value
+     * @param mapKey 指定的map的key属性
+     * @param query  查询对象
+     * @param <K>    map的key
+     * @param <V>    map的value
      * @return
      */
     default <K, V> Map<K, V> mapWithKey(GetterFun<V, K> mapKey, BaseQuery<? extends BaseQuery, V> query) {
@@ -225,10 +225,10 @@ public interface BaseMapper extends CommonMapper {
     /**
      * 将结果转成map
      *
-     * @param mapKey   指定的map的key属性
-     * @param query    查询对象
-     * @param <K>      map的key
-     * @param <V>      map的value
+     * @param mapKey 指定的map的key属性
+     * @param query  查询对象
+     * @param <K>    map的key
+     * @param <V>    map的value
      * @return
      */
     default <K, V> Map<K, V> mapWithKey(String mapKey, BaseQuery<? extends BaseQuery, V> query) {

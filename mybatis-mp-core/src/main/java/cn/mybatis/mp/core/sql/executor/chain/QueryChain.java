@@ -183,8 +183,8 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
     /**
      * 将结果转成map
      *
-     * @param mapKey   指定的map的key属性
-     * @param <K>      map的key
+     * @param mapKey 指定的map的key属性
+     * @param <K>    map的key
      * @return
      */
     public <K> Map<K, E> mapWithKey(GetterFun<E, K> mapKey) {

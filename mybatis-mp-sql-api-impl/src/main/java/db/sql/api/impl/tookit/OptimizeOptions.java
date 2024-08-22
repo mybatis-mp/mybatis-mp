@@ -36,6 +36,7 @@ public class OptimizeOptions {
 
     /**
      * 关闭所有优化项
+     *
      * @return
      */
     public OptimizeOptions disableAll() {
@@ -46,9 +47,10 @@ public class OptimizeOptions {
 
     /**
      * 是否所有优化项关闭
+     *
      * @return
      */
-    public boolean isAllDisable(){
+    public boolean isAllDisable() {
         return !optimizeOrderBy && !optimizeJoin;
     }
 

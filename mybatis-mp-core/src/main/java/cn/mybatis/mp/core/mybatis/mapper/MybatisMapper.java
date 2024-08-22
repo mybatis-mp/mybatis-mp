@@ -619,10 +619,10 @@ public interface MybatisMapper<T> extends CommonMapper {
     /**
      * 将结果转成map
      *
-     * @param mapKey   指定的map的key属性
-     * @param query    查询对象
-     * @param <K>      map的key
-     * @param <V>      map的value
+     * @param mapKey 指定的map的key属性
+     * @param query  查询对象
+     * @param <K>    map的key
+     * @param <V>    map的value
      * @return
      */
     default <K, V, Q extends BaseQuery<Q, V>> Map<K, V> mapWithKey(String mapKey, BaseQuery<Q, V> query) {

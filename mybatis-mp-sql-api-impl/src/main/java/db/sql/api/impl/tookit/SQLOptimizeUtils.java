@@ -192,8 +192,8 @@ public final class SQLOptimizeUtils {
      * 获取优化后的查询
      * 只优化left joins
      *
-     * @param query   查询语句
-     * @param context 构建SQL上下文
+     * @param query           查询语句
+     * @param context         构建SQL上下文
      * @param optimizeOptions 优化配置
      * @return
      */
@@ -213,7 +213,6 @@ public final class SQLOptimizeUtils {
         cmdList = (List<Cmd>) classCmdMap.values().stream().sorted(query.comparator()).collect(Collectors.toList());
         return CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList);
     }
-
 
 
     /**
@@ -283,8 +282,8 @@ public final class SQLOptimizeUtils {
     /**
      * 获取优化后的count sql
      *
-     * @param query   查询语句
-     * @param context 构建SQL上下文
+     * @param query           查询语句
+     * @param context         构建SQL上下文
      * @param optimizeOptions 优化配置
      * @return SQL StringBuilder
      */

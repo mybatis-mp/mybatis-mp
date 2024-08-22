@@ -9,8 +9,8 @@ public interface QuerySQLBuilder {
     /**
      * 构建query sql
      *
-     * @param query    查询
-     * @param context  上下文
+     * @param query           查询
+     * @param context         上下文
      * @param optimizeOptions 优化配置
      * @return
      */
@@ -20,8 +20,8 @@ public interface QuerySQLBuilder {
     /**
      * 构建 count query sql
      *
-     * @param query    查询
-     * @param context  上下文
+     * @param query           查询
+     * @param context         上下文
      * @param optimizeOptions 优化配置
      * @return
      */
@@ -30,8 +30,8 @@ public interface QuerySQLBuilder {
     /**
      * 从query 中 获取 count 查询 sql
      *
-     * @param query    查询
-     * @param context  上下文
+     * @param query           查询
+     * @param context         上下文
      * @param optimizeOptions 优化配置
      * @return
      */

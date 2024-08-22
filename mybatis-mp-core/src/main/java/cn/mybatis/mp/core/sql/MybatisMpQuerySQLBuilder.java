@@ -10,8 +10,8 @@ public class MybatisMpQuerySQLBuilder implements QuerySQLBuilder {
     /**
      * 构建query sql
      *
-     * @param query    查询
-     * @param context  上下文
+     * @param query           查询
+     * @param context         上下文
      * @param optimizeOptions 优化配置
      * @return
      */
@@ -23,8 +23,8 @@ public class MybatisMpQuerySQLBuilder implements QuerySQLBuilder {
     /**
      * 构建count查询sql
      *
-     * @param query    查询
-     * @param context  上下文
+     * @param query           查询
+     * @param context         上下文
      * @param optimizeOptions 优化配置
      * @return
      */
@@ -36,8 +36,8 @@ public class MybatisMpQuerySQLBuilder implements QuerySQLBuilder {
     /**
      * 从query中构建count sql，一般用于分页时使用
      *
-     * @param query    查询
-     * @param context  上下文
+     * @param query           查询
+     * @param context         上下文
      * @param optimizeOptions 优化配置
      * @return
      */
