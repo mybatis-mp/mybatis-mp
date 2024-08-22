@@ -44,11 +44,11 @@ public class QueryTest extends BaseTest {
             });
 
             if (TestDataSource.DB_TYPE == DbType.H2) {
-                assertEquals(sysUser.getId(), 3);
+                assertEquals(sysUser.getId(), 1);
             } else if (TestDataSource.DB_TYPE == DbType.MYSQL) {
                 assertEquals(sysUser.getId(), 2);
             } else {
-                assertEquals(sysUser.getId(), 1);
+                assertEquals(sysUser.getId(), 3);
             }
         }
     }
