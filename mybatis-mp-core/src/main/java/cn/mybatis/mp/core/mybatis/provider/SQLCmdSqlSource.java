@@ -22,6 +22,7 @@ public class SQLCmdSqlSource implements SqlSource {
     static {
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.QUERY_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.cmdQuery((SQLCmdQueryContext) context, providerContext, dbType));
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.GET_QUERY_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.getCmdQuery((SQLCmdQueryContext) context, providerContext, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.GET_BY_ID_QUERY_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.getByIdCmdQuery((SQLCmdQueryContext) context, providerContext, dbType));
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.COUNT_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.cmdCount((SQLCmdCountQueryContext) context, providerContext, dbType));
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.QUERY_COUNT_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.countFromQuery((SQLCmdCountFromQueryContext) context, providerContext, dbType));
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.UPDATE_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.update((SQLCmdUpdateContext) context, providerContext, dbType));

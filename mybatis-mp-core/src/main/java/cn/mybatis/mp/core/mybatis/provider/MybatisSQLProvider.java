@@ -14,6 +14,7 @@ public class MybatisSQLProvider {
     public static final String DELETE_NAME = "delete";
     public static final String QUERY_NAME = "cmdQuery";
     public static final String GET_QUERY_NAME = "getCmdQuery";
+    public static final String GET_BY_ID_QUERY_NAME = "getByIdCmdQuery";
     public static final String COUNT_NAME = "cmdCount";
     public static final String QUERY_COUNT_NAME = "countFromQuery";
 
@@ -65,6 +66,11 @@ public class MybatisSQLProvider {
     public static String cmdQuery(SQLCmdQueryContext queryContext, ProviderContext providerContext, DbType dbType) {
         queryContext.init(dbType);
         handlerPrefixMapping(queryContext);
+        return queryContext.sql(dbType);
+    }
+
+    public static String getByIdCmdQuery(SQLCmdQueryContext queryContext, ProviderContext providerContext, DbType dbType) {
+        queryContext.init(dbType);
         return queryContext.sql(dbType);
     }
 
