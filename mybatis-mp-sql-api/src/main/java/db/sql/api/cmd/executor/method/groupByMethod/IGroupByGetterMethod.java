@@ -14,7 +14,9 @@ public interface IGroupByGetterMethod<SELF extends IGroupByGetterMethod, TABLE e
         return this.groupBy(column, 1);
     }
 
-    <T> SELF groupBy(Getter<T> column, int storey);
+    default <T> SELF groupBy(Getter<T> column, int storey) {
+        return this.groupBy(column, storey, null);
+    }
 
     default <T> SELF groupBy(boolean when, Getter<T> column) {
         if (!when) {

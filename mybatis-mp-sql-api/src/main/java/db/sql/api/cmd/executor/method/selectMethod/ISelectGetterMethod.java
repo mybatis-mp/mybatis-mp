@@ -14,7 +14,9 @@ public interface ISelectGetterMethod<SELF extends ISelectGetterMethod, TABLE ext
         return this.select(column, 1);
     }
 
-    <T> SELF select(Getter<T> column, int storey);
+    default <T> SELF select(Getter<T> column, int storey) {
+        return this.select(column, storey, null);
+    }
 
     default <T> SELF select(boolean when, Getter<T> column) {
         if (!when) {

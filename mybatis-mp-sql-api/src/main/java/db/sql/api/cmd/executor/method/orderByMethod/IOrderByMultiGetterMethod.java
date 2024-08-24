@@ -6,7 +6,7 @@ import db.sql.api.cmd.basic.IOrderByDirection;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
 
-public interface IOrderByMultiGetterMethod<SELF extends IOrderByMultiGetterMethod, TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> extends IBaseOrderByMethods, IOrderByMultiGetterFunMethod<SELF, TABLE, TABLE_FIELD> {
+public interface IOrderByMultiGetterMethod<SELF extends IOrderByMultiGetterMethod, TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> extends IOrderByMultiGetterFunMethod<SELF, TABLE, TABLE_FIELD> {
 
     default <T> SELF orderBy(Getter<T>... columns) {
         return this.orderBy(ascOrderByDirection(), 1, columns);
