@@ -2,10 +2,8 @@ package cn.mybatis.mp.core.mybatis.configuration;
 
 import cn.mybatis.mp.core.mybatis.mapper.context.MybatisLikeQueryParameter;
 import cn.mybatis.mp.core.mybatis.mapper.context.MybatisParameter;
-import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdContext;
 import cn.mybatis.mp.core.mybatis.typeHandler.LikeQuerySupport;
 import cn.mybatis.mp.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
-import db.sql.api.impl.cmd.executor.Executor;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
@@ -18,23 +16,23 @@ import java.util.function.Supplier;
 
 public class PreparedParameterHandler implements ParameterHandler {
 
-    private final SQLCmdContext<? extends Executor> cmdContext;
+    private final PreparedParameterContext parameterContext;
 
     private final MybatisConfiguration configuration;
 
-    public PreparedParameterHandler(MybatisConfiguration configuration, SQLCmdContext<? extends Executor> cmdContext) {
+    public PreparedParameterHandler(MybatisConfiguration configuration, PreparedParameterContext parameterContext) {
         this.configuration = configuration;
-        this.cmdContext = cmdContext;
+        this.parameterContext = parameterContext;
     }
 
     @Override
     public Object getParameterObject() {
-        return cmdContext;
+        return parameterContext;
     }
 
     @Override
     public void setParameters(PreparedStatement ps) throws SQLException {
-        Object[] params = cmdContext.getSQLCmdParams();
+        Object[] params = parameterContext.getParameters();
         int length = params.length;
         for (int i = 0; i < length; i++) {
             Object value = params[i];
