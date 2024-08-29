@@ -3,7 +3,6 @@ package cn.mybatis.mp.core.mybatis.configuration;
 
 import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
-import cn.mybatis.mp.core.mybatis.mapper.DbRunner;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.resultset.MybatisDefaultResultSetHandler;
 import cn.mybatis.mp.core.mybatis.typeHandler.EnumTypeHandler;
@@ -97,21 +96,11 @@ public class MybatisConfiguration extends Configuration {
         }
     }
 
-    private void addDbRunner() {
-        if (!this.mapperRegistry.hasMapper(DbRunner.class)) {
-            super.addMapper(DbRunner.class);
-        }
-    }
-
     @Override
     public <T> void addMapper(Class<T> type) {
         //添加基础 BasicMapper
         if (!this.hasMapper(BasicMapper.class)) {
             this.addBasicMapper(BasicMapper.class);
-        }
-        //添加
-        if (!this.hasMapper(DbRunner.class)) {
-            this.addDbRunner();
         }
 
         if (MybatisMapper.class.isAssignableFrom(type)) {
