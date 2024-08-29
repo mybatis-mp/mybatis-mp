@@ -67,7 +67,7 @@ public interface BasicMapper extends BaseMapper {
                 q.select(selectFields);
             }
         });
-        return this.$getById(new SQLCmdQueryContext(query),new RowBounds(0,1));
+        return this.$getById(new SQLCmdQueryContext(query), new RowBounds(0, 1));
     }
 
     /**

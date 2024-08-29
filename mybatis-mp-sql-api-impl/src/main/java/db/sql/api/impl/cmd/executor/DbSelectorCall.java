@@ -43,7 +43,7 @@ public class DbSelectorCall<R> implements SelectorCall<R> {
         });
     }
 
-    private R execute(Callable<R> callable){
+    private R execute(Callable<R> callable) {
         try {
             return callable.call();
         } catch (Exception e) {
