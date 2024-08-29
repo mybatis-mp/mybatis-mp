@@ -17,4 +17,7 @@ public class FetchSysRoleVoWhenHasNested {
 
     @NestedResultEntity(target = SysUser.class)
     private SysUser sysUser;
+
+    @Fetch(source = SysUser.class, property = "role_id", target = SysRole.class, targetProperty = "id", targetSelectProperty = "[count(distinct {id})]")
+    private Integer sysRoleCnt;
 }

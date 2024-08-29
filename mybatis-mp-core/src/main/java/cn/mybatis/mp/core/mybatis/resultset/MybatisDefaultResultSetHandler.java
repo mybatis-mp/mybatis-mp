@@ -109,7 +109,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 continue;
             }
 
-            if (Objects.isNull(fetchInfo.getEqGetFieldInvoker()) || fetchInfo.getFetch().limit() > 0) {
+            if (Objects.isNull(fetchInfo.getEqGetFieldInvoker()) || fetchInfo.getFetch().limit() > 0 || (Objects.nonNull(fetchInfo.getTargetSelectColumn()) && fetchInfo.getTargetSelectColumn().contains("("))) {
                 this.singleConditionFetch(rowValue, fetchInfo, onValue);
             } else {
                 MapUtil.computeIfAbsent(needFetchValuesMap, fetchInfo, key -> new ArrayList<>()).add(new FetchObject(onValue, onValue.toString(), rowValue));
@@ -198,7 +198,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             query.select(fetchInfo.getReturnType());
         } else {
             query.select(new Column(fetchInfo.getTargetSelectColumn()));
-            query.select(new Column(fetchInfo.getTargetMatchColumn()));
+            if (!fetchInfo.getTargetSelectColumn().contains("(")) {
+                query.select(new Column(fetchInfo.getTargetMatchColumn()));
+            }
         }
         if (Objects.nonNull(fetchInfo.getOrderBy()) && !StringPool.EMPTY.equals(fetchInfo.getOrderBy())) {
             query.orderBy(OrderByDirection.NONE, fetchInfo.getOrderBy());

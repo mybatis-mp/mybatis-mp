@@ -313,11 +313,40 @@ public class ResultInfo {
 
         String targetSelectColumn = null;
         if (!StringPool.EMPTY.equals(fetch.targetSelectProperty())) {
-            TableFieldInfo targetSelectTargetFieldInfo = fetchTargetTableInfo.getFieldInfo(fetch.targetSelectProperty());
-            if (Objects.isNull(targetSelectTargetFieldInfo)) {
-                throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the targetSelectProperty: " + fetch.targetSelectProperty() + " is not a entity field");
+            String targetSelectProperty = fetch.targetSelectProperty().trim();
+            if (targetSelectProperty.startsWith("[") && targetSelectProperty.endsWith("]")) {
+                StringBuilder targetSelectColumnBuilder = new StringBuilder();
+                int startIndex = 1;
+                while (true) {
+                    int start = targetSelectProperty.indexOf("{", startIndex);
+                    if (start == -1) {
+                        if (targetSelectColumnBuilder.length() == 0) {
+                            throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the targetSelectProperty: " + targetSelectProperty);
+                        } else {
+                            targetSelectColumnBuilder.append(targetSelectProperty.substring(startIndex, targetSelectProperty.length() - 1));
+                            targetSelectColumn = targetSelectColumnBuilder.toString();
+                            break;
+                        }
+                    }
+                    int end = targetSelectProperty.indexOf("}", start);
+                    if (end == -1) {
+                        throw new RuntimeException(targetSelectProperty + " format is Format exception");
+                    }
+                    String property = targetSelectProperty.substring(start + 1, end);
+                    TableFieldInfo targetSelectTargetFieldInfo = fetchTargetTableInfo.getFieldInfo(property);
+                    if (Objects.isNull(targetSelectTargetFieldInfo)) {
+                        throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the targetSelectProperty: " + property + " is not a entity field");
+                    }
+                    targetSelectColumnBuilder.append(targetSelectProperty.substring(startIndex, start)).append(targetSelectTargetFieldInfo.getColumnName());
+                    startIndex = end + 1;
+                }
+            } else {
+                TableFieldInfo targetSelectTargetFieldInfo = fetchTargetTableInfo.getFieldInfo(fetch.targetSelectProperty());
+                if (Objects.isNull(targetSelectTargetFieldInfo)) {
+                    throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the targetSelectProperty: " + fetch.targetSelectProperty() + " is not a entity field");
+                }
+                targetSelectColumn = targetSelectTargetFieldInfo.getColumnName();
             }
-            targetSelectColumn = targetSelectTargetFieldInfo.getColumnName();
         }
 
         String orderBy = fetch.orderBy().trim();
