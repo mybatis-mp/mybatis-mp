@@ -107,7 +107,7 @@ public class GeneratorUtil {
         }
         entityInfo.getFieldInfoList().forEach(item -> {
             classList.add(item.getType().getName());
-            if (item.isNeedTableField()) {
+            if (item.isNeedTableField(generatorConfig.getEntityConfig())) {
                 classList.add(TableField.class.getName());
             }
             if (item.getColumnInfo().isVersion()) {
@@ -178,7 +178,10 @@ public class GeneratorUtil {
             classList.add(entityInfo.getIdFieldInfo().getType().getName());
         }
         classList.add(entityInfo.getMapperPackage() + "." + entityInfo.getMapperName());
-        classList.add(entityInfo.getDaoPackage() + "." + entityInfo.getDaoName());
+
+        if (generatorConfig.getDaoConfig().isEnable()) {
+            classList.add(entityInfo.getDaoPackage() + "." + entityInfo.getDaoName());
+        }
 
         if (generatorConfig.getContainerType() == ContainerType.SPRING) {
             classList.add("org.springframework.stereotype.Repository");
@@ -233,8 +236,16 @@ public class GeneratorUtil {
         if (entityInfo.getIdFieldInfo() != null) {
             classList.add(entityInfo.getIdFieldInfo().getType().getName());
         }
-        classList.add(entityInfo.getDaoPackage() + "." + entityInfo.getDaoName());
-        classList.add(entityInfo.getServicePackage() + "." + entityInfo.getServiceName());
+
+        if (generatorConfig.getDaoConfig().isEnable()) {
+            classList.add(entityInfo.getDaoPackage() + "." + entityInfo.getDaoName());
+        } else if (generatorConfig.getDaoImplConfig().isEnable()) {
+            classList.add(entityInfo.getDaoImplPackage() + "." + entityInfo.getDaoImplName());
+        }
+
+        if (generatorConfig.getServiceConfig().isEnable()) {
+            classList.add(entityInfo.getServicePackage() + "." + entityInfo.getServiceName());
+        }
 
         if (generatorConfig.getServiceImplConfig().isInjectMapper() || !generatorConfig.getServiceImplConfig().isInjectDao()) {
             classList.add(entityInfo.getMapperPackage() + "." + entityInfo.getMapperName());
@@ -281,7 +292,13 @@ public class GeneratorUtil {
             classList.add(entityInfo.getIdFieldInfo().getType().getName());
         }
 
-        classList.add(entityInfo.getServicePackage() + "." + entityInfo.getServiceName());
+        if (generatorConfig.getActionConfig().isInjectService()) {
+            if (generatorConfig.getServiceConfig().isEnable()) {
+                classList.add(entityInfo.getServicePackage() + "." + entityInfo.getServiceName());
+            } else if (generatorConfig.getServiceImplConfig().isEnable()) {
+                classList.add(entityInfo.getServiceImplPackage() + "." + entityInfo.getServiceImplName());
+            }
+        }
 
         if (generatorConfig.getContainerType() == ContainerType.SPRING) {
             classList.add("org.springframework.web.bind.annotation.RestController");

@@ -35,10 +35,15 @@ public class FreemarkerTemplateEngine implements TemplateEngine {
             Template template = configuration.getTemplate(templateBuilder.templateFilePath() + ".ftl");
 
             File outputFile = new File(templateBuilder.targetFilePath());
-            if (!outputFile.exists()) {
-                outputFile.getParentFile().mkdirs();
-                outputFile.createNewFile();
+            if (outputFile.exists()) {
+                if (!templateBuilder.isFileCover()) {
+                    return;
+                }
+                outputFile.delete();
             }
+
+            outputFile.getParentFile().mkdirs();
+            outputFile.createNewFile();
 
             try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
                 template.process(templateBuilder.contextData(), new OutputStreamWriter(fileOutputStream, StandardCharsets.UTF_8));

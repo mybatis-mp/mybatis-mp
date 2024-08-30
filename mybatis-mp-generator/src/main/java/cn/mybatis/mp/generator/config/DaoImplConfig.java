@@ -21,12 +21,22 @@ public class DaoImplConfig {
      */
     private String suffix = "DaoImpl";
 
+    /**
+     * 是否启用
+     */
+    private boolean enable = true;
+
 
     /**
      * dao实现类的父类
      */
     public DaoImplConfig superClass(String superClass) {
         this.superClass = superClass;
+        return this;
+    }
+
+    public DaoImplConfig enable(boolean enable) {
+        this.enable = enable;
         return this;
     }
 

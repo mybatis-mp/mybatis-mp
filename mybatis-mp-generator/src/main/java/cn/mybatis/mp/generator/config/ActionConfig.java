@@ -1,9 +1,16 @@
 package cn.mybatis.mp.generator.config;
 
+import cn.mybatis.mp.generator.database.meta.EntityInfo;
 import lombok.Getter;
 
 @Getter
 public class ActionConfig {
+
+    private final GeneratorConfig generatorConfig;
+
+    public ActionConfig(GeneratorConfig generatorConfig) {
+        this.generatorConfig = generatorConfig;
+    }
 
     /**
      * 是否启用
@@ -151,6 +158,10 @@ public class ActionConfig {
     public ActionConfig injectService(boolean injectService) {
         this.injectService = injectService;
         return this;
+    }
+
+    public boolean isInjectService() {
+        return injectService && (this.generatorConfig.getServiceConfig().isEnable() || this.generatorConfig.getServiceImplConfig().isEnable());
     }
 
     /**
@@ -324,5 +335,15 @@ public class ActionConfig {
     public ActionConfig swagger(boolean enable) {
         this.swagger = enable;
         return this;
+    }
+
+    public String serviceClassName(EntityInfo entityInfo) {
+        if (this.generatorConfig.getServiceConfig().isEnable()) {
+            return entityInfo.getServiceName();
+        }
+        if (this.generatorConfig.getServiceImplConfig().isEnable()) {
+            return entityInfo.getServiceImplName();
+        }
+        throw new RuntimeException("service层未开启");
     }
 }

@@ -16,7 +16,7 @@ public class DaoImplTemplateBuilder extends AbstractTemplateBuilder {
 
     @Override
     public boolean enable() {
-        return generatorConfig.getDaoConfig().isEnable();
+        return generatorConfig.getDaoImplConfig().isEnable();
     }
 
     @Override
@@ -48,8 +48,13 @@ public class DaoImplTemplateBuilder extends AbstractTemplateBuilder {
         data.put("date", LocalDate.now().toString());
         data.put("author", generatorConfig.getAuthor());
         data.put("entityInfo", entityInfo);
+        data.put("entityConfig", generatorConfig.getEntityConfig());
+        data.put("mapperConfig", generatorConfig.getMapperConfig());
         data.put("daoConfig", generatorConfig.getDaoConfig());
         data.put("daoImplConfig", generatorConfig.getDaoImplConfig());
+        data.put("serviceConfig", generatorConfig.getServiceConfig());
+        data.put("serviceImplConfig", generatorConfig.getServiceImplConfig());
+        data.put("generatorConfig", generatorConfig);
         data.put("containerType", generatorConfig.getContainerType());
         return data;
     }

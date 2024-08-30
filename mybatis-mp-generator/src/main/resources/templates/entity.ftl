@@ -41,8 +41,8 @@ public class ${entityInfo.name} ${superExtend}{
 </#if>
 <#if field.columnInfo.primaryKey>
     ${field.buildTableIdCode()!}
-    <#if field.isNeedTableField()>
-    ${field.buildTableField()}
+    <#if field.isNeedTableField(entityConfig)>
+    ${field.buildTableField(entityConfig)}
     private ${field.typeName} ${field.name};
     <#else>
     private ${field.typeName} ${field.name};
@@ -62,8 +62,8 @@ public class ${entityInfo.name} ${superExtend}{
     @ApiModelProperty("${field.remarks!}")
 </#if>
 </#if>
-    <#if field.isNeedTableField()>
-    ${field.buildTableField()}
+    <#if field.isNeedTableField(entityConfig)>
+    ${field.buildTableField(entityConfig)}
     private ${field.typeName} ${field.name};
 <#else>
     private ${field.typeName} ${field.name};
