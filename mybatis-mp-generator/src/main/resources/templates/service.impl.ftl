@@ -17,7 +17,7 @@ public class ${entityInfo.serviceImplName} ${superExtend}<#if serviceConfig.isGe
 
 <#if serviceImplConfig.isInjectDao()>
     @${autowiredAnnotationName}
-    private ${serviceImplConfig.daoClassName(entityInfo)} ${util.firstToLower(serviceImplConfig.daoClassName(entityInfo))};
+    private ${serviceImplConfig.injectDaoClassName(entityInfo)} ${util.firstToLower(serviceImplConfig.injectDaoClassName(entityInfo))};
     
 </#if>
 <#if !serviceImplConfig.isInjectDao() || serviceImplConfig.isInjectMapper()>

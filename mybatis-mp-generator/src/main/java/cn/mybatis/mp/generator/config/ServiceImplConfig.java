@@ -91,7 +91,7 @@ public class ServiceImplConfig {
         return this;
     }
 
-    public String daoClassName(EntityInfo entityInfo) {
+    public String injectDaoClassName(EntityInfo entityInfo) {
         if (this.generatorConfig.getDaoConfig().isEnable()) {
             return entityInfo.getDaoName();
         }

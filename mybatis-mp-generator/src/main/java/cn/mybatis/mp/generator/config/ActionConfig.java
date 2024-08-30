@@ -337,7 +337,7 @@ public class ActionConfig {
         return this;
     }
 
-    public String serviceClassName(EntityInfo entityInfo) {
+    public String injectServiceClassName(EntityInfo entityInfo) {
         if (this.generatorConfig.getServiceConfig().isEnable()) {
             return entityInfo.getServiceName();
         }

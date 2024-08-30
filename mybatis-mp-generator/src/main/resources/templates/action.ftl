@@ -36,7 +36,7 @@ public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric(
 
 <#if actionConfig.isInjectService()>
     @${autowiredAnnotationName}
-    private ${actionConfig.serviceClassName(entityInfo)} ${util.firstToLower(actionConfig.serviceClassName(entityInfo))};
+    private ${actionConfig.injectServiceClassName(entityInfo)} ${util.firstToLower(actionConfig.injectServiceClassName(entityInfo))};
 
 </#if>
 <#if actionConfig.isEnableGet()  && entityInfo.hasId()>
