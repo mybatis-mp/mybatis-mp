@@ -34,13 +34,13 @@ public class SQLCmdSqlSource implements SqlSource {
     private final Method providerMethod;
     private final ProviderContext providerContext;
 
-    private final DbType dbType;
+    private DbType dbType;
 
     public SQLCmdSqlSource(Configuration configuration, Method providerMethod, ProviderContext providerContext) {
         this.configuration = configuration;
         this.providerMethod = providerMethod;
         this.providerContext = providerContext;
-        this.dbType = DbTypeUtil.getDbType(configuration);
+
     }
 
 
@@ -51,11 +51,14 @@ public class SQLCmdSqlSource implements SqlSource {
         if (Objects.isNull(sqlGenerator)) {
             throw new RuntimeException("Unadapted: Unknown SQL method: " + methodName);
         }
-        String sql = sqlGenerator.apply(parameterObject, this.providerContext, dbType);
+        String sql = sqlGenerator.apply(parameterObject, this.providerContext, getDbType());
         return new BoundSql(this.configuration, sql, Collections.emptyList(), parameterObject);
     }
 
     public DbType getDbType() {
+        if (Objects.isNull(dbType)) {
+            this.dbType = DbTypeUtil.getDbType(configuration);
+        }
         return dbType;
     }
 
