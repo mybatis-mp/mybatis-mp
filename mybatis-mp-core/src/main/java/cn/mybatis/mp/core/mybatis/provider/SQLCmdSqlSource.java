@@ -40,7 +40,6 @@ public class SQLCmdSqlSource implements SqlSource {
         this.configuration = configuration;
         this.providerMethod = providerMethod;
         this.providerContext = providerContext;
-
     }
 
 

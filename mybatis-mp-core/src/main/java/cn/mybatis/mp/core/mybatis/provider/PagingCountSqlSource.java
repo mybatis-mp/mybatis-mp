@@ -7,11 +7,13 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.session.Configuration;
 
+import java.util.Objects;
+
 public class PagingCountSqlSource implements SqlSource {
 
     private final Configuration configuration;
 
-    private final DbType dbType;
+    private DbType dbType;
 
     private final SqlSource sqlSource;
 
@@ -20,19 +22,21 @@ public class PagingCountSqlSource implements SqlSource {
     public PagingCountSqlSource(Configuration configuration, SqlSource sqlSource, boolean optimize) {
         this.configuration = configuration;
         this.sqlSource = sqlSource;
-        this.dbType = DbTypeUtil.getDbType(configuration);
         this.optimize = optimize;
     }
 
     @Override
     public BoundSql getBoundSql(Object parameterObject) {
         BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
-        String sql = PagingUtil.getCountSQL(this.dbType, boundSql.getSql(), optimize);
+        String sql = PagingUtil.getCountSQL(getDbType(), boundSql.getSql(), optimize);
         return new PagingBoundSql(this.configuration, sql, boundSql);
     }
 
 
     public DbType getDbType() {
+        if (Objects.isNull(dbType)) {
+            this.dbType = DbTypeUtil.getDbType(configuration);
+        }
         return dbType;
     }
 }
