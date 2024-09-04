@@ -55,6 +55,7 @@ public @interface Fetch {
      * 目标select属性
      * 用于返回单列的情况
      * 可以动态select 例如:[count({id})] or [{id}+{name} as aa]等
+     *
      * @return
      */
     String targetSelectProperty() default "";
@@ -62,6 +63,7 @@ public @interface Fetch {
     /**
      * 用于结果排序 例如 "xx desc,xx2 desc"; 其中 xx xx2 均为 实体类属性，不是列，多个逗号分割
      * 可以动态 例如:[{id} desc,{createTime} asc]等
+     *
      * @return
      */
     String orderBy() default "";

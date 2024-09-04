@@ -12,12 +12,9 @@ import java.util.Objects;
 public class PagingCountSqlSource implements SqlSource {
 
     private final Configuration configuration;
-
-    private DbType dbType;
-
     private final SqlSource sqlSource;
-
     private final boolean optimize;
+    private DbType dbType;
 
     public PagingCountSqlSource(Configuration configuration, SqlSource sqlSource, boolean optimize) {
         this.configuration = configuration;

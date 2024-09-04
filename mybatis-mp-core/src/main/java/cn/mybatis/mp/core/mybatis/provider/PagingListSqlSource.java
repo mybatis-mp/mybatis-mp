@@ -14,10 +14,8 @@ import java.util.Objects;
 public class PagingListSqlSource implements SqlSource {
 
     private final Configuration configuration;
-
-    private DbType dbType;
-
     private final SqlSource sqlSource;
+    private DbType dbType;
 
     public PagingListSqlSource(Configuration configuration, SqlSource sqlSource) {
         this.configuration = configuration;

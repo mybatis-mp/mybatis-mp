@@ -17,30 +17,26 @@ public class ServiceImplConfig {
      * 接口父类
      */
     private String superClass;
-
-    public ServiceImplConfig(GeneratorConfig generatorConfig) {
-        this.generatorConfig = generatorConfig;
-    }
-
     /**
      * 注入dao
      */
     private boolean injectDao = true;
-
     /**
      * 注入Mapper
      */
     private boolean injectMapper = false;
-
     /**
      * service实现类包名
      */
     private String packageName = "service.impl";
-
     /**
      * service实现后缀
      */
     private String suffix = "ServiceImpl";
+
+    public ServiceImplConfig(GeneratorConfig generatorConfig) {
+        this.generatorConfig = generatorConfig;
+    }
 
     /**
      * 接口父类

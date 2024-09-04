@@ -7,131 +7,106 @@ import lombok.Getter;
 public class ActionConfig {
 
     private final GeneratorConfig generatorConfig;
-
-    public ActionConfig(GeneratorConfig generatorConfig) {
-        this.generatorConfig = generatorConfig;
-    }
-
     /**
      * 是否启用
      */
     private boolean enable = true;
-
-
     /**
      * 控制器父类
      */
     private String superClass;
-
     /**
      * 注入service
      */
     private boolean injectService = true;
-
     /**
      * 是否含有泛型
      */
     private boolean generic;
-
     /**
      * 新增
      */
     private boolean enableSave = true;
-
     /**
      * 新增的方法名
      */
     private String saveMethodName = "save";
-
     /**
      * 新增的path
      */
     private String saveUriPath = "/save";
-
     /**
      * 修改
      */
     private boolean enableUpdate = true;
-
     /**
      * 修改的方法名
      */
     private String updateMethodName = "update";
-
     /**
      * 修改的path
      */
     private String updateUriPath = "/update";
-
     /**
      * 删除
      */
     private boolean enableDelete = true;
-
     /**
      * 删除的方法名
      */
     private String deleteMethodName = "delete";
-
     /**
      * 删除的path
      */
     private String deleteUriPath = "/delete";
-
     /**
      * 分页
      */
     private boolean enableFind = true;
-
     /**
      * 分页的方法名
      */
     private String findMethodName = "find";
-
     /**
      * 分页的path
      */
     private String findUriPath = "/find";
-
     /**
      * 单个查询
      */
     private boolean enableGet = true;
-
     /**
      * 单个查询的方法名
      */
     private String getMethodName = "get";
-
     /**
      * 单个查询的path
      */
     private String getUriPath = "/get";
-
     /**
      * 实体类包名
      */
     private String packageName = "action";
-
     /**
      * mapper后缀
      */
     private String suffix = "Action";
-
     /**
      * save update 等返回的类型
      */
     private String returnClass;
-
     /**
      * 返回的名字
      */
     private String returnClassName = "Object";
-
     /**
      * 是否开启 swagger
      */
     private boolean swagger = false;
+
+    public ActionConfig(GeneratorConfig generatorConfig) {
+        this.generatorConfig = generatorConfig;
+    }
 
     /**
      * 设置是否启用
