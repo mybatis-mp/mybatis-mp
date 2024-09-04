@@ -43,6 +43,11 @@ public class InsertSelectChain<T> extends BaseInsert<InsertSelectChain<T>> {
         return new InsertSelectChain<>();
     }
 
+    public <T2> InsertSelectChain<T> insertSelect(Getter<T> field, Cmd select) {
+        this.insertSelectFields.put(field, select);
+        return this;
+    }
+
     public <T2> InsertSelectChain<T> insertSelect(Getter<T> field, Getter<T2> select) {
         this.insertSelectFields.put(field, select);
         return this;
@@ -70,6 +75,8 @@ public class InsertSelectChain<T> extends BaseInsert<InsertSelectChain<T>> {
                 } else if (entry.getValue() instanceof SelectGetterFieldsFun) {
                     SelectGetterFieldsFun selectGetterFieldsFun = (SelectGetterFieldsFun) entry.getValue();
                     selectQuery.select(selectGetterFieldsFun.fields, selectGetterFieldsFun.fun);
+                } else if (entry.getValue() instanceof Cmd) {
+                    selectQuery.select((Cmd) entry.getValue());
                 } else {
                     selectQuery.select((Getter<?>) entry.getValue());
                 }
