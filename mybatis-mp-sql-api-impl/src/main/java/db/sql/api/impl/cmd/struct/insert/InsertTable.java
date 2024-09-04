@@ -45,7 +45,10 @@ public class InsertTable implements IInsertTable<Table> {
 
         if (context.getDbType() == DbType.ORACLE && parent instanceof AbstractInsert) {
             AbstractInsert abstractInsert = (AbstractInsert) parent;
-            List<List<Cmd>> insertValues = abstractInsert.getInsertValues().getValues();
+            List<List<Cmd>> insertValues = null;
+            if (Objects.nonNull(abstractInsert.getInsertValues())) {
+                abstractInsert.getInsertValues().getValues();
+            }
             if (Objects.nonNull(insertValues) && insertValues.size() > 1) {
                 sqlBuilder.append(" INSERT ALL ");
                 return sqlBuilder;
