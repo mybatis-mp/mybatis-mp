@@ -9,6 +9,7 @@ import com.mybatis.mp.core.test.mapper.DefaultValueTestMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
+import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -180,23 +181,22 @@ public class DefaultValueTestCase extends BaseTest {
             System.out.println(defaultValueTest);
             defaultValueTest = mapper.getById(1);
             System.out.println(defaultValueTest);
-            if (TestDataSource.DB_TYPE != DbType.ORACLE && TestDataSource.DB_TYPE != DbType.KING_BASE) {
-                InsertChain insert = InsertChain.of(mapper)
-                        .insert(DefaultValueTest.class)
-                        //.insertIgnore()
-                        .field(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
-                        .fromSelect(Query
-                                .create()
-                                .select(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
-                                .from(DefaultValueTest.class)
-                                .eq(DefaultValueTest::getId, 1)
-                        );
-                insert.execute();
-                defaultValueTest = mapper.getById(2);
-                assertEquals(defaultValueTest.getValue2(), 13);
-                assertEquals(defaultValueTest.getValue3(), TestEnum.X2);
-            }
 
+            InsertChain insert = InsertChain.of(mapper)
+                    .insert(DefaultValueTest.class)
+                    //.insertIgnore()
+                    .field(DefaultValueTest::getId, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
+                    .fromSelect(Query
+                            .create()
+                            .select(Methods.value(100))
+                            .select(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
+                            .from(DefaultValueTest.class)
+                            .eq(DefaultValueTest::getId, 1)
+                    );
+            insert.execute();
+            defaultValueTest = mapper.getById(100);
+            assertEquals(defaultValueTest.getValue2(), 13);
+            assertEquals(defaultValueTest.getValue3(), TestEnum.X2);
         }
     }
 
