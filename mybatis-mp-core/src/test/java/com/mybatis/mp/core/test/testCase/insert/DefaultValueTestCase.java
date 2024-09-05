@@ -2,7 +2,6 @@ package com.mybatis.mp.core.test.testCase.insert;
 
 import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.sql.executor.chain.InsertChain;
-import cn.mybatis.mp.core.sql.executor.chain.InsertSelectChain;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import com.mybatis.mp.core.test.DO.DefaultValueTest;
 import com.mybatis.mp.core.test.DO.TestEnum;
@@ -216,9 +215,9 @@ public class DefaultValueTestCase extends BaseTest {
             defaultValueTest = mapper.getById(1);
             System.out.println(defaultValueTest);
 
-            InsertSelectChain.of(mapper)
+            InsertChain.of(mapper)
                     .insert(DefaultValueTest.class)
-                    .insertSelect(DefaultValueTest::getId, DefaultValueTest::getId, c -> Methods.value(100))
+                    .insertSelect(DefaultValueTest::getId, Methods.value(100))
                     .insertSelect(DefaultValueTest::getValue1, GetterFields.of(DefaultValueTest::getValue1, DefaultValueTest::getValue1), cs -> cs[0].concat(cs[1]))
                     .insertSelect(DefaultValueTest::getValue2, DefaultValueTest::getValue2)
                     .insertSelect(DefaultValueTest::getValue3, DefaultValueTest::getValue3)
