@@ -13,31 +13,31 @@ import ${pkg};
  * @since ${date}
  */
 @${serviceAnnotationName}
-public class ${entityInfo.serviceImplName} ${superExtend}<#if serviceConfig.isGeneric()><${entityInfo.name},<#if entityInfo.idFieldInfo??>${entityInfo.idFieldInfo.typeName}<#else>Void</#if>></#if> implements ${entityInfo.serviceName}{
+public class ${entityInfo.serviceImplName} ${superExtend}<#if serviceConfig.isGeneric()><${entityInfo.name},<#if entityInfo.idFieldInfo??>${entityInfo.idFieldInfo.typeName}<#else>Void</#if>></#if> <#if serviceConfig.isEnable()>implements ${entityInfo.serviceName}</#if>{
 
 <#if serviceImplConfig.isInjectDao()>
     @${autowiredAnnotationName}
-    private ${entityInfo.daoName} ${util.firstToLower(entityInfo.daoName)};
-
+    private ${serviceImplConfig.injectDaoClassName(entityInfo)} ${util.firstToLower(serviceImplConfig.injectDaoClassName(entityInfo))};
+    
 </#if>
 <#if !serviceImplConfig.isInjectDao() || serviceImplConfig.isInjectMapper()>
     @${autowiredAnnotationName}
-    private ${entityInfo.mapperName} ${util.firstToLower(entityInfo.mapperName)};
+    private ${serviceImplConfig.mapperClassName(entityInfo)} ${util.firstToLower(serviceImplConfig.mapperClassName(entityInfo))};
 
     private QueryChain<${entityInfo.name}> queryChain() {
-        return QueryChain.of(${util.firstToLower(entityInfo.mapperName)});
+        return QueryChain.of(${util.firstToLower(serviceImplConfig.mapperClassName(entityInfo))});
     }
 
     private UpdateChain updateChain() {
-        return UpdateChain.of(${util.firstToLower(entityInfo.mapperName)});
+        return UpdateChain.of(${util.firstToLower(serviceImplConfig.mapperClassName(entityInfo))});
     }
 
     private InsertChain insertChain(){
-        return InsertChain.of(${util.firstToLower(entityInfo.mapperName)});
+        return InsertChain.of(${util.firstToLower(serviceImplConfig.mapperClassName(entityInfo))});
     }
 
     private DeleteChain deleteChain(){
-        return DeleteChain.of(${util.firstToLower(entityInfo.mapperName)});
+        return DeleteChain.of(${util.firstToLower(serviceImplConfig.mapperClassName(entityInfo))});
     }
 
 </#if>

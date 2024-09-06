@@ -1,34 +1,42 @@
 package cn.mybatis.mp.generator.config;
 
+import cn.mybatis.mp.generator.database.meta.EntityInfo;
 import lombok.Getter;
 
 @Getter
 public class ServiceImplConfig {
 
+    private final GeneratorConfig generatorConfig;
+    /**
+     * 是否启用
+     */
+    private boolean enable = true;
+
+
     /**
      * 接口父类
      */
     private String superClass;
-
     /**
      * 注入dao
      */
     private boolean injectDao = true;
-
     /**
      * 注入Mapper
      */
     private boolean injectMapper = false;
-
     /**
      * service实现类包名
      */
     private String packageName = "service.impl";
-
     /**
      * service实现后缀
      */
     private String suffix = "ServiceImpl";
+
+    public ServiceImplConfig(GeneratorConfig generatorConfig) {
+        this.generatorConfig = generatorConfig;
+    }
 
     /**
      * 接口父类
@@ -38,12 +46,21 @@ public class ServiceImplConfig {
         return this;
     }
 
+    public ServiceImplConfig enable(boolean enable) {
+        this.enable = enable;
+        return this;
+    }
+
     /**
      * 注入dao
      */
     public ServiceImplConfig injectDao(boolean injectDao) {
         this.injectDao = injectDao;
         return this;
+    }
+
+    public boolean isInjectDao() {
+        return injectDao && this.generatorConfig.getDaoImplConfig().isEnable();
     }
 
     /**
@@ -68,5 +85,19 @@ public class ServiceImplConfig {
     public ServiceImplConfig suffix(String suffix) {
         this.suffix = suffix;
         return this;
+    }
+
+    public String injectDaoClassName(EntityInfo entityInfo) {
+        if (this.generatorConfig.getDaoConfig().isEnable()) {
+            return entityInfo.getDaoName();
+        }
+        if (this.generatorConfig.getDaoImplConfig().isEnable()) {
+            return entityInfo.getDaoImplName();
+        }
+        throw new RuntimeException("dao层未开启");
+    }
+
+    public String mapperClassName(EntityInfo entityInfo) {
+        return entityInfo.getMapperName();
     }
 }

@@ -4,6 +4,7 @@ import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import cn.mybatis.mp.core.sql.executor.chain.UpdateChain;
+import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.DO.SysUserScore;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
@@ -11,6 +12,7 @@ import com.mybatis.mp.core.test.mapper.SysUserScoreMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
+import db.sql.api.cmd.GetterFields;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.DatePattern;
@@ -34,6 +36,7 @@ public class FunTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer count = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId, c -> c.count())
+                    .select(GetterFields.of(SysUser::getId, SysRole::getId), cs -> cs[0].concat(cs[1]).as("item_name"))
                     .from(SysUser.class)
                     .like(LikeMode.RIGHT, SysUser::getUserName, "test")
                     .and()

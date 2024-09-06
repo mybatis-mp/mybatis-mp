@@ -17,6 +17,7 @@ import db.sql.api.impl.cmd.executor.SelectorCall;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
 import org.apache.ibatis.cursor.Cursor;
+import org.apache.ibatis.session.RowBounds;
 
 import java.io.Serializable;
 import java.util.*;
@@ -58,14 +59,15 @@ public interface BasicMapper extends BaseMapper {
      * @return 当个当前实体类
      */
     default <E> E getById(Class<E> entityType, Serializable id, Getter<E>... selectFields) {
-        return this.getWithQueryFun(entityType, (baseQuery -> {
-            baseQuery.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
+        BaseQuery<?, E> query = MapperCmdBuilderUtil.buildQuery(entityType, (q) -> {
+            q.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
             TableInfo tableInfo = Tables.get(entityType);
-            WhereUtil.appendIdWhere(baseQuery.$where(), tableInfo, id);
+            WhereUtil.appendIdWhere(q.$where(), tableInfo, id);
             if (Objects.nonNull(selectFields) && selectFields.length > 0) {
-                baseQuery.select(selectFields);
+                q.select(selectFields);
             }
-        }));
+        });
+        return this.$getById(new SQLCmdQueryContext(query), new RowBounds(0, 1));
     }
 
     /**
@@ -93,7 +95,6 @@ public interface BasicMapper extends BaseMapper {
      */
     default <E> E getWithQueryFun(Class<E> entityType, Consumer<BaseQuery<? extends BaseQuery, E>> consumer) {
         BaseQuery<?, E> query = MapperCmdBuilderUtil.buildQuery(entityType, consumer);
-        query.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
         return this.get(query);
     }
 

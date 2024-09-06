@@ -31,6 +31,9 @@ public class InsertValues implements IInsertValues<Cmd> {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        if (Objects.isNull(values) || values.isEmpty()) {
+            return sqlBuilder;
+        }
         boolean oracleMuti = false;
         AbstractInsert abstractInsert = null;
         if (context.getDbType() == DbType.ORACLE && parent instanceof AbstractInsert) {

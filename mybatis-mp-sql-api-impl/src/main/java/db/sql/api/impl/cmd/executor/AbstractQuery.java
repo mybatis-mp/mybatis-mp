@@ -196,19 +196,6 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return (SELF) this;
     }
 
-    /**
-     * select 列
-     *
-     * @param column 列
-     * @param storey 列存储层级
-     * @param <T>    列的实体类
-     * @return 自己
-     */
-    @Override
-    public <T> SELF select(Getter<T> column, int storey) {
-        return this.select($.field(column, storey));
-    }
-
 
     /**
      * select 子查询 列
@@ -221,11 +208,17 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      */
     @Override
     public <T> SELF select(Getter<T> column, int storey, Function<TableField, Cmd> f) {
+        if (Objects.isNull(f)) {
+            return this.select($.field(column, storey));
+        }
         return this.select(f.apply($.field(column, storey)));
     }
 
     @Override
     public SELF select(GetterField[] getterFields, Function<TableField[], Cmd> f) {
+        if (Objects.isNull(f)) {
+            return this.select($.fields(getterFields));
+        }
         return this.select(f.apply($.fields(getterFields)));
     }
 
@@ -248,19 +241,6 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     /**
      * select 子查询 列
      *
-     * @param dataset 子查询
-     * @param column  列
-     * @param <T>     列的实体类
-     * @return
-     */
-    @Override
-    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF select(IDataset<DATASET, DATASET_FIELD> dataset, Getter<T> column) {
-        return this.select(this.$(dataset, column));
-    }
-
-    /**
-     * select 子查询 列
-     *
      * @param dataset    子查询
      * @param columnName 列
      * @param f          转换函数
@@ -273,6 +253,9 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     @Override
     public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF select(IDataset<DATASET, DATASET_FIELD> dataset, GetterField[] getterFields, Function<IDatasetField[], Cmd> f) {
+        if (Objects.isNull(f)) {
+            return this.select(this.getDatasetFields(dataset, getterFields));
+        }
         return this.select(this.apply(dataset, f, getterFields));
     }
 
@@ -376,21 +359,6 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return groupBy;
     }
 
-
-    /**
-     * groupBy 列
-     *
-     * @param column 列
-     * @param storey 列存储层级
-     * @param <T>    列的实体类
-     * @return 自己
-     */
-    @Override
-    public <T> SELF groupBy(Getter<T> column, int storey) {
-        return this.groupBy($.field(column, storey));
-    }
-
-
     /**
      * groupBy 子查询 列
      *
@@ -402,11 +370,17 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      */
     @Override
     public <T> SELF groupBy(Getter<T> column, int storey, Function<TableField, Cmd> f) {
+        if (Objects.isNull(f)) {
+            return this.groupBy($.field(column, storey));
+        }
         return this.groupBy(f.apply($.field(column, storey)));
     }
 
     @Override
     public SELF groupBy(GetterField[] getterFields, Function<TableField[], Cmd> f) {
+        if (Objects.isNull(f)) {
+            return this.groupBy($.fields(getterFields));
+        }
         return this.groupBy(f.apply($.fields(getterFields)));
     }
 
@@ -454,12 +428,10 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     @Override
     public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(IDataset<DATASET, DATASET_FIELD> dataset, GetterField[] getterFields, Function<IDatasetField[], Cmd> f) {
+        if (Objects.isNull(f)) {
+            return this.groupBy(this.getDatasetFields(dataset, getterFields));
+        }
         return this.groupBy(this.apply(dataset, f, getterFields));
-    }
-
-    @Override
-    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF groupBy(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
-        return this.groupBy(this.$(dataset, columnName));
     }
 
 
@@ -536,7 +508,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return this.havingOr(f.apply($.fields(getterFields)));
     }
 
-    private <R, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> R apply(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], R> f, IColumnField... columnFields) {
+    private <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> IDatasetField[] getDatasetFields(IDataset<DATASET, DATASET_FIELD> dataset, IColumnField... columnFields) {
         IDatasetField[] datasetFields = new IDatasetField[columnFields.length];
         for (int i = 0; i < columnFields.length; i++) {
             IColumnField columnField = columnFields[i];
@@ -548,7 +520,11 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
                 throw new RuntimeException("Not Supported");
             }
         }
-        return f.apply(datasetFields);
+        return datasetFields;
+    }
+
+    private <R, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> R apply(IDataset<DATASET, DATASET_FIELD> dataset, Function<IDatasetField[], R> f, IColumnField... columnFields) {
+        return f.apply(getDatasetFields(dataset, columnFields));
     }
 
     @Override
@@ -620,19 +596,6 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return this.limit;
     }
 
-    /**
-     * orderBy 列
-     *
-     * @param column 列
-     * @param storey 列存储层级
-     * @param <T>    列的实体类
-     * @return 自己
-     */
-    @Override
-    public <T> SELF orderBy(IOrderByDirection orderByDirection, Getter<T> column, int storey) {
-        return this.orderBy(orderByDirection, $.field(column, storey));
-    }
-
 
     /**
      * orderBy 列
@@ -645,11 +608,17 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      */
     @Override
     public <T> SELF orderBy(IOrderByDirection orderByDirection, Getter<T> column, int storey, Function<TableField, Cmd> f) {
+        if (Objects.isNull(f)) {
+            return this.orderBy(orderByDirection, $.field(column, storey));
+        }
         return this.orderBy(orderByDirection, f.apply($.field(column, storey)));
     }
 
     @Override
     public SELF orderBy(IOrderByDirection orderByDirection, GetterField[] getterFields, Function<TableField[], Cmd> f) {
+        if (Objects.isNull(f)) {
+            return this.orderBy(orderByDirection, $.fields(getterFields));
+        }
         return this.orderBy(orderByDirection, f.apply($.fields(getterFields)));
     }
 
@@ -665,20 +634,10 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     @Override
     public SELF orderBy(IOrderByDirection orderByDirection, String columnName, Function<IDatasetField, Cmd> f) {
+        if (Objects.isNull(f)) {
+            return this.orderBy(orderByDirection, Methods.column(columnName));
+        }
         return this.orderBy(orderByDirection, f.apply(Methods.column(columnName)));
-    }
-
-    /**
-     * orderBy 子查询 列
-     *
-     * @param dataset 子查询
-     * @param column  列
-     * @param <T>     列的实体类
-     * @return
-     */
-    @Override
-    public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T> column) {
-        return this.orderBy(orderByDirection, this.$(dataset, column));
     }
 
     /**
@@ -692,6 +651,9 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      */
     @Override
     public <T, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, Getter<T> column, Function<DATASET_FIELD, Cmd> f) {
+        if (Objects.isNull(f)) {
+            return this.orderBy(orderByDirection, this.$(dataset, column));
+        }
         return this.orderBy(orderByDirection, f.apply(this.$(dataset, column)));
     }
 
@@ -705,12 +667,18 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
      */
     @Override
     public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, String columnName, Function<DATASET_FIELD, Cmd> f) {
+        if (Objects.isNull(f)) {
+            return this.orderBy(orderByDirection, this.$(dataset, columnName));
+        }
         return this.orderBy(orderByDirection, f.apply(this.$(dataset, columnName)));
     }
 
 
     @Override
     public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF orderBy(IDataset<DATASET, DATASET_FIELD> dataset, IOrderByDirection orderByDirection, GetterField[] getterFields, Function<IDatasetField[], Cmd> f) {
+        if (Objects.isNull(f)) {
+            return this.orderBy(orderByDirection, this.getDatasetFields(dataset, getterFields));
+        }
         return this.orderBy(orderByDirection, this.apply(dataset, f, getterFields));
     }
 

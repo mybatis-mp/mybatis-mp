@@ -47,7 +47,7 @@ public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdCon
     }
 
     @Override
-    public Object[] getSQLCmdParams() {
+    public Object[] getParameters() {
         return sqlBuilderContext.getParams();
     }
 

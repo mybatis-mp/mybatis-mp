@@ -30,15 +30,6 @@ public interface BaseMapper extends CommonMapper {
      * @return 返回单个对象
      */
     default <E> E get(BaseQuery<? extends BaseQuery, E> query) {
-        if (Objects.isNull(query.getLimit())) {
-            query.dbAdapt((q, selector) -> {
-                selector.when(DbType.SQL_SERVER, () -> {
-                    //忽略
-                }).otherwise(() -> {
-                    query.limit(2);
-                });
-            });
-        }
         return this.$get(new SQLCmdQueryContext(query), new RowBounds(0, 2));
     }
 
@@ -240,11 +231,21 @@ public interface BaseMapper extends CommonMapper {
      *
      * @param queryContext 上下文
      * @return 返回单个查询
-     * @see MybatisSQLProvider#cmdQuery(SQLCmdQueryContext, ProviderContext, DbType)
+     * @see MybatisSQLProvider#getCmdQuery (SQLCmdQueryContext, ProviderContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.GET_QUERY_NAME)
     <R> R $get(SQLCmdQueryContext queryContext, RowBounds rowBounds);
 
+
+    /**
+     * ID查询 返回单个
+     *
+     * @param queryContext 上下文
+     * @return 返回单个查询
+     * @see MybatisSQLProvider#getByIdCmdQuery (SQLCmdQueryContext, ProviderContext, DbType)
+     */
+    @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.GET_BY_ID_QUERY_NAME)
+    <R> R $getById(SQLCmdQueryContext queryContext, RowBounds rowBounds);
 
     /**
      * @param updateContext 上下文

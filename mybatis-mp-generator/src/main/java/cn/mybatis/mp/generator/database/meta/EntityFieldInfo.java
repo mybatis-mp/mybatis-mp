@@ -1,6 +1,7 @@
 package cn.mybatis.mp.generator.database.meta;
 
 import cn.mybatis.mp.core.util.NamingUtil;
+import cn.mybatis.mp.generator.config.EntityConfig;
 import cn.mybatis.mp.generator.config.GeneratorConfig;
 import cn.mybatis.mp.generator.util.GeneratorUtil;
 import lombok.Getter;
@@ -49,11 +50,11 @@ public class EntityFieldInfo {
         this.alwaysAnnotation = generatorConfig.getEntityConfig().isAlwaysAnnotation();
     }
 
-    public boolean isNeedTableField() {
-        return alwaysAnnotation || !select || !update || this.getColumnInfo().getDefaultValue() != null;
+    public boolean isNeedTableField(EntityConfig entityConfig) {
+        return alwaysAnnotation || !select || !update || (entityConfig.isDefaultValueEnable() && this.getColumnInfo().getDefaultValue() != null);
     }
 
-    public String buildTableField() {
+    public String buildTableField(EntityConfig entityConfig) {
         StringBuilder stringBuilder = new StringBuilder("@TableField(");
         if (alwaysAnnotation) {
             stringBuilder.append("value =\"").append(this.getColumnInfo().getName()).append("\",");
@@ -64,7 +65,7 @@ public class EntityFieldInfo {
         if (!update) {
             stringBuilder.append("update = false,");
         }
-        if (this.getColumnInfo().getDefaultValue() != null) {
+        if (entityConfig.isDefaultValueEnable() && this.getColumnInfo().getDefaultValue() != null) {
             stringBuilder.append(String.format("defaultValue = \"%s\",", this.getColumnInfo().getDefaultValue().replace("\"", "\\\"")));
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);

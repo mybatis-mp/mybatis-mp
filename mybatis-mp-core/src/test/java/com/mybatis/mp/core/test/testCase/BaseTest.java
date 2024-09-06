@@ -2,6 +2,7 @@ package com.mybatis.mp.core.test.testCase;
 
 import cn.mybatis.mp.core.mybatis.configuration.MybatisConfiguration;
 import cn.mybatis.mp.core.mybatis.configuration.MybatisDatabaseIdProvider;
+import cn.mybatis.mp.core.mybatis.mapper.DbRunner;
 import com.mybatis.mp.core.test.db2.typeHandler.LocalDateTimeTypeHandler;
 import com.mybatis.mp.core.test.mapper.*;
 import db.sql.api.Cmd;
@@ -92,6 +93,7 @@ public class BaseTest {
         configuration.addMapper(SysUserEncryptMapper.class);
 
         configuration.addMapper(MultiPkMapper.class);
+        configuration.addMapper(DbRunner.class);
 
         String mapperLocations = "classpath:/mappers/**.xml";
 

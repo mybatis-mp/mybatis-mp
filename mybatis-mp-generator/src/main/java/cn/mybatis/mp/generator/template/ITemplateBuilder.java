@@ -6,6 +6,10 @@ import java.util.Map;
 
 public interface ITemplateBuilder {
 
+    default boolean isFileCover() {
+        return true;
+    }
+
     default boolean enable() {
         return true;
     }

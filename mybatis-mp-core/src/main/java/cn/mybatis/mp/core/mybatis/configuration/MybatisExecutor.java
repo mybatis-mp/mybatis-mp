@@ -63,7 +63,7 @@ public class MybatisExecutor implements Executor {
     public CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql) {
         CacheKey cacheKey = this.delegate.createCacheKey(ms, parameterObject, rowBounds, boundSql);
         if (parameterObject instanceof SQLCmdQueryContext) {
-            cacheKey.updateAll(((SQLCmdQueryContext) parameterObject).getSQLCmdParams());
+            cacheKey.updateAll(((SQLCmdQueryContext) parameterObject).getParameters());
         }
         return cacheKey;
     }

@@ -4,7 +4,6 @@ package cn.mybatis.mp.core.mybatis.configuration;
 import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
-import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdContext;
 import cn.mybatis.mp.core.mybatis.resultset.MybatisDefaultResultSetHandler;
 import cn.mybatis.mp.core.mybatis.typeHandler.EnumTypeHandler;
 import cn.mybatis.mp.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
@@ -69,8 +68,8 @@ public class MybatisConfiguration extends Configuration {
 
     @Override
     public ParameterHandler newParameterHandler(MappedStatement ms, Object parameterObject, BoundSql boundSql) {
-        if (parameterObject instanceof SQLCmdContext && !ms.getId().endsWith(SelectKeyGenerator.SELECT_KEY_SUFFIX)) {
-            return (ParameterHandler) interceptorChain.pluginAll(new PreparedParameterHandler(this, (SQLCmdContext) parameterObject));
+        if (parameterObject instanceof PreparedParameterContext && !ms.getId().endsWith(SelectKeyGenerator.SELECT_KEY_SUFFIX)) {
+            return (ParameterHandler) interceptorChain.pluginAll(new PreparedParameterHandler(this, (PreparedParameterContext) parameterObject));
         }
         return super.newParameterHandler(ms, parameterObject, boundSql);
     }

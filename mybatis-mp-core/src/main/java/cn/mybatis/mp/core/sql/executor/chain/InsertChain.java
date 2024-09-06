@@ -2,10 +2,19 @@ package cn.mybatis.mp.core.sql.executor.chain;
 
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
+import cn.mybatis.mp.core.sql.executor.Query;
+import db.sql.api.Cmd;
+import db.sql.api.Getter;
+import db.sql.api.cmd.GetterField;
+import db.sql.api.impl.cmd.basic.TableField;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class InsertChain extends BaseInsert<InsertChain> {
+
+    private final Map<Getter<?>, Object> insertSelectFields = new HashMap<>();
 
     protected MybatisMapper<?> mapper;
 
@@ -29,6 +38,54 @@ public class InsertChain extends BaseInsert<InsertChain> {
      */
     public static InsertChain create() {
         return new InsertChain();
+    }
+
+    public <T> InsertChain insertSelect(Getter<T> field, Cmd select) {
+        this.insertSelectFields.put(field, select);
+        return this;
+    }
+
+    public <T, T2> InsertChain insertSelect(Getter<T> field, Getter<T2> select) {
+        this.insertSelectFields.put(field, select);
+        return this;
+    }
+
+    public <T, T2> InsertChain insertSelect(Getter<T> field, Getter<T2> select, Function<TableField, Cmd> fun) {
+        this.insertSelectFields.put(field, new SelectGetterFun<>(select, fun));
+        return this;
+    }
+
+    public <T> InsertChain insertSelect(Getter<T> field, GetterField[] select, Function<TableField[], Cmd> fun) {
+        this.insertSelectFields.put(field, new SelectGetterFieldsFun(select, fun));
+        return this;
+    }
+
+    public InsertChain insertSelectQuery(Consumer<Query<?>> consumer) {
+        if (!insertSelectFields.isEmpty()) {
+            List<Getter<?>> fields = new ArrayList<>();
+            Query<?> selectQuery = Query.create();
+            for (Map.Entry<Getter<?>, Object> entry : insertSelectFields.entrySet()) {
+                fields.add(entry.getKey());
+                if (entry.getValue() instanceof SelectGetterFun) {
+                    SelectGetterFun<?> selectGetterFun = (SelectGetterFun<?>) entry.getValue();
+                    selectQuery.select(selectGetterFun.field, selectGetterFun.fun);
+                } else if (entry.getValue() instanceof SelectGetterFieldsFun) {
+                    SelectGetterFieldsFun selectGetterFieldsFun = (SelectGetterFieldsFun) entry.getValue();
+                    selectQuery.select(selectGetterFieldsFun.fields, selectGetterFieldsFun.fun);
+                } else if (entry.getValue() instanceof Cmd) {
+                    selectQuery.select((Cmd) entry.getValue());
+                } else {
+                    selectQuery.select((Getter<?>) entry.getValue());
+                }
+            }
+            this.field(fields.toArray(new Getter[fields.size()]));
+            this.fromSelect(selectQuery);
+            insertSelectFields.clear();
+            if (db.sql.api.impl.tookit.Objects.nonNull(consumer)) {
+                consumer.accept(selectQuery);
+            }
+        }
+        return this;
     }
 
     private void setDefault() {
@@ -68,5 +125,29 @@ public class InsertChain extends BaseInsert<InsertChain> {
     public int execute() {
         this.setDefault();
         return mapper.save(this);
+    }
+
+    private static class SelectGetterFun<T> {
+
+        public Getter<T> field;
+
+        public Function<TableField, Cmd> fun;
+
+        public SelectGetterFun(Getter<T> field, Function<TableField, Cmd> fun) {
+            this.field = field;
+            this.fun = fun;
+        }
+    }
+
+    private static class SelectGetterFieldsFun {
+
+        public GetterField[] fields;
+
+        public Function<TableField[], Cmd> fun;
+
+        public SelectGetterFieldsFun(GetterField[] fields, Function<TableField[], Cmd> fun) {
+            this.fields = fields;
+            this.fun = fun;
+        }
     }
 }

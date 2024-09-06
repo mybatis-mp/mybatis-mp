@@ -12,7 +12,7 @@ public class SQLPrinter {
 
     public static String sql(DbType dbType, Cmd cmd) {
         //创建构建SQL的上下文 数据库:MYSQL SQL模式 打印
-        SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(DbType.MYSQL, SQLMode.PRINT);
+        SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(dbType, SQLMode.PRINT);
         return cmd.sql(cmd, cmd, sqlBuilderContext, new StringBuilder()).toString();
     }
 

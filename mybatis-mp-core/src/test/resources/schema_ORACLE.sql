@@ -229,9 +229,9 @@ insert all
     into nested_muti_third(id,nested_second_id,th_name) values  (2,2,'嵌套BAB')
 select * from dual;
 
-drop table multi_pk;
+DROP TABLE multi_pk;
 
-CREATE TABLE IF NOT EXISTS multi_pk
+CREATE TABLE multi_pk
 (
     id1 INT NOT NULL,
     id2 INT NOT NULL,

@@ -42,6 +42,10 @@ public class EntityConfig {
      */
     private boolean schema = false;
     /**
+     * 默认值是否可用
+     */
+    private boolean defaultValueEnable = true;
+    /**
      * 默认TableId代码，数据库非自增时生效
      */
     private String defaultTableIdCode;
@@ -132,6 +136,11 @@ public class EntityConfig {
      */
     public EntityConfig lombok(boolean lombok) {
         this.lombok = lombok;
+        return this;
+    }
+
+    public EntityConfig defaultValueEnable(boolean enable) {
+        this.defaultValueEnable = enable;
         return this;
     }
 

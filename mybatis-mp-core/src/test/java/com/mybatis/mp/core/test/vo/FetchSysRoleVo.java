@@ -19,6 +19,6 @@ public class FetchSysRoleVo {
     @Fetch(column = "id", target = SysUser.class, targetProperty = "role_id", targetSelectProperty = "userName", orderBy = "id asc")
     private List<String> sysRoleNames;
 
-    @Fetch(column = "id", target = SysUser.class, targetProperty = "role_id", orderBy = "id asc,userName desc")
+    @Fetch(column = "id", target = SysUser.class, targetProperty = "role_id", orderBy = "[{id} asc,{userName} desc]")
     private List<FetchSysUserForRoleVo> sysRole;
 }

@@ -203,9 +203,9 @@ values
     (1,2,'嵌套BAA'),
     (2,2,'嵌套BAB');
 
-drop table multi_pk;
+drop table if exists multi_pk;
 
-CREATE TABLE IF NOT EXISTS multi_pk
+CREATE TABLE multi_pk
 (
     id1 INT NOT NULL,
     id2 INT NOT NULL,

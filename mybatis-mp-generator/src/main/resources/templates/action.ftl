@@ -34,9 +34,9 @@ import io.swagger.annotations.ApiParam;
 </#if>
 public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric()><${entityInfo.name},<#if entityInfo.idFieldInfo??>${entityInfo.idFieldInfo.typeName}<#else>Void</#if>></#if>{
 
-<#if actionConfig.isInjectService() && serviceConfig.isEnable()>
+<#if actionConfig.isInjectService()>
     @${autowiredAnnotationName}
-    private ${entityInfo.serviceName} ${util.firstToLower(entityInfo.serviceName)};
+    private ${actionConfig.injectServiceClassName(entityInfo)} ${util.firstToLower(actionConfig.injectServiceClassName(entityInfo))};
 
 </#if>
 <#if actionConfig.isEnableGet()  && entityInfo.hasId()>

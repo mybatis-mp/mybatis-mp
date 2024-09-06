@@ -54,11 +54,12 @@ public class GeneratorConfig {
     /**
      * Service 实现类配置
      */
-    private final ServiceImplConfig serviceImplConfig = new ServiceImplConfig();
+    private final ServiceImplConfig serviceImplConfig = new ServiceImplConfig(this);
     /**
      * Action 实现类配置
      */
-    private final ActionConfig actionConfig = new ActionConfig();
+    private final ActionConfig actionConfig = new ActionConfig(this);
+
     private ContainerType containerType = ContainerType.SPRING;
     /**
      * 是否忽略试图
@@ -92,6 +93,11 @@ public class GeneratorConfig {
     private int swaggerVersion = 3;
 
     /**
+     * 文件覆盖
+     */
+    private boolean fileCover = true;
+
+    /**
      * 模板引擎
      */
     private TemplateEngine templateEngine;
@@ -123,6 +129,11 @@ public class GeneratorConfig {
      */
     public GeneratorConfig containerType(ContainerType containerType) {
         this.containerType = containerType;
+        return this;
+    }
+
+    public GeneratorConfig fileCover(boolean cover) {
+        this.fileCover = cover;
         return this;
     }
 

@@ -167,7 +167,10 @@ public class UpdateTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser old = sysUserMapper.getById(1);
-            UpdateChain.of(sysUserMapper).set(SysUser::getRole_id, c -> c.plus(1)).eq(SysUser::getId, 1).execute();
+            UpdateChain.of(sysUserMapper)
+                    .set(SysUser::getRole_id, c -> c.plus(1))
+                    .eq(SysUser::getId, 1)
+                    .execute();
 
             SysUser sysUser = sysUserMapper.getById(1);
             assertEquals(old.getRole_id() + 1, sysUser.getRole_id());

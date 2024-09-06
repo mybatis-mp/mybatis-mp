@@ -22,6 +22,7 @@ public class SQLCmdSqlSource implements SqlSource {
     static {
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.QUERY_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.cmdQuery((SQLCmdQueryContext) context, providerContext, dbType));
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.GET_QUERY_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.getCmdQuery((SQLCmdQueryContext) context, providerContext, dbType));
+        SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.GET_BY_ID_QUERY_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.getByIdCmdQuery((SQLCmdQueryContext) context, providerContext, dbType));
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.COUNT_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.cmdCount((SQLCmdCountQueryContext) context, providerContext, dbType));
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.QUERY_COUNT_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.countFromQuery((SQLCmdCountFromQueryContext) context, providerContext, dbType));
         SQL_GENERATOR_FUN_MAP.put(MybatisSQLProvider.UPDATE_NAME, (context, providerContext, dbType) -> MybatisSQLProvider.update((SQLCmdUpdateContext) context, providerContext, dbType));
@@ -33,13 +34,12 @@ public class SQLCmdSqlSource implements SqlSource {
     private final Method providerMethod;
     private final ProviderContext providerContext;
 
-    private final DbType dbType;
+    private DbType dbType;
 
     public SQLCmdSqlSource(Configuration configuration, Method providerMethod, ProviderContext providerContext) {
         this.configuration = configuration;
         this.providerMethod = providerMethod;
         this.providerContext = providerContext;
-        this.dbType = DbTypeUtil.getDbType(configuration);
     }
 
 
@@ -50,11 +50,14 @@ public class SQLCmdSqlSource implements SqlSource {
         if (Objects.isNull(sqlGenerator)) {
             throw new RuntimeException("Unadapted: Unknown SQL method: " + methodName);
         }
-        String sql = sqlGenerator.apply(parameterObject, this.providerContext, dbType);
+        String sql = sqlGenerator.apply(parameterObject, this.providerContext, getDbType());
         return new BoundSql(this.configuration, sql, Collections.emptyList(), parameterObject);
     }
 
     public DbType getDbType() {
+        if (Objects.isNull(dbType)) {
+            this.dbType = DbTypeUtil.getDbType(configuration);
+        }
         return dbType;
     }
 

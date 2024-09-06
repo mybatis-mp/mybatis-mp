@@ -51,7 +51,11 @@ public class InsertFields implements IInsertFields<TableField> {
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (context.getDbType() == DbType.ORACLE && parent instanceof AbstractInsert) {
             AbstractInsert abstractInsert = (AbstractInsert) parent;
-            List<List<Cmd>> insertValues = abstractInsert.getInsertValues().getValues();
+
+            List<List<Cmd>> insertValues = null;
+            if (Objects.nonNull(abstractInsert.getInsertValues())) {
+                abstractInsert.getInsertValues().getValues();
+            }
             if (Objects.nonNull(insertValues) && insertValues.size() > 1) {
                 //啥也不做
                 return sqlBuilder;
