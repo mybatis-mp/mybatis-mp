@@ -1,6 +1,9 @@
 package cn.mybatis.mp.core.sql;
 
+import cn.mybatis.mp.core.sql.executor.BaseDelete;
+import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
+import cn.mybatis.mp.core.sql.executor.BaseUpdate;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.tookit.OptimizeOptions;
 
@@ -12,7 +15,7 @@ public interface QuerySQLBuilder {
      * @param query           查询
      * @param context         上下文
      * @param optimizeOptions 优化配置
-     * @return
+     * @return sql
      */
     StringBuilder buildQuerySQl(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions);
 
@@ -23,7 +26,7 @@ public interface QuerySQLBuilder {
      * @param query           查询
      * @param context         上下文
      * @param optimizeOptions 优化配置
-     * @return
+     * @return sql
      */
     StringBuilder buildCountQuerySQl(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions);
 
@@ -33,8 +36,29 @@ public interface QuerySQLBuilder {
      * @param query           查询
      * @param context         上下文
      * @param optimizeOptions 优化配置
-     * @return
+     * @return sql
      */
     StringBuilder buildCountSQLFromQuery(BaseQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions);
+
+    /**
+     * @param insert  插入对象
+     * @param context 上下文
+     * @return sql
+     */
+    StringBuilder buildInsertSQL(BaseInsert insert, SqlBuilderContext context);
+
+    /**
+     * @param update  修改对象
+     * @param context 上下文
+     * @return sql
+     */
+    StringBuilder buildUpdateSQL(BaseUpdate update, SqlBuilderContext context);
+
+    /**
+     * @param delete  删除对象
+     * @param context 上下文
+     * @return sql
+     */
+    StringBuilder buildDeleteSQL(BaseDelete delete, SqlBuilderContext context);
 
 }
