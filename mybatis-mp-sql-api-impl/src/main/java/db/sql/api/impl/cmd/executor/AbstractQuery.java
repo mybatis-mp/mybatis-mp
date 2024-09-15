@@ -147,6 +147,13 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return fetchFilters;
     }
 
+    public void setFetchFilters(Map<String, Consumer<Where>> fetchFilters) {
+        if (Objects.nonNull(this.fetchFilters)) {
+            throw new RuntimeException("Can't call setFetchFilters when the this.fetchFilters has value");
+        }
+        this.fetchFilters = fetchFilters;
+    }
+
     @Override
     protected void initCmdSorts(Map<Class<? extends Cmd>, Integer> cmdSorts) {
         int i = 0;

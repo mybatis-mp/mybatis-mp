@@ -151,7 +151,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
         String fetchKey = fetchInfo.getField().getDeclaringClass().getName() + "." + fetchInfo.getField().getName();
         boolean hasFetchFilter = !Objects.isNull(fetchFilters) && fetchFilters.containsKey(fetchKey);
-
+        query.setFetchFilters(fetchFilters);
         if (hasFetchFilter) {
             fetchFilters.get(fetchKey).accept(query.$where());
         }
