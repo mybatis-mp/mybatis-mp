@@ -68,10 +68,13 @@ public class FetchTest extends BaseTest {
                     .select(FetchSysUserVo.class)
                     .from(SysUser.class)
                     .eq(SysUser::getId, 2)
+                    .fetchFilter(FetchSysUserVo::getSysRole, where -> where.eq(SysRole::getId, 1))
+                    .fetchFilter(SysRoleVo::getSysRole, where -> where.eq(SysRole::getId, 1))
                     .returnType(FetchSysUserVo.class)
                     .list();
             System.out.println(list);
             assertEquals("测试", list.get(0).getSysRole().getName());
+            assertEquals(list.get(0).getSysRole().getId(), list.get(0).getSysRole().getSysRole().getId());
         }
     }
 

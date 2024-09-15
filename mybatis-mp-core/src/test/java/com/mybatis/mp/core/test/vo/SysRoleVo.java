@@ -1,5 +1,6 @@
 package com.mybatis.mp.core.test.vo;
 
+import cn.mybatis.mp.db.annotations.Fetch;
 import cn.mybatis.mp.db.annotations.ResultEntity;
 import com.mybatis.mp.core.test.DO.SysRole;
 import lombok.Data;
@@ -12,4 +13,6 @@ public class SysRoleVo {
 
     private String name;
 
+    @Fetch(property = "id", source = SysRole.class, targetProperty = "id", target = SysRole.class)
+    private SysRole sysRole;
 }
