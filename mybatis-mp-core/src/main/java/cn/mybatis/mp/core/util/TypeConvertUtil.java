@@ -43,6 +43,8 @@ public final class TypeConvertUtil {
             newValue = new BigDecimal(value.toString());
         } else if (targetType == BigInteger.class) {
             newValue = new BigInteger(value.toString());
+        } else if (targetType == Character.class) {
+            newValue = value.toString().charAt(0);
         } else {
             throw new RuntimeException("Inconsistent types");
         }
