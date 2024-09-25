@@ -792,6 +792,20 @@ public final class Methods {
     }
 
     /**
+     * 匹配 match 在 key里边的位置
+     * key 需要符合逗号分割规范
+     *
+     * @param key
+     * @param match
+     * @return
+     */
+    public static FindInSet findInSet(Cmd key, Number match) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(match);
+        return new FindInSet(key, match + "");
+    }
+
+    /**
      * 匹配key 在values里的位置 从1 开始
      *
      * @param key
