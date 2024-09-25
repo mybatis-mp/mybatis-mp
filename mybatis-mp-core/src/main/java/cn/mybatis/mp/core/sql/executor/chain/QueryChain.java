@@ -19,6 +19,8 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
 
     protected MybatisMapper<E> mapper;
 
+    protected boolean selectEmpty;
+
     protected QueryChain() {
 
     }
@@ -51,6 +53,11 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
         return new QueryChain<>(mapper, where);
     }
 
+    public <E> QueryChain<E> selectEmpty() {
+        this.selectEmpty = true;
+        return (QueryChain<E>) this;
+    }
+
     public <E2> QueryChain<E2> returnType(Class<E2> returnType) {
         return (QueryChain<E2>) super.setReturnType(returnType);
     }
@@ -68,7 +75,7 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
     }
 
     private void setDefault(boolean forCount) {
-        if (Objects.isNull(this.select)) {
+        if (!selectEmpty && Objects.isNull(this.select)) {
             if (forCount) {
                 this.selectCountAll();
             } else {
