@@ -35,4 +35,32 @@ public class PropertyNamer {
     public static boolean isSetter(String name) {
         return name.startsWith("set") && name.length() > 3;
     }
+
+
+    /**
+     * 将驼峰命名转换为下划线命名
+     *
+     * @param str 驼峰命名的字符串
+     * @return 转换后的下划线命名的字符串
+     */
+    public static String camelToUnderscore(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+
+        StringBuilder result = new StringBuilder(str.length() * 2);
+        int i = 0;
+        char[] chars = str.toCharArray();
+        for (char c : chars) {
+            if (i > 0 && Character.isUpperCase(c)) {
+                result.append('_');
+            }
+            result.append(Character.toLowerCase(c));
+            i++;
+        }
+
+        return result.toString();
+    }
+
+
 }

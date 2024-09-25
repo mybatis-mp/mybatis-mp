@@ -5,15 +5,16 @@ import cn.mybatis.mp.core.util.FieldUtil;
 import cn.mybatis.mp.core.util.GenericUtil;
 import cn.mybatis.mp.db.annotations.ResultEntity;
 import cn.mybatis.mp.db.annotations.Table;
+import db.sql.api.impl.tookit.PropertyNamer;
 import db.sql.api.impl.tookit.SqlUtil;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class ResultMapUtils {
 
@@ -53,9 +54,19 @@ public final class ResultMapUtils {
         }
     }
 
+    private static List<ResultMapping> createResultMapping(MybatisConfiguration configuration, boolean isTableId, Field field, String columnName, JdbcType jdbcType, Class<? extends TypeHandler<?>> typeHandler) {
+        return Arrays.asList(
+                configuration.buildResultMapping(isTableId, field, columnName, jdbcType, typeHandler),
+                configuration.buildResultMapping(isTableId, field, SqlUtil.getAsName(field), jdbcType, typeHandler)
+        );
+    }
+
     private static List<ResultMapping> getEntityResultMappings(MybatisConfiguration configuration, Class entity) {
         TableInfo tableInfo = Tables.get(entity);
-        List<ResultMapping> resultMappings = tableInfo.getTableFieldInfos().stream().map(tableFieldInfo -> configuration.buildResultMapping(tableFieldInfo.isTableId(), tableFieldInfo.getField(), tableFieldInfo.getColumnName(), tableFieldInfo.getTableFieldAnnotation().jdbcType(), tableFieldInfo.getTableFieldAnnotation().typeHandler())).collect(Collectors.toList());
+        List<ResultMapping> resultMappings = new ArrayList<>(tableInfo.getTableFieldInfos().size() * 2);
+        for (TableFieldInfo tableFieldInfo : tableInfo.getTableFieldInfos()) {
+            resultMappings.addAll(createResultMapping(configuration, tableFieldInfo.isTableId(), tableFieldInfo.getField(), tableFieldInfo.getColumnName(), tableFieldInfo.getTableFieldAnnotation().jdbcType(), tableFieldInfo.getTableFieldAnnotation().typeHandler()));
+        }
         return Collections.unmodifiableList(resultMappings);
     }
 
@@ -69,10 +80,11 @@ public final class ResultMapUtils {
     private static List<ResultMapping> getNormalResultMappings(MybatisConfiguration configuration, Class clazz) {
         List<Field> list = FieldUtil.getResultMappingFields(clazz);
 
-        List<ResultMapping> resultMappings = new ArrayList<>(list.size() * 2);
+        List<ResultMapping> resultMappings = new ArrayList<>(list.size() * 4);
         list.forEach(field -> {
             resultMappings.add(configuration.buildResultMapping(false, field, field.getName(), JdbcType.UNDEFINED, UnknownTypeHandler.class));
-            resultMappings.add(configuration.buildResultMapping(false, field, SqlUtil.getFiledLambdaAsName(field), JdbcType.UNDEFINED, UnknownTypeHandler.class));
+            resultMappings.add(configuration.buildResultMapping(false, field, PropertyNamer.camelToUnderscore(field.getName()), JdbcType.UNDEFINED, UnknownTypeHandler.class));
+            resultMappings.add(configuration.buildResultMapping(false, field, SqlUtil.getAsName(field), JdbcType.UNDEFINED, UnknownTypeHandler.class));
         });
 
         return Collections.unmodifiableList(resultMappings);
@@ -161,9 +173,9 @@ public final class ResultMapUtils {
                 .forEach(item -> {
                     if (item instanceof ResultTableFieldInfo) {
                         ResultTableFieldInfo resultTableFieldInfo = (ResultTableFieldInfo) item;
-                        resultMappings.add(createResultMapping(configuration, resultTableFieldInfo));
+                        resultMappings.addAll(createResultMapping(configuration, resultTableFieldInfo));
                     } else {
-                        createResultMapping(configuration, item, resultMappings);
+                        resultMappings.addAll(createResultMapping(configuration, item));
                     }
                 });
         return resultMappings;
@@ -174,17 +186,19 @@ public final class ResultMapUtils {
      *
      * @param configuration
      * @param resultFieldInfo
-     * @param resultMappings
      */
-    private static void createResultMapping(MybatisConfiguration configuration, ResultFieldInfo resultFieldInfo, List<ResultMapping> resultMappings) {
+    private static List<ResultMapping> createResultMapping(MybatisConfiguration configuration, ResultFieldInfo resultFieldInfo) {
+        List<ResultMapping> resultMappingList = new ArrayList<>(5);
+
         ResultMapping resultMapping = configuration.buildResultMapping(false, resultFieldInfo.getField(), resultFieldInfo.getMappingColumnName(), resultFieldInfo.getJdbcType(), resultFieldInfo.getTypeHandler());
-        resultMappings.add(resultMapping);
+        resultMappingList.add(resultMapping);
 
         if (!SqlUtil.isAsName(resultFieldInfo.getField(), resultFieldInfo.getMappingColumnName())) {
             String asName = SqlUtil.getAsName(resultFieldInfo.getField());
             resultMapping = configuration.buildResultMapping(false, resultFieldInfo.getField(), asName, resultFieldInfo.getJdbcType(), resultFieldInfo.getTypeHandler());
-            resultMappings.add(resultMapping);
+            resultMappingList.add(resultMapping);
         }
+        return resultMappingList;
     }
 
     /**
@@ -194,8 +208,7 @@ public final class ResultMapUtils {
      * @param resultTableFieldInfo
      * @return
      */
-    private static ResultMapping createResultMapping(MybatisConfiguration configuration, ResultTableFieldInfo resultTableFieldInfo) {
-        boolean isId = resultTableFieldInfo.getTableFieldInfo().isTableId();
-        return configuration.buildResultMapping(isId, resultTableFieldInfo.getField(), resultTableFieldInfo.getMappingColumnName(), resultTableFieldInfo.getJdbcType(), resultTableFieldInfo.getTypeHandler());
+    private static List<ResultMapping> createResultMapping(MybatisConfiguration configuration, ResultTableFieldInfo resultTableFieldInfo) {
+        return createResultMapping(configuration, resultTableFieldInfo.getTableFieldInfo().isTableId(), resultTableFieldInfo.getField(), resultTableFieldInfo.getMappingColumnName(), resultTableFieldInfo.getJdbcType(), resultTableFieldInfo.getTypeHandler());
     }
 }
