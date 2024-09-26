@@ -41,6 +41,14 @@ public class DaoConfig {
     }
 
     /**
+     * dao接口父类
+     */
+    public DaoConfig superClass(Class superClass) {
+        this.superClass = superClass.getName();
+        return this;
+    }
+
+    /**
      * 设置是否启用
      */
     public DaoConfig enable(boolean enable) {

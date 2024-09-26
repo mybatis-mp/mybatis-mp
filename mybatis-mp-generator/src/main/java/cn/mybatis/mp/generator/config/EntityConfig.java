@@ -149,6 +149,17 @@ public class EntityConfig {
     }
 
     /**
+     * 实体类的父类
+     *
+     * @param superClass
+     * @return
+     */
+    public EntityConfig superClass(Class superClass) {
+        this.superClass = superClass.getName();
+        return this;
+    }
+
+    /**
      * 设置是否使用 lombok
      */
     public EntityConfig lombok(boolean lombok) {

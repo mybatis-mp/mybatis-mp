@@ -36,6 +36,14 @@ public class MapperConfig {
     }
 
     /**
+     * Mapper接口父类
+     */
+    public MapperConfig superClass(Class superClass) {
+        this.superClass = superClass.getName();
+        return this;
+    }
+
+    /**
      * 是否使用 @Mapper
      */
     public MapperConfig mapperAnnotation(boolean mapperAnnotation) {
