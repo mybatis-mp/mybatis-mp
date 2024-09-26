@@ -20,7 +20,7 @@ public class ${entityInfo.serviceImplName} ${superExtend}<#if serviceConfig.isGe
     private ${serviceImplConfig.injectDaoClassName(entityInfo)} ${util.firstToLower(serviceImplConfig.injectDaoClassName(entityInfo))};
     
 </#if>
-<#if !serviceImplConfig.isInjectDao() || serviceImplConfig.isInjectMapper()>
+<#if !serviceImplConfig.isInjectDao() && serviceImplConfig.isInjectMapper()>
     @${autowiredAnnotationName}
     private ${serviceImplConfig.mapperClassName(entityInfo)} ${util.firstToLower(serviceImplConfig.mapperClassName(entityInfo))};
 

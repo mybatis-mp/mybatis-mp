@@ -54,14 +54,14 @@ public class Test {
 
     private static void mysqlTest() {
         new FastGenerator(new GeneratorConfig(
-                "jdbc:mysql://localhost:3306/sys_oss",
+                "jdbc:mysql://localhost:3306/test3",
                 "root",
                 "123456")
                 .basePackage("com.test")
                 .swaggerVersion(3)
                 .containerType(ContainerType.SPRING)
                 .tableConfig(tableConfig -> {
-                    tableConfig.includeTable("ip_info");
+                    //tableConfig.includeTable("ip_info");
                 })
                 .columnConfig(columnConfig -> {
                     columnConfig.disableUpdateColumns("create_time");
@@ -77,6 +77,8 @@ public class Test {
                 .mapperXmlConfig(mapperXmlConfig -> {
                     mapperXmlConfig.enable(true).resultMap(true).columnList(true);
                 })
+                //.daoConfig(daoConfig -> daoConfig.enable(false))
+                //.daoImplConfig(daoImplConfig -> daoImplConfig.enable(false))
                 .serviceImplConfig(serviceImplConfig -> {
                     serviceImplConfig.injectMapper(true);
                 })
