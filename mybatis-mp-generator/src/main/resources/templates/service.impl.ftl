@@ -24,6 +24,10 @@ public class ${entityInfo.serviceImplName}${superExtend}<#if serviceConfig.isGen
     @${autowiredAnnotationName}
     private ${serviceImplConfig.mapperClassName(entityInfo)} ${util.firstToLower(serviceImplConfig.mapperClassName(entityInfo))};
 
+    protected ${entityInfo.mapperName} getMapper(){
+        return this.${util.firstToLower(entityInfo.mapperName)};
+    }
+
     private QueryChain<${entityInfo.name}> queryChain() {
         return QueryChain.of(${util.firstToLower(serviceImplConfig.mapperClassName(entityInfo))});
     }

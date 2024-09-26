@@ -83,8 +83,9 @@ public class Test {
                 })
                 //.daoConfig(daoConfig -> daoConfig.enable(false))
                 //.daoImplConfig(daoImplConfig -> daoImplConfig.enable(false))
+                .serviceConfig(serviceConfig -> serviceConfig.superClass(IService.class).generic(true))
                 .serviceImplConfig(serviceImplConfig -> {
-                    serviceImplConfig.injectMapper(true);
+                    serviceImplConfig.superClass(ServiceImpl.class).injectMapper(true).injectDao(false);
                 })
                 .actionConfig(actionConfig -> {
                     actionConfig
