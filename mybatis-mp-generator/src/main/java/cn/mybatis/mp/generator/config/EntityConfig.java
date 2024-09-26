@@ -93,7 +93,7 @@ public class EntityConfig {
         typeMapping.put(JdbcType.LONGVARCHAR, String.class);
         typeMapping.put(JdbcType.DATE, LocalDateTime.class);
         typeMapping.put(JdbcType.TIME, LocalTime.class);
-        typeMapping.put(JdbcType.TIMESTAMP, LocalTime.class);
+        typeMapping.put(JdbcType.TIMESTAMP, LocalDateTime.class);
         typeMapping.put(JdbcType.BINARY, byte[].class);
         typeMapping.put(JdbcType.VARBINARY, byte[].class);
         typeMapping.put(JdbcType.LONGVARBINARY, byte[].class);
