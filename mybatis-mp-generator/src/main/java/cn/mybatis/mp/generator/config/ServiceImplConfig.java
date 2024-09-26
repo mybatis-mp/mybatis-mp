@@ -46,6 +46,14 @@ public class ServiceImplConfig {
         return this;
     }
 
+    /**
+     * 接口父类
+     */
+    public ServiceImplConfig superClass(Class superClass) {
+        this.superClass = superClass.getName();
+        return this;
+    }
+
     public ServiceImplConfig enable(boolean enable) {
         this.enable = enable;
         return this;

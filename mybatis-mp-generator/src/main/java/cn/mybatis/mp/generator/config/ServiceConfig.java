@@ -38,6 +38,13 @@ public class ServiceConfig {
         return this;
     }
 
+    /**
+     * 接口父类
+     */
+    public ServiceConfig superClass(Class superClass) {
+        this.superClass = superClass.getName();
+        return this;
+    }
 
     /**
      * 设置是否启用

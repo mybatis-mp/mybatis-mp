@@ -41,7 +41,7 @@ public class DaoTemplateBuilder extends AbstractTemplateBuilder {
             } else {
                 superName = generatorConfig.getDaoConfig().getSuperClass();
             }
-            data.put("superExtend", "extends " + superName);
+            data.put("superExtend", " extends " + superName);
         } else {
             data.put("superExtend", "");
         }

@@ -18,6 +18,7 @@ import java.util.function.Function;
 @Getter
 public class EntityConfig {
 
+
     /**
      * 数据库类型的java映射
      */
@@ -28,6 +29,11 @@ public class EntityConfig {
      * 是否开启 swagger
      */
     private boolean swagger = false;
+
+    /**
+     * 是否开启 serial
+     */
+    private boolean serial = false;
 
     /**
      * 实体类父类
@@ -117,6 +123,17 @@ public class EntityConfig {
      */
     public EntityConfig swagger(boolean enable) {
         this.swagger = enable;
+        return this;
+    }
+
+    /**
+     * 是否开启 serial
+     *
+     * @param enable
+     * @return
+     */
+    public EntityConfig serial(boolean enable) {
+        this.serial = enable;
         return this;
     }
 

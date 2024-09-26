@@ -1,5 +1,6 @@
 package cn.mybatis.mp.generator;
 
+import cn.mybatis.mp.generator.buidler.TsTypeTemplateBuilder;
 import cn.mybatis.mp.generator.config.ContainerType;
 import cn.mybatis.mp.generator.config.GeneratorConfig;
 import db.sql.api.DbType;
@@ -37,7 +38,7 @@ public class Test {
                     mapperXmlConfig.enable(true).resultMap(true).columnList(true);
                 })
                 .serviceImplConfig(serviceImplConfig -> {
-                    serviceImplConfig.injectMapper(true);
+                    serviceImplConfig.superClass(Integer.class).injectMapper(true);
                 })
                 .actionConfig(actionConfig -> {
                     actionConfig
@@ -63,6 +64,9 @@ public class Test {
                 .tableConfig(tableConfig -> {
                     //tableConfig.includeTable("ip_info");
                 })
+                .templateBuilders(list -> {
+                    list.add(TsTypeTemplateBuilder.class);
+                })
                 .columnConfig(columnConfig -> {
                     columnConfig.disableUpdateColumns("create_time");
                     columnConfig.versionColumn("phone");
@@ -70,7 +74,7 @@ public class Test {
                     columnConfig.tenantIdColumn("state");
                 })
                 .entityConfig(entityConfig -> {
-                    entityConfig.lombok(false);
+                    entityConfig.lombok(false).serial(false);
                     entityConfig.swagger(true);
                     entityConfig.logicDeleteCode("@LogicDelete(beforeValue=\"0\",afterValue=\"1\",deleteTimeField=\"create_time\")");
                 })
@@ -116,6 +120,9 @@ public class Test {
                 dataSource)
                 .basePackage("com.test")//根包路径
                 .baseFilePath("../generate")
+                .templateBuilders(list -> {
+                    list.add(TsTypeTemplateBuilder.class);
+                })
                 .mapperXmlConfig(mapperXmlConfig -> mapperXmlConfig.enable(true).columnList(true).resultMap(true))
         ).create();
     }
