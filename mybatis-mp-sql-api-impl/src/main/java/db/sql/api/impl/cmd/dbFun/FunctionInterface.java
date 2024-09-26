@@ -5,11 +5,16 @@ import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.DatePattern;
 import db.sql.api.impl.cmd.condition.*;
+import db.sql.api.impl.cmd.dbFun.db.MysqlFunctions;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 public interface FunctionInterface extends Cmd {
+
+    default MysqlFunctions mysql() {
+        return new MysqlFunctions(this);
+    }
 
     default Sum sum() {
         return Methods.sum(this);

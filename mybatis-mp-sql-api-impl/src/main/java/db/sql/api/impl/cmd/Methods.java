@@ -7,6 +7,7 @@ import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.condition.*;
 import db.sql.api.impl.cmd.dbFun.*;
+import db.sql.api.impl.cmd.dbFun.db.MysqlFunctions;
 import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 
@@ -19,6 +20,10 @@ import java.util.stream.Collectors;
  * 数据库方法集合
  */
 public final class Methods {
+
+    public MysqlFunctions mysql(Cmd key) {
+        return new MysqlFunctions(key);
+    }
 
     public static Cmd paramWrapAndConvertToCmd(Cmd key, Object param) {
         if (java.util.Objects.isNull(param)) {

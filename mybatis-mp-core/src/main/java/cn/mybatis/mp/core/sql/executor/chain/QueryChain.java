@@ -75,7 +75,7 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
     }
 
     private void setDefault(boolean forCount) {
-        if (!autoSelect && Objects.isNull(this.select)) {
+        if (autoSelect && Objects.isNull(this.select)) {
             if (forCount) {
                 this.selectCountAll();
             } else {

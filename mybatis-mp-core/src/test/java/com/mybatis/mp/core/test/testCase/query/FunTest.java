@@ -669,4 +669,99 @@ public class FunTest extends BaseTest {
         }
     }
 
+
+    @Test
+    public void jsonExtract() {
+        if (TestDataSource.DB_TYPE != DbType.MYSQL) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName("{\"name\": \"John\", \"age\": 30, \"obj\": { \"title\": \"xx\" } }");
+            sysUserMapper.update(sysUser);
+
+            String xx = QueryChain.of(sysUserMapper)
+                    .disableAutoSelect()
+                    .dbAdapt((queryChain, selector) -> {
+                        selector.when(DbType.MYSQL, () -> {
+                            queryChain.select(SysUser::getUserName, c -> c.mysql().jsonExtract("$.obj.title"));
+                        });
+                    })
+                    .eq(SysUser::getId, 1)
+                    .returnType(String.class)
+                    .get();
+
+            if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+                assertEquals(xx, "\"xx\"");
+            } else {
+                assertEquals(xx, "\"xx\"");
+            }
+
+        }
+    }
+
+    @Test
+    public void jsonContainsPath() {
+        if (TestDataSource.DB_TYPE != DbType.MYSQL) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName("{\"name\": \"John\", \"age\": 30, \"obj\": { \"title\": \"xx\" } }");
+            sysUserMapper.update(sysUser);
+
+            Boolean exists = QueryChain.of(sysUserMapper)
+                    .disableAutoSelect()
+                    .dbAdapt((queryChain, selector) -> {
+                        selector.when(DbType.MYSQL, () -> {
+                            queryChain.select(SysUser::getUserName, c -> c.mysql().jsonContainsPath("$.obj.title"));
+                        });
+                    })
+                    .eq(SysUser::getId, 1)
+                    .returnType(Boolean.class)
+                    .get();
+            assertEquals(exists, true);
+
+
+        }
+    }
+
+    @Test
+    public void jsonContains() {
+        if (TestDataSource.DB_TYPE != DbType.MYSQL) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName("{\"name\": \"John\", \"age\": 30, \"obj\": { \"title\": \"\\\"xx\" } }");
+            sysUserMapper.update(sysUser);
+
+            Boolean exists = QueryChain.of(sysUserMapper)
+                    .disableAutoSelect()
+                    .dbAdapt((queryChain, selector) -> {
+                        selector.when(DbType.MYSQL, () -> {
+                            queryChain.select(SysUser::getUserName, c -> c.mysql().jsonContains("\"xx", "$.obj.title"));
+                        });
+                    })
+                    .eq(SysUser::getId, 1)
+                    .returnType(Boolean.class)
+                    .get();
+            assertEquals(exists, true);
+
+            exists = QueryChain.of(sysUserMapper)
+                    .disableAutoSelect()
+                    .dbAdapt((queryChain, selector) -> {
+                        selector.when(DbType.MYSQL, () -> {
+                            queryChain.select(SysUser::getUserName, c -> c.mysql().jsonContains(30, "$.age"));
+                        });
+                    })
+                    .eq(SysUser::getId, 1)
+                    .returnType(Boolean.class)
+                    .get();
+            assertEquals(exists, true);
+        }
+    }
 }
