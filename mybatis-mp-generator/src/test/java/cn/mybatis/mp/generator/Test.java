@@ -114,7 +114,7 @@ public class Test {
                 dataSource)
                 .basePackage("com.test")//根包路径
                 .baseFilePath("../generate")
-                .mapperXmlConfig(mapperXmlConfig -> mapperXmlConfig.enable(true))
+                .mapperXmlConfig(mapperXmlConfig -> mapperXmlConfig.enable(true).columnList(true).resultMap(true))
         ).create();
     }
 
