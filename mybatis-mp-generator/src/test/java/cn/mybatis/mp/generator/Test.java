@@ -94,6 +94,11 @@ public class Test {
 
     }
 
+    @org.junit.jupiter.api.Test
+    public void h2TestCase(){
+        h2Test();
+    }
+
     private static void h2Test() {
 
         DataSource dataSource = new EmbeddedDatabaseBuilder()
@@ -108,6 +113,7 @@ public class Test {
                 DbType.H2,//数据库类型
                 dataSource)
                 .basePackage("com.test")//根包路径
+                .baseFilePath("../generate/")
         ).create();
     }
 
