@@ -113,7 +113,8 @@ public class Test {
                 DbType.H2,//数据库类型
                 dataSource)
                 .basePackage("com.test")//根包路径
-                .baseFilePath("../generate/")
+                .baseFilePath("../generate")
+                .mapperXmlConfig(mapperXmlConfig -> mapperXmlConfig.enable(true))
         ).create();
     }
 
