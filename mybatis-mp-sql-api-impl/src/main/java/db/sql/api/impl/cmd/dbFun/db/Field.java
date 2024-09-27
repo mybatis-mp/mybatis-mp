@@ -1,8 +1,9 @@
-package db.sql.api.impl.cmd.dbFun;
+package db.sql.api.impl.cmd.dbFun.db;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.dbFun.BasicFunction;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 

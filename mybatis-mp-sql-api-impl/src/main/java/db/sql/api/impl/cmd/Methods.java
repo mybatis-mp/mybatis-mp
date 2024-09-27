@@ -7,7 +7,7 @@ import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.condition.*;
 import db.sql.api.impl.cmd.dbFun.*;
-import db.sql.api.impl.cmd.dbFun.db.MysqlFunctions;
+import db.sql.api.impl.cmd.dbFun.db.*;
 import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 
@@ -790,7 +790,7 @@ public final class Methods {
      * @param match
      * @return
      */
-    public static FindInSet findInSet(Cmd key, String match) {
+    public static FindInSet mysqlFindInSet(Cmd key, String match) {
         Objects.requireNonNull(key);
         Objects.requireNonEmpty(match);
         return new FindInSet(key, match);
@@ -804,7 +804,7 @@ public final class Methods {
      * @param match
      * @return
      */
-    public static FindInSet findInSet(Cmd key, Number match) {
+    public static FindInSet mysqlFindInSet(Cmd key, Number match) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(match);
         return new FindInSet(key, match + "");
@@ -818,7 +818,7 @@ public final class Methods {
      * @return
      */
     @SafeVarargs
-    public static Field filed(Cmd key, Object... values) {
+    public static Field mysqlFiled(Cmd key, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new Field(key, values);
@@ -1477,5 +1477,78 @@ public final class Methods {
             value = values[1];
         }
         return new NotLike(mode, key, value);
+    }
+
+    /**
+     * mysql fromUnixTime 函数
+     *
+     * @param key
+     * @return FromUnixTime
+     */
+    public static FromUnixTime mysqlFromUnixTime(Cmd key) {
+        Objects.requireNonNull(key);
+        return new FromUnixTime(key);
+    }
+
+    /**
+     * mysql fromUnixTime 函数
+     *
+     * @param key          列
+     * @param containValue 包含值
+     * @return FromUnixTime
+     */
+    public static JsonContains mysqlJsonContains(Cmd key, Serializable containValue) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(containValue);
+        return new JsonContains(key, containValue);
+    }
+
+    /**
+     * mysql json 是否包含值
+     *
+     * @param key          列
+     * @param containValue 包含值
+     * @param path         指定路径
+     * @return FromUnixTime
+     */
+    public static JsonContains mysqlJsonContains(Cmd key, Serializable containValue, String path) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(containValue);
+        Objects.requireNonEmpty(path);
+        return new JsonContains(key, containValue);
+    }
+
+    /**
+     * mysql json 是否包含路径
+     *
+     * @param key   列
+     * @param paths 指定路径
+     * @return
+     */
+    @SafeVarargs
+    public static JsonContainsPath mysqlJsonContainsPath(Cmd key, String... paths) {
+        return mysqlJsonContainsPath(key, true, paths);
+    }
+
+    /**
+     * mysql json 是否包含路径
+     *
+     * @param key      列
+     * @param allMatch 是否全匹配上
+     * @param paths    指定路径
+     * @return
+     */
+    @SafeVarargs
+    public static JsonContainsPath mysqlJsonContainsPath(Cmd key, boolean allMatch, String... paths) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(paths);
+        return new JsonContainsPath(key, allMatch, paths);
+    }
+
+    @SafeVarargs
+    public static JsonExtract mysqlJsonExtract(Cmd key, String... paths) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(paths);
+        return new JsonExtract(key, paths);
     }
 }

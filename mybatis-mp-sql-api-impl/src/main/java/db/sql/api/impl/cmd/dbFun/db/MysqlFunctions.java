@@ -1,6 +1,7 @@
 package db.sql.api.impl.cmd.dbFun.db;
 
 import db.sql.api.Cmd;
+import db.sql.api.impl.cmd.Methods;
 
 import java.io.Serializable;
 
@@ -14,24 +15,41 @@ public class MysqlFunctions {
 
     @SafeVarargs
     public final JsonExtract jsonExtract(String... paths) {
-        return new JsonExtract(this.key, paths);
+        return Methods.mysqlJsonExtract(this.key, paths);
     }
 
     @SafeVarargs
     public final JsonContainsPath jsonContainsPath(String... paths) {
-        return new JsonContainsPath(this.key, paths);
+        return Methods.mysqlJsonContainsPath(this.key, paths);
     }
 
     @SafeVarargs
     public final JsonContainsPath jsonContainsPath(boolean allMatch, String... paths) {
-        return new JsonContainsPath(this.key, allMatch, paths);
+        return Methods.mysqlJsonContainsPath(this.key, allMatch, paths);
     }
 
     public final JsonContains jsonContains(Serializable containValue) {
-        return new JsonContains(this.key, containValue);
+        return Methods.mysqlJsonContains(this.key, containValue);
     }
 
     public final JsonContains jsonContains(Serializable containValue, String path) {
-        return new JsonContains(this.key, containValue, path);
+        return Methods.mysqlJsonContains(this.key, containValue, path);
+    }
+
+    public final FindInSet findInSet(String str) {
+        return Methods.mysqlFindInSet(this.key, str);
+    }
+
+    public final FindInSet findInSet(Number value) {
+        return Methods.mysqlFindInSet(this.key, value);
+    }
+
+    @SafeVarargs
+    public final Field filed(Cmd key, Object... values) {
+        return Methods.mysqlFiled(key, values);
+    }
+
+    public final FromUnixTime fromUnixTime() {
+        return Methods.mysqlFromUnixTime(this.key);
     }
 }

@@ -225,13 +225,7 @@ public interface FunctionInterface extends Cmd {
         return Methods.reverse(this);
     }
 
-    default FindInSet findInSet(String str) {
-        return Methods.findInSet(this, str);
-    }
 
-    default FindInSet findInSet(Number value) {
-        return Methods.findInSet(this, value);
-    }
 
     default Year year() {
         return Methods.year(this);
