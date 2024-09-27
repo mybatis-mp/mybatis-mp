@@ -75,14 +75,14 @@ public class Test {
                 })
                 .entityConfig(entityConfig -> {
                     entityConfig.lombok(false).serial(false);
-                    entityConfig.swagger(true);
+                    entityConfig.swagger(true).packageName("model");
                     entityConfig.logicDeleteCode("@LogicDelete(beforeValue=\"0\",afterValue=\"1\",deleteTimeField=\"create_time\")");
                 })
                 .mapperXmlConfig(mapperXmlConfig -> {
                     mapperXmlConfig.enable(true).resultMap(true).columnList(true);
                 })
-                //.daoConfig(daoConfig -> daoConfig.enable(false))
-                //.daoImplConfig(daoImplConfig -> daoImplConfig.enable(false))
+                .daoConfig(daoConfig -> daoConfig.enable(false))
+                .daoImplConfig(daoImplConfig -> daoImplConfig.enable(false))
                 .serviceConfig(serviceConfig -> serviceConfig.superClass(IService.class).generic(true))
                 .serviceImplConfig(serviceImplConfig -> {
                     serviceImplConfig.superClass(ServiceImpl.class).injectMapper(true).injectDao(false);
