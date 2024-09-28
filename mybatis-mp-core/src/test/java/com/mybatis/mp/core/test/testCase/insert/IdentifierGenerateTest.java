@@ -148,7 +148,8 @@ public class IdentifierGenerateTest extends BaseTest {
             SysUser old = QueryChain.of(sysUserMapper).orderByDesc(SysUser::getId).limit(1).get();
             Integer maxId = old.getId();
 
-            if (TestDataSource.DB_TYPE != DbType.SQL_SERVER && TestDataSource.DB_TYPE != DbType.DB2) {
+            if (TestDataSource.DB_TYPE != DbType.SQL_SERVER
+                    && TestDataSource.DB_TYPE != DbType.DB2) {
                 old.setId(maxId + 1);
             } else {
                 old.setId(null);
@@ -158,7 +159,7 @@ public class IdentifierGenerateTest extends BaseTest {
             sysUserMapper.save(old);
 
             SysUser sysUser = sysUserMapper.getById(maxId + 1);
-            if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                 assertEquals(null, sysUser.getUserName());
             } else {
                 assertEquals("", sysUser.getUserName());

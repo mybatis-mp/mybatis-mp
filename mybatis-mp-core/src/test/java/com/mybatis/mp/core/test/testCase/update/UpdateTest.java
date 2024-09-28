@@ -397,7 +397,7 @@ public class UpdateTest extends BaseTest {
             sysUserMapper.update(old);
 
             SysUser sysUser = sysUserMapper.getById(1);
-            if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                 assertEquals(null, sysUser.getUserName());
             } else {
                 assertEquals("", sysUser.getUserName());
