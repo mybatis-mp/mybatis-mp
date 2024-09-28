@@ -1515,7 +1515,7 @@ public final class Methods {
         Objects.requireNonNull(key);
         Objects.requireNonNull(containValue);
         Objects.requireNonEmpty(path);
-        return new JsonContains(key, containValue);
+        return new JsonContains(key, containValue, path);
     }
 
     /**
