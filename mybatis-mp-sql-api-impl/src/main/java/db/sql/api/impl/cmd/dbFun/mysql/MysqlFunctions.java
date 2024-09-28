@@ -1,4 +1,4 @@
-package db.sql.api.impl.cmd.dbFun.db;
+package db.sql.api.impl.cmd.dbFun.mysql;
 
 import db.sql.api.Cmd;
 import db.sql.api.impl.cmd.Methods;
@@ -45,11 +45,15 @@ public class MysqlFunctions {
     }
 
     @SafeVarargs
-    public final Field filed(Cmd key, Object... values) {
+    public final Field filed(Object... values) {
         return Methods.mysqlFiled(key, values);
     }
 
     public final FromUnixTime fromUnixTime() {
         return Methods.mysqlFromUnixTime(this.key);
+    }
+
+    public final Md5 md5() {
+        return Methods.mysqlMd5(this.key);
     }
 }

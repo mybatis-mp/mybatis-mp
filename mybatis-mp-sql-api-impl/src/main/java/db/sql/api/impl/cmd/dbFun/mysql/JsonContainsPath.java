@@ -1,4 +1,4 @@
-package db.sql.api.impl.cmd.dbFun.db;
+package db.sql.api.impl.cmd.dbFun.mysql;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
