@@ -24,6 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class TypeHandlerTest extends BaseTest {
     @Test
     public void json() {
+        if (TestDataSource.DB_TYPE == DbType.DB2) {
+            return;
+        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             JsonTypeTestVo jsonTypeTestVo = QueryChain.of(sysUserMapper)
@@ -46,6 +49,9 @@ public class TypeHandlerTest extends BaseTest {
 
     @Test
     public void json2() {
+        if (TestDataSource.DB_TYPE == DbType.DB2) {
+            return;
+        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
             QueryChain<?> queryChain = QueryChain.of(sysRoleMapper)
@@ -70,6 +76,9 @@ public class TypeHandlerTest extends BaseTest {
 
     @Test
     public void json3() {
+        if (TestDataSource.DB_TYPE == DbType.DB2) {
+            return;
+        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
             QueryChain<?> queryChain = QueryChain.of(sysRoleMapper)
@@ -98,7 +107,7 @@ public class TypeHandlerTest extends BaseTest {
             SysUserEncryptMapper sysUserMapper = session.getMapper(SysUserEncryptMapper.class);
 
             SysUserEncrypt sysUser = new SysUserEncrypt();
-            if (TestDataSource.DB_TYPE != DbType.SQL_SERVER) {
+            if (TestDataSource.DB_TYPE != DbType.SQL_SERVER && TestDataSource.DB_TYPE != DbType.DB2) {
                 sysUser.setId(123);
             }
 

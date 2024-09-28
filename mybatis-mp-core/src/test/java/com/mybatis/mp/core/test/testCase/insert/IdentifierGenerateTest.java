@@ -148,7 +148,7 @@ public class IdentifierGenerateTest extends BaseTest {
             SysUser old = QueryChain.of(sysUserMapper).orderByDesc(SysUser::getId).limit(1).get();
             Integer maxId = old.getId();
 
-            if (TestDataSource.DB_TYPE != DbType.SQL_SERVER) {
+            if (TestDataSource.DB_TYPE != DbType.SQL_SERVER && TestDataSource.DB_TYPE != DbType.DB2) {
                 old.setId(maxId + 1);
             } else {
                 old.setId(null);

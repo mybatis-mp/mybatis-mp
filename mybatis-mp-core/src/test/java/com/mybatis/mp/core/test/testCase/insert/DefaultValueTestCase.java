@@ -186,14 +186,13 @@ public class DefaultValueTestCase extends BaseTest {
             defaultValueTest = mapper.getById(1);
             System.out.println(defaultValueTest);
             InsertChain insert;
-            if (TestDataSource.DB_TYPE == DbType.SQL_SERVER) {
+            if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2) {
                 insert = InsertChain.of(mapper)
                         .insert(DefaultValueTest.class)
                         //.insertIgnore()
                         .field(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
                         .fromSelect(Query
                                 .create()
-
                                 .select(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
                                 .from(DefaultValueTest.class)
                                 .eq(DefaultValueTest::getId, 1)
@@ -241,7 +240,7 @@ public class DefaultValueTestCase extends BaseTest {
             InsertChain.of(mapper)
                     .insert(DefaultValueTest.class)
                     .dbAdapt((insertChain, selector) -> {
-                        selector.when(DbType.SQL_SERVER, () -> {
+                        selector.when(new DbType[]{DbType.SQL_SERVER, DbType.DB2}, () -> {
 
                         }).otherwise(() -> {
                             insertChain.insertSelect(DefaultValueTest::getId, Methods.value(maxId + 1));

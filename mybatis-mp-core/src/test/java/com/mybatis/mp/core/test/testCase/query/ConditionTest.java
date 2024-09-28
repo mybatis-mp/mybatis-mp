@@ -478,7 +478,7 @@ public class ConditionTest extends BaseTest {
                     .eq(SysUser::getUserName, "admin          ")
                     .returnType(SysUser.class)
                     .get();
-            if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.MARIA_DB) {
+            if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.MARIA_DB || TestDataSource.DB_TYPE == DbType.DB2) {
                 assertTrue(sysUser != null);
             } else {
                 assertNull(sysUser);

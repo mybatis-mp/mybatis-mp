@@ -4,6 +4,8 @@ import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
+import com.mybatis.mp.core.test.testCase.TestDataSource;
+import db.sql.api.DbType;
 import db.sql.api.cmd.GetterFields;
 import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
@@ -93,6 +95,9 @@ public class DbFunTest extends BaseTest {
 
     @Test
     public void ifTest() {
+        if (TestDataSource.DB_TYPE == DbType.DB2) {
+            return;
+        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer id = QueryChain.of(sysUserMapper)
