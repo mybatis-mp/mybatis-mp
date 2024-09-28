@@ -37,12 +37,14 @@ public class If extends BasicFunction<If> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
+        sqlBuilder.append(SqlConst.BRACKET_LEFT);
+        sqlBuilder.append("CASE WHEN ");
         this.key.sql(module, this, context, sqlBuilder);
-        sqlBuilder.append(SqlConst.DELIMITER);
+        sqlBuilder.append(" THEN ");
         this.value.sql(module, this, context, sqlBuilder);
-        sqlBuilder.append(SqlConst.DELIMITER);
+        sqlBuilder.append(" ELSE ");
         this.thenValue.sql(module, this, context, sqlBuilder);
+        sqlBuilder.append(" END");
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
     }

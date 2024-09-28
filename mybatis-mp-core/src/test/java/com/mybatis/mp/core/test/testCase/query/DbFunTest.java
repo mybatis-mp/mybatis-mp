@@ -5,6 +5,7 @@ import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
 import db.sql.api.cmd.GetterFields;
+import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -87,6 +88,36 @@ public class DbFunTest extends BaseTest {
                     .count();
 
             assertEquals(id, 1);
+        }
+    }
+
+    @Test
+    public void ifTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Integer id = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, c -> Methods.if_(c.eq(1), 2, 3))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1)
+                    .returnType(Integer.TYPE)
+                    .get();
+
+            assertEquals(id, 2);
+        }
+    }
+
+    @Test
+    public void instrTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Integer index = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getUserName, c -> c.instr("m"))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1)
+                    .returnType(Integer.TYPE)
+                    .get();
+
+            assertEquals(index, 3);
         }
     }
 }

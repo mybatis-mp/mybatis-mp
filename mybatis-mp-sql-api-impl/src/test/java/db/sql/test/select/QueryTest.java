@@ -97,7 +97,7 @@ public class QueryTest extends BaseTest {
                         "concat(id,1,'2',3),concat(id,id)," +
                         "concat_ws('$',id,1,'2',3),concat_ws('$',id,id)," +
                         "concat(count(id),'abc')," +
-                        "if(id>2,1,2)," +
+                        "(case when id>2 then 1 else 2 end)," +
                         "(case when id<3 then 1 when id<2 then 2 else 3 end) as xx" +
                         " from user",
 

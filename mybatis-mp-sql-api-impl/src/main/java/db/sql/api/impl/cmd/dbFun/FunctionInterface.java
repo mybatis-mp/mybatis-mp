@@ -434,4 +434,8 @@ public interface FunctionInterface extends Cmd {
     default NotEmpty notEmpty() {
         return Methods.notEmpty(this);
     }
+
+    default Instr instr(String str) {
+        return Methods.instr(this, str);
+    }
 }

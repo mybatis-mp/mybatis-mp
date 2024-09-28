@@ -1551,4 +1551,17 @@ public final class Methods {
         Objects.requireNonNull(paths);
         return new JsonExtract(key, paths);
     }
+
+    /**
+     * 返回目标字符(串)在源字符串字符串中出现的起始位置
+     *
+     * @param key 列
+     * @param str 匹配的字符
+     * @return
+     */
+    public static Instr instr(Cmd key, String str) {
+        Objects.requireNonNull(key);
+        Objects.requireNonEmpty(str);
+        return new Instr(key, str);
+    }
 }

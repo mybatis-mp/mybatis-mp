@@ -369,4 +369,16 @@ public final class SqlConst {
         return " CHAR_LENGTH";
     }
 
+    public static String TRUNCATE(DbType dbType) {
+        switch (dbType) {
+            case SQL_SERVER: {
+                return " ROUND";
+            }
+            case ORACLE: {
+                return " TRUNC";
+            }
+        }
+        return " TRUNCATE";
+    }
+
 }

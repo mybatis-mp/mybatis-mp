@@ -240,7 +240,7 @@ public class FunTest extends BaseTest {
                 eq(SysUser::getId, 3);
 
         query.setReturnType(String.class);
-        check("if_", "SELECT  IF( t.id = 3 , 'abc' , '') FROM t_sys_user t WHERE  t.id = 3", query);
+        check("if_", "SELECT  (case when t.id = 3 then 'abc' else '' end) FROM t_sys_user t WHERE  t.id = 3", query);
     }
 
     @Test
