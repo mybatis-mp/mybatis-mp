@@ -475,10 +475,10 @@ public class ConditionTest extends BaseTest {
                     .trimStringInCondition(false)
                     .select(SysUser::getId)
                     .from(SysUser.class)
-                    .eq(SysUser::getUserName, "admin      ")
+                    .eq(SysUser::getUserName, "admin          ")
                     .returnType(SysUser.class)
                     .get();
-            if (TestDataSource.DB_TYPE == DbType.SQL_SERVER) {
+            if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.MARIA_DB) {
                 assertTrue(sysUser != null);
             } else {
                 assertNull(sysUser);

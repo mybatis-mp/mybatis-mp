@@ -54,7 +54,7 @@ public class InsertTable implements IInsertTable<Table> {
                 return sqlBuilder;
             }
         }
-        sqlBuilder.append(insertIgnore && context.getDbType() == DbType.MYSQL ? SqlConst.INSERT_IGNORE_INTO : SqlConst.INSERT_INTO);
+        sqlBuilder.append(insertIgnore && (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB) ? SqlConst.INSERT_IGNORE_INTO : SqlConst.INSERT_INTO);
         sqlBuilder.append(this.table.getName());
         return sqlBuilder;
     }
