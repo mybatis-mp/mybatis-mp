@@ -660,7 +660,7 @@ public class FunTest extends BaseTest {
 
     @Test
     public void jsonExtract() {
-        if (TestDataSource.DB_TYPE != DbType.MYSQL) {
+        if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -672,7 +672,7 @@ public class FunTest extends BaseTest {
             String xx = QueryChain.of(sysUserMapper)
                     .disableAutoSelect()
                     .dbAdapt((queryChain, selector) -> {
-                        selector.when(DbType.MYSQL, () -> {
+                        selector.when(new DbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
                             queryChain.select(SysUser::getUserName, c -> c.mysql().jsonExtract("$.obj.title"));
                         });
                     })
@@ -691,7 +691,7 @@ public class FunTest extends BaseTest {
 
     @Test
     public void jsonContainsPath() {
-        if (TestDataSource.DB_TYPE != DbType.MYSQL) {
+        if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -703,7 +703,7 @@ public class FunTest extends BaseTest {
             Boolean exists = QueryChain.of(sysUserMapper)
                     .disableAutoSelect()
                     .dbAdapt((queryChain, selector) -> {
-                        selector.when(DbType.MYSQL, () -> {
+                        selector.when(new DbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
                             queryChain.select(SysUser::getUserName, c -> c.mysql().jsonContainsPath("$.obj.title"));
                         });
                     })
@@ -718,7 +718,7 @@ public class FunTest extends BaseTest {
 
     @Test
     public void jsonContains() {
-        if (TestDataSource.DB_TYPE != DbType.MYSQL) {
+        if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -730,7 +730,7 @@ public class FunTest extends BaseTest {
             Boolean exists = QueryChain.of(sysUserMapper)
                     .disableAutoSelect()
                     .dbAdapt((queryChain, selector) -> {
-                        selector.when(DbType.MYSQL, () -> {
+                        selector.when(new DbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
                             queryChain.select(SysUser::getUserName, c -> c.mysql().jsonContains("\"xx", "$.obj.title"));
                         });
                     })
@@ -742,7 +742,7 @@ public class FunTest extends BaseTest {
             exists = QueryChain.of(sysUserMapper)
                     .disableAutoSelect()
                     .dbAdapt((queryChain, selector) -> {
-                        selector.when(DbType.MYSQL, () -> {
+                        selector.when(new DbType[]{DbType.MYSQL, DbType.MARIA_DB}, () -> {
                             queryChain.select(SysUser::getUserName, c -> c.mysql().jsonContains(30, "$.age"));
                         });
                     })
@@ -750,6 +750,24 @@ public class FunTest extends BaseTest {
                     .returnType(Boolean.class)
                     .get();
             assertEquals(exists, true);
+        }
+    }
+
+    @Test
+    public void md5Test() {
+        if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            String md5 = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, c -> c.mysql().md5())
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1)
+                    .returnType(String.class)
+                    .get();
+
+            assertEquals("c4ca4238a0b923820dcc509a6f75849b", md5);
         }
     }
 }
