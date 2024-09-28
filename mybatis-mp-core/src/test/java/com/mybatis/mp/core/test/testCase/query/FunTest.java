@@ -637,9 +637,6 @@ public class FunTest extends BaseTest {
 
     @Test
     public void subStr() {
-        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
-            return;
-        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String left = QueryChain.of(sysUserMapper)

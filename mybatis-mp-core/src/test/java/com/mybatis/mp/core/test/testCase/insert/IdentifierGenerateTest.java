@@ -145,12 +145,14 @@ public class IdentifierGenerateTest extends BaseTest {
     public void insertEmpty() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            SysUser old = sysUserMapper.getById(1);
-            old.setId(10);
+            SysUser old = QueryChain.of(sysUserMapper).orderByDesc(SysUser::getId).limit(1).get();
+            Integer maxId = old.getId();
+
+            old.setId(null);
             old.setUserName("");
             sysUserMapper.save(old);
 
-            SysUser sysUser = sysUserMapper.getById(old.getId());
+            SysUser sysUser = sysUserMapper.getById(maxId + 1);
             assertEquals("", sysUser.getUserName());
         }
     }

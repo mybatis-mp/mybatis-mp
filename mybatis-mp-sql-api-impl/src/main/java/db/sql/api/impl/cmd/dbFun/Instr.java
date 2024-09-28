@@ -24,6 +24,7 @@ public class Instr extends BasicFunction<Instr> {
             sqlBuilder.append(SqlConst.DELIMITER);
             this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+            return sqlBuilder;
         }
         sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
         this.key.sql(module, this, context, sqlBuilder);

@@ -381,4 +381,15 @@ public final class SqlConst {
         return " TRUNCATE";
     }
 
+    public static String SUBSTR(DbType dbType) {
+        switch (dbType) {
+            case SQL_SERVER: {
+                return " SUBSTRING";
+            }
+            default: {
+                return " SUBSTR";
+            }
+        }
+    }
+
 }
