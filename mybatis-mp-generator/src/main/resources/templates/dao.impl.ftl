@@ -13,7 +13,7 @@ import ${pkg};
  * @since ${date}
  */
 @${repositoryAnnotationName}
-public class ${entityInfo.daoImplName} ${superExtend}<#if daoConfig.isGeneric()><${entityInfo.name},<#if entityInfo.idFieldInfo??>${entityInfo.idFieldInfo.typeName}<#else>Void</#if>></#if> <#if daoConfig.isEnable()>implements ${entityInfo.daoName}</#if>{
+public class ${entityInfo.daoImplName}${superExtend}<#if daoConfig.isGeneric()><${entityInfo.name}, <#if entityInfo.idFieldInfo??>${entityInfo.idFieldInfo.typeName}<#else>Void</#if>></#if><#if daoConfig.isEnable()> implements ${entityInfo.daoName}</#if> {
 
 <#if containerType.is("solon")>
     @${autowiredAnnotationName}

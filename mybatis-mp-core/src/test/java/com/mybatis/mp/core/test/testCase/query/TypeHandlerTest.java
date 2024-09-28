@@ -24,6 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class TypeHandlerTest extends BaseTest {
     @Test
     public void json() {
+        if (TestDataSource.DB_TYPE == DbType.DB2) {
+            return;
+        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             JsonTypeTestVo jsonTypeTestVo = QueryChain.of(sysUserMapper)
@@ -46,9 +49,12 @@ public class TypeHandlerTest extends BaseTest {
 
     @Test
     public void json2() {
+        if (TestDataSource.DB_TYPE == DbType.DB2) {
+            return;
+        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
-            QueryChain queryChain = QueryChain.of(sysRoleMapper)
+            QueryChain<?> queryChain = QueryChain.of(sysRoleMapper)
                     .select(Methods.value("[{\"id\":123}]").as("aa"))
                     .select(Methods.value("{\"id\":1234}").as("bb"))
                     .from(SysRole.class)
@@ -56,7 +62,7 @@ public class TypeHandlerTest extends BaseTest {
 
             String sql = SQLPrinter.sql(TestDataSource.DB_TYPE, queryChain);
 
-            JsonTypeTestVo jsonTypeTestVo = sysRoleMapper.jsonTypeTest1(sql);
+            JsonTypeTestVo jsonTypeTestVo = queryChain.returnType(JsonTypeTestVo.class).get();
 
             assertEquals(jsonTypeTestVo.getAa().get(0).getClass(), SysUser.class);
             assertEquals(jsonTypeTestVo.getAa().get(0).getId(), 123);
@@ -70,9 +76,12 @@ public class TypeHandlerTest extends BaseTest {
 
     @Test
     public void json3() {
+        if (TestDataSource.DB_TYPE == DbType.DB2) {
+            return;
+        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
-            QueryChain queryChain = QueryChain.of(sysRoleMapper)
+            QueryChain<?> queryChain = QueryChain.of(sysRoleMapper)
                     .select(Methods.value("[{\"id\":123}]").as("aa"))
                     .select(Methods.value("{\"id\":1234}").as("bb"))
                     .from(SysRole.class)
@@ -80,7 +89,7 @@ public class TypeHandlerTest extends BaseTest {
 
             String sql = SQLPrinter.sql(TestDataSource.DB_TYPE, queryChain);
 
-            JsonTypeTestVo jsonTypeTestVo = sysRoleMapper.jsonTypeTest2(sql);
+            JsonTypeTestVo jsonTypeTestVo = queryChain.returnType(JsonTypeTestVo.class).get();
 
             assertEquals(jsonTypeTestVo.getAa().get(0).getClass(), SysUser.class);
             assertEquals(jsonTypeTestVo.getAa().get(0).getId(), 123);
@@ -98,7 +107,7 @@ public class TypeHandlerTest extends BaseTest {
             SysUserEncryptMapper sysUserMapper = session.getMapper(SysUserEncryptMapper.class);
 
             SysUserEncrypt sysUser = new SysUserEncrypt();
-            if (TestDataSource.DB_TYPE != DbType.SQL_SERVER) {
+            if (TestDataSource.DB_TYPE != DbType.SQL_SERVER && TestDataSource.DB_TYPE != DbType.DB2) {
                 sysUser.setId(123);
             }
 

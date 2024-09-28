@@ -12,7 +12,7 @@ import ${pkg};
  * @author ${author!}
  * @since ${date}
  */
-public interface ${entityInfo.daoName} ${superExtend}<#if daoConfig.isGeneric()><${entityInfo.name},<#if entityInfo.idFieldInfo??>${entityInfo.idFieldInfo.typeName}<#else>Void</#if>></#if> {
+public interface ${entityInfo.daoName}${superExtend}<#if daoConfig.isGeneric()><${entityInfo.name}, <#if entityInfo.idFieldInfo??>${entityInfo.idFieldInfo.typeName}<#else>Void</#if>></#if> {
 <#if entityInfo.hasMultiId()>
      /**
       * 根据多个主键查询

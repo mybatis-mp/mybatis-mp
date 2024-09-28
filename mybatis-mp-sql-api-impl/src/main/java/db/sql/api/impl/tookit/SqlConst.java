@@ -160,6 +160,14 @@ public final class SqlConst {
 
     public static final char[] GROUP_CONCAT = " GROUP_CONCAT".toCharArray();
 
+    public static final char[] JSON_EXTRACT = " JSON_EXTRACT".toCharArray();
+
+    public static final char[] JSON_CONTAINS_PATH = " JSON_CONTAINS_PATH".toCharArray();
+
+    public static final char[] JSON_CONTAINS = " JSON_CONTAINS".toCharArray();
+
+    public static final char[] JSON_QUOTE = " JSON_QUOTE".toCharArray();
+
     public static String FORCE_INDEX(DbType dbType, String indexName) {
         switch (dbType) {
             case SQL_SERVER: {
@@ -359,6 +367,29 @@ public final class SqlConst {
             }
         }
         return " CHAR_LENGTH";
+    }
+
+    public static String TRUNCATE(DbType dbType) {
+        switch (dbType) {
+            case SQL_SERVER: {
+                return " ROUND";
+            }
+            case ORACLE: {
+                return " TRUNC";
+            }
+        }
+        return " TRUNCATE";
+    }
+
+    public static String SUBSTR(DbType dbType) {
+        switch (dbType) {
+            case SQL_SERVER: {
+                return " SUBSTRING";
+            }
+            default: {
+                return " SUBSTR";
+            }
+        }
     }
 
 }

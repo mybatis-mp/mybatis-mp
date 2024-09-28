@@ -41,7 +41,7 @@ public class ServiceImplTemplateBuilder extends AbstractTemplateBuilder {
             } else {
                 superName = generatorConfig.getServiceImplConfig().getSuperClass();
             }
-            data.put("superExtend", "extends " + superName);
+            data.put("superExtend", " extends " + superName);
         } else {
             data.put("superExtend", "");
         }

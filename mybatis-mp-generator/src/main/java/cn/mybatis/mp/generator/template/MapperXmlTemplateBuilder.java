@@ -35,6 +35,7 @@ public class MapperXmlTemplateBuilder extends AbstractTemplateBuilder {
         data.put("author", generatorConfig.getAuthor());
         data.put("entityInfo", entityInfo);
         data.put("entityConfig", generatorConfig.getEntityConfig());
+        data.put("mapperXmlConfig", generatorConfig.getMapperXmlConfig());
         data.put("mapperConfig", generatorConfig.getMapperConfig());
         data.put("daoConfig", generatorConfig.getDaoConfig());
         data.put("daoImplConfig", generatorConfig.getDaoImplConfig());

@@ -44,7 +44,14 @@ public interface BaseMapper extends CommonMapper {
         if (Objects.isNull(query.getSelect())) {
             query.select1();
         }
-        query.limit(1);
+        query.dbAdapt((q, selector) -> {
+            selector.when(DbType.SQL_SERVER, () -> {
+                query.getSelect().top(1);
+            }).otherwise(() -> {
+                query.limit(1);
+            });
+        });
+
         query.setReturnType(Integer.TYPE);
         Integer obj = (Integer) this.get(query);
         return Objects.nonNull(obj) && obj >= 1;

@@ -3,9 +3,11 @@ package com.mybatis.mp.core.test.testCase.insert;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import com.mybatis.mp.core.test.DO.IdTest;
 import com.mybatis.mp.core.test.DO.IdTest2;
+import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.DO.UUIDTest;
 import com.mybatis.mp.core.test.mapper.IdTest2Mapper;
 import com.mybatis.mp.core.test.mapper.IdTestMapper;
+import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.mapper.UUIDMapper;
 import com.mybatis.mp.core.test.model.IdTestModel;
 import com.mybatis.mp.core.test.testCase.BaseTest;
@@ -138,4 +140,32 @@ public class IdentifierGenerateTest extends BaseTest {
             assertEquals(idTest.getId(), "a");
         }
     }
+
+    @Test
+    public void insertEmpty() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser old = QueryChain.of(sysUserMapper).orderByDesc(SysUser::getId).limit(1).get();
+            Integer maxId = old.getId();
+
+            if (TestDataSource.DB_TYPE != DbType.SQL_SERVER
+                    && TestDataSource.DB_TYPE != DbType.DB2) {
+                old.setId(maxId + 1);
+            } else {
+                old.setId(null);
+            }
+
+            old.setUserName("");
+            sysUserMapper.save(old);
+
+            SysUser sysUser = sysUserMapper.getById(maxId + 1);
+            if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+                assertEquals(null, sysUser.getUserName());
+            } else {
+                assertEquals("", sysUser.getUserName());
+            }
+
+        }
+    }
+
 }

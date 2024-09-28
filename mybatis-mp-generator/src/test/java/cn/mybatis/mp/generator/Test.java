@@ -1,5 +1,6 @@
 package cn.mybatis.mp.generator;
 
+import cn.mybatis.mp.generator.buidler.TsTypeTemplateBuilder;
 import cn.mybatis.mp.generator.config.ContainerType;
 import cn.mybatis.mp.generator.config.GeneratorConfig;
 import db.sql.api.DbType;
@@ -37,7 +38,7 @@ public class Test {
                     mapperXmlConfig.enable(true).resultMap(true).columnList(true);
                 })
                 .serviceImplConfig(serviceImplConfig -> {
-                    serviceImplConfig.injectMapper(true);
+                    serviceImplConfig.superClass(Integer.class).injectMapper(true);
                 })
                 .actionConfig(actionConfig -> {
                     actionConfig
@@ -54,14 +55,17 @@ public class Test {
 
     private static void mysqlTest() {
         new FastGenerator(new GeneratorConfig(
-                "jdbc:mysql://localhost:3306/sys_oss",
+                "jdbc:mysql://localhost:3306/test3",
                 "root",
                 "123456")
                 .basePackage("com.test")
                 .swaggerVersion(3)
                 .containerType(ContainerType.SPRING)
                 .tableConfig(tableConfig -> {
-                    tableConfig.includeTable("ip_info");
+                    //tableConfig.includeTable("ip_info");
+                })
+                .templateBuilders(list -> {
+                    list.add(TsTypeTemplateBuilder.class);
                 })
                 .columnConfig(columnConfig -> {
                     columnConfig.disableUpdateColumns("create_time");
@@ -70,15 +74,18 @@ public class Test {
                     columnConfig.tenantIdColumn("state");
                 })
                 .entityConfig(entityConfig -> {
-                    entityConfig.lombok(false);
-                    entityConfig.swagger(true);
+                    entityConfig.lombok(false).serial(false);
+                    entityConfig.swagger(true).packageName("model");
                     entityConfig.logicDeleteCode("@LogicDelete(beforeValue=\"0\",afterValue=\"1\",deleteTimeField=\"create_time\")");
                 })
                 .mapperXmlConfig(mapperXmlConfig -> {
                     mapperXmlConfig.enable(true).resultMap(true).columnList(true);
                 })
+                .daoConfig(daoConfig -> daoConfig.enable(false))
+                .daoImplConfig(daoImplConfig -> daoImplConfig.enable(false))
+                .serviceConfig(serviceConfig -> serviceConfig.superClass(IService.class).generic(true))
                 .serviceImplConfig(serviceImplConfig -> {
-                    serviceImplConfig.injectMapper(true);
+                    serviceImplConfig.superClass(ServiceImpl.class).injectMapper(true).injectDao(false);
                 })
                 .actionConfig(actionConfig -> {
                     actionConfig
@@ -92,6 +99,11 @@ public class Test {
                 })
         ).create();
 
+    }
+
+    @org.junit.jupiter.api.Test
+    public void h2TestCase(){
+        h2Test();
     }
 
     private static void h2Test() {
@@ -108,6 +120,11 @@ public class Test {
                 DbType.H2,//数据库类型
                 dataSource)
                 .basePackage("com.test")//根包路径
+                .baseFilePath("../generate")
+                .templateBuilders(list -> {
+                    list.add(TsTypeTemplateBuilder.class);
+                })
+                .mapperXmlConfig(mapperXmlConfig -> mapperXmlConfig.enable(true).columnList(true).resultMap(true))
         ).create();
     }
 

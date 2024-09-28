@@ -13,11 +13,14 @@ import db.sql.api.tookit.CmdUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Select implements ISelect<Select> {
 
     private final List<Cmd> selectFields = new ArrayList<>();
     private boolean distinct = false;
+
+    private Integer top;
 
     @Override
     public List<Cmd> getSelectField() {
@@ -27,6 +30,12 @@ public class Select implements ISelect<Select> {
     @Override
     public Select selectIgnore(Cmd column) {
         selectFields.remove(column);
+        return this;
+    }
+
+    @Override
+    public Select top(int count) {
+        this.top = count;
         return this;
     }
 
@@ -63,6 +72,11 @@ public class Select implements ISelect<Select> {
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (!(parent instanceof Function)) {
             sqlBuilder.append(SqlConst.SELECT);
+        }
+        if (Objects.nonNull(top)) {
+            if (context.getDbType() == DbType.SQL_SERVER) {
+                sqlBuilder.append(" TOP ").append(top).append(SqlConst.BLANK);
+            }
         }
         if (distinct) {
             Distinct.INSTANCE.sql(module, this, context, sqlBuilder);

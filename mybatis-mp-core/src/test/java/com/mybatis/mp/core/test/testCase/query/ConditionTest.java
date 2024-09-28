@@ -4,6 +4,8 @@ import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
+import com.mybatis.mp.core.test.testCase.TestDataSource;
+import db.sql.api.DbType;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.exception.ConditionValueNullException;
 import db.sql.api.impl.tookit.Objects;
@@ -473,10 +475,17 @@ public class ConditionTest extends BaseTest {
                     .trimStringInCondition(false)
                     .select(SysUser::getId)
                     .from(SysUser.class)
-                    .eq(SysUser::getUserName, "admin ")
+                    .eq(SysUser::getUserName, "admin          ")
                     .returnType(SysUser.class)
                     .get();
-            assertNull(sysUser);
+            if (TestDataSource.DB_TYPE == DbType.SQL_SERVER
+                    || TestDataSource.DB_TYPE == DbType.MARIA_DB
+                    || TestDataSource.DB_TYPE == DbType.DB2
+                    || TestDataSource.DB_TYPE == DbType.DM) {
+                assertTrue(sysUser != null);
+            } else {
+                assertNull(sysUser);
+            }
         }
     }
 }

@@ -179,23 +179,41 @@ public class DefaultValueTestCase extends BaseTest {
             defaultValueTest.setValue2(13);
             defaultValueTest.setValue3(TestEnum.X2);
             mapper.save(defaultValueTest);
+
+            Integer maxId = defaultValueTest.getId();
+
             System.out.println(defaultValueTest);
             defaultValueTest = mapper.getById(1);
             System.out.println(defaultValueTest);
+            InsertChain insert;
+            if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2) {
+                insert = InsertChain.of(mapper)
+                        .insert(DefaultValueTest.class)
+                        //.insertIgnore()
+                        .field(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
+                        .fromSelect(Query
+                                .create()
+                                .select(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
+                                .from(DefaultValueTest.class)
+                                .eq(DefaultValueTest::getId, 1)
+                        );
+            } else {
+                insert = InsertChain.of(mapper)
+                        .insert(DefaultValueTest.class)
+                        //.insertIgnore()
+                        .field(DefaultValueTest::getId, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
+                        .fromSelect(Query
+                                .create()
+                                .select(Methods.value(maxId + 1))
+                                .select(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
+                                .from(DefaultValueTest.class)
+                                .eq(DefaultValueTest::getId, 1)
+                        );
+            }
 
-            InsertChain insert = InsertChain.of(mapper)
-                    .insert(DefaultValueTest.class)
-                    //.insertIgnore()
-                    .field(DefaultValueTest::getId, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
-                    .fromSelect(Query
-                            .create()
-                            .select(Methods.value(100))
-                            .select(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
-                            .from(DefaultValueTest.class)
-                            .eq(DefaultValueTest::getId, 1)
-                    );
+
             insert.execute();
-            defaultValueTest = mapper.getById(100);
+            defaultValueTest = mapper.getById(maxId + 1);
             assertEquals(defaultValueTest.getValue2(), 13);
             assertEquals(defaultValueTest.getValue3(), TestEnum.X2);
         }
@@ -210,23 +228,35 @@ public class DefaultValueTestCase extends BaseTest {
             defaultValueTest.setValue1("1");
             defaultValueTest.setValue2(13);
             defaultValueTest.setValue3(TestEnum.X2);
+            defaultValueTest.setValue4(1);
             mapper.save(defaultValueTest);
+
+            Integer maxId = defaultValueTest.getId();
+
             System.out.println(defaultValueTest);
             defaultValueTest = mapper.getById(1);
             System.out.println(defaultValueTest);
 
             InsertChain.of(mapper)
                     .insert(DefaultValueTest.class)
-                    .insertSelect(DefaultValueTest::getId, Methods.value(100))
+                    .dbAdapt((insertChain, selector) -> {
+                        selector.when(new DbType[]{DbType.SQL_SERVER, DbType.DB2}, () -> {
+
+                        }).otherwise(() -> {
+                            insertChain.insertSelect(DefaultValueTest::getId, Methods.value(maxId + 1));
+                        });
+                    })
+
                     .insertSelect(DefaultValueTest::getValue1, GetterFields.of(DefaultValueTest::getValue1, DefaultValueTest::getValue1), cs -> cs[0].concat(cs[1]))
                     .insertSelect(DefaultValueTest::getValue2, DefaultValueTest::getValue2)
                     .insertSelect(DefaultValueTest::getValue3, DefaultValueTest::getValue3)
+                    .insertSelect(DefaultValueTest::getValue4, DefaultValueTest::getValue4)
                     .insertSelect(DefaultValueTest::getCreateTime, DefaultValueTest::getCreateTime)
                     .insertSelectQuery(query -> query.from(DefaultValueTest.class).eq(DefaultValueTest::getId, 1))
                     .execute();
 
 
-            defaultValueTest = mapper.getById(100);
+            defaultValueTest = mapper.getById(maxId + 1);
             assertEquals(defaultValueTest.getValue1(), "11");
             assertEquals(defaultValueTest.getValue2(), 13);
             assertEquals(defaultValueTest.getValue3(), TestEnum.X2);

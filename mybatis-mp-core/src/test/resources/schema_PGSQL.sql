@@ -200,7 +200,7 @@ values
     (2,2,'嵌套BAB');
 
 
-drop table multi_pk;
+drop table if exists multi_pk;
 
 CREATE TABLE IF NOT EXISTS multi_pk
 (

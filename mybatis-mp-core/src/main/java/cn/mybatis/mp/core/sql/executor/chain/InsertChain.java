@@ -5,7 +5,9 @@ import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.Query;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
+import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.GetterField;
+import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.basic.TableField;
 
 import java.util.*;
@@ -60,10 +62,10 @@ public class InsertChain extends BaseInsert<InsertChain> {
         return this;
     }
 
-    public InsertChain insertSelectQuery(Consumer<Query<?>> consumer) {
+    private void buildSelectQuery() {
         if (!insertSelectFields.isEmpty()) {
             List<Getter<?>> fields = new ArrayList<>();
-            Query<?> selectQuery = Query.create();
+            IQuery selectQuery = this.getInsertSelect().getSelectQuery();
             for (Map.Entry<Getter<?>, Object> entry : insertSelectFields.entrySet()) {
                 fields.add(entry.getKey());
                 if (entry.getValue() instanceof SelectGetterFun) {
@@ -81,6 +83,13 @@ public class InsertChain extends BaseInsert<InsertChain> {
             this.field(fields.toArray(new Getter[fields.size()]));
             this.fromSelect(selectQuery);
             insertSelectFields.clear();
+        }
+    }
+
+    public InsertChain insertSelectQuery(Consumer<Query<?>> consumer) {
+        if (!insertSelectFields.isEmpty()) {
+            Query<?> selectQuery = Query.create();
+            this.fromSelect(selectQuery);
             if (db.sql.api.impl.tookit.Objects.nonNull(consumer)) {
                 consumer.accept(selectQuery);
             }
@@ -149,5 +158,19 @@ public class InsertChain extends BaseInsert<InsertChain> {
             this.fields = fields;
             this.fun = fun;
         }
+    }
+
+    @Override
+    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        this.selectorExecute(context.getDbType());
+        this.buildSelectQuery();
+        return super.sql(module, parent, context, sqlBuilder);
+    }
+
+    @Override
+    public StringBuilder sql(SqlBuilderContext context, StringBuilder sqlBuilder) {
+        this.selectorExecute(context.getDbType());
+        this.buildSelectQuery();
+        return super.sql(context, sqlBuilder);
     }
 }

@@ -19,4 +19,6 @@ public interface ISelect<SELF extends ISelect> extends Cmd {
     List<Cmd> getSelectField();
 
     SELF selectIgnore(Cmd column);
+
+    SELF top(int count);
 }

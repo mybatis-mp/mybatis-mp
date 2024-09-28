@@ -18,6 +18,7 @@ import java.util.function.Function;
 @Getter
 public class EntityConfig {
 
+
     /**
      * 数据库类型的java映射
      */
@@ -28,6 +29,11 @@ public class EntityConfig {
      * 是否开启 swagger
      */
     private boolean swagger = false;
+
+    /**
+     * 是否开启 serial
+     */
+    private boolean serial = false;
 
     /**
      * 实体类父类
@@ -93,7 +99,7 @@ public class EntityConfig {
         typeMapping.put(JdbcType.LONGVARCHAR, String.class);
         typeMapping.put(JdbcType.DATE, LocalDateTime.class);
         typeMapping.put(JdbcType.TIME, LocalTime.class);
-        typeMapping.put(JdbcType.TIMESTAMP, LocalTime.class);
+        typeMapping.put(JdbcType.TIMESTAMP, LocalDateTime.class);
         typeMapping.put(JdbcType.BINARY, byte[].class);
         typeMapping.put(JdbcType.VARBINARY, byte[].class);
         typeMapping.put(JdbcType.LONGVARBINARY, byte[].class);
@@ -121,6 +127,17 @@ public class EntityConfig {
     }
 
     /**
+     * 是否开启 serial
+     *
+     * @param enable
+     * @return
+     */
+    public EntityConfig serial(boolean enable) {
+        this.serial = enable;
+        return this;
+    }
+
+    /**
      * 实体类的父类
      *
      * @param superClass
@@ -128,6 +145,17 @@ public class EntityConfig {
      */
     public EntityConfig superClass(String superClass) {
         this.superClass = superClass;
+        return this;
+    }
+
+    /**
+     * 实体类的父类
+     *
+     * @param superClass
+     * @return
+     */
+    public EntityConfig superClass(Class superClass) {
+        this.superClass = superClass.getName();
         return this;
     }
 

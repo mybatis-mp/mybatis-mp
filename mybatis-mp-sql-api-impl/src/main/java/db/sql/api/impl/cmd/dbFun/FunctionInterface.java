@@ -5,11 +5,16 @@ import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.DatePattern;
 import db.sql.api.impl.cmd.condition.*;
+import db.sql.api.impl.cmd.dbFun.mysql.MysqlFunctions;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 public interface FunctionInterface extends Cmd {
+
+    default MysqlFunctions mysql() {
+        return new MysqlFunctions(this);
+    }
 
     default Sum sum() {
         return Methods.sum(this);
@@ -220,9 +225,7 @@ public interface FunctionInterface extends Cmd {
         return Methods.reverse(this);
     }
 
-    default FindInSet findInSet(String str) {
-        return Methods.findInSet(this, str);
-    }
+
 
     default Year year() {
         return Methods.year(this);
@@ -290,10 +293,6 @@ public interface FunctionInterface extends Cmd {
 
     default DateAdd dateSub(int n, TimeUnit timeUnit) {
         return this.dateAdd(n * -1, timeUnit);
-    }
-
-    default Md5 md5() {
-        return Methods.md5(this);
     }
 
     default InetAton inetAton() {
@@ -430,5 +429,9 @@ public interface FunctionInterface extends Cmd {
 
     default NotEmpty notEmpty() {
         return Methods.notEmpty(this);
+    }
+
+    default Instr instr(String str) {
+        return Methods.instr(this, str);
     }
 }

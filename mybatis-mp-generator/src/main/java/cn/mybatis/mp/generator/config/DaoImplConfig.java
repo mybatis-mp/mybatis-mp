@@ -35,6 +35,14 @@ public class DaoImplConfig {
         return this;
     }
 
+    /**
+     * dao实现类的父类
+     */
+    public DaoImplConfig superClass(Class superClass) {
+        this.superClass = superClass.getName();
+        return this;
+    }
+
     public DaoImplConfig enable(boolean enable) {
         this.enable = enable;
         return this;

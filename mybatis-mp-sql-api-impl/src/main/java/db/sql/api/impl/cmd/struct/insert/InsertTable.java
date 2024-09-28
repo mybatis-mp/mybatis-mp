@@ -45,16 +45,16 @@ public class InsertTable implements IInsertTable<Table> {
 
         if (context.getDbType() == DbType.ORACLE && parent instanceof AbstractInsert) {
             AbstractInsert abstractInsert = (AbstractInsert) parent;
-            List<List<Cmd>> insertValues = null;
+            List<List<Cmd>> insertValuesList = null;
             if (Objects.nonNull(abstractInsert.getInsertValues())) {
-                abstractInsert.getInsertValues().getValues();
+                insertValuesList = abstractInsert.getInsertValues().getValues();
             }
-            if (Objects.nonNull(insertValues) && insertValues.size() > 1) {
+            if (Objects.nonNull(insertValuesList) && insertValuesList.size() > 1) {
                 sqlBuilder.append(" INSERT ALL ");
                 return sqlBuilder;
             }
         }
-        sqlBuilder.append(insertIgnore ? SqlConst.INSERT_IGNORE_INTO : SqlConst.INSERT_INTO);
+        sqlBuilder.append(insertIgnore && (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB) ? SqlConst.INSERT_IGNORE_INTO : SqlConst.INSERT_INTO);
         sqlBuilder.append(this.table.getName());
         return sqlBuilder;
     }

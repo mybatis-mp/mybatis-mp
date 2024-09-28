@@ -36,7 +36,7 @@ public class MapperTemplateBuilder extends AbstractTemplateBuilder {
             } else {
                 superName = generatorConfig.getMapperConfig().getSuperClass();
             }
-            data.put("superExtend", "extends " + superName);
+            data.put("superExtend", " extends " + superName);
         } else {
             data.put("superExtend", "");
         }

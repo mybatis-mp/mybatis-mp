@@ -18,7 +18,6 @@
 <#if mapperXmlConfig.isColumnList()>
     <!-- 通用查询结果列 -->
     <sql id="ColumnList">
-
 <#list entityInfo.allFieldInfoList() as field>
     <#if field_index==0>
         ${field.columnInfo.name}

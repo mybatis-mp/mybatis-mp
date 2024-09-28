@@ -125,6 +125,14 @@ public class ActionConfig {
     }
 
     /**
+     * 控制器父类
+     */
+    public ActionConfig superClass(Class superClass) {
+        this.superClass = superClass.getName();
+        return this;
+    }
+
+    /**
      * 是否注入service
      *
      * @param injectService

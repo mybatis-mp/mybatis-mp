@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiParam;
 @Api("${entityInfo.tableInfo.remarks!}-接口")
     </#if>
 </#if>
-public class ${entityInfo.actionName} ${superExtend}<#if actionConfig.isGeneric()><${entityInfo.name},<#if entityInfo.idFieldInfo??>${entityInfo.idFieldInfo.typeName}<#else>Void</#if>></#if>{
+public class ${entityInfo.actionName}${superExtend}<#if actionConfig.isGeneric()><${entityInfo.name}, <#if entityInfo.idFieldInfo??>${entityInfo.idFieldInfo.typeName}<#else>Void</#if>></#if> {
 
 <#if actionConfig.isInjectService()>
     @${autowiredAnnotationName}

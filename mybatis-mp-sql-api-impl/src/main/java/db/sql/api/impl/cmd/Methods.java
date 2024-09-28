@@ -7,6 +7,7 @@ import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.condition.*;
 import db.sql.api.impl.cmd.dbFun.*;
+import db.sql.api.impl.cmd.dbFun.mysql.*;
 import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 
@@ -19,6 +20,10 @@ import java.util.stream.Collectors;
  * 数据库方法集合
  */
 public final class Methods {
+
+    public MysqlFunctions mysql(Cmd key) {
+        return new MysqlFunctions(key);
+    }
 
     public static Cmd paramWrapAndConvertToCmd(Cmd key, Object param) {
         if (java.util.Objects.isNull(param)) {
@@ -785,10 +790,24 @@ public final class Methods {
      * @param match
      * @return
      */
-    public static FindInSet findInSet(Cmd key, String match) {
+    public static FindInSet mysqlFindInSet(Cmd key, String match) {
         Objects.requireNonNull(key);
         Objects.requireNonEmpty(match);
         return new FindInSet(key, match);
+    }
+
+    /**
+     * 匹配 match 在 key里边的位置
+     * key 需要符合逗号分割规范
+     *
+     * @param key
+     * @param match
+     * @return
+     */
+    public static FindInSet mysqlFindInSet(Cmd key, Number match) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(match);
+        return new FindInSet(key, match + "");
     }
 
     /**
@@ -799,7 +818,7 @@ public final class Methods {
      * @return
      */
     @SafeVarargs
-    public static Field filed(Cmd key, Object... values) {
+    public static Field mysqlFiled(Cmd key, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(values);
         return new Field(key, values);
@@ -954,7 +973,7 @@ public final class Methods {
      * @param str
      * @return
      */
-    public static Md5 md5(String str) {
+    public static Md5 mysqlMd5(String str) {
         Objects.requireNonEmpty(str);
         return new Md5(str);
     }
@@ -965,7 +984,7 @@ public final class Methods {
      * @param key
      * @return
      */
-    public static Md5 md5(Cmd key) {
+    public static Md5 mysqlMd5(Cmd key) {
         Objects.requireNonNull(key);
         return new Md5(key);
     }
@@ -1458,5 +1477,91 @@ public final class Methods {
             value = values[1];
         }
         return new NotLike(mode, key, value);
+    }
+
+    /**
+     * mysql fromUnixTime 函数
+     *
+     * @param key
+     * @return FromUnixTime
+     */
+    public static FromUnixTime mysqlFromUnixTime(Cmd key) {
+        Objects.requireNonNull(key);
+        return new FromUnixTime(key);
+    }
+
+    /**
+     * mysql fromUnixTime 函数
+     *
+     * @param key          列
+     * @param containValue 包含值
+     * @return FromUnixTime
+     */
+    public static JsonContains mysqlJsonContains(Cmd key, Serializable containValue) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(containValue);
+        return new JsonContains(key, containValue);
+    }
+
+    /**
+     * mysql json 是否包含值
+     *
+     * @param key          列
+     * @param containValue 包含值
+     * @param path         指定路径
+     * @return FromUnixTime
+     */
+    public static JsonContains mysqlJsonContains(Cmd key, Serializable containValue, String path) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(containValue);
+        Objects.requireNonEmpty(path);
+        return new JsonContains(key, containValue, path);
+    }
+
+    /**
+     * mysql json 是否包含路径
+     *
+     * @param key   列
+     * @param paths 指定路径
+     * @return
+     */
+    @SafeVarargs
+    public static JsonContainsPath mysqlJsonContainsPath(Cmd key, String... paths) {
+        return mysqlJsonContainsPath(key, true, paths);
+    }
+
+    /**
+     * mysql json 是否包含路径
+     *
+     * @param key      列
+     * @param allMatch 是否全匹配上
+     * @param paths    指定路径
+     * @return
+     */
+    @SafeVarargs
+    public static JsonContainsPath mysqlJsonContainsPath(Cmd key, boolean allMatch, String... paths) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(paths);
+        return new JsonContainsPath(key, allMatch, paths);
+    }
+
+    @SafeVarargs
+    public static JsonExtract mysqlJsonExtract(Cmd key, String... paths) {
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(paths);
+        return new JsonExtract(key, paths);
+    }
+
+    /**
+     * 返回目标字符(串)在源字符串字符串中出现的起始位置
+     *
+     * @param key 列
+     * @param str 匹配的字符
+     * @return
+     */
+    public static Instr instr(Cmd key, String str) {
+        Objects.requireNonNull(key);
+        Objects.requireNonEmpty(str);
+        return new Instr(key, str);
     }
 }

@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS id_test
 
 CREATE TABLE IF NOT EXISTS uuid_test
 (
-    id varchar(64),
+    id varchar(64) not null,
     create_time DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY(id)
 );

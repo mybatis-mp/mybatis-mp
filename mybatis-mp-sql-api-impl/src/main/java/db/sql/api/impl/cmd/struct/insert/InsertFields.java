@@ -54,7 +54,7 @@ public class InsertFields implements IInsertFields<TableField> {
 
             List<List<Cmd>> insertValues = null;
             if (Objects.nonNull(abstractInsert.getInsertValues())) {
-                abstractInsert.getInsertValues().getValues();
+                insertValues = abstractInsert.getInsertValues().getValues();
             }
             if (Objects.nonNull(insertValues) && insertValues.size() > 1) {
                 //啥也不做

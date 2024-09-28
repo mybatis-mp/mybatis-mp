@@ -116,7 +116,7 @@ public class TestDataSource {
 
     private static DataSource createKingbaseDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setJdbcUrl("jdbc:kingbase8://localhost:4321/test3");
+        ds.setJdbcUrl("jdbc:kingbase8://localhost:54321/test3");
         ds.setUsername("system");
         ds.setPassword("123456");
         ds.setDriverClassName("com.kingbase8.Driver");
@@ -174,7 +174,19 @@ public class TestDataSource {
             String[] sqls = getSqlFromFile();
             for (String sql : sqls) {
                 ex_sql = sql;
-                if (DB_TYPE == DbType.ORACLE) {
+                if (DB_TYPE == DbType.ORACLE || DB_TYPE == DbType.KING_BASE) {
+                    if (sql.contains("DROP TABLE ")) {
+                        String tableName = sql.replace("DROP TABLE ", "").trim();
+                        if (!existsOracleDropTable(conn, tableName)) {
+                            continue;
+                        }
+                    } else if (sql.contains("DROP SEQUENCE")) {
+                        String seqName = sql.replace("DROP SEQUENCE", "").trim();
+                        if (!existsOracleSeq(conn, seqName)) {
+                            continue;
+                        }
+                    }
+                } else if (DB_TYPE == DbType.KING_BASE) {
                     if (sql.contains("DROP TABLE ")) {
                         String tableName = sql.replace("DROP TABLE ", "").trim();
                         if (!existsOracleDropTable(conn, tableName)) {
@@ -219,6 +231,7 @@ public class TestDataSource {
             throw new RuntimeException(e);
         }
     }
+
 
     private static String[] getSqlFromFile() {
         try {

@@ -15,7 +15,7 @@ import ${pkg};
 <#if mapperConfig.isMapperAnnotation()>
 @Mapper
 </#if>
-public interface ${entityInfo.mapperName} ${superExtend}<${entityInfo.name}> {
+public interface ${entityInfo.mapperName}${superExtend}<${entityInfo.name}> {
 <#if entityInfo.hasMultiId()>
     default ${entityInfo.name} getById(<#list entityInfo.idFieldInfoList as field>${field.typeName} ${field.name}<#if field_has_next>, </#if></#list>){
         return this.get(where -> where<#list entityInfo.idFieldInfoList as field>.eq(${entityInfo.name}::${field.getterMethodName()}, ${field.name})</#list>);
