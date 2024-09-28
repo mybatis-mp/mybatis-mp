@@ -603,9 +603,6 @@ public class FunTest extends BaseTest {
 
     @Test
     public void left() {
-        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
-            return;
-        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String left = QueryChain.of(sysUserMapper)
@@ -620,9 +617,6 @@ public class FunTest extends BaseTest {
 
     @Test
     public void right() {
-        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
-            return;
-        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String left = QueryChain.of(sysUserMapper)
@@ -651,9 +645,6 @@ public class FunTest extends BaseTest {
 
     @Test
     public void subStr2() {
-        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
-            return;
-        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String left = QueryChain.of(sysUserMapper)

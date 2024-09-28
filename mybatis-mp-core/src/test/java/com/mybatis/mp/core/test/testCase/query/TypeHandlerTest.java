@@ -48,7 +48,7 @@ public class TypeHandlerTest extends BaseTest {
     public void json2() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
-            QueryChain queryChain = QueryChain.of(sysRoleMapper)
+            QueryChain<?> queryChain = QueryChain.of(sysRoleMapper)
                     .select(Methods.value("[{\"id\":123}]").as("aa"))
                     .select(Methods.value("{\"id\":1234}").as("bb"))
                     .from(SysRole.class)
@@ -56,7 +56,7 @@ public class TypeHandlerTest extends BaseTest {
 
             String sql = SQLPrinter.sql(TestDataSource.DB_TYPE, queryChain);
 
-            JsonTypeTestVo jsonTypeTestVo = sysRoleMapper.jsonTypeTest1(sql);
+            JsonTypeTestVo jsonTypeTestVo = queryChain.returnType(JsonTypeTestVo.class).get();
 
             assertEquals(jsonTypeTestVo.getAa().get(0).getClass(), SysUser.class);
             assertEquals(jsonTypeTestVo.getAa().get(0).getId(), 123);
@@ -72,7 +72,7 @@ public class TypeHandlerTest extends BaseTest {
     public void json3() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
-            QueryChain queryChain = QueryChain.of(sysRoleMapper)
+            QueryChain<?> queryChain = QueryChain.of(sysRoleMapper)
                     .select(Methods.value("[{\"id\":123}]").as("aa"))
                     .select(Methods.value("{\"id\":1234}").as("bb"))
                     .from(SysRole.class)
@@ -80,7 +80,7 @@ public class TypeHandlerTest extends BaseTest {
 
             String sql = SQLPrinter.sql(TestDataSource.DB_TYPE, queryChain);
 
-            JsonTypeTestVo jsonTypeTestVo = sysRoleMapper.jsonTypeTest2(sql);
+            JsonTypeTestVo jsonTypeTestVo = queryChain.returnType(JsonTypeTestVo.class).get();
 
             assertEquals(jsonTypeTestVo.getAa().get(0).getClass(), SysUser.class);
             assertEquals(jsonTypeTestVo.getAa().get(0).getId(), 123);

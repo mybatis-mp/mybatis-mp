@@ -26,10 +26,16 @@ public class Instr extends BasicFunction<Instr> {
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
         }
-        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
+        if (context.getDbType() == DbType.PGSQL) {
+            sqlBuilder.append("strpos");
+        } else {
+            sqlBuilder.append(operator);
+        }
+        sqlBuilder.append(SqlConst.BRACKET_LEFT);
         this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
         this.str.sql(module, this, context, sqlBuilder);
+
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
     }
