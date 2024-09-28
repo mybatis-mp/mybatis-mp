@@ -397,7 +397,12 @@ public class UpdateTest extends BaseTest {
             sysUserMapper.update(old);
 
             SysUser sysUser = sysUserMapper.getById(1);
-            assertEquals("", sysUser.getUserName());
+            if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+                assertEquals(null, sysUser.getUserName());
+            } else {
+                assertEquals("", sysUser.getUserName());
+            }
+
         }
     }
 }

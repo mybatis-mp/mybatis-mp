@@ -5,7 +5,7 @@ import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.DatePattern;
 import db.sql.api.impl.cmd.condition.*;
-import db.sql.api.impl.cmd.dbFun.db.MysqlFunctions;
+import db.sql.api.impl.cmd.dbFun.mysql.MysqlFunctions;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
@@ -293,10 +293,6 @@ public interface FunctionInterface extends Cmd {
 
     default DateAdd dateSub(int n, TimeUnit timeUnit) {
         return this.dateAdd(n * -1, timeUnit);
-    }
-
-    default Md5 md5() {
-        return Methods.md5(this);
     }
 
     default InetAton inetAton() {

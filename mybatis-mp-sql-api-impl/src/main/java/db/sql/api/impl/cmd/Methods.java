@@ -7,7 +7,7 @@ import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.condition.*;
 import db.sql.api.impl.cmd.dbFun.*;
-import db.sql.api.impl.cmd.dbFun.db.*;
+import db.sql.api.impl.cmd.dbFun.mysql.*;
 import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 
@@ -973,7 +973,7 @@ public final class Methods {
      * @param str
      * @return
      */
-    public static Md5 md5(String str) {
+    public static Md5 mysqlMd5(String str) {
         Objects.requireNonEmpty(str);
         return new Md5(str);
     }
@@ -984,7 +984,7 @@ public final class Methods {
      * @param key
      * @return
      */
-    public static Md5 md5(Cmd key) {
+    public static Md5 mysqlMd5(Cmd key) {
         Objects.requireNonNull(key);
         return new Md5(key);
     }

@@ -229,6 +229,7 @@ public class DefaultValueTestCase extends BaseTest {
             defaultValueTest.setValue1("1");
             defaultValueTest.setValue2(13);
             defaultValueTest.setValue3(TestEnum.X2);
+            defaultValueTest.setValue4(1);
             mapper.save(defaultValueTest);
 
             Integer maxId = defaultValueTest.getId();
@@ -250,6 +251,7 @@ public class DefaultValueTestCase extends BaseTest {
                     .insertSelect(DefaultValueTest::getValue1, GetterFields.of(DefaultValueTest::getValue1, DefaultValueTest::getValue1), cs -> cs[0].concat(cs[1]))
                     .insertSelect(DefaultValueTest::getValue2, DefaultValueTest::getValue2)
                     .insertSelect(DefaultValueTest::getValue3, DefaultValueTest::getValue3)
+                    .insertSelect(DefaultValueTest::getValue4, DefaultValueTest::getValue4)
                     .insertSelect(DefaultValueTest::getCreateTime, DefaultValueTest::getCreateTime)
                     .insertSelectQuery(query -> query.from(DefaultValueTest.class).eq(DefaultValueTest::getId, 1))
                     .execute();

@@ -619,13 +619,13 @@ public class FunTest extends BaseTest {
     public void right() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            String left = QueryChain.of(sysUserMapper)
+            String right = QueryChain.of(sysUserMapper)
                     .select(SysUser::getUserName, c -> c.right(2))
                     .from(SysUser.class)
                     .eq(SysUser::getUserName, "admin")
                     .returnType(String.class)
                     .get();
-            assertEquals(left, "in");
+            assertEquals(right, "in");
         }
     }
 
