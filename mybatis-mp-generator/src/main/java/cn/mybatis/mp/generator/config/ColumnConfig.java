@@ -15,11 +15,6 @@ import java.util.function.Function;
 public class ColumnConfig {
 
     /**
-     * 排除列
-     */
-    private final List<String> excludeColumns = new ArrayList<>();
-
-    /**
      * 禁止修改的列
      */
     private final List<String> disableUpdateColumns = new ArrayList<>();
@@ -48,14 +43,6 @@ public class ColumnConfig {
      * 默认值转换
      */
     private Function<String, String> defaultValueConvert = new DefaultValueConvert()::convert;
-
-    /**
-     * 排除列
-     */
-    public ColumnConfig excludeColumns(String... columns) {
-        this.excludeColumns.addAll(Arrays.asList(columns));
-        return this;
-    }
 
     /**
      * 禁止修改的列

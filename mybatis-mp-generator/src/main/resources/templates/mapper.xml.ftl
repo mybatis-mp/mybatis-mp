@@ -5,12 +5,12 @@
 <#if mapperXmlConfig.isResultMap()>
     <!-- 通用查询映射结果 -->
     <resultMap id="ResultMap" type="${entityInfo.entityPackage}.${entityInfo.name}">
-<#list entityInfo.allFieldInfoList() as field>
+<#list entityInfo.getAllFieldInfoList() as field>
     <#if field.columnInfo.primaryKey>
         <id column="${field.columnInfo.name}" property="${field.name}" />
     </#if>
 </#list>
-<#list entityInfo.allFieldInfoList() as field>
+<#list entityInfo.getAllFieldInfoList() as field>
     <#if !field.columnInfo.primaryKey>
         <result column="${field.columnInfo.name}" property="${field.name}" />
     </#if>
@@ -21,7 +21,7 @@
 <#if mapperXmlConfig.isColumnList()>
     <!-- 通用查询结果列 -->
     <sql id="ColumnList">
-<#list entityInfo.allFieldInfoList() as field>
+<#list entityInfo.getAllFieldInfoList() as field>
     <#if field_index==0>
         ${field.columnInfo.name}
     <#else>

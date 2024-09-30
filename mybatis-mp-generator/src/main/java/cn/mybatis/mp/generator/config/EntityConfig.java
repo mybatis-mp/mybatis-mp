@@ -10,14 +10,16 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Getter
 public class EntityConfig {
-
+    /**
+     * 排除列
+     */
+    private final List<String> excludeColumns = new ArrayList<>();
 
     /**
      * 数据库类型的java映射
@@ -150,6 +152,14 @@ public class EntityConfig {
      */
     public EntityConfig superClass(String superClass) {
         this.superClass = superClass;
+        return this;
+    }
+
+    /**
+     * 排除列
+     */
+    public EntityConfig excludeColumns(String... columns) {
+        this.excludeColumns.addAll(Arrays.asList(columns));
         return this;
     }
 
