@@ -104,6 +104,11 @@ public class GeneratorUtil {
         }
         if (generatorConfig.getEntityConfig().isLombok()) {
             classList.add("lombok.Data");
+            if (generatorConfig.getEntityConfig().isLombokBuilder()) {
+                classList.add("lombok.Builder");
+                classList.add("lombok.AllArgsConstructor");
+                classList.add("lombok.NoArgsConstructor");
+            }
         }
         entityInfo.getFieldInfoList().forEach(item -> {
             classList.add(item.getType().getName());

@@ -43,6 +43,11 @@ public class EntityConfig {
      * 是否使用 lombok
      */
     private boolean lombok = true;
+
+    /**
+     * 是否使用 lombok @Builder
+     */
+    private boolean lombokBuilder = false;
     /**
      * 注解上是否加上schema
      */
@@ -162,11 +167,25 @@ public class EntityConfig {
     /**
      * 设置是否使用 lombok
      */
-    public EntityConfig lombok(boolean lombok) {
-        this.lombok = lombok;
+    public EntityConfig lombok(boolean enable) {
+        this.lombok = enable;
         return this;
     }
 
+    /**
+     * 设置是否使用 lombok @Builder
+     */
+    public EntityConfig lombokBuilder(boolean enable) {
+        this.lombokBuilder = enable;
+        return this;
+    }
+
+    /**
+     * 是否生成默认值
+     *
+     * @param enable
+     * @return
+     */
     public EntityConfig defaultValueEnable(boolean enable) {
         this.defaultValueEnable = enable;
         return this;

@@ -74,7 +74,7 @@ public class Test {
                     columnConfig.tenantIdColumn("state");
                 })
                 .entityConfig(entityConfig -> {
-                    entityConfig.lombok(false).serial(false);
+                    entityConfig.lombok(true).lombokBuilder(true).serial(false);
                     entityConfig.swagger(true).packageName("model");
                     entityConfig.logicDeleteCode("@LogicDelete(beforeValue=\"0\",afterValue=\"1\",deleteTimeField=\"create_time\")");
                 })

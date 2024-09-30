@@ -22,6 +22,11 @@ import io.swagger.annotations.ApiModelProperty;
  */
 <#if entityConfig.isLombok()>
 @Data
+<#if entityConfig.isLombokBuilder()>
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+</#if>
 </#if>
 <#if entityConfig.isSwagger()>
 <#if generatorConfig.getSwaggerVersion() == 3>

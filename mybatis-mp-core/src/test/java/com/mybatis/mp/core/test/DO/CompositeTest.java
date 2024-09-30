@@ -3,12 +3,18 @@ package com.mybatis.mp.core.test.DO;
 import cn.mybatis.mp.db.IdAutoType;
 import cn.mybatis.mp.db.annotations.*;
 import db.sql.api.DbType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
 @Table
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CompositeTest {
 
     @TableId
