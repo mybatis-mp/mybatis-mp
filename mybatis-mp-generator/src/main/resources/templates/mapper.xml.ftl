@@ -5,13 +5,16 @@
 <#if mapperXmlConfig.isResultMap()>
     <!-- 通用查询映射结果 -->
     <resultMap id="ResultMap" type="${entityInfo.entityPackage}.${entityInfo.name}">
-    <#list entityInfo.allFieldInfoList() as field>
+<#list entityInfo.allFieldInfoList() as field>
     <#if field.columnInfo.primaryKey>
         <id column="${field.columnInfo.name}" property="${field.name}" />
-    <#else>
+    </#if>
+</#list>
+<#list entityInfo.allFieldInfoList() as field>
+    <#if !field.columnInfo.primaryKey>
         <result column="${field.columnInfo.name}" property="${field.name}" />
     </#if>
-    </#list>
+</#list>
     </resultMap>
 </#if>
 

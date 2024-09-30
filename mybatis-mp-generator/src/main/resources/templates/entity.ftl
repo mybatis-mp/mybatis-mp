@@ -22,9 +22,10 @@ import io.swagger.annotations.ApiModelProperty;
  */
 <#if entityConfig.isLombok()>
 @Data
+@EqualsAndHashCode<#if entityConfig.getSuperClass()?? && entityConfig.getSuperClass() != ''>(callSuper = true)</#if>
+@ToString<#if entityConfig.getSuperClass()?? && entityConfig.getSuperClass() != ''>(callSuper = true)</#if>
 <#if entityConfig.isLombokBuilder()>
-@Builder
-@AllArgsConstructor
+<#if entityConfig.getSuperClass()?? && entityConfig.getSuperClass() != ''>@SuperBuilder<#else >@Builder</#if>
 @NoArgsConstructor
 </#if>
 </#if>
