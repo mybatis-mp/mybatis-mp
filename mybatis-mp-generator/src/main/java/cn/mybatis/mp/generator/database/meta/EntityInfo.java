@@ -24,6 +24,7 @@ public class EntityInfo {
     private final String remarks;
     private final EntityFieldInfo idFieldInfo;
     private final List<EntityFieldInfo> idFieldInfoList;
+    private final List<EntityFieldInfo> allFieldInfoList;
     private final List<EntityFieldInfo> fieldInfoList;
     private final List<EntityFieldInfo> excludeFieldInfoList;
     private final String entityPackage;
@@ -55,10 +56,11 @@ public class EntityInfo {
             this.idFieldInfo = null;
         }
         this.idFieldInfoList = tableInfo.getIdColumnInfoList().stream().map(item -> new EntityFieldInfo(generatorConfig, this, item)).collect(Collectors.toList());
-        List<EntityFieldInfo> fieldInfoList = tableInfo.getColumnInfoList().stream().map(item -> new EntityFieldInfo(generatorConfig, this, item)).collect(Collectors.toList());
+        this.allFieldInfoList = tableInfo.getColumnInfoList().stream().map(item -> new EntityFieldInfo(generatorConfig, this, item)).collect(Collectors.toList());
 
-        this.excludeFieldInfoList = fieldInfoList.stream().filter(item -> generatorConfig.getColumnConfig().getExcludeColumns().contains(item.getColumnInfo().getName()) || generatorConfig.getColumnConfig().getExcludeColumns().contains(item.getColumnInfo().getName().toUpperCase())).collect(Collectors.toList());
+        this.excludeFieldInfoList = allFieldInfoList.stream().filter(item -> generatorConfig.getEntityConfig().getExcludeColumns().contains(item.getColumnInfo().getName()) || generatorConfig.getEntityConfig().getExcludeColumns().contains(item.getColumnInfo().getName().toUpperCase())).collect(Collectors.toList());
 
+        List<EntityFieldInfo> fieldInfoList = new ArrayList<>(this.allFieldInfoList);
         fieldInfoList.removeAll(this.excludeFieldInfoList);
         this.fieldInfoList = fieldInfoList;
 
@@ -89,13 +91,5 @@ public class EntityInfo {
 
     public boolean hasMultiId() {
         return idFieldInfoList.size() > 1;
-    }
-
-    public List<EntityFieldInfo> allFieldInfoList() {
-        List<EntityFieldInfo> list = new ArrayList<>();
-        list.addAll(this.excludeFieldInfoList);
-        list.addAll(this.fieldInfoList);
-
-        return list.stream().distinct().collect(Collectors.toList());
     }
 }

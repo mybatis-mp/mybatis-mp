@@ -12,6 +12,10 @@ public class ServiceImplConfig {
      */
     private boolean enable = true;
 
+    /**
+     * 启用泛型
+     */
+    private boolean generic = false;
 
     /**
      * 接口父类
@@ -56,6 +60,14 @@ public class ServiceImplConfig {
 
     public ServiceImplConfig enable(boolean enable) {
         this.enable = enable;
+        return this;
+    }
+
+    /**
+     * 启用泛型
+     */
+    public ServiceImplConfig generic(boolean generic) {
+        this.generic = generic;
         return this;
     }
 

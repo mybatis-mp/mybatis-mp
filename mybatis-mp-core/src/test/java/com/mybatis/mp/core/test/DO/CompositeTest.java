@@ -1,23 +1,25 @@
 package com.mybatis.mp.core.test.DO;
 
-import cn.mybatis.mp.db.IdAutoType;
-import cn.mybatis.mp.db.annotations.*;
-import db.sql.api.DbType;
+import cn.mybatis.mp.db.annotations.LogicDelete;
+import cn.mybatis.mp.db.annotations.Table;
+import cn.mybatis.mp.db.annotations.TableField;
+import cn.mybatis.mp.db.annotations.TenantId;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Data
 @Table
-public class CompositeTest {
+@SuperBuilder
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class CompositeTest extends BaseEntity {
 
-    @TableId
-    @TableId(dbType = DbType.ORACLE, value = IdAutoType.SQL, sql = "select composite_test_seq.NEXTVAL FROM dual")
-    @TableId(dbType = DbType.KING_BASE, value = IdAutoType.SQL, sql = "select composite_test_seq.NEXTVAL FROM dual")
-    private Long id;
-
-    @Version
-    private Integer version;
 
     @TenantId
     private Integer tenantId;

@@ -10,14 +10,16 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Getter
 public class EntityConfig {
-
+    /**
+     * 排除列
+     */
+    private final List<String> excludeColumns = new ArrayList<>();
 
     /**
      * 数据库类型的java映射
@@ -43,6 +45,11 @@ public class EntityConfig {
      * 是否使用 lombok
      */
     private boolean lombok = true;
+
+    /**
+     * 是否使用 lombok @Builder
+     */
+    private boolean lombokBuilder = false;
     /**
      * 注解上是否加上schema
      */
@@ -149,6 +156,14 @@ public class EntityConfig {
     }
 
     /**
+     * 排除列
+     */
+    public EntityConfig excludeColumns(String... columns) {
+        this.excludeColumns.addAll(Arrays.asList(columns));
+        return this;
+    }
+
+    /**
      * 实体类的父类
      *
      * @param superClass
@@ -162,11 +177,25 @@ public class EntityConfig {
     /**
      * 设置是否使用 lombok
      */
-    public EntityConfig lombok(boolean lombok) {
-        this.lombok = lombok;
+    public EntityConfig lombok(boolean enable) {
+        this.lombok = enable;
         return this;
     }
 
+    /**
+     * 设置是否使用 lombok @Builder
+     */
+    public EntityConfig lombokBuilder(boolean enable) {
+        this.lombokBuilder = enable;
+        return this;
+    }
+
+    /**
+     * 是否生成默认值
+     *
+     * @param enable
+     * @return
+     */
     public EntityConfig defaultValueEnable(boolean enable) {
         this.defaultValueEnable = enable;
         return this;

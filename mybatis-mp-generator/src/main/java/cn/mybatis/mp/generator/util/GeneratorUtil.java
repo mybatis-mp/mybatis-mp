@@ -104,6 +104,12 @@ public class GeneratorUtil {
         }
         if (generatorConfig.getEntityConfig().isLombok()) {
             classList.add("lombok.Data");
+            classList.add("lombok.EqualsAndHashCode");
+            classList.add("lombok.ToString");
+            if (generatorConfig.getEntityConfig().isLombokBuilder()) {
+                classList.add(generatorConfig.getEntityConfig().getSuperClass() != null && generatorConfig.getEntityConfig().getSuperClass() != "" ? "lombok.experimental.SuperBuilder" : "lombok.Builder");
+                classList.add("lombok.NoArgsConstructor");
+            }
         }
         entityInfo.getFieldInfoList().forEach(item -> {
             classList.add(item.getType().getName());

@@ -22,7 +22,7 @@ public class ActionConfig {
     /**
      * 是否含有泛型
      */
-    private boolean generic;
+    private boolean generic = false;
     /**
      * 新增
      */
