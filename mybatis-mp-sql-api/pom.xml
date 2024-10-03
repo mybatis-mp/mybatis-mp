@@ -12,4 +12,10 @@
     <url>https://gitee.com/mybatis-mp</url>
     <artifactId>mybatis-mp-sql-api</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>cn.mybatis-mp</groupId>
+            <artifactId>mybatis-mp-annotation</artifactId>
+        </dependency>
+    </dependencies>
 </project>
