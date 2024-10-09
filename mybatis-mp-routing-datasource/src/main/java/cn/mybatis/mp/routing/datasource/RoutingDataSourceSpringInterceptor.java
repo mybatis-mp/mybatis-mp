@@ -47,11 +47,18 @@ public class RoutingDataSourceSpringInterceptor implements MethodInterceptor {
         if (method.isAnnotationPresent(DS.class)) {
             DS ds = method.getAnnotation(DS.class);
             dSKey = ds.value();
+        } else if (invocation.getThis().getClass().isAnnotationPresent(DS.class)) {
+            DS ds = invocation.getThis().getClass().getAnnotation(DS.class);
+            dSKey = ds.value();
         } else if (method.getDeclaringClass().isAnnotationPresent(DS.class)) {
             DS ds = method.getDeclaringClass().getAnnotation(DS.class);
             dSKey = ds.value();
         }
-        dSKey = parseDSKey(dSKey, method, invocation.getArguments());
+
+        if (dSKey != null) {
+            dSKey = parseDSKey(dSKey, method, invocation.getArguments());
+        }
+
         if (dSKey == null || dSKey.equals(currentDSKey)) {
             //和当前一样 没必须切换
             return invocation.proceed();

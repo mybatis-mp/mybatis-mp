@@ -113,4 +113,9 @@ public class SpringRoutingDataSourceTest {
     public void defaultDatabaseTest() {
         defaultTestDao.defaultDatabaseTest();
     }
+
+    @Test
+    public void testSuperMethod() {
+        druidDao.getById2(1);
+    }
 }
