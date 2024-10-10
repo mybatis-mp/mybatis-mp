@@ -116,6 +116,6 @@ public class SpringRoutingDataSourceTest {
 
     @Test
     public void testSuperMethod() {
-        druidDao.getById2(1);
+        compositeDao.testSuperMethod();
     }
 }

@@ -13,11 +13,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 @DS(RoutingDataSourceType.HIKARI)
 @Repository
+@Transactional(propagation = Propagation.NOT_SUPPORTED, rollbackFor = Exception.class)
 public class HikariDaoImpl extends DaoImpl<Hikari, Integer> implements HikariDao {
 
 
     public HikariDaoImpl(@Autowired HikariMapper hikariMapper) {
         super(hikariMapper);
+    }
+
+    @Override
+    public HikariMapper getMapper() {
+        return (HikariMapper) super.getMapper();
     }
 
     @Override
@@ -49,4 +55,6 @@ public class HikariDaoImpl extends DaoImpl<Hikari, Integer> implements HikariDao
     public void test4() {
         this.aa();
     }
+
+
 }
