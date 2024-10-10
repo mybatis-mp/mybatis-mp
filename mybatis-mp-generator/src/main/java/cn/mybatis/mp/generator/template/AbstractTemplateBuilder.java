@@ -15,12 +15,17 @@ public abstract class AbstractTemplateBuilder implements ITemplateBuilder {
     }
 
     @Override
-    public boolean isFileCover() {
+    public boolean fileCover() {
         return this.generatorConfig.isFileCover();
     }
 
     @Override
-    public EntityInfo getEntityInfo() {
+    public EntityInfo entityInfo() {
         return entityInfo;
+    }
+
+    @Override
+    public String charset() {
+        return this.generatorConfig.getCharset();
     }
 }

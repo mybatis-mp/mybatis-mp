@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface ITemplateBuilder {
 
-    default boolean isFileCover() {
+    default boolean fileCover() {
         return true;
     }
 
@@ -14,12 +14,14 @@ public interface ITemplateBuilder {
         return true;
     }
 
-    EntityInfo getEntityInfo();
+    EntityInfo entityInfo();
 
     String targetFilePath();
 
     String templateFilePath();
 
     Map<String, Object> contextData();
+
+    String charset();
 
 }

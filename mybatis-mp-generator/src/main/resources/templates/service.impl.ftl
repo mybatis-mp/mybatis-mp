@@ -15,16 +15,16 @@ import ${pkg};
 @${serviceAnnotationName}
 public class ${entityInfo.serviceImplName}${superExtend}<#if serviceImplConfig.isGeneric()><${entityInfo.name},<#if entityInfo.idFieldInfo??>${entityInfo.idFieldInfo.typeName}<#else>Void</#if>></#if><#if serviceConfig.isEnable()> implements ${entityInfo.serviceName}</#if> {
 
-<#if serviceImplConfig.isInjectDao()>
+<#if serviceImplConfig.isInjectDao(generatorConfig)>
     @${autowiredAnnotationName}
-    private ${serviceImplConfig.injectDaoClassName(entityInfo)} ${util.firstToLower(serviceImplConfig.injectDaoClassName(entityInfo))};
+    private ${serviceImplConfig.injectDaoClassName(generatorConfig,entityInfo)} ${util.firstToLower(serviceImplConfig.injectDaoClassName(generatorConfig,entityInfo))};
 
-    protected ${serviceImplConfig.injectDaoClassName(entityInfo)} getDao() {
-        return ${util.firstToLower(serviceImplConfig.injectDaoClassName(entityInfo))};
+    protected ${serviceImplConfig.injectDaoClassName(generatorConfig,entityInfo)} getDao() {
+        return ${util.firstToLower(serviceImplConfig.injectDaoClassName(generatorConfig,entityInfo))};
     }
     
 </#if>
-<#if !serviceImplConfig.isInjectDao() && serviceImplConfig.isInjectMapper()>
+<#if !serviceImplConfig.isInjectDao(generatorConfig) && serviceImplConfig.isInjectMapper()>
     @${autowiredAnnotationName}
     private ${serviceImplConfig.mapperClassName(entityInfo)} ${util.firstToLower(serviceImplConfig.mapperClassName(entityInfo))};
 

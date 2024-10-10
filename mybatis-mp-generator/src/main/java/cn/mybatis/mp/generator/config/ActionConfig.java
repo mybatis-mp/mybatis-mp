@@ -5,8 +5,6 @@ import lombok.Getter;
 
 @Getter
 public class ActionConfig {
-
-    private final GeneratorConfig generatorConfig;
     /**
      * 是否启用
      */
@@ -104,10 +102,6 @@ public class ActionConfig {
      */
     private boolean swagger = false;
 
-    public ActionConfig(GeneratorConfig generatorConfig) {
-        this.generatorConfig = generatorConfig;
-    }
-
     /**
      * 设置是否启用
      */
@@ -143,8 +137,8 @@ public class ActionConfig {
         return this;
     }
 
-    public boolean isInjectService() {
-        return injectService && (this.generatorConfig.getServiceConfig().isEnable() || this.generatorConfig.getServiceImplConfig().isEnable());
+    public boolean isInjectService(GeneratorConfig generatorConfig) {
+        return injectService && (generatorConfig.getServiceConfig().isEnable() || generatorConfig.getServiceImplConfig().isEnable());
     }
 
     /**
@@ -320,11 +314,11 @@ public class ActionConfig {
         return this;
     }
 
-    public String injectServiceClassName(EntityInfo entityInfo) {
-        if (this.generatorConfig.getServiceConfig().isEnable()) {
+    public String injectServiceClassName(GeneratorConfig generatorConfig, EntityInfo entityInfo) {
+        if (generatorConfig.getServiceConfig().isEnable()) {
             return entityInfo.getServiceName();
         }
-        if (this.generatorConfig.getServiceImplConfig().isEnable()) {
+        if (generatorConfig.getServiceImplConfig().isEnable()) {
             return entityInfo.getServiceImplName();
         }
         throw new RuntimeException("service层未开启");

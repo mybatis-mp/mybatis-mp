@@ -13,52 +13,69 @@ import java.util.function.Consumer;
 @Getter
 public class GeneratorConfig {
 
-    private final DataBaseConfig dataBaseConfig;
+    /**
+     * 数据库配置
+     */
+    private DataBaseConfig dataBaseConfig;
+
+    /**
+     * 列配置
+     */
+    private ColumnConfig columnConfig = new ColumnConfig();
+
     /**
      * 表配置
      */
-    private final TableConfig tableConfig = new TableConfig();
-    /**
-     * mapper 配置
-     */
-    private final MapperConfig mapperConfig = new MapperConfig();
+    private TableConfig tableConfig = new TableConfig();
+
     /**
      * mapper xml 配置
      */
-    private final MapperXmlConfig mapperXmlConfig = new MapperXmlConfig();
+    private MapperXmlConfig mapperXmlConfig = new MapperXmlConfig();
+
+    /**
+     * mapper 配置
+     */
+    private MapperConfig mapperConfig = new MapperConfig();
+
+    /**
+     * 实体类配置
+     */
+    private EntityConfig entityConfig = new EntityConfig();
+
+    /**
+     * Dao 配置
+     */
+    private DaoConfig daoConfig = new DaoConfig();
+
+    /**
+     * Dao 实现类配置
+     */
+    private DaoImplConfig daoImplConfig = new DaoImplConfig();
+
+    /**
+     * Service 配置
+     */
+    private ServiceConfig serviceConfig = new ServiceConfig();
+
+    /**
+     * Service 实现类配置
+     */
+    private ServiceImplConfig serviceImplConfig = new ServiceImplConfig();
+
+    /**
+     * Action 实现类配置
+     */
+    private ActionConfig actionConfig = new ActionConfig();
+
     /**
      * 忽略表
      */
     private final boolean ignoreTable = false;
+
     private final List<Class<? extends ITemplateBuilder>> templateBuilders = new ArrayList<>();
-    /**
-     * 列配置
-     */
-    private final ColumnConfig columnConfig = new ColumnConfig();
-    /**
-     * 实体类配置
-     */
-    private final EntityConfig entityConfig = new EntityConfig();
-    /**
-     * Dao 配置
-     */
-    private final DaoConfig daoConfig = new DaoConfig();
-    /**
-     * Dao 实现类配置
-     */
-    private final DaoImplConfig daoImplConfig = new DaoImplConfig();
-    /**
-     * Service 配置
-     */
-    private final ServiceConfig serviceConfig = new ServiceConfig();
-    /**
-     * Service 实现类配置
-     */
-    private final ServiceImplConfig serviceImplConfig = new ServiceImplConfig(this);
-    /**
-     * Action 实现类配置
-     */
-    private final ActionConfig actionConfig = new ActionConfig(this);
+
+    private String charset = "utf-8";
 
     private ContainerType containerType = ContainerType.SPRING;
     /**
@@ -119,6 +136,16 @@ public class GeneratorConfig {
 
     public GeneratorConfig(DbType dbType, DataSource dataSource) {
         this.dataBaseConfig = new DataBaseConfig(dbType, dataSource);
+    }
+
+    /**
+     * 设置文件编码
+     *
+     * @param charset
+     */
+    public GeneratorConfig charset(String charset) {
+        this.charset = charset;
+        return this;
     }
 
     /**
@@ -353,4 +380,47 @@ public class GeneratorConfig {
         return this;
     }
 
+    public void setDataBaseConfig(DataBaseConfig dataBaseConfig) {
+        this.dataBaseConfig = dataBaseConfig;
+    }
+
+    public void setColumnConfig(ColumnConfig columnConfig) {
+        this.columnConfig = columnConfig;
+    }
+
+    public void setTableConfig(TableConfig tableConfig) {
+        this.tableConfig = tableConfig;
+    }
+
+    public void setEntityConfig(EntityConfig entityConfig) {
+        this.entityConfig = entityConfig;
+    }
+
+    public void setMapperXmlConfig(MapperXmlConfig mapperXmlConfig) {
+        this.mapperXmlConfig = mapperXmlConfig;
+    }
+
+    public void setMapperConfig(MapperConfig mapperConfig) {
+        this.mapperConfig = mapperConfig;
+    }
+
+    public void setDaoConfig(DaoConfig daoConfig) {
+        this.daoConfig = daoConfig;
+    }
+
+    public void setDaoImplConfig(DaoImplConfig daoImplConfig) {
+        this.daoImplConfig = daoImplConfig;
+    }
+
+    public void setServiceConfig(ServiceConfig serviceConfig) {
+        this.serviceConfig = serviceConfig;
+    }
+
+    public void setServiceImplConfig(ServiceImplConfig serviceImplConfig) {
+        this.serviceImplConfig = serviceImplConfig;
+    }
+
+    public void setActionConfig(ActionConfig actionConfig) {
+        this.actionConfig = actionConfig;
+    }
 }

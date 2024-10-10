@@ -253,7 +253,7 @@ public class GeneratorUtil {
             classList.add(entityInfo.getServicePackage() + "." + entityInfo.getServiceName());
         }
 
-        if (generatorConfig.getServiceImplConfig().isInjectMapper() || !generatorConfig.getServiceImplConfig().isInjectDao()) {
+        if (generatorConfig.getServiceImplConfig().isInjectMapper() || !generatorConfig.getServiceImplConfig().isInjectDao(generatorConfig)) {
             classList.add(entityInfo.getMapperPackage() + "." + entityInfo.getMapperName());
             classList.add(QueryChain.class.getName());
             classList.add(UpdateChain.class.getName());
@@ -298,7 +298,7 @@ public class GeneratorUtil {
             classList.add(entityInfo.getIdFieldInfo().getType().getName());
         }
 
-        if (generatorConfig.getActionConfig().isInjectService()) {
+        if (generatorConfig.getActionConfig().isInjectService(generatorConfig)) {
             if (generatorConfig.getServiceConfig().isEnable()) {
                 classList.add(entityInfo.getServicePackage() + "." + entityInfo.getServiceName());
             } else if (generatorConfig.getServiceImplConfig().isEnable()) {
