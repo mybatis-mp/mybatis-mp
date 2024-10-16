@@ -10,11 +10,11 @@ public final class SqlUtil {
 
     public static <T> String getAsName(Getter<T> getter) {
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(getter);
-        return String.format("%s%s%s", lambdaFieldInfo.getType().getSimpleName(), AS_SPLIT, lambdaFieldInfo.getName());
+        return lambdaFieldInfo.getType().getSimpleName() + AS_SPLIT + lambdaFieldInfo.getName();
     }
 
     public static String getAsName(Field field) {
-        return String.format("%s%s%s", field.getDeclaringClass().getSimpleName(), AS_SPLIT, field.getName());
+        return field.getDeclaringClass().getSimpleName() + AS_SPLIT + field.getName();
     }
 
     public static boolean isAsName(Field field, String name) {

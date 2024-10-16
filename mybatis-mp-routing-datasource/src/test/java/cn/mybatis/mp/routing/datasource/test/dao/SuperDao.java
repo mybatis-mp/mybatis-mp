@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
 public interface SuperDao<T> {
 
     MybatisMapper<T> getMapper();

@@ -36,7 +36,7 @@ public class MybatisCmdFactory extends CmdFactory {
 
     @Override
     public Table table(Class entity, int storey) {
-        return MapUtil.computeIfAbsent(this.tableCache, String.format("%s.%s", entity.getName(), storey), key -> {
+        return MapUtil.computeIfAbsent(this.tableCache, storey + entity.getName(), key -> {
             TableInfo tableInfo = Tables.get(entity);
             tableNums++;
             Table table = new MpTable(tableInfo);
@@ -62,12 +62,12 @@ public class MybatisCmdFactory extends CmdFactory {
         try {
             tableInfo = Tables.get(entity);
         } catch (NotTableClassException e) {
-            throw new RuntimeException(String.format("class %s is not entity", entity.getName()));
+            throw new RuntimeException("class " + entity.getName() + " is not entity");
         }
 
         TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(filedName);
         if (Objects.isNull(tableFieldInfo)) {
-            throw new RuntimeException(String.format("property %s is not a column", filedName));
+            throw new RuntimeException("property " + filedName + " is not a column");
         }
         Table table = table(entity, storey);
         return new MpTableField((MpTable) table, tableFieldInfo);

@@ -163,13 +163,13 @@ public final class TableInfoUtil {
         try {
             tableInfo = Tables.get(entity);
         } catch (NotTableClassException e) {
-            throw new RuntimeException(String.format("class %s is not entity", entity.getName()));
+            throw new RuntimeException("class " + entity.getName() + " is not entity");
         }
 
         String filedName = fieldInfo.getName();
         TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(filedName);
         if (Objects.isNull(tableFieldInfo)) {
-            throw new RuntimeException(String.format("property %s is not a column", filedName));
+            throw new RuntimeException("property " + filedName + " is not a column");
         }
         return tableFieldInfo.getColumnName();
     }

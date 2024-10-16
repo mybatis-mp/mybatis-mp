@@ -135,7 +135,7 @@ public final class PagingUtil {
                 sql = sql.substring(0, orderByIndex + (sql.length() - upperCaseSql.length()));
             }
         }
-        return String.format("SELECT COUNT(*) FROM (%s) T", sql);
+        return new StringBuilder("SELECT COUNT(*) FROM (").append(sql).append(") T").toString();
     }
 
 }

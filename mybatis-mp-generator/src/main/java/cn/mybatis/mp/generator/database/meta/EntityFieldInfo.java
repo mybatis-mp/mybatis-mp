@@ -66,7 +66,9 @@ public class EntityFieldInfo {
             stringBuilder.append("update = false,");
         }
         if (entityConfig.isDefaultValueEnable() && this.getColumnInfo().getDefaultValue() != null) {
-            stringBuilder.append(String.format("defaultValue = \"%s\",", this.getColumnInfo().getDefaultValue().replace("\"", "\\\"")));
+            stringBuilder.append("defaultValue = \"")
+                    .append(this.getColumnInfo().getDefaultValue().replace("\"", "\\\""))
+                    .append("\"");
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
 

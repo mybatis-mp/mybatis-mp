@@ -13,24 +13,24 @@ public interface DatePattern extends Cmd {
     DatePattern YYYY_MM_DD = new DatePattern() {
         @Override
         public String pattern(DbType dbType) {
-            return String.format("%s-%s-%s",
-                    yearPattern(dbType),
-                    monthPattern(dbType),
-                    dayPattern(dbType)
-            );
+            return
+                    yearPattern(dbType) + '-' +
+                            monthPattern(dbType) + '-' +
+                            dayPattern(dbType);
+
         }
     };
     DatePattern YYYY_MM_DD_HH_MM_SS = new DatePattern() {
         @Override
         public String pattern(DbType dbType) {
-            return String.format("%s-%s-%s %s:%s:%s",
-                    yearPattern(dbType),
-                    monthPattern(dbType),
-                    dayPattern(dbType),
-                    hourPattern(dbType),
-                    minutePattern(dbType),
-                    secondPattern(dbType)
-            );
+            return
+                    yearPattern(dbType) + '-' +
+                            monthPattern(dbType) + '-' +
+                            dayPattern(dbType) + ' ' +
+                            hourPattern(dbType) + ':' +
+                            minutePattern(dbType) + ':' +
+                            secondPattern(dbType);
+
         }
     };
 
