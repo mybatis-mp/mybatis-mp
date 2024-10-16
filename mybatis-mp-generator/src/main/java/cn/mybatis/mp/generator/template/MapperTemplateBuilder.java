@@ -4,6 +4,7 @@ import cn.mybatis.mp.generator.config.GeneratorConfig;
 import cn.mybatis.mp.generator.database.meta.EntityInfo;
 import cn.mybatis.mp.generator.util.GeneratorUtil;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +17,10 @@ public class MapperTemplateBuilder extends AbstractTemplateBuilder {
 
     @Override
     public String targetFilePath() {
-        return generatorConfig.getBaseFilePath() + "/" + (entityInfo.getMapperPackage() + "." + entityInfo.getMapperName()).replaceAll("\\.", "/") + ".java";
+        return getJavaDirPath()
+                .append(File.separator)
+                .append((entityInfo.getMapperPackage() + "." + entityInfo.getMapperName()).replaceAll("\\.", File.separator) + ".java")
+                .toString();
     }
 
     @Override

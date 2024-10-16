@@ -86,10 +86,21 @@ public class GeneratorConfig {
      * 完成后是否打开目录
      */
     private boolean finishOpen = false;
+
     /**
      * 根文件路径 默认取 System.getProperty("user.dir") +"/generate"
      */
     private String baseFilePath = System.getProperty("user.dir") + "/generate";
+
+    /**
+     * 基于baseFilePath的resource文件相对路径
+     */
+    private String resourcePath;
+
+    /**
+     * 基于baseFilePath的java源码文件相对路径
+     */
+    private String javaPath;
     /**
      * 根包路径
      */
@@ -216,6 +227,28 @@ public class GeneratorConfig {
      */
     public GeneratorConfig baseFilePath(String baseFilePath) {
         this.baseFilePath = baseFilePath;
+        return this;
+    }
+
+    /**
+     * 基于baseFilePath的resource文件相对路径
+     *
+     * @param resourcePath
+     * @return
+     */
+    public GeneratorConfig resourcePath(String resourcePath) {
+        this.resourcePath = resourcePath;
+        return this;
+    }
+
+    /**
+     * 基于baseFilePath的java源码文件相对路径
+     *
+     * @param javaPath
+     * @return
+     */
+    public GeneratorConfig javaPath(String javaPath) {
+        this.javaPath = javaPath;
         return this;
     }
 
@@ -423,4 +456,5 @@ public class GeneratorConfig {
     public void setActionConfig(ActionConfig actionConfig) {
         this.actionConfig = actionConfig;
     }
+
 }
