@@ -32,6 +32,12 @@ public final class TypeConvertUtil {
 
         Object newValue;
         if (targetType == Boolean.class) {
+            String v = value.toString().trim();
+            if (v.equals("1")) {
+                return (T) Boolean.TRUE;
+            } else if (v.equals("0")) {
+                return (T) Boolean.FALSE;
+            }
             newValue = Boolean.valueOf(value.toString());
         } else if (targetType == Byte.class) {
             newValue = Byte.valueOf(value.toString());
