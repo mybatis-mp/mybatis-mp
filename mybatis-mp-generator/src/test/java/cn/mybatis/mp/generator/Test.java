@@ -58,6 +58,9 @@ public class Test {
                 "jdbc:mysql://localhost:3306/test3",
                 "root",
                 "123456")
+                .baseFilePath(System.getProperty("user.dir") + "/xx")
+                .javaPath("src/main/java")
+                .resourcePath("src/main/resources")
                 .basePackage("com.test")
                 .swaggerVersion(3)
                 .containerType(ContainerType.SPRING)
