@@ -21,6 +21,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FetchTest extends BaseTest {
 
+    @Test
+    public void fetchWithNoRootField() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<FetchSysUserVo> list = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getRole_id)
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 2)
+                    .returnType(FetchSysUserVo.class)
+                    .list();
+            System.out.println(list);
+            assertEquals("测试", list.get(0).getSysRole().getName());
+        }
+    }
+
 
     @Test
     public void fetchByAllNested() {

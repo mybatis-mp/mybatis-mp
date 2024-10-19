@@ -64,6 +64,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     @Override
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
         Object rowValue = super.getRowValue(rsw, resultMap, columnPrefix);
+        if (Objects.isNull(rowValue) && rsw.getResultSet().getRow() > 0 && this.fetchInfosMap.containsKey(resultMap.getType())) {
+            rowValue = configuration.getObjectFactory().create(resultMap.getType());
+        }
         this.loadFetchValue(rowValue, rsw.getResultSet());
         return rowValue;
     }
@@ -71,6 +74,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     @Override
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, CacheKey combinedKey, String columnPrefix, Object partialObject) throws SQLException {
         Object rowValue = super.getRowValue(rsw, resultMap, combinedKey, columnPrefix, partialObject);
+        if (Objects.isNull(rowValue) && rsw.getResultSet().getRow() > 0 && this.fetchInfosMap.containsKey(resultMap.getType())) {
+            rowValue = configuration.getObjectFactory().create(resultMap.getType());
+        }
         this.loadFetchValue(rowValue, rsw.getResultSet());
         return rowValue;
     }
