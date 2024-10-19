@@ -64,20 +64,14 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     @Override
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
         Object rowValue = super.getRowValue(rsw, resultMap, columnPrefix);
-        if (Objects.isNull(rowValue) && rsw.getResultSet().getRow() > 0 && this.fetchInfosMap.containsKey(resultMap.getType())) {
-            rowValue = configuration.getObjectFactory().create(resultMap.getType());
-        }
-        this.loadFetchValue(rowValue, rsw.getResultSet());
+        rowValue = this.loadFetchValue(resultMap.getType(), rowValue, rsw.getResultSet());
         return rowValue;
     }
 
     @Override
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, CacheKey combinedKey, String columnPrefix, Object partialObject) throws SQLException {
         Object rowValue = super.getRowValue(rsw, resultMap, combinedKey, columnPrefix, partialObject);
-        if (Objects.isNull(rowValue) && rsw.getResultSet().getRow() > 0 && this.fetchInfosMap.containsKey(resultMap.getType())) {
-            rowValue = configuration.getObjectFactory().create(resultMap.getType());
-        }
-        this.loadFetchValue(rowValue, rsw.getResultSet());
+        rowValue = this.loadFetchValue(resultMap.getType(), rowValue, rsw.getResultSet());
         return rowValue;
     }
 
@@ -87,14 +81,14 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         this.handleFetch();
     }
 
-    public void loadFetchValue(Object rowValue, ResultSet resultSet) {
-        if (Objects.isNull(rowValue) || Objects.isNull(fetchInfosMap) || fetchInfosMap.isEmpty()) {
-            return;
+    public Object loadFetchValue(Class<?> resultType, Object rowValue, ResultSet resultSet) throws SQLException {
+        if (Objects.isNull(fetchInfosMap) || fetchInfosMap.isEmpty()) {
+            return rowValue;
         }
 
-        List<FetchInfo> fetchInfos = fetchInfosMap.get(rowValue.getClass());
+        List<FetchInfo> fetchInfos = fetchInfosMap.get(resultType);
         if (Objects.isNull(fetchInfos) || fetchInfos.isEmpty()) {
-            return;
+            return rowValue;
         }
 
         for (FetchInfo fetchInfo : fetchInfos) {
@@ -115,12 +109,18 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 continue;
             }
 
+            if (Objects.isNull(rowValue) && resultSet.getRow() < 1) {
+                rowValue = configuration.getObjectFactory().create(resultType);
+            }
+
             if (Objects.isNull(fetchInfo.getEqGetFieldInvoker()) || fetchInfo.getFetch().limit() > 0 || (Objects.nonNull(fetchInfo.getTargetSelectColumn()) && fetchInfo.getTargetSelectColumn().contains("("))) {
                 this.singleConditionFetch(rowValue, fetchInfo, onValue);
             } else {
                 MapUtil.computeIfAbsent(needFetchValuesMap, fetchInfo, key -> new ArrayList<>()).add(new FetchObject(onValue, onValue.toString(), rowValue));
             }
         }
+
+        return rowValue;
     }
 
     public void handleFetch() {
