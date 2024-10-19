@@ -109,7 +109,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 continue;
             }
 
-            if (Objects.isNull(rowValue) && resultSet.getRow() < 1) {
+            if (Objects.isNull(rowValue) && resultSet.getRow() > 0) {
                 rowValue = configuration.getObjectFactory().create(resultType);
             }
 
