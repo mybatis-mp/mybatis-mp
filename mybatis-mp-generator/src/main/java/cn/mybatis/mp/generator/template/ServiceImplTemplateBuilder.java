@@ -3,6 +3,7 @@ package cn.mybatis.mp.generator.template;
 import cn.mybatis.mp.generator.config.GeneratorConfig;
 import cn.mybatis.mp.generator.database.meta.EntityInfo;
 import cn.mybatis.mp.generator.util.GeneratorUtil;
+import cn.mybatis.mp.generator.util.PathUtils;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -22,10 +23,12 @@ public class ServiceImplTemplateBuilder extends AbstractTemplateBuilder {
 
     @Override
     public String targetFilePath() {
-        return getJavaDirPath()
-                .append(File.separator)
-                .append((entityInfo.getServiceImplPackage() + "." + entityInfo.getServiceImplName()).replaceAll("\\.", File.separator) + ".java")
-                .toString();
+        return PathUtils.buildFilePath(
+                generatorConfig.getBaseFilePath(),
+                generatorConfig.getJavaPath(),
+                entityInfo.getServiceImplPackage().replaceAll("\\.", File.separator),
+                entityInfo.getServiceImplName())
+                + ".java";
     }
 
     @Override

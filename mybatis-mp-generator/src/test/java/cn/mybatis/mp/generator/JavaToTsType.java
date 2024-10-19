@@ -17,6 +17,7 @@ public class JavaToTsType {
         ruleMap.put("Date", "Date");
         ruleMap.put("Timestamp", "Date");
         ruleMap.put("LocalDateTime", "number[]");
+        ruleMap.put("Byte", "number");
     }
 
 

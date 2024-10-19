@@ -2,6 +2,7 @@ package cn.mybatis.mp.generator.database.meta;
 
 import cn.mybatis.mp.generator.config.GeneratorConfig;
 import cn.mybatis.mp.generator.util.GeneratorUtil;
+import cn.mybatis.mp.generator.util.PathUtils;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -64,25 +65,25 @@ public class EntityInfo {
         fieldInfoList.removeAll(this.excludeFieldInfoList);
         this.fieldInfoList = fieldInfoList;
 
-        this.entityPackage = generatorConfig.getBasePackage() + "." + generatorConfig.getEntityConfig().getPackageName();
+        this.entityPackage = PathUtils.buildPackage(generatorConfig.getBasePackage(), generatorConfig.getEntityConfig().getPackageName()).toString();
 
         this.mapperName = this.name + generatorConfig.getMapperConfig().getSuffix();
-        this.mapperPackage = generatorConfig.getBasePackage() + "." + generatorConfig.getMapperConfig().getPackageName();
+        this.mapperPackage = PathUtils.buildPackage(generatorConfig.getBasePackage(), generatorConfig.getMapperConfig().getPackageName()).toString();
 
         this.daoName = this.name + generatorConfig.getDaoConfig().getSuffix();
-        this.daoPackage = generatorConfig.getBasePackage() + "." + generatorConfig.getDaoConfig().getPackageName();
+        this.daoPackage = PathUtils.buildPackage(generatorConfig.getBasePackage(), generatorConfig.getDaoConfig().getPackageName()).toString();
 
         this.daoImplName = this.name + generatorConfig.getDaoImplConfig().getSuffix();
-        this.daoImplPackage = generatorConfig.getBasePackage() + "." + generatorConfig.getDaoImplConfig().getPackageName();
+        this.daoImplPackage = PathUtils.buildPackage(generatorConfig.getBasePackage(), generatorConfig.getDaoImplConfig().getPackageName()).toString();
 
         this.serviceName = this.name + generatorConfig.getServiceConfig().getSuffix();
-        this.servicePackage = generatorConfig.getBasePackage() + "." + generatorConfig.getServiceConfig().getPackageName();
+        this.servicePackage = PathUtils.buildPackage(generatorConfig.getBasePackage(), generatorConfig.getServiceConfig().getPackageName()).toString();
 
         this.serviceImplName = this.name + generatorConfig.getServiceImplConfig().getSuffix();
-        this.serviceImplPackage = generatorConfig.getBasePackage() + "." + generatorConfig.getServiceImplConfig().getPackageName();
+        this.serviceImplPackage = PathUtils.buildPackage(generatorConfig.getBasePackage(), generatorConfig.getServiceImplConfig().getPackageName()).toString();
 
         this.actionName = this.name + generatorConfig.getActionConfig().getSuffix();
-        this.actionPackage = generatorConfig.getBasePackage() + "." + generatorConfig.getActionConfig().getPackageName();
+        this.actionPackage = PathUtils.buildPackage(generatorConfig.getBasePackage(), generatorConfig.getActionConfig().getPackageName()).toString();
     }
 
     public boolean hasId() {

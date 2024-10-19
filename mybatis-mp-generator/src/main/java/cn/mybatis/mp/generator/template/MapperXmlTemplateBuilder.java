@@ -2,6 +2,7 @@ package cn.mybatis.mp.generator.template;
 
 import cn.mybatis.mp.generator.config.GeneratorConfig;
 import cn.mybatis.mp.generator.database.meta.EntityInfo;
+import cn.mybatis.mp.generator.util.PathUtils;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -21,10 +22,12 @@ public class MapperXmlTemplateBuilder extends AbstractTemplateBuilder {
 
     @Override
     public String targetFilePath() {
-        return getResourceDirPath()
-                .append(File.separator)
-                .append(((generatorConfig.getMapperXmlConfig().getPackageName() + "." + entityInfo.getName() + generatorConfig.getMapperXmlConfig().getSuffix()).replaceAll("\\.", File.separator)) + ".xml")
-                .toString();
+        return PathUtils.buildFilePath(
+                generatorConfig.getBaseFilePath(),
+                generatorConfig.getResourcePath(),
+                generatorConfig.getMapperXmlConfig().getPackageName().replaceAll("\\.", File.separator),
+                entityInfo.getName())
+                + ".xml";
     }
 
     @Override
