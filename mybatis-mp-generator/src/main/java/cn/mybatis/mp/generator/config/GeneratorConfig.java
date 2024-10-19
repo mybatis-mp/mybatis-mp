@@ -104,7 +104,7 @@ public class GeneratorConfig {
     /**
      * 根包路径
      */
-    private String basePackage = "";
+    private String basePackage;
     /**
      * 模板根目录
      */
