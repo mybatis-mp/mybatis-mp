@@ -1,6 +1,5 @@
 package cn.mybatis.mp.core.sql;
 
-import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
@@ -35,14 +34,8 @@ public class MybatisCmdFactory extends CmdFactory {
     }
 
     @Override
-    public Table table(Class entity, int storey) {
-        return MapUtil.computeIfAbsent(this.tableCache, storey + entity.getName(), key -> {
-            TableInfo tableInfo = Tables.get(entity);
-            tableNums++;
-            Table table = new MpTable(tableInfo);
-            table.as(tableAs(storey, tableNums));
-            return table;
-        });
+    public MpTable table(Class entity, int storey) {
+        return (MpTable) MapUtil.computeIfAbsent(this.tableCache, storey + entity.getName(), key -> new MpTable(Tables.get(entity), tableAs(storey, ++tableNums)));
     }
 
     @Override
@@ -58,19 +51,12 @@ public class MybatisCmdFactory extends CmdFactory {
 
     @Override
     public TableField field(Class entity, String filedName, int storey) {
-        TableInfo tableInfo;
-        try {
-            tableInfo = Tables.get(entity);
-        } catch (NotTableClassException e) {
-            throw new RuntimeException("class " + entity.getName() + " is not entity");
-        }
-
-        TableFieldInfo tableFieldInfo = tableInfo.getFieldInfo(filedName);
+        MpTable table = table(entity, storey);
+        TableFieldInfo tableFieldInfo = table.getTableInfo().getFieldInfo(filedName);
         if (Objects.isNull(tableFieldInfo)) {
             throw new RuntimeException("property " + filedName + " is not a column");
         }
-        Table table = table(entity, storey);
-        return new MpTableField((MpTable) table, tableFieldInfo);
+        return new MpTableField(table, tableFieldInfo);
     }
 
     @Override

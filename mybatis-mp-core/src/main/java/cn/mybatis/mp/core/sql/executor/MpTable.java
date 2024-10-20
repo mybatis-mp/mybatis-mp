@@ -15,6 +15,11 @@ public class MpTable extends db.sql.api.impl.cmd.basic.Table {
         this.tableInfo = tableInfo;
     }
 
+    public MpTable(TableInfo tableInfo, String alias) {
+        this(tableInfo);
+        this.alias = alias;
+    }
+
     @Override
     public <E> TableField $(Getter<E> column) {
         LambdaUtil.LambdaFieldInfo fieldInfo = LambdaUtil.getFieldInfo(column);
