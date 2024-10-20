@@ -11,5 +11,12 @@
 
     <url>https://gitee.com/mybatis-mp</url>
     <artifactId>mybatis-mp-annotation</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
 
 </project>

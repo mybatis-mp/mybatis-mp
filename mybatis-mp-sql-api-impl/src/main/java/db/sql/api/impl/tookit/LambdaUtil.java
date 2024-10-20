@@ -17,7 +17,6 @@ package db.sql.api.impl.tookit;
 
 
 import db.sql.api.GetterFun;
-import org.apache.ibatis.util.MapUtil;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
@@ -62,7 +61,7 @@ public final class LambdaUtil {
 
     private static <T> Class<T> getClass(SerializedLambda lambda, ClassLoader classLoader) {
         String classNamePath = getClassNamePath(lambda);
-        return (Class<T>) MapUtil.computeIfAbsent(CLASS_MAP, classNamePath, key -> {
+        return (Class<T>) CLASS_MAP.computeIfAbsent(classNamePath, key -> {
             try {
                 return Class.forName(getClassName(key), false, classLoader);
             } catch (ClassNotFoundException e) {
