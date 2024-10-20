@@ -3,7 +3,9 @@ package cn.mybatis.mp.generator.template;
 import cn.mybatis.mp.generator.config.GeneratorConfig;
 import cn.mybatis.mp.generator.database.meta.EntityInfo;
 import cn.mybatis.mp.generator.util.GeneratorUtil;
+import cn.mybatis.mp.generator.util.PathUtils;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +18,13 @@ public class EntityTemplateBuilder extends AbstractTemplateBuilder {
 
     @Override
     public String targetFilePath() {
-        return generatorConfig.getBaseFilePath() + "/" + (entityInfo.getEntityPackage() + "." + entityInfo.getName()).replaceAll("\\.", "/") + ".java";
+
+        return PathUtils.buildFilePath(
+                generatorConfig.getBaseFilePath(),
+                generatorConfig.getJavaPath(),
+                entityInfo.getEntityPackage().replaceAll("\\.", File.separator),
+                entityInfo.getName())
+                + ".java";
     }
 
     @Override

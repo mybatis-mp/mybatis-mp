@@ -6,7 +6,6 @@ import lombok.Getter;
 @Getter
 public class ServiceImplConfig {
 
-    private final GeneratorConfig generatorConfig;
     /**
      * 是否启用
      */
@@ -37,10 +36,6 @@ public class ServiceImplConfig {
      * service实现后缀
      */
     private String suffix = "ServiceImpl";
-
-    public ServiceImplConfig(GeneratorConfig generatorConfig) {
-        this.generatorConfig = generatorConfig;
-    }
 
     /**
      * 接口父类
@@ -79,8 +74,8 @@ public class ServiceImplConfig {
         return this;
     }
 
-    public boolean isInjectDao() {
-        return injectDao && this.generatorConfig.getDaoImplConfig().isEnable();
+    public boolean isInjectDao(GeneratorConfig generatorConfig) {
+        return injectDao && generatorConfig.getDaoImplConfig().isEnable();
     }
 
     /**
@@ -107,11 +102,11 @@ public class ServiceImplConfig {
         return this;
     }
 
-    public String injectDaoClassName(EntityInfo entityInfo) {
-        if (this.generatorConfig.getDaoConfig().isEnable()) {
+    public String injectDaoClassName(GeneratorConfig generatorConfig, EntityInfo entityInfo) {
+        if (generatorConfig.getDaoConfig().isEnable()) {
             return entityInfo.getDaoName();
         }
-        if (this.generatorConfig.getDaoImplConfig().isEnable()) {
+        if (generatorConfig.getDaoImplConfig().isEnable()) {
             return entityInfo.getDaoImplName();
         }
         throw new RuntimeException("dao层未开启");

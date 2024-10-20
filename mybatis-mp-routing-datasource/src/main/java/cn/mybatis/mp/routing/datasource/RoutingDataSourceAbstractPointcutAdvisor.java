@@ -22,11 +22,14 @@ public class RoutingDataSourceAbstractPointcutAdvisor extends AbstractPointcutAd
                 return true;
             }
             Method specificMethod = AopUtils.getMostSpecificMethod(method, targetClass);
+
             if (methodMatch(specificMethod)) {
                 return true;
             }
-
-            return method.getDeclaringClass().isAnnotationPresent(DS.class);
+            if (method.getDeclaringClass().isAnnotationPresent(DS.class)) {
+                return true;
+            }
+            return targetClass.isAnnotationPresent(DS.class);
         }
     };
     private final RoutingDataSourceSpringInterceptor interceptor;

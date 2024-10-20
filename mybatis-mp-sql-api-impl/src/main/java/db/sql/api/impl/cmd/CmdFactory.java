@@ -40,7 +40,7 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
     }
 
     public Table cacheTable(Class<?> entity, int storey) {
-        return this.tableCache.get(String.format("%s.%s", entity.getName(), storey));
+        return this.tableCache.get(storey + entity.getName());
     }
 
 

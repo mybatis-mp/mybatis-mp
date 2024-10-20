@@ -21,6 +21,11 @@ public class DruidDaoImpl extends DaoImpl<Druid, Integer> implements DruidDao {
     }
 
     @Override
+    public DruidMapper getMapper() {
+        return (DruidMapper) super.getMapper();
+    }
+
+    @Override
     public void test1() {
         this.getById(1);
     }
@@ -58,4 +63,6 @@ public class DruidDaoImpl extends DaoImpl<Druid, Integer> implements DruidDao {
     public void testSpel(int id) {
         this.getById(1);
     }
+
+
 }

@@ -57,7 +57,7 @@ public enum DbType {
             if (getKeywordWrap().isToUpperCase()) {
                 name = name.toUpperCase(Locale.ENGLISH);
             }
-            return String.format("%s%s%s", getKeywordWrap().getPrefix(), name, getKeywordWrap().getSuffix());
+            return getKeywordWrap().getPrefix() + name + getKeywordWrap().getSuffix();
         }
         return name;
     }

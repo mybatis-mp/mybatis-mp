@@ -118,11 +118,11 @@ public class IdWorker {
     public IdWorker(long workerId, long dataCenterId) {
         if (workerId > MAX_WORKER_ID || workerId < 0) {
             throw new IllegalArgumentException(
-                    String.format("workerId must be greater than 0 and less than %d.", MAX_WORKER_ID));
+                    "workerId must be greater than 0 and less than " + MAX_WORKER_ID);
         }
         if (dataCenterId > MAX_DATA_CENTER_ID || dataCenterId < 0) {
             throw new IllegalArgumentException(
-                    String.format("dataCenterId must be greater than 0 and less than %d.", MAX_DATA_CENTER_ID));
+                    "dataCenterId must be greater than 0 and less than " + MAX_DATA_CENTER_ID);
         }
         this.workerId = workerId;
         this.dataCenterId = dataCenterId;
@@ -182,13 +182,13 @@ public class IdWorker {
                     wait(offset << 1L);
                     currentTimeMillis = System.currentTimeMillis();
                     if (currentTimeMillis < lastTimeMillis) {
-                        throw new RuntimeException(String.format("Clock moved backwards, please check the time. Current timestamp: %d, last used timestamp: %d", currentTimeMillis, lastTimeMillis));
+                        throw new RuntimeException("Clock moved backwards, please check the time. Current timestamp: " + currentTimeMillis + ", last used timestamp: " + lastTimeMillis);
                     }
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             } else {
-                throw new RuntimeException(String.format("Clock moved backwards, please check the time. Current timestamp: %d, last used timestamp: %d", currentTimeMillis, lastTimeMillis));
+                throw new RuntimeException("Clock moved backwards, please check the time. Current timestamp: " + currentTimeMillis + ", last used timestamp: " + lastTimeMillis);
             }
         }
 

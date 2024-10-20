@@ -127,24 +127,24 @@ public class TableInfo {
             }
             if (tableFieldInfo.isVersion()) {
                 if (versionFieldInfo != null) {
-                    throw new RuntimeException(String.format("Entity %s has multi @Version", entity.getName()));
+                    throw new RuntimeException("Entity " + entity.getName() + " has multi @Version");
                 }
                 versionFieldInfo = tableFieldInfo;
             }
             if (tableFieldInfo.isTenantId()) {
                 if (tenantIdFieldInfo != null) {
-                    throw new RuntimeException(String.format("Entity %s has multi @TenantId", entity.getName()));
+                    throw new RuntimeException("Entity " + entity.getName() + " has multi @TenantId");
                 }
                 tenantIdFieldInfo = tableFieldInfo;
             }
             if (tableFieldInfo.isLogicDelete()) {
                 if (logicDeleteFieldInfo != null) {
-                    throw new RuntimeException(String.format("Entity %s has multi @LogicDelete", entity.getName()));
+                    throw new RuntimeException("Entity " + entity.getName() + " has multi @LogicDelete");
                 }
                 logicDeleteFieldInfo = tableFieldInfo;
                 LogicDelete logicDeleteAnnotation = field.getAnnotation(LogicDelete.class);
                 if (MybatisMpConfig.isDefaultValueKeyFormat(logicDeleteAnnotation.beforeValue())) {
-                    throw new RuntimeException(String.format("the @LogicDelete of Entity %s has config error,the beforeValue can't be dynamic key", entity.getName()));
+                    throw new RuntimeException("the @LogicDelete of Entity " + entity.getName() + " has config error,the beforeValue can't be dynamic key");
                 }
             }
         }

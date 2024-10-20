@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.mybatis-mp</groupId>
         <artifactId>mybatis-mp</artifactId>
-        <version>1.6.9</version>
+        <version>1.7.0</version>
     </parent>
 
     <url>https://gitee.com/mybatis-mp</url>
@@ -22,6 +22,13 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

@@ -29,4 +29,11 @@ public class CompositeDaoImpl implements CompositeDao {
 
 
     }
+
+    @Override
+    @Transactional
+    public void testSuperMethod() {
+        druidDao.getById2(1);
+        hikariDao.getById2(1);
+    }
 }
