@@ -57,7 +57,11 @@ public interface IInsert<SELF extends IInsert,
 
     <T> SELF field(Getter<T>... fields);
 
-    SELF values(List<Object> values);
+    default SELF values(List<Object> values) {
+        return this.values(values, false);
+    }
+
+    SELF values(List<Object> values, boolean enableNull);
 
     SELF fromSelect(IQuery query);
 

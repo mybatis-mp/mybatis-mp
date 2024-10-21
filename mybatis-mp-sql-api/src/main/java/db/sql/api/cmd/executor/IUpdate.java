@@ -1,6 +1,7 @@
 package db.sql.api.cmd.executor;
 
 import db.sql.api.Cmd;
+import db.sql.api.Getter;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
@@ -54,6 +55,12 @@ public interface IUpdate<SELF extends IUpdate,
     }
 
     SELF update(Class entity, Consumer<TABLE> consumer);
+
+    default <T> SELF set(Getter<T> field, V value) {
+        return this.set(field, value, false);
+    }
+
+    <T> SELF set(Getter<T> field, V value, boolean enableNull);
 
     @Override
     default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD>... tables) {

@@ -14,12 +14,31 @@ import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultValueTestCase extends BaseTest {
+
+
+    @Test
+    public void insertValueTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
+
+            InsertChain.of(mapper)
+                    .insert(DefaultValueTest.class)
+                    .field(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue4, DefaultValueTest::getCreateTime)
+                    .values(Arrays.asList("a", 1, null, LocalDateTime.now()), true)
+                    .values(Arrays.asList("a", 2, 1, LocalDateTime.now()))
+                    .execute();
+
+
+        }
+    }
+
 
     @Test
     public void defaultValueTest() {
