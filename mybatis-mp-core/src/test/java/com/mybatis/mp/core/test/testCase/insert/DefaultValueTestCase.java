@@ -24,7 +24,10 @@ public class DefaultValueTestCase extends BaseTest {
 
 
     @Test
-    public void insertValueTest() {
+    public void insertAllowNullTest() {
+        if(TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL){
+            return;
+        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
 
