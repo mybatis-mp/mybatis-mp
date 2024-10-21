@@ -86,7 +86,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         }
         if (value instanceof Object[]) {
             Object[] values = (Object[]) value;
-            List<Object> objectList = new ArrayList<>();
+            List<Object> objectList = new ArrayList<>(values.length);
             for (Object v : values) {
                 Object nv = getSingleValue(v);
                 if (Objects.isNull(nv)) {
@@ -123,7 +123,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
                 objectList = new ArrayDeque<>(collection.size());
             } else {
                 //throw new RuntimeException("Not supported");
-                objectList = new ArrayList<>();
+                objectList = new ArrayList<>(collection.size());
             }
             for (Object v : collection) {
                 Object nv = getSingleValue(v);

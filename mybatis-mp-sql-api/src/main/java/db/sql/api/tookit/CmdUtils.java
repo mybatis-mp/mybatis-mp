@@ -19,13 +19,10 @@ public final class CmdUtils {
     }
 
     public static StringBuilder join(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder builder, List<? extends Cmd> cmdList, char[] delimiter) {
-        if (cmdList == null) {
+        if (cmdList == null || cmdList.isEmpty()) {
             return builder;
         }
         Iterator<? extends Cmd> iterator = cmdList.iterator();
-        if (!iterator.hasNext()) {
-            return builder;
-        }
         while (true) {
             Cmd cmd = iterator.next();
             builder = cmd.sql(module, parent, context, builder);

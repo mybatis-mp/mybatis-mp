@@ -275,14 +275,13 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
         return this.select(f.apply(this.$(dataset, column)));
     }
 
-
     @Override
-    public From $from(IDataset... tables) {
+    public From $from(IDataset table) {
         if (this.from == null) {
             from = new From();
             this.append(from);
         }
-        this.from.append(tables);
+        this.from.append(table);
         return from;
     }
 

@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
 
 public abstract class BaseExecutor<SELF extends BaseExecutor<SELF, CMD_FACTORY>, CMD_FACTORY extends CmdFactory> implements Executor<SELF, CMD_FACTORY> {
 
-    protected final List<Cmd> cmds = new ArrayList<>();
+    protected final List<Cmd> cmds = new ArrayList<>(6);
 
     private final Map<Class<? extends Cmd>, Integer> cmdSorts = new HashMap<>();
 
@@ -25,7 +25,7 @@ public abstract class BaseExecutor<SELF extends BaseExecutor<SELF, CMD_FACTORY>,
 
     private Selector createSelector() {
         if (Objects.isNull(this.selectors)) {
-            this.selectors = new ArrayList<>();
+            this.selectors = new ArrayList<>(2);
         }
         DbSelector dbSelector = new DbSelector();
         this.selectors.add(dbSelector);

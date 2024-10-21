@@ -207,12 +207,12 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     }
 
     @Override
-    public From $from(IDataset... tables) {
+    public From $from(IDataset table) {
         if (this.from == null) {
             from = new From();
             this.append(from);
         }
-        this.from.append(tables);
+        this.from.append(table);
         return from;
     }
 

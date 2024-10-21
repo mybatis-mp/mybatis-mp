@@ -58,7 +58,7 @@ public interface IQuery<SELF extends IQuery
 
     SELECT $select();
 
-    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> FROM $from(IDataset<DATASET, DATASET_FIELD>... tables);
+    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> FROM $from(IDataset<DATASET, DATASET_FIELD> table);
 
     <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> JOIN $join(JoinMode mode, DATASET mainTable, DATASET secondTable);
 
@@ -107,9 +107,16 @@ public interface IQuery<SELF extends IQuery
         return (SELF) this;
     }
 
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD> table) {
+        $from(table);
+        return (SELF) this;
+    }
+
     @Override
     default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD>... tables) {
-        $from(tables);
+        for (IDataset<DATASET, DATASET_FIELD> table : tables) {
+            $from(table);
+        }
         return (SELF) this;
     }
 

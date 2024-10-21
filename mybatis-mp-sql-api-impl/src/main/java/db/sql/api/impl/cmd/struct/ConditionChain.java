@@ -88,7 +88,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
 
     private List<ConditionBlock> conditionBlocks() {
         if (conditionBlocks == null) {
-            conditionBlocks = new ArrayList<>();
+            conditionBlocks = new ArrayList<>(4);
         }
         return this.conditionBlocks;
     }

@@ -18,7 +18,7 @@ import static db.sql.api.impl.tookit.SqlConst.CASE;
 
 public class Case extends BasicFunction<Case> {
 
-    private final List<Cmd> values = new ArrayList<>();
+    private final List<Cmd> values = new ArrayList<>(3);
 
     public Case() {
         super(CASE, null);

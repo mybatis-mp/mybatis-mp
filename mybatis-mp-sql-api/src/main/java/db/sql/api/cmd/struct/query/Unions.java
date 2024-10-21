@@ -14,7 +14,7 @@ public class Unions implements Cmd {
 
     public void add(IUnion union) {
         if (unions == null) {
-            unions = new ArrayList<>();
+            unions = new ArrayList<>(2);
         }
         unions.add(union);
     }

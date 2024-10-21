@@ -20,7 +20,7 @@ public class InsertFields implements IInsertFields<TableField> {
 
     public InsertFields filed(TableField field) {
         if (tableFields == null) {
-            this.tableFields = new ArrayList<>();
+            this.tableFields = new ArrayList<>(10);
         }
         this.tableFields.add(field);
         return this;
@@ -28,7 +28,7 @@ public class InsertFields implements IInsertFields<TableField> {
 
     public InsertFields filed(TableField... fields) {
         if (tableFields == null) {
-            this.tableFields = new ArrayList<>();
+            this.tableFields = new ArrayList<>(10);
         }
         Lists.merge(this.tableFields, fields);
         return this;
@@ -36,7 +36,7 @@ public class InsertFields implements IInsertFields<TableField> {
 
     public InsertFields filed(List<TableField> fields) {
         if (tableFields == null) {
-            this.tableFields = new ArrayList<>();
+            this.tableFields = new ArrayList<>(10);
         }
         this.tableFields.addAll(fields);
         return this;
