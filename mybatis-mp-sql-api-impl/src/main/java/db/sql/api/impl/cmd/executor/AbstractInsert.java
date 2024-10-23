@@ -85,7 +85,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     }
 
     @Override
-    public InsertFields $field(TableField... fields) {
+    public InsertFields $fields(TableField... fields) {
         if (this.insertFields == null) {
             this.insertFields = new InsertFields();
             this.append(this.insertFields);
@@ -95,7 +95,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     }
 
     @Override
-    public InsertFields $field(List<TableField> fields) {
+    public InsertFields $fields(List<TableField> fields) {
         if (this.insertFields == null) {
             this.insertFields = new InsertFields();
             this.append(this.insertFields);
@@ -143,12 +143,12 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     }
 
     @Override
-    public <T> SELF field(Getter<T>... fields) {
+    public <T> SELF fields(Getter<T>... fields) {
         TableField[] tableField = new TableField[fields.length];
         for (int i = 0; i < fields.length; i++) {
             tableField[i] = $.field(fields[i]);
         }
-        return this.field(tableField);
+        return this.fields(tableField);
     }
 
     @Override

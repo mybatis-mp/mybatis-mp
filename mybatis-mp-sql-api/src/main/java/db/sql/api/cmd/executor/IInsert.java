@@ -25,9 +25,9 @@ public interface IInsert<SELF extends IInsert,
 
     INSERT_TABLE $insert(TABLE table);
 
-    INSERT_FIELD $field(TABLE_FIELD... fields);
+    INSERT_FIELD $fields(TABLE_FIELD... fields);
 
-    INSERT_FIELD $field(List<TABLE_FIELD> fields);
+    INSERT_FIELD $fields(List<TABLE_FIELD> fields);
 
     INSERT_VALUE $values(List<V> values);
 
@@ -45,17 +45,17 @@ public interface IInsert<SELF extends IInsert,
 
     SELF insertIgnore();
 
-    default SELF field(TABLE_FIELD... fields) {
-        $field(fields);
+    default SELF fields(TABLE_FIELD... fields) {
+        $fields(fields);
         return (SELF) this;
     }
 
-    default SELF field(List<TABLE_FIELD> fields) {
-        $field(fields);
+    default SELF fields(List<TABLE_FIELD> fields) {
+        $fields(fields);
         return (SELF) this;
     }
 
-    <T> SELF field(Getter<T>... fields);
+    <T> SELF fields(Getter<T>... fields);
 
     default SELF values(List<Object> values) {
         return this.values(values, false);

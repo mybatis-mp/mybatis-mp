@@ -80,7 +80,7 @@ public class InsertChain extends BaseInsert<InsertChain> {
                     selectQuery.select((Getter<?>) entry.getValue());
                 }
             }
-            this.field(fields.toArray(new Getter[fields.size()]));
+            this.fields(fields.toArray(new Getter[fields.size()]));
             this.fromSelect(selectQuery);
             insertSelectFields.clear();
         }

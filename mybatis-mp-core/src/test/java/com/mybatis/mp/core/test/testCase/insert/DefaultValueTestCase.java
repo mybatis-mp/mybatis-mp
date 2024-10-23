@@ -33,7 +33,7 @@ public class DefaultValueTestCase extends BaseTest {
 
             InsertChain.of(mapper)
                     .insert(DefaultValueTest.class)
-                    .field(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue4, DefaultValueTest::getCreateTime)
+                    .fields(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue4, DefaultValueTest::getCreateTime)
                     .values(Arrays.asList("a", 1, null, LocalDateTime.now()), true)
                     .values(Arrays.asList("a", 2, 1, LocalDateTime.now()))
                     .execute();
@@ -212,7 +212,7 @@ public class DefaultValueTestCase extends BaseTest {
                 insert = InsertChain.of(mapper)
                         .insert(DefaultValueTest.class)
                         //.insertIgnore()
-                        .field(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
+                        .fields(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
                         .fromSelect(Query
                                 .create()
                                 .select(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
@@ -223,7 +223,7 @@ public class DefaultValueTestCase extends BaseTest {
                 insert = InsertChain.of(mapper)
                         .insert(DefaultValueTest.class)
                         //.insertIgnore()
-                        .field(DefaultValueTest::getId, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
+                        .fields(DefaultValueTest::getId, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
                         .fromSelect(Query
                                 .create()
                                 .select(Methods.value(maxId + 1))
