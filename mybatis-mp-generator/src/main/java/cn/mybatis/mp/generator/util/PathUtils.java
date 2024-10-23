@@ -3,6 +3,7 @@ package cn.mybatis.mp.generator.util;
 import db.sql.api.impl.tookit.Objects;
 
 import java.io.File;
+import java.util.regex.Matcher;
 
 public final class PathUtils {
     @SafeVarargs
@@ -40,9 +41,9 @@ public final class PathUtils {
             }
         }
         if(File.separator.equals("/")){
-            return builder.toString().toString().replaceAll("\\\\",File.separator);
+            return builder.toString().toString().replaceAll("\\\\", Matcher.quoteReplacement(File.separator));
         }else {
-            return builder.toString().toString().replaceAll("\\/",File.separator);
+            return builder.toString().toString().replaceAll("\\/", Matcher.quoteReplacement(File.separator));
         }
     }
 }

@@ -9,6 +9,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 public class DaoTemplateBuilder extends AbstractTemplateBuilder {
 
@@ -26,7 +27,7 @@ public class DaoTemplateBuilder extends AbstractTemplateBuilder {
         return PathUtils.buildFilePath(
                 generatorConfig.getBaseFilePath(),
                 generatorConfig.getJavaPath(),
-                entityInfo.getDaoPackage().replaceAll("\\.", File.separator),
+                entityInfo.getDaoPackage().replaceAll("\\.", Matcher.quoteReplacement(File.separator)),
                 entityInfo.getDaoName())
                 + ".java";
     }
