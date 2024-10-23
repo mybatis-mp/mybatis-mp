@@ -14,7 +14,7 @@ public class Joins<JOIN extends IJoin> implements Cmd {
     private final List<JOIN> joins;
 
     public Joins() {
-        this(new ArrayList<>());
+        this(new ArrayList<>(2));
     }
 
     public Joins(List<JOIN> joins) {

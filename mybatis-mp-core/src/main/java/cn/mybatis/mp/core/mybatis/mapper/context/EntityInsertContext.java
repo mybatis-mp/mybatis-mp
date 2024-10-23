@@ -96,7 +96,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
             }
 
             if (isNeedInsert) {
-                insert.field($.field(table, tableFieldInfo.getColumnName()));
+                insert.fields($.field(table, tableFieldInfo.getColumnName()));
                 TableField tableField = tableFieldInfo.getTableFieldAnnotation();
                 MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
                 values.add(Methods.value(mybatisParameter));

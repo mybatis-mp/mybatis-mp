@@ -14,7 +14,7 @@ public class Withs implements Cmd {
 
     public void add(IWith with) {
         if (withs == null) {
-            withs = new ArrayList<>();
+            withs = new ArrayList<>(2);
         }
         withs.add(with);
     }

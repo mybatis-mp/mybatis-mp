@@ -95,7 +95,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
             }
 
             if (isNeedInsert) {
-                insert.field($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()));
+                insert.fields($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()));
                 TableField tableField = modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation();
                 MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
                 values.add(Methods.value(mybatisParameter));

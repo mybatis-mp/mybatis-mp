@@ -14,12 +14,34 @@ import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultValueTestCase extends BaseTest {
+
+
+    @Test
+    public void insertAllowNullTest() {
+        if(TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL){
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
+
+            InsertChain.of(mapper)
+                    .insert(DefaultValueTest.class)
+                    .fields(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue4, DefaultValueTest::getCreateTime)
+                    .values(Arrays.asList("a", 1, null, LocalDateTime.now()), true)
+                    .values(Arrays.asList("a", 2, 1, LocalDateTime.now()))
+                    .execute();
+
+
+        }
+    }
+
 
     @Test
     public void defaultValueTest() {
@@ -190,7 +212,7 @@ public class DefaultValueTestCase extends BaseTest {
                 insert = InsertChain.of(mapper)
                         .insert(DefaultValueTest.class)
                         //.insertIgnore()
-                        .field(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
+                        .fields(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
                         .fromSelect(Query
                                 .create()
                                 .select(DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
@@ -201,7 +223,7 @@ public class DefaultValueTestCase extends BaseTest {
                 insert = InsertChain.of(mapper)
                         .insert(DefaultValueTest.class)
                         //.insertIgnore()
-                        .field(DefaultValueTest::getId, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
+                        .fields(DefaultValueTest::getId, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getValue3, DefaultValueTest::getCreateTime)
                         .fromSelect(Query
                                 .create()
                                 .select(Methods.value(maxId + 1))

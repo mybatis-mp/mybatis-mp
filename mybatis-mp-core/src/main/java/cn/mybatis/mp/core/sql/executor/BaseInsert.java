@@ -13,16 +13,16 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
 
     @Override
     @SafeVarargs
-    public final <T2> T field(Getter<T2>... fields) {
-        return super.field(fields);
+    public final <T2> T fields(Getter<T2>... fields) {
+        return super.fields(fields);
     }
 
     /**************以下为去除警告************/
 
     @Override
     @SafeVarargs
-    public final T field(TableField... fields) {
-        return super.field(fields);
+    public final T fields(TableField... fields) {
+        return super.fields(fields);
     }
 
     /**************以上为去除警告************/

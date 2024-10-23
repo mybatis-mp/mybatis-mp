@@ -32,6 +32,23 @@ public class UpdateTest extends BaseTest {
     }
 
     @Test
+    public void nullUpdateTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            int cnt = UpdateChain.of(sysUserMapper)
+                    .set(SysUser::getUserName, null, true)
+                    .eq(SysUser::getId, 1)
+                    .execute();
+
+            assertEquals(cnt, 1);
+
+            SysUser sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+
+    }
+
+    @Test
     public void onDBTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);

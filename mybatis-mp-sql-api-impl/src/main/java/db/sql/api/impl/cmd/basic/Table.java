@@ -20,9 +20,9 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
 
     protected String prefix;
 
-    private String name;
+    protected String name;
 
-    private String forceIndex;
+    protected String forceIndex;
 
     public Table(String name) {
         this.name = name;

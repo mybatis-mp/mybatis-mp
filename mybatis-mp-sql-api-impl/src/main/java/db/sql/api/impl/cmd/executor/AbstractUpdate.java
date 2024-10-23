@@ -13,6 +13,7 @@ import db.sql.api.cmd.struct.Joins;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.ConditionFactory;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.*;
@@ -153,7 +154,10 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     }
 
     @Override
-    public <T> SELF set(Getter<T> field, Object value) {
+    public <T> SELF set(Getter<T> field, Object value, boolean enableNull) {
+        if (enableNull && Objects.isNull(value)) {
+            return this.set(field, NULL.NULL);
+        }
         return this.set($.field(field), value);
     }
 
@@ -207,12 +211,12 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     }
 
     @Override
-    public From $from(IDataset... tables) {
+    public From $from(IDataset table) {
         if (this.from == null) {
             from = new From();
             this.append(from);
         }
-        this.from.append(tables);
+        this.from.append(table);
         return from;
     }
 

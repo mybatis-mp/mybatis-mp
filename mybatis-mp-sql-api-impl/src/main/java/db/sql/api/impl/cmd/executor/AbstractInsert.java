@@ -7,12 +7,14 @@ import db.sql.api.cmd.executor.IInsert;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.insert.InsertFields;
 import db.sql.api.impl.cmd.struct.insert.InsertSelect;
 import db.sql.api.impl.cmd.struct.insert.InsertTable;
 import db.sql.api.impl.cmd.struct.insert.InsertValues;
+import db.sql.api.impl.tookit.Objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +85,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     }
 
     @Override
-    public InsertFields $field(TableField... fields) {
+    public InsertFields $fields(TableField... fields) {
         if (this.insertFields == null) {
             this.insertFields = new InsertFields();
             this.append(this.insertFields);
@@ -93,7 +95,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     }
 
     @Override
-    public InsertFields $field(List<TableField> fields) {
+    public InsertFields $fields(List<TableField> fields) {
         if (this.insertFields == null) {
             this.insertFields = new InsertFields();
             this.append(this.insertFields);
@@ -141,20 +143,23 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     }
 
     @Override
-    public <T> SELF field(Getter<T>... fields) {
+    public <T> SELF fields(Getter<T>... fields) {
         TableField[] tableField = new TableField[fields.length];
         for (int i = 0; i < fields.length; i++) {
             tableField[i] = $.field(fields[i]);
         }
-        return this.field(tableField);
+        return this.fields(tableField);
     }
 
-
     @Override
-    public SELF values(List<Object> values) {
+    public SELF values(List<Object> values, boolean enableNull) {
         List<Cmd> cmdValues = new ArrayList<>(values.size());
         for (int i = 0; i < values.size(); i++) {
             Object value = values.get(i);
+            if (enableNull && Objects.isNull(value)) {
+                cmdValues.add(NULL.NULL);
+                continue;
+            }
             if (value instanceof Cmd) {
                 cmdValues.add(Methods.cmd(value));
                 continue;

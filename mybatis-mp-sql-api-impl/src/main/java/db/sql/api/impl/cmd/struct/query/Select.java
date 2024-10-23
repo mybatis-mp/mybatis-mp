@@ -17,7 +17,8 @@ import java.util.Objects;
 
 public class Select implements ISelect<Select> {
 
-    private final List<Cmd> selectFields = new ArrayList<>();
+    private final List<Cmd> selectFields = new ArrayList<>(6);
+
     private boolean distinct = false;
 
     private Integer top;

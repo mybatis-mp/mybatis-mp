@@ -8,6 +8,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 public class MapperXmlTemplateBuilder extends AbstractTemplateBuilder {
 
@@ -25,7 +26,7 @@ public class MapperXmlTemplateBuilder extends AbstractTemplateBuilder {
         return PathUtils.buildFilePath(
                 generatorConfig.getBaseFilePath(),
                 generatorConfig.getResourcePath(),
-                generatorConfig.getMapperXmlConfig().getPackageName().replaceAll("\\.", File.separator),
+                generatorConfig.getMapperXmlConfig().getPackageName().replaceAll("\\.", Matcher.quoteReplacement(File.separator)),
                 entityInfo.getName())
                 + ".xml";
     }

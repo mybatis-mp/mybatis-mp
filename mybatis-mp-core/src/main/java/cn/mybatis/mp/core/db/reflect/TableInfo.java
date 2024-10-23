@@ -83,7 +83,7 @@ public class TableInfo {
     public TableInfo(Class<?> entity) {
         this.type = entity;
 
-        Table table = (Table) entity.getAnnotation(Table.class);
+        Table table = entity.getAnnotation(Table.class);
         this.schema = table.schema();
         this.tableName = TableInfoUtil.getTableName(entity);
         if (schema == null || StringPool.EMPTY.equals(schema)) {

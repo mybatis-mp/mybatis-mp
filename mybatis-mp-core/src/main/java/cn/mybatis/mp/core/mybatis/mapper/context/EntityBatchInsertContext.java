@@ -80,7 +80,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
 
         //设置insert 列
         for (TableFieldInfo tableFieldInfo : saveFieldInfoSet) {
-            insert.field(insert.$().field(table, tableFieldInfo.getColumnName()));
+            insert.fields(insert.$().field(table, tableFieldInfo.getColumnName()));
         }
 
         int fieldSize = saveFieldInfoSet.size();

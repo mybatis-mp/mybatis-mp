@@ -12,13 +12,13 @@ public class InsertTest extends BaseTest {
     void insertTest() {
         check("insert常规插入", "insert into user (id,name) values (1,'2')"
                 , new Insert().insert(userTable())
-                        .field(userTable().$("id"), userTable().$("name"))
+                        .fields(userTable().$("id"), userTable().$("name"))
                         .values(Arrays.asList(1, "2"))
         );
 
         check("insert批量插入", "insert into user (id,name) values (1,'2'),(2,'3')"
                 , new Insert().insert(userTable())
-                        .field(userTable().$("id"), userTable().$("name"))
+                        .fields(userTable().$("id"), userTable().$("name"))
                         .values(Arrays.asList(1, "2"))
                         .values(Arrays.asList(2, "3"))
         );

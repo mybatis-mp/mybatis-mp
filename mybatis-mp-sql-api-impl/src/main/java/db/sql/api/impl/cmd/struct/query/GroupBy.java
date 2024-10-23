@@ -11,7 +11,7 @@ import java.util.List;
 
 public class GroupBy implements IGroupBy<GroupBy, Cmd> {
 
-    private final List<Cmd> groupByFields = new ArrayList<>();
+    private final List<Cmd> groupByFields = new ArrayList<>(2);
 
     @Override
     public GroupBy groupBy(Cmd field) {

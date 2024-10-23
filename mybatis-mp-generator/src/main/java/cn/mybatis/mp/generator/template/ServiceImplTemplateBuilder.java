@@ -9,6 +9,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 public class ServiceImplTemplateBuilder extends AbstractTemplateBuilder {
 
@@ -26,7 +27,7 @@ public class ServiceImplTemplateBuilder extends AbstractTemplateBuilder {
         return PathUtils.buildFilePath(
                 generatorConfig.getBaseFilePath(),
                 generatorConfig.getJavaPath(),
-                entityInfo.getServiceImplPackage().replaceAll("\\.", File.separator),
+                entityInfo.getServiceImplPackage().replaceAll("\\.", Matcher.quoteReplacement(File.separator)),
                 entityInfo.getServiceImplName())
                 + ".java";
     }

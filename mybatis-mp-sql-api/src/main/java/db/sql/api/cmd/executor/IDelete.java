@@ -37,7 +37,7 @@ public interface IDelete<SELF extends IDelete,
 
     DELETE_TABLE $delete(IDataset... tables);
 
-    FROM $from(IDataset... tables);
+    FROM $from(IDataset table);
 
     JOIN $join(JoinMode mode, IDataset mainTable, IDataset secondTable);
 
@@ -51,7 +51,9 @@ public interface IDelete<SELF extends IDelete,
 
     @Override
     default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD>... tables) {
-        $from(tables);
+        for (IDataset<DATASET, DATASET_FIELD> table : tables) {
+            $from(table);
+        }
         return (SELF) this;
     }
 

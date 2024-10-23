@@ -20,7 +20,7 @@ public class Having implements IHaving<Having> {
 
     private final CmdFactory cmdFactory;
 
-    private final List<ConditionBlock> conditionBlocks = new ArrayList<>();
+    private final List<ConditionBlock> conditionBlocks = new ArrayList<>(4);
 
     public Having(CmdFactory cmdFactory) {
         this.cmdFactory = cmdFactory;
