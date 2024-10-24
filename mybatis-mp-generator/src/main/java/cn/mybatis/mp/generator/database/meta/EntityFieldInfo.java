@@ -68,7 +68,7 @@ public class EntityFieldInfo {
         if (entityConfig.isDefaultValueEnable() && this.getColumnInfo().getDefaultValue() != null) {
             stringBuilder.append("defaultValue = \"")
                     .append(this.getColumnInfo().getDefaultValue().replace("\"", "\\\""))
-                    .append("\"");
+                    .append("\",");
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
 
