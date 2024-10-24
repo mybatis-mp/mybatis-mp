@@ -8,7 +8,6 @@ import cn.mybatis.mp.generator.util.PathUtils;
 import db.sql.api.impl.tookit.Objects;
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +92,7 @@ public class EntityInfo {
     public String buildTable(EntityConfig entityConfig) {
         StringBuilder stringBuilder = new StringBuilder("@Table(");
         stringBuilder.append("value =\"").append(this.getTableInfo().getName()).append("\",");
-        if (!entityConfig.isSchema() && StringUtils.hasLength(this.getTableInfo().getSchema())) {
+        if (!entityConfig.isSchema() && this.getTableInfo().getSchema()!=null && !this.getTableInfo().getSchema().isEmpty()) {
             stringBuilder.append("schema = \"").append(this.getTableInfo().getSchema()).append("\",");
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
