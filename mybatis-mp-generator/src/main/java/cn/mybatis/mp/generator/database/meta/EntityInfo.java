@@ -1,10 +1,14 @@
 package cn.mybatis.mp.generator.database.meta;
 
-import cn.mybatis.mp.generator.config.GeneratorConfig;
+import cn.mybatis.mp.core.util.NamingUtil;
+import cn.mybatis.mp.generator.config.*;
+import cn.mybatis.mp.generator.util.ClassUtils;
 import cn.mybatis.mp.generator.util.GeneratorUtil;
 import cn.mybatis.mp.generator.util.PathUtils;
+import db.sql.api.impl.tookit.Objects;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,20 +39,12 @@ public class EntityInfo {
     private final String daoPackage;
     private final String daoImplName;
     private final String daoImplPackage;
-    private boolean hasIgnoreTablePrefix = false;
+    private boolean hasIgnorePrefix = false;
 
     public EntityInfo(GeneratorConfig generatorConfig, TableInfo tableInfo) {
-        String tmpTableName = tableInfo.getName();
-        for (String prefix : generatorConfig.getTableConfig().getTablePrefixs()) {
-            if (tmpTableName.startsWith(prefix)) {
-                tmpTableName = tmpTableName.replaceFirst(prefix, "");
-                hasIgnoreTablePrefix = true;
-                break;
-            }
-        }
-
-
-        this.name = GeneratorUtil.getEntityName(generatorConfig, tmpTableName);
+        String handledTableName = NamingUtil.removePrefix(tableInfo.getName(), generatorConfig.getTableConfig().getTablePrefixes());
+        hasIgnorePrefix = handledTableName != tableInfo.getName();
+        this.name = GeneratorUtil.getEntityName(generatorConfig, handledTableName);
         this.remarks = tableInfo.getRemarks();
         this.tableInfo = tableInfo;
         if (tableInfo.getIdColumnInfo() != null) {
@@ -92,5 +88,114 @@ public class EntityInfo {
 
     public boolean hasMultiId() {
         return idFieldInfoList.size() > 1;
+    }
+
+    public String buildTable(EntityConfig entityConfig) {
+        StringBuilder stringBuilder = new StringBuilder("@Table(");
+        stringBuilder.append("value =\"").append(this.getTableInfo().getName()).append("\",");
+        if (!entityConfig.isSchema() && StringUtils.hasLength(this.getTableInfo().getSchema())) {
+            stringBuilder.append("schema = \"").append(this.getTableInfo().getSchema()).append("\",");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        stringBuilder.append(")");
+        return stringBuilder.toString();
+    }
+
+    public String buildClassFullName(EntityConfig entityConfig) {
+        StringBuilder stringBuilder = new StringBuilder(this.name);
+        if (entityConfig.getSuperClass() != null) {
+            stringBuilder.append(" extends ").append(ClassUtils.getClassSimpleName(entityConfig.getSuperClass()));
+        }
+        if (entityConfig.isSerial()) {
+            stringBuilder.append("  implements java.io.Serializable");
+        }
+
+        return stringBuilder.toString();
+    }
+
+    public String buildMapperClassFullName(MapperConfig mapperConfig) {
+        StringBuilder stringBuilder = new StringBuilder(this.getMapperName());
+        if (Objects.nonNull(mapperConfig.getSuperClass())) {
+            stringBuilder.append(" extends ").append(ClassUtils.getClassSimpleName(mapperConfig.getSuperClass()));
+        }
+        if (Objects.nonNull(mapperConfig.getSuperClass())) {
+            stringBuilder.append(this.buildGeneric());
+        }
+        return stringBuilder.toString();
+    }
+
+    public String buildDaoClassFullName(DaoConfig daoConfig) {
+        StringBuilder stringBuilder = new StringBuilder(this.getDaoName());
+        if (Objects.nonNull(daoConfig.getSuperClass())) {
+            stringBuilder.append(" extends ").append(ClassUtils.getClassSimpleName(daoConfig.getSuperClass()));
+        }
+        if (Objects.nonNull(daoConfig.getSuperClass()) && daoConfig.isGeneric()) {
+            stringBuilder.append(this.buildGenericWithId());
+        }
+        return stringBuilder.toString();
+    }
+
+    public String buildDaoImplClassFullName(DaoConfig daoConfig, DaoImplConfig daoImplConfig) {
+        StringBuilder stringBuilder = new StringBuilder(this.getDaoImplName());
+        if (Objects.nonNull(daoImplConfig.getSuperClass())) {
+            stringBuilder.append(" extends ").append(ClassUtils.getClassSimpleName(daoImplConfig.getSuperClass()));
+        }
+        if (Objects.nonNull(daoImplConfig.getSuperClass()) && daoConfig.isGeneric()) {
+            stringBuilder.append(this.buildGenericWithId());
+        }
+        if (daoConfig.isEnable()) {
+            stringBuilder.append(" implements ").append(getDaoName());
+        }
+        return stringBuilder.toString();
+    }
+
+    public String buildServiceClassFullName(ServiceConfig serviceConfig) {
+        StringBuilder stringBuilder = new StringBuilder(this.getServiceName());
+        if (Objects.nonNull(serviceConfig.getSuperClass())) {
+            stringBuilder.append(" extends ").append(ClassUtils.getClassSimpleName(serviceConfig.getSuperClass()));
+        }
+        if (Objects.nonNull(serviceConfig.getSuperClass()) && serviceConfig.isGeneric()) {
+            stringBuilder.append(this.buildGenericWithId());
+        }
+        return stringBuilder.toString();
+    }
+
+    public String buildServiceImplClassFullName(ServiceConfig serviceConfig, ServiceImplConfig serviceImplConfig) {
+        StringBuilder stringBuilder = new StringBuilder(this.getServiceImplName());
+        if (Objects.nonNull(serviceImplConfig.getSuperClass())) {
+            stringBuilder.append(" extends ").append(ClassUtils.getClassSimpleName(serviceImplConfig.getSuperClass()));
+        }
+        if (Objects.nonNull(serviceImplConfig.getSuperClass()) && serviceImplConfig.isGeneric()) {
+            stringBuilder.append(this.buildGenericWithId());
+        }
+        if (serviceConfig.isEnable()) {
+            stringBuilder.append(" implements ").append(getServiceName());
+        }
+        return stringBuilder.toString();
+    }
+
+    public String buildActionClassFullName(ActionConfig actionConfig) {
+        StringBuilder stringBuilder = new StringBuilder(this.getActionName());
+        if (Objects.nonNull(actionConfig.getSuperClass())) {
+            stringBuilder.append(" extends ").append(ClassUtils.getClassSimpleName(actionConfig.getSuperClass()));
+        }
+        if (Objects.nonNull(actionConfig.getSuperClass()) && actionConfig.isGeneric()) {
+            stringBuilder.append(this.buildGenericWithId());
+        }
+        return stringBuilder.toString();
+    }
+
+    public String buildGeneric() {
+        return "<" + getName() + ">";
+    }
+
+    public String buildGenericWithId() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("<").append(getName()).append(", ");
+        if (Objects.nonNull(idFieldInfo)) {
+            stringBuilder.append(Objects.nonNull(idFieldInfo) ? idFieldInfo.getTypeName() : "Void");
+        }
+        stringBuilder.append(">");
+        return stringBuilder.toString();
     }
 }

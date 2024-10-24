@@ -12,6 +12,6 @@ import ${pkg};
  * @author ${author!}
  * @since ${date}
  */
-public interface ${entityInfo.serviceName}${superExtend}<#if serviceConfig.isGeneric()><${entityInfo.name}, <#if entityInfo.idFieldInfo??>${entityInfo.idFieldInfo.typeName}<#else>Void</#if>></#if> {
+public interface ${entityInfo.buildServiceClassFullName(serviceConfig)} {
 
 }

@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 public class TableConfig {
 
     /**
-     * 需要生成的表名
+     * 表名前缀 - 设置后 可忽略前缀
      */
-    private final List<String> tablePrefixs = new ArrayList<>();
+    private final List<String> tablePrefixes = new ArrayList<>();
 
     /**
      * 需要生成的表名
@@ -26,15 +26,14 @@ public class TableConfig {
      */
     private final List<String> excludeTables = new ArrayList<>();
 
-
     /**
      * 表的前缀
      *
-     * @param prefixs
+     * @param prefixes
      * @return
      */
-    public TableConfig tablePrefixs(String... prefixs) {
-        this.tablePrefixs.addAll(Arrays.stream(prefixs)
+    public TableConfig tablePrefixes(String... prefixes) {
+        this.tablePrefixes.addAll(Arrays.stream(prefixes)
                 .map(item -> {
                     if (item.toLowerCase().equals(item)) {
                         return item.toLowerCase();

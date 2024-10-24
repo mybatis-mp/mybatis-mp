@@ -61,11 +61,11 @@ public class Test {
                 //.baseFilePath(System.getProperty("user.dir") + "/xx")
                 //.javaPath("src/main/java")
                 //.resourcePath("src/main/resources")
-                //.basePackage("com.test")
+                .basePackage("com.test")
                 .swaggerVersion(3)
                 .containerType(ContainerType.SPRING)
                 .tableConfig(tableConfig -> {
-                    //tableConfig.includeTable("ip_info");
+                    tableConfig.tablePrefixes("i");
                 })
                 .templateBuilders(list -> {
                     list.add(TsTypeTemplateBuilder.class);
@@ -77,18 +77,22 @@ public class Test {
                     columnConfig.tenantIdColumn("state");
                 })
                 .entityConfig(entityConfig -> {
-                    entityConfig.lombok(true).lombokBuilder(true).serial(false).superClass(Test.class);
+                    entityConfig.columnPrefixes("n");
+                    entityConfig.lombok(true)
+                            .lombokBuilder(true)
+                            .serial(false)
+                            .superClass(Test.class);
                     entityConfig.swagger(true).packageName("model");
                     entityConfig.logicDeleteCode("@LogicDelete(beforeValue=\"0\",afterValue=\"1\",deleteTimeField=\"create_time\")");
                 })
                 .mapperXmlConfig(mapperXmlConfig -> {
                     mapperXmlConfig.enable(true).resultMap(true).columnList(true);
                 })
-                .daoConfig(daoConfig -> daoConfig.enable(false))
-                .daoImplConfig(daoImplConfig -> daoImplConfig.enable(false))
+                //.daoConfig(daoConfig -> daoConfig.enable(false))
+                //.daoImplConfig(daoImplConfig -> daoImplConfig.enable(false))
                 .serviceConfig(serviceConfig -> serviceConfig.superClass(IService.class).generic(true))
                 .serviceImplConfig(serviceImplConfig -> {
-                    serviceImplConfig.superClass(ServiceImpl.class).injectMapper(true).injectDao(false);
+                    serviceImplConfig.superClass(ServiceImpl.class).injectMapper(true).generic(true).injectDao(false);
                 })
                 .actionConfig(actionConfig -> {
                     actionConfig
@@ -134,6 +138,7 @@ public class Test {
     public static void main(String[] args) {
         Long start = System.currentTimeMillis();
         mysqlTest();
+        //oracleTest();
         System.out.println(System.currentTimeMillis() - start);
     }
 }
