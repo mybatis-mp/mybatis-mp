@@ -40,7 +40,7 @@ public class EntityFieldInfo {
         this.columnInfo = columnInfo;
         String columnName = columnInfo.getName();
 
-        String handledTableName = NamingUtil.removePrefix(columnName, generatorConfig.getEntityConfig().getColumnPrefixes());
+        String handledTableName = NamingUtil.removePrefix(columnName, generatorConfig.getColumnConfig().getColumnPrefixes());
         hasIgnorePrefix = handledTableName != columnName;
 
         this.update = !generatorConfig.getColumnConfig().getDisableUpdateColumns().contains(columnName);

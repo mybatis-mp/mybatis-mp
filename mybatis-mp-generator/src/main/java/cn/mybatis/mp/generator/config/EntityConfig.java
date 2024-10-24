@@ -18,11 +18,6 @@ import java.util.function.Function;
 public class EntityConfig {
 
     /**
-     * 列名前缀 - 设置后 可忽略前缀
-     */
-    private final List<String> columnPrefixes = new ArrayList<>();
-
-    /**
      * 排除列
      */
     private final List<String> excludeColumns = new ArrayList<>();
@@ -158,17 +153,6 @@ public class EntityConfig {
      */
     public EntityConfig superClass(String superClass) {
         this.superClass = superClass;
-        return this;
-    }
-
-    /**
-     * 设置列名前缀
-     *
-     * @param prefixes
-     * @return
-     */
-    public EntityConfig columnPrefixes(String... prefixes) {
-        this.columnPrefixes.addAll(Arrays.asList(prefixes));
         return this;
     }
 

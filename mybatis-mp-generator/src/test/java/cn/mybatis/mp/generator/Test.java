@@ -71,13 +71,13 @@ public class Test {
                     list.add(TsTypeTemplateBuilder.class);
                 })
                 .columnConfig(columnConfig -> {
+                    columnConfig.columnPrefixes("n");
                     columnConfig.disableUpdateColumns("create_time");
                     columnConfig.versionColumn("phone");
                     columnConfig.logicDeleteColumn("free");
                     columnConfig.tenantIdColumn("state");
                 })
                 .entityConfig(entityConfig -> {
-                    entityConfig.columnPrefixes("n");
                     entityConfig.lombok(true)
                             .lombokBuilder(true)
                             .serial(false)

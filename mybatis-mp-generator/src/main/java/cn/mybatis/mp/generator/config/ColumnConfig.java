@@ -15,6 +15,11 @@ import java.util.function.Function;
 public class ColumnConfig {
 
     /**
+     * 列名前缀 - 设置后 可忽略前缀
+     */
+    private final List<String> columnPrefixes = new ArrayList<>();
+
+    /**
      * 禁止修改的列
      */
     private final List<String> disableUpdateColumns = new ArrayList<>();
@@ -43,6 +48,17 @@ public class ColumnConfig {
      * 默认值转换
      */
     private Function<String, String> defaultValueConvert = new DefaultValueConvert()::convert;
+
+    /**
+     * 设置列名前缀
+     *
+     * @param prefixes
+     * @return
+     */
+    public ColumnConfig columnPrefixes(String... prefixes) {
+        this.columnPrefixes.addAll(Arrays.asList(prefixes));
+        return this;
+    }
 
     /**
      * 禁止修改的列
