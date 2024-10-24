@@ -50,6 +50,13 @@ public class ${entityInfo.buildClassFullName(entityConfig)} {
      */
 </#if>
 <#if field.columnInfo.primaryKey>
+<#if entityConfig.isSwagger()>
+<#if generatorConfig.getSwaggerVersion() == 3>
+    @Schema(description = "${field.remarks!}")
+<#else>
+    @ApiModelProperty("${field.remarks!}")
+</#if>
+</#if>
     ${field.buildTableIdCode()!}
     <#if field.isNeedTableField(entityConfig)>
     ${field.buildTableField(entityConfig)}
