@@ -36,8 +36,8 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel("${entityInfo.tableInfo.remarks!}")
 </#if>
 </#if>
-@Table(value="${entityInfo.tableInfo.name}"<#if entityConfig.isSchema()>,schema="${entityInfo.tableInfo.schema!}"</#if>)
-public class ${entityInfo.name}${superExtend}<#if entityConfig.isSerial()> implements java.io.Serializable</#if> {
+${entityInfo.buildTable(entityConfig)}
+public class ${entityInfo.buildClassFullName(entityConfig)} {
 
 <#if entityConfig.isSerial()>
     private static final long serialVersionUID = 1L;
@@ -50,6 +50,13 @@ public class ${entityInfo.name}${superExtend}<#if entityConfig.isSerial()> imple
      */
 </#if>
 <#if field.columnInfo.primaryKey>
+<#if entityConfig.isSwagger()>
+<#if generatorConfig.getSwaggerVersion() == 3>
+    @Schema(description = "${field.remarks!}")
+<#else>
+    @ApiModelProperty("${field.remarks!}")
+</#if>
+</#if>
     ${field.buildTableIdCode()!}
     <#if field.isNeedTableField(entityConfig)>
     ${field.buildTableField(entityConfig)}

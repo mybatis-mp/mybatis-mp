@@ -20,6 +20,7 @@
 <#if mapperXmlConfig.isColumnList()>
 
     <sql id="ColumnList">
+        <!--@sql select -->
 <#list entityInfo.getAllFieldInfoList() as field>
     <#if field_index==0>
         ${field.columnInfo.name}
@@ -27,6 +28,7 @@
         ,${field.columnInfo.name}
     </#if>
 </#list>
+        <!--@sql from  ${entityInfo.tableInfo.name}-->
     </sql>
 </#if>
 </mapper>

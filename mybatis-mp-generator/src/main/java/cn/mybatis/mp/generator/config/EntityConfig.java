@@ -16,6 +16,12 @@ import java.util.function.Function;
 
 @Getter
 public class EntityConfig {
+
+    /**
+     * 列名前缀 - 设置后 可忽略前缀
+     */
+    private final List<String> columnPrefixes = new ArrayList<>();
+
     /**
      * 排除列
      */
@@ -82,7 +88,7 @@ public class EntityConfig {
     /**
      * 字段名转换器
      */
-    private Function<ColumnInfo, String> fieldNameConverter;
+    private Function<String, String> fieldNameConverter;
     /**
      * 备注转换器
      */
@@ -152,6 +158,17 @@ public class EntityConfig {
      */
     public EntityConfig superClass(String superClass) {
         this.superClass = superClass;
+        return this;
+    }
+
+    /**
+     * 设置列名前缀
+     *
+     * @param prefixes
+     * @return
+     */
+    public EntityConfig columnPrefixes(String... prefixes) {
+        this.columnPrefixes.addAll(Arrays.asList(prefixes));
         return this;
     }
 
@@ -254,7 +271,7 @@ public class EntityConfig {
     /**
      * 字段名字转换器
      */
-    public EntityConfig fieldNameConverter(Function<ColumnInfo, String> fieldNameConverter) {
+    public EntityConfig fieldNameConverter(Function<String, String> fieldNameConverter) {
         this.fieldNameConverter = fieldNameConverter;
         return this;
     }

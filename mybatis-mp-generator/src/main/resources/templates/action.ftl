@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiParam;
 @Api("${entityInfo.tableInfo.remarks!}-接口")
     </#if>
 </#if>
-public class ${entityInfo.actionName}${superExtend}<#if actionConfig.isGeneric()><${entityInfo.name}, <#if entityInfo.idFieldInfo??>${entityInfo.idFieldInfo.typeName}<#else>Void</#if>></#if> {
+public class ${entityInfo.buildActionClassFullName(actionConfig)} {
 
 <#if actionConfig.isInjectService(generatorConfig)>
     @${autowiredAnnotationName}
@@ -48,12 +48,12 @@ public class ${entityInfo.actionName}${superExtend}<#if actionConfig.isGeneric()
     <#if generatorConfig.getSwaggerVersion() == 3>
     @Operation(summary = "根据ID查询")
     <#list entityInfo.idFieldInfoList as field>
-    @Parameter(name = "${field.name}", description = "${field.remarks}", required = true)
+    @Parameter(name = "${field.name}", description = "${field.remarks!}", required = true)
     </#list>
     <#else >
     @ApiOperation("根据ID查询")
     <#list entityInfo.idFieldInfoList as field>
-    @ApiParam(name = "${field.name}", value = "${field.remarks}", required = true)
+    @ApiParam(name = "${field.name}", value = "${field.remarks!}", required = true)
     </#list>
     </#if>
 </#if>
@@ -108,12 +108,12 @@ public class ${entityInfo.actionName}${superExtend}<#if actionConfig.isGeneric()
     <#if generatorConfig.getSwaggerVersion() == 3>
     @Operation(summary = "根据ID删除")
     <#list entityInfo.idFieldInfoList as field>
-    @Parameter(name = "${field.name}", description = "${field.remarks}", required = true)
+    @Parameter(name = "${field.name}", description = "${field.remarks!}", required = true)
     </#list>
     <#else >
     @ApiOperation("根据ID删除")
     <#list entityInfo.idFieldInfoList as field>
-    @ApiParam(name = "${field.name}", value = "${field.remarks}", required = true)
+    @ApiParam(name = "${field.name}", value = "${field.remarks!}", required = true)
     </#list>
     </#if>
 </#if>

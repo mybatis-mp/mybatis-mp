@@ -1,6 +1,7 @@
 package cn.mybatis.mp.generator.database.meta;
 
 import cn.mybatis.mp.generator.config.GeneratorConfig;
+import cn.mybatis.mp.generator.util.StringCodeSafeUtil;
 import db.sql.api.impl.tookit.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
@@ -62,7 +63,8 @@ public class TableMetaDataQuery {
 
                 tableInfo = new TableInfo();
                 tableInfo.setName(tableName);
-                tableInfo.setRemarks(resultSet.getString("REMARKS"));
+                String remarks = resultSet.getString("REMARKS");
+                tableInfo.setRemarks(StringCodeSafeUtil.removeSpecialCharacters(remarks));
                 tableInfo.setTableType(resultSet.getString("TABLE_TYPE"));
                 tableInfo.setSchema(resultSet.getString("TABLE_SCHEM"));
                 tableInfo.setCatalog(resultSet.getString("TABLE_CAT"));
@@ -157,7 +159,9 @@ public class TableMetaDataQuery {
                 columnInfo.setJdbcType(JdbcType.forCode(resultSet.getInt("DATA_TYPE")));
                 columnInfo.setLength(resultSet.getInt("COLUMN_SIZE"));
                 columnInfo.setScale(resultSet.getInt("DECIMAL_DIGITS"));
-                columnInfo.setRemarks(resultSet.getString("REMARKS"));
+
+                String remarks = resultSet.getString("REMARKS");
+                columnInfo.setRemarks(StringCodeSafeUtil.removeSpecialCharacters(remarks));
 
 
                 columnInfo.setDefaultValue(generatorConfig.getColumnConfig().getDefaultValueConvert().apply(resultSet.getString("COLUMN_DEF")));

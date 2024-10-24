@@ -9,12 +9,14 @@ import cn.mybatis.mp.generator.template.ITemplateBuilder;
 import cn.mybatis.mp.generator.template.engine.FreemarkerTemplateEngine;
 import cn.mybatis.mp.generator.template.engine.TemplateEngine;
 import cn.mybatis.mp.generator.util.RuntimeUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class FastGenerator {
 
     private final GeneratorConfig generatorConfig;
@@ -28,11 +30,15 @@ public class FastGenerator {
         try (Connection connection = generatorConfig.getDataBaseConfig().getConnection()) {
             TableMetaDataQuery tableMetaDataQuery = new TableMetaDataQuery(generatorConfig, connection);
             List<TableInfo> tableInfoList = tableMetaDataQuery.getTableInfoList(!generatorConfig.isIgnoreTable(), !generatorConfig.isIgnoreView());
+            log.info("mybatis-mp-generator found {} tables and {} views",
+                    tableInfoList.stream().filter(tableInfo -> !tableInfo.isView()).count(),
+                    tableInfoList.stream().filter(tableInfo -> tableInfo.isView()).count());
             entityInfoList = tableInfoList.stream().map(item -> new EntityInfo(generatorConfig, item)).collect(Collectors.toList());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
+        log.info("mybatis-mp-generator's base file path is {}", generatorConfig.getBaseFilePath());
 
         TemplateEngine templateEngine = generatorConfig.getTemplateEngine();
         templateEngine = templateEngine == null ? new FreemarkerTemplateEngine() : templateEngine;

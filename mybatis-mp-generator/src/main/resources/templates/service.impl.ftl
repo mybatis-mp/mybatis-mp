@@ -13,7 +13,7 @@ import ${pkg};
  * @since ${date}
  */
 @${serviceAnnotationName}
-public class ${entityInfo.serviceImplName}${superExtend}<#if serviceImplConfig.isGeneric()><${entityInfo.name},<#if entityInfo.idFieldInfo??>${entityInfo.idFieldInfo.typeName}<#else>Void</#if>></#if><#if serviceConfig.isEnable()> implements ${entityInfo.serviceName}</#if> {
+public class ${entityInfo.buildServiceImplClassFullName(serviceConfig,serviceImplConfig)} {
 
 <#if serviceImplConfig.isInjectDao(generatorConfig)>
     @${autowiredAnnotationName}

@@ -1,5 +1,6 @@
 package cn.mybatis.mp.core.util;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -106,6 +107,43 @@ public final class NamingUtil {
         char[] chars = name.toCharArray();
         chars[0] = Character.toUpperCase(first);
         return new String(chars);
+    }
+
+    /**
+     * 移除前缀
+     *
+     * @param original 源字符串
+     * @param prefixes 前缀列表
+     * @return
+     */
+    public static String removePrefix(String original, List<String> prefixes) {
+        if (prefixes == null || prefixes.isEmpty()) {
+            return original;
+        }
+        for (String prefix : prefixes) {
+            String target = removePrefix(original, prefix);
+            if (target != original) {
+                return target;
+            }
+        }
+        return original;
+    }
+
+    /**
+     * 移除前缀
+     *
+     * @param original 源字符串
+     * @param prefix   前缀列表
+     * @return
+     */
+    public static String removePrefix(String original, String prefix) {
+        if (prefix == null || prefix.isEmpty()) {
+            return original;
+        }
+        if (original.startsWith(prefix)) {
+            return original.substring(prefix.length());
+        }
+        return original;
     }
 
     public static void main(String[] args) {

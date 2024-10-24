@@ -43,15 +43,15 @@ public class GeneratorUtil {
      * 获取实体类字段名字
      *
      * @param generatorConfig
-     * @param columnInfo
+     * @param columnName
      * @return
      */
-    public static String getEntityFieldName(GeneratorConfig generatorConfig, ColumnInfo columnInfo) {
+    public static String getEntityFieldName(GeneratorConfig generatorConfig, String columnName) {
         EntityConfig entityConfig = generatorConfig.getEntityConfig();
         if (entityConfig.getFieldNameConverter() == null) {
-            return entityConfig.getFieldNamingStrategy().getName(columnInfo.getName(), false);
+            return entityConfig.getFieldNamingStrategy().getName(columnName, false);
         }
-        return entityConfig.getFieldNameConverter().apply(columnInfo);
+        return entityConfig.getFieldNameConverter().apply(columnName);
     }
 
     /**

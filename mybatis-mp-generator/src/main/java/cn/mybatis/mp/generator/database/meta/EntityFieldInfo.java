@@ -32,12 +32,20 @@ public class EntityFieldInfo {
 
     private final boolean alwaysAnnotation;
 
+    private boolean hasIgnorePrefix = false;
+
 
     public EntityFieldInfo(GeneratorConfig generatorConfig, EntityInfo entityInfo, ColumnInfo columnInfo) {
         this.entityInfo = entityInfo;
         this.columnInfo = columnInfo;
-        this.update = !generatorConfig.getColumnConfig().getDisableUpdateColumns().contains(columnInfo.getName());
-        this.name = GeneratorUtil.getEntityFieldName(generatorConfig, columnInfo);
+        String columnName = columnInfo.getName();
+
+        String handledTableName = NamingUtil.removePrefix(columnName, generatorConfig.getEntityConfig().getColumnPrefixes());
+        hasIgnorePrefix = handledTableName != columnName;
+
+        this.update = !generatorConfig.getColumnConfig().getDisableUpdateColumns().contains(columnName);
+
+        this.name = GeneratorUtil.getEntityFieldName(generatorConfig, handledTableName);
         this.remarks = GeneratorUtil.getEntityFieldRemarks(generatorConfig, columnInfo);
         this.type = GeneratorUtil.getColumnType(generatorConfig, columnInfo);
         if (this.type == byte[].class) {
@@ -51,12 +59,16 @@ public class EntityFieldInfo {
     }
 
     public boolean isNeedTableField(EntityConfig entityConfig) {
-        return alwaysAnnotation || !select || !update || (entityConfig.isDefaultValueEnable() && this.getColumnInfo().getDefaultValue() != null);
+        return alwaysAnnotation
+                || hasIgnorePrefix
+                || !select
+                || !update
+                || (entityConfig.isDefaultValueEnable() && this.getColumnInfo().getDefaultValue() != null);
     }
 
     public String buildTableField(EntityConfig entityConfig) {
         StringBuilder stringBuilder = new StringBuilder("@TableField(");
-        if (alwaysAnnotation) {
+        if (alwaysAnnotation || hasIgnorePrefix) {
             stringBuilder.append("value =\"").append(this.getColumnInfo().getName()).append("\",");
         }
         if (!select) {
@@ -68,7 +80,7 @@ public class EntityFieldInfo {
         if (entityConfig.isDefaultValueEnable() && this.getColumnInfo().getDefaultValue() != null) {
             stringBuilder.append("defaultValue = \"")
                     .append(this.getColumnInfo().getDefaultValue().replace("\"", "\\\""))
-                    .append("\"");
+                    .append("\",");
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
 
