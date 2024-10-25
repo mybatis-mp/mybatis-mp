@@ -15,6 +15,15 @@ public interface IUpdateMethod<SELF extends IUpdateMethod, TABLE, TABLE_FILED, V
 
     <T> SELF set(Getter<T> field, V value);
 
+    <T, T2> SELF set(Getter<T> target, Getter<T2> source);
+
+    default <T, T2> SELF set(boolean when, Getter<T> target, Getter<T2> source) {
+        if (!when) {
+            return (SELF) this;
+        }
+        return set(target, source);
+    }
+
     <T> SELF set(Getter<T> field, Function<TABLE_FILED, Cmd> f);
 
     /**

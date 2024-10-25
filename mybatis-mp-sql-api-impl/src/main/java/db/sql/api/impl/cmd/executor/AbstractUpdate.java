@@ -153,6 +153,10 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         return this.set(predicate.test(value), field, value);
     }
 
+    public <T, T2> SELF set(Getter<T> target, Getter<T2> source) {
+        return this.set($.field(target), $.field(source));
+    }
+
     @Override
     public <T> SELF set(Getter<T> field, Object value, boolean enableNull) {
         if (enableNull && Objects.isNull(value)) {
