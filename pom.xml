@@ -17,8 +17,6 @@
         <module>mybatis-mp-core</module>
         <module>mybatis-mp-sql-api</module>
         <module>mybatis-mp-sql-api-impl</module>
-        <module>mybatis-mp-generator</module>
-        <module>mybatis-mp-routing-datasource</module>
     </modules>
     <issueManagement>
         <system>Gitee Issue</system>
@@ -51,6 +49,8 @@
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
         <mybatis-mp.version>1.7.2</mybatis-mp.version>
+        <mybatis-mp-generator-core.version>1.0.0</mybatis-mp-generator-core.version>
+        <mybatis-mp-datasource-routing.version>1.0.0</mybatis-mp-datasource-routing.version>
         <mybatis-mp-spring-boot-starter.version>1.7.2</mybatis-mp-spring-boot-starter.version>
 
         <!-- mybatis version -->
@@ -110,8 +110,13 @@
             </dependency>
             <dependency>
                 <groupId>cn.mybatis-mp</groupId>
-                <artifactId>mybatis-mp-generator</artifactId>
-                <version>${mybatis-mp.version}</version>
+                <artifactId>mybatis-mp-generator-core</artifactId>
+                <version>${mybatis-mp-generator-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.mybatis-mp</groupId>
+                <artifactId>mybatis-mp-datasource-routing</artifactId>
+                <version>${mybatis-mp-datasource-routing.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.mybatis-mp</groupId>
