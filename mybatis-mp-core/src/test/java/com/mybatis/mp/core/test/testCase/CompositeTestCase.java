@@ -1,6 +1,7 @@
 package com.mybatis.mp.core.test.testCase;
 
 import cn.mybatis.mp.core.tenant.TenantContext;
+import com.alibaba.fastjson.JSON;
 import com.mybatis.mp.core.test.DO.CompositeTest;
 import com.mybatis.mp.core.test.mapper.CompositeTestMapper;
 import org.apache.ibatis.session.SqlSession;
@@ -35,6 +36,8 @@ public class CompositeTestCase extends BaseTest {
         assertEquals(compositeTest.getVersion(), 1);
         assertEquals(compositeTest.getTenantId(), 1);
         assertEquals(compositeTest.getDeleted().intValue(), 0);
+        compositeTest=  compositeTestMapper.getById(compositeTest.getId());
+        System.out.println(JSON.toJSONString(compositeTest));
     }
 
     @Test
