@@ -11,6 +11,7 @@ import org.apache.ibatis.cursor.Cursor;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * 查询链路
@@ -60,6 +61,10 @@ public class QueryChain<E> extends BaseQuery<QueryChain<E>, E> {
 
     public <E2> QueryChain<E2> returnType(Class<E2> returnType) {
         return (QueryChain<E2>) super.setReturnType(returnType);
+    }
+
+    public <E2> QueryChain<E2> returnType(Class<E2> returnType, Consumer<E2> consumer) {
+        return (QueryChain<E2>) super.setReturnType(returnType, consumer);
     }
 
     public <V> QueryChain<Map<String, V>> returnMap(Class<V> vClass) {

@@ -25,7 +25,7 @@ public class JoinTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer count = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getId, FunctionInterface::count)
+                    .select(SysUser::getId, c -> c.count())
                     .from(SysUser.class)
                     .join(SysUser.class, SysRole.class)
                     .returnType(Integer.TYPE)

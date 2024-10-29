@@ -16,10 +16,54 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.LongAdder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FetchTest extends BaseTest {
+
+    @Test
+    public void returnTypeEach() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            LongAdder longAdder = new LongAdder();
+            QueryChain.of(sysUserMapper)
+                    .returnType(SysUser.class, sysUser -> {
+                        System.out.println(sysUser);
+                        if (sysUser instanceof SysUser) {
+                            longAdder.increment();
+                        } else {
+                            throw new RuntimeException("returnTypeEach item not instanceof SysUser");
+                        }
+                    })
+                    .mapWithKey(SysUser::getRole_id);
+            System.out.println(longAdder.sum());
+            assertTrue(longAdder.sum() > 0);
+        }
+    }
+
+    @Test
+    public void returnTypeVoEach() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            LongAdder longAdder = new LongAdder();
+            QueryChain.of(sysUserMapper)
+                    .from(SysUser.class)
+                    .join(SysUser.class, SysRole.class)
+                    .returnType(SysUserVo.class, sysUserVo -> {
+                        System.out.println(sysUserVo);
+                        if (sysUserVo instanceof SysUserVo) {
+                            longAdder.increment();
+                        } else {
+                            throw new RuntimeException("returnTypeEach item not instanceof SysUser");
+                        }
+                    })
+                    .mapWithKey(SysUserVo::getId);
+            System.out.println(longAdder.sum());
+            assertTrue(longAdder.sum() > 0);
+        }
+    }
 
     @Test
     public void fetchWithNoRootField() {

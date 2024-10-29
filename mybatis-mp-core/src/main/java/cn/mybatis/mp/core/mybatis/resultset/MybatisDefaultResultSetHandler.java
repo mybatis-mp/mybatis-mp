@@ -6,6 +6,7 @@ import cn.mybatis.mp.core.mybatis.configuration.FetchObject;
 import cn.mybatis.mp.core.mybatis.configuration.SqlSessionThreadLocalUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdQueryContext;
+import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.db.annotations.ResultEntity;
@@ -44,6 +45,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     private Map<String, Consumer<Where>> fetchFilters;
 
+    private Consumer returnTypeEach;
+
+    private Class<?> returnType;
+
     public MybatisDefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
         if (mappedStatement.getResultMaps().size() == 1) {
@@ -55,8 +60,15 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 }
 
                 if (boundSql.getParameterObject() instanceof SQLCmdQueryContext) {
-                    fetchFilters = ((SQLCmdQueryContext) boundSql.getParameterObject()).getExecution().getFetchFilters();
+                    BaseQuery<?, ?> baseQuery = ((SQLCmdQueryContext) boundSql.getParameterObject()).getExecution();
+                    this.fetchFilters = baseQuery.getFetchFilters();
                 }
+            }
+
+            if (boundSql.getParameterObject() instanceof SQLCmdQueryContext) {
+                BaseQuery<?, ?> baseQuery = ((SQLCmdQueryContext) boundSql.getParameterObject()).getExecution();
+                this.returnTypeEach = baseQuery.getReturnTypeEach();
+                this.returnType = baseQuery.getReturnType();
             }
         }
     }
@@ -64,6 +76,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     @Override
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
         Object rowValue = super.getRowValue(rsw, resultMap, columnPrefix);
+        if (Objects.nonNull(returnTypeEach) && Objects.nonNull(rowValue) && rowValue.getClass() == returnType) {
+            returnTypeEach.accept(rowValue);
+        }
         rowValue = this.loadFetchValue(resultMap.getType(), rowValue, rsw.getResultSet());
         return rowValue;
     }
@@ -71,6 +86,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     @Override
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, CacheKey combinedKey, String columnPrefix, Object partialObject) throws SQLException {
         Object rowValue = super.getRowValue(rsw, resultMap, combinedKey, columnPrefix, partialObject);
+        if (Objects.nonNull(returnTypeEach) && Objects.nonNull(rowValue) && rowValue.getClass() == returnType) {
+            returnTypeEach.accept(rowValue);
+        }
         rowValue = this.loadFetchValue(resultMap.getType(), rowValue, rsw.getResultSet());
         return rowValue;
     }

@@ -2,6 +2,8 @@ package cn.mybatis.mp.core.sql.executor;
 
 import db.sql.api.impl.cmd.struct.Where;
 
+import java.util.function.Consumer;
+
 public class Query<T> extends BaseQuery<Query<T>, T> {
 
     public Query() {
@@ -22,5 +24,9 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
 
     public <R> Query<R> returnType(Class<R> returnType) {
         return (Query<R>) super.setReturnType(returnType);
+    }
+
+    public <R> Query<R> returnType(Class<R> returnType, Consumer<R> consumer) {
+        return (Query<R>) super.setReturnType(returnType, consumer);
     }
 }

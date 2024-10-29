@@ -25,6 +25,8 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     protected OptimizeOptions optimizeOptions = new OptimizeOptions();
 
+    protected Consumer<E> returnTypeEach;
+
     public BaseQuery() {
         this(new MybatisCmdFactory());
     }
@@ -79,6 +81,19 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
     public <E2, Q2 extends BaseQuery<Q2, E2>> BaseQuery<Q2, E2> setReturnType(Class<E2> returnType) {
         this.returnType = returnType;
         return (BaseQuery<Q2, E2>) this;
+    }
+
+    public <E2, Q2 extends BaseQuery<Q2, E2>> BaseQuery<Q2, E2> setReturnType(Class<E2> returnType, Consumer<E2> consumer) {
+        return (BaseQuery<Q2, E2>) this.setReturnType(returnType).returnTypeEach(consumer);
+    }
+
+    public Q returnTypeEach(Consumer<E> consumer) {
+        this.returnTypeEach = consumer;
+        return (Q) this;
+    }
+
+    public Consumer<E> getReturnTypeEach() {
+        return returnTypeEach;
     }
 
     @Override
