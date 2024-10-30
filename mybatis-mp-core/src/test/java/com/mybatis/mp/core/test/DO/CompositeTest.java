@@ -1,15 +1,13 @@
 package com.mybatis.mp.core.test.DO;
 
 import cn.mybatis.mp.db.annotations.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
-@Data
+@Setter
+@Getter
 @Table
 @SuperBuilder
 @NoArgsConstructor

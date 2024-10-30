@@ -36,7 +36,7 @@ public class CompositeTestCase extends BaseTest {
         assertEquals(compositeTest.getVersion(), 1);
         assertEquals(compositeTest.getTenantId(), 1);
         assertEquals(compositeTest.getDeleted().intValue(), 0);
-        compositeTest=  compositeTestMapper.getById(compositeTest.getId());
+        compositeTest = compositeTestMapper.getById(compositeTest.getId());
         System.out.println(JSON.toJSONString(compositeTest));
     }
 

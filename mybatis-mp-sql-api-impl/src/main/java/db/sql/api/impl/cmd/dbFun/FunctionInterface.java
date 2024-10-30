@@ -226,7 +226,6 @@ public interface FunctionInterface extends Cmd {
     }
 
 
-
     default Year year() {
         return Methods.year(this);
     }

@@ -14,12 +14,13 @@ public class JsonQuote extends BasicFunction<JsonQuote> {
 
     public JsonQuote(Serializable value) {
         super(SqlConst.JSON_QUOTE, null);
-        this.value=new BasicValue(value);
+        this.value = new BasicValue(value);
     }
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);;
+        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
+        ;
         this.value.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;

@@ -18,8 +18,8 @@ public class QueryAsTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUser = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getId,c->c.as(SysUser::getId))
-                    .select(SysUser::getUserName,c->c.as(SysUser::getUserName))
+                    .select(SysUser::getId, c -> c.as(SysUser::getId))
+                    .select(SysUser::getUserName, c -> c.as(SysUser::getUserName))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 2)
                     .get();
@@ -39,12 +39,12 @@ public class QueryAsTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserVo sysUser = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getId,c->c.as(SysUserVo::getId))
-                    .select(SysUser::getUserName,c->c.as(SysUserVo::getUserName))
-                    .select(SysUser::getUserName,c->c.as(SysUserVo::getKkName))
-                    .select(SysUser::getUserName,c->c.as(SysUserVo::getKkName2))
-                    .select(SysRole::getId,c->c.as(SysRole::getId))
-                    .select(SysRole::getName,c->c.as(SysRole::getName))
+                    .select(SysUser::getId, c -> c.as(SysUserVo::getId))
+                    .select(SysUser::getUserName, c -> c.as(SysUserVo::getUserName))
+                    .select(SysUser::getUserName, c -> c.as(SysUserVo::getKkName))
+                    .select(SysUser::getUserName, c -> c.as(SysUserVo::getKkName2))
+                    .select(SysRole::getId, c -> c.as(SysRole::getId))
+                    .select(SysRole::getName, c -> c.as(SysRole::getName))
                     .from(SysUser.class)
                     .join(SysUser.class, SysRole.class)
                     .eq(SysUser::getId, 2)
@@ -58,7 +58,7 @@ public class QueryAsTest extends BaseTest {
             eqSysUser.setKkName("test1");
             eqSysUser.setKkName2("test1");
 
-            SysRole eqSysRole=new SysRole();
+            SysRole eqSysRole = new SysRole();
             eqSysRole.setId(1);
             eqSysRole.setName("测试");
 

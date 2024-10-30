@@ -408,6 +408,7 @@ public class UpdateTest extends BaseTest {
             assertEquals("admin", sysUser.getUserName());
         }
     }
+
     @Test
     public void updateEmpty() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
