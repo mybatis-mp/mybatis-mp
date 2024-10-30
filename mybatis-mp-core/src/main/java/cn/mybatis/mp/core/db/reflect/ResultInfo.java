@@ -21,6 +21,16 @@ public class ResultInfo {
     private final Map<Class, List<FetchInfo>> fetchInfoMap;
 
     /**
+     * 所有的 PutValue注解的信息 包括内嵌的
+     */
+    private final Map<Class, List<PutValueInfo>> putValueInfoMap;
+
+    /**
+     * 所有的 PutEnumValue注解的信息 包括内嵌的
+     */
+    private final Map<Class, List<PutEnumValueInfo>> putEnumValueInfoMap;
+
+    /**
      * 所有的 ResultFieldInfo 不包括内嵌的
      */
     private final List<ResultFieldInfo> resultFieldInfos;
@@ -35,12 +45,21 @@ public class ResultInfo {
      */
     private final Map<Class, Map<Integer, String>> tablePrefixes;
 
+    /**
+     * 类上的PutValues注解
+     */
+    private final List<OnValue> onValueList;
+
     public ResultInfo(Class<?> clazz) {
+
         ParseResult parseResult = parse(clazz);
         this.fetchInfoMap = Collections.unmodifiableMap(parseResult.fetchInfoMap);
+        this.putValueInfoMap = Collections.unmodifiableMap(parseResult.putValueInfoMap);
+        this.putEnumValueInfoMap = Collections.unmodifiableMap(parseResult.putEnumValueInfoMap);
         this.resultFieldInfos = Collections.unmodifiableList(parseResult.resultFieldInfos);
         this.tablePrefixes = Collections.unmodifiableMap(parseResult.tablePrefixes);
         this.nestedResultInfos = Collections.unmodifiableList(parseResult.nestedResultInfos);
+        this.onValueList = Collections.unmodifiableList(parseResult.onValueList);
     }
 
     private static ParseResult parse(Class<?> clazz) {
@@ -52,6 +71,9 @@ public class ResultInfo {
     }
 
     private static void parseResultEntity(ParseResult parseResult, Class<?> clazz, ResultEntity resultEntity) {
+        if (clazz.isAnnotationPresent(OnValue.class)) {
+            parseResult.onValueList.add(clazz.getAnnotation(OnValue.class));
+        }
         TableInfo resultEntityTableInfo = resultEntity.value().isAnnotationPresent(Table.class) ? Tables.get(resultEntity.value()) : null;
 
         int tableCount = 0;
@@ -73,6 +95,18 @@ public class ResultInfo {
             if (field.isAnnotationPresent(Fetch.class)) {
                 //Fetch
                 tableCount = parseFetch(parseResult, parseResult.resultFieldInfos, clazz, field, tableCount);
+                continue;
+            }
+
+            if (field.isAnnotationPresent(PutValue.class)) {
+                //PutValue
+                tableCount = parsePutValue(parseResult, parseResult.resultFieldInfos, clazz, field, tableCount);
+                continue;
+            }
+
+            if (field.isAnnotationPresent(PutEnumValue.class)) {
+                //PutEnumValue
+                tableCount = parsePutEnumValue(parseResult, parseResult.resultFieldInfos, clazz, field, tableCount);
                 continue;
             }
 
@@ -165,8 +199,14 @@ public class ResultInfo {
             }
         }
 
+
         //是否隐射的实体类
         boolean fieldTypeIsEntity = targetType.isAnnotationPresent(Table.class);
+        if (!fieldTypeIsEntity) {
+            if (targetType.isAnnotationPresent(OnValue.class)) {
+                parseResult.onValueList.add((OnValue) targetType.getAnnotation(OnValue.class));
+            }
+        }
 
         TableInfo tableInfo = Tables.get(nestedResultEntity.target());
         if (Objects.isNull(tableInfo)) {
@@ -413,7 +453,93 @@ public class ResultInfo {
             targetMatchField = fetchTargetFieldInfo.getField();
         }
 
+        if (!returnType.isAnnotationPresent(Table.class)) {
+            if (returnType.isAnnotationPresent(OnValue.class)) {
+                parseResult.onValueList.add((OnValue) returnType.getAnnotation(OnValue.class));
+            }
+        }
+
         parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(field, fetch, returnType, valueColumn, valueTypeHandler, targetMatchField, targetMatchColumn, targetSelectColumn, orderBy));
+        return tableCount;
+    }
+
+
+    /**
+     * 解析内嵌字段
+     *
+     * @param parseResult 解析结果
+     * @param field       字段
+     * @param tableCount  当前表个数
+     * @return 当前已存在表的个数
+     */
+    private static int parsePutValue(ParseResult parseResult, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
+        PutValue putValue = field.getAnnotation(PutValue.class);
+        if (!putValue.source().isAnnotationPresent(Table.class)) {
+            throw new RuntimeException(clazz.getName() + "->" + field.getName() + " @PutValue config error,the source: " + putValue.source().getName() + " is not a entity");
+        }
+
+        String[] properties = putValue.property().split(",");
+        String[] valuesColumn = new String[properties.length];
+        TypeHandler<?>[] valuesTypeHandler = new TypeHandler[properties.length];
+        for (int i = 0; i < properties.length; i++) {
+            TableInfo fetchTableInfo = Tables.get(putValue.source());
+            TableFieldInfo fetchFieldInfo = fetchTableInfo.getFieldInfo(putValue.property());
+
+            if (Objects.isNull(fetchFieldInfo)) {
+                throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the property: " + putValue.property() + " is not a entity field");
+            }
+            //创建前缀
+            tableCount = createPrefix(putValue.source(), putValue.storey(), parseResult.tablePrefixes, tableCount);
+            //获取前缀
+            String tablePrefix = getTablePrefix(parseResult.tablePrefixes, putValue.source(), putValue.storey());
+
+            resultFieldInfos.add(new ResultTableFieldInfo(false, putValue.source(), putValue.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
+
+            valuesColumn[i] = tablePrefix + fetchFieldInfo.getColumnName();
+            valuesTypeHandler[i] = fetchFieldInfo.getTypeHandler();
+        }
+
+        parseResult.putValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutValueInfo(field, putValue, valuesColumn, valuesTypeHandler, putValue.factory()));
+        return tableCount;
+    }
+
+    /**
+     * 解析内嵌字段
+     *
+     * @param parseResult 解析结果
+     * @param field       字段
+     * @param tableCount  当前表个数
+     * @return 当前已存在表的个数
+     */
+    private static int parsePutEnumValue(ParseResult parseResult, List<ResultFieldInfo> resultFieldInfos, Class clazz, Field field, int tableCount) {
+        PutEnumValue putEnumValue = field.getAnnotation(PutEnumValue.class);
+        if (!putEnumValue.source().isAnnotationPresent(Table.class)) {
+            throw new RuntimeException(clazz.getName() + "->" + field.getName() + " @PutEnumValue config error,the source: " + putEnumValue.source().getName() + " is not a entity");
+        }
+
+        if (!putEnumValue.target().isEnum()) {
+            throw new RuntimeException(clazz.getName() + "->" + field.getName() + " @PutEnumValue config error,the target: " + putEnumValue.target().getName() + " is not a enum");
+        }
+
+
+        TableInfo fetchTableInfo = Tables.get(putEnumValue.source());
+        TableFieldInfo fetchFieldInfo = fetchTableInfo.getFieldInfo(putEnumValue.property());
+
+        if (Objects.isNull(fetchFieldInfo)) {
+            throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the property: " + putEnumValue.property() + " is not a entity field");
+        }
+        //创建前缀
+        tableCount = createPrefix(putEnumValue.source(), putEnumValue.storey(), parseResult.tablePrefixes, tableCount);
+        //获取前缀
+        String tablePrefix = getTablePrefix(parseResult.tablePrefixes, putEnumValue.source(), putEnumValue.storey());
+
+        resultFieldInfos.add(new ResultTableFieldInfo(false, putEnumValue.source(), putEnumValue.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
+
+        String valueColumn = tablePrefix + fetchFieldInfo.getColumnName();
+        TypeHandler<?> valueTypeHandler = fetchFieldInfo.getTypeHandler();
+
+
+        parseResult.putEnumValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutEnumValueInfo(field, valueColumn, valueTypeHandler, putEnumValue));
         return tableCount;
     }
 
@@ -491,5 +617,11 @@ public class ResultInfo {
         public final List<NestedResultInfo> nestedResultInfos = new ArrayList<>();
 
         public final Map<Class, Map<Integer, String>> tablePrefixes = new HashMap<>();
+
+        public final Map<Class, List<PutValueInfo>> putValueInfoMap = new HashMap<>();
+
+        public final Map<Class, List<PutEnumValueInfo>> putEnumValueInfoMap = new HashMap<>();
+
+        public final List<OnValue> onValueList = new ArrayList<>();
     }
 }
