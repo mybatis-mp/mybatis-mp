@@ -5,10 +5,10 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface OnValue {
+public @interface CreatedEvent {
 
     /**
-     * 指定类进行消费，需要实现一个on静态方法
+     * 指定类进行消费，需要实现一个createdEvent静态方法
      *
      * @return
      */

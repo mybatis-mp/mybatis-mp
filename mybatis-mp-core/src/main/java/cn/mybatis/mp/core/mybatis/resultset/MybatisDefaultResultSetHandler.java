@@ -7,11 +7,11 @@ import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdQueryContext;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.Query;
-import cn.mybatis.mp.core.util.OnValueUtil;
+import cn.mybatis.mp.core.util.CreatedEventUtil;
 import cn.mybatis.mp.core.util.PutEnumValueUtil;
 import cn.mybatis.mp.core.util.PutValueUtil;
 import cn.mybatis.mp.core.util.StringPool;
-import cn.mybatis.mp.db.annotations.OnValue;
+import cn.mybatis.mp.db.annotations.CreatedEvent;
 import cn.mybatis.mp.db.annotations.ResultEntity;
 import db.sql.api.impl.cmd.basic.Column;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
@@ -48,7 +48,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     private Map<String, Consumer<Where>> fetchFilters;
 
-    private Consumer returnTypeEach;
+    private Consumer onRowEvent;
 
     private Class<?> returnType;
 
@@ -56,7 +56,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     private Map<Class, List<PutValueInfo>> putValueInfoMap;
 
-    private List<OnValue> onValueList;
+    private List<CreatedEvent> createdEventList;
 
     public MybatisDefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
@@ -74,20 +74,20 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     this.fetchFilters = baseQuery.getFetchFilters();
                     this.putEnumValueInfoMap = resultInfo.getPutEnumValueInfoMap();
                     this.putValueInfoMap = resultInfo.getPutValueInfoMap();
-                    this.onValueList = resultInfo.getOnValueList();
+                    this.createdEventList = resultInfo.getCreatedEventList();
                 }
             }
 
             if (boundSql.getParameterObject() instanceof SQLCmdQueryContext) {
                 BaseQuery<?, ?> baseQuery = ((SQLCmdQueryContext) boundSql.getParameterObject()).getExecution();
-                this.returnTypeEach = baseQuery.getReturnTypeEach();
+                this.onRowEvent = baseQuery.getOnRowEvent();
                 this.returnType = baseQuery.getReturnType();
             }
         }
     }
 
-    private void returnTypeEach(Object rowValue) {
-        if (Objects.isNull(returnTypeEach)) {
+    private void onRowEvent(Object rowValue) {
+        if (Objects.isNull(onRowEvent)) {
             return;
         }
         if (Objects.isNull(rowValue)) {
@@ -96,7 +96,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (rowValue.getClass() != returnType) {
             return;
         }
-        returnTypeEach.accept(rowValue);
+        onRowEvent.accept(rowValue);
     }
 
     private void putEnumValue(Object rowValue, ResultSet resultSet) {
@@ -180,14 +180,14 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     }
 
     private void putValues(Object rowValue) {
-        if (Objects.isNull(this.onValueList)) {
+        if (Objects.isNull(this.createdEventList)) {
             return;
         }
         if (Objects.isNull(rowValue)) {
             return;
         }
-        this.onValueList.stream().forEach(item -> {
-            OnValueUtil.onValue(rowValue, item);
+        this.createdEventList.stream().forEach(item -> {
+            CreatedEventUtil.onCreated(rowValue, item);
         });
 
     }
@@ -198,7 +198,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         rowValue = this.loadFetchValue(resultMap.getType(), rowValue, rsw.getResultSet());
         this.putEnumValue(rowValue, rsw.getResultSet());
         this.putValue(rowValue, rsw.getResultSet());
-        this.returnTypeEach(rowValue);
+        this.onRowEvent(rowValue);
         this.putValues(rowValue);
         return rowValue;
     }
@@ -209,7 +209,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         rowValue = this.loadFetchValue(resultMap.getType(), rowValue, rsw.getResultSet());
         this.putEnumValue(rowValue, rsw.getResultSet());
         this.putValue(rowValue, rsw.getResultSet());
-        this.returnTypeEach(rowValue);
+        this.onRowEvent(rowValue);
         this.putValues(rowValue);
         return rowValue;
     }

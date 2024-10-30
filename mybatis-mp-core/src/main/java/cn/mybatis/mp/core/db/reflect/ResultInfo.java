@@ -48,7 +48,7 @@ public class ResultInfo {
     /**
      * 类上的PutValues注解
      */
-    private final List<OnValue> onValueList;
+    private final List<CreatedEvent> createdEventList;
 
     public ResultInfo(Class<?> clazz) {
 
@@ -59,7 +59,7 @@ public class ResultInfo {
         this.resultFieldInfos = Collections.unmodifiableList(parseResult.resultFieldInfos);
         this.tablePrefixes = Collections.unmodifiableMap(parseResult.tablePrefixes);
         this.nestedResultInfos = Collections.unmodifiableList(parseResult.nestedResultInfos);
-        this.onValueList = Collections.unmodifiableList(parseResult.onValueList);
+        this.createdEventList = Collections.unmodifiableList(parseResult.createdEventList);
     }
 
     private static ParseResult parse(Class<?> clazz) {
@@ -71,8 +71,8 @@ public class ResultInfo {
     }
 
     private static void parseResultEntity(ParseResult parseResult, Class<?> clazz, ResultEntity resultEntity) {
-        if (clazz.isAnnotationPresent(OnValue.class)) {
-            parseResult.onValueList.add(clazz.getAnnotation(OnValue.class));
+        if (clazz.isAnnotationPresent(CreatedEvent.class)) {
+            parseResult.createdEventList.add(clazz.getAnnotation(CreatedEvent.class));
         }
         TableInfo resultEntityTableInfo = resultEntity.value().isAnnotationPresent(Table.class) ? Tables.get(resultEntity.value()) : null;
 
@@ -203,8 +203,8 @@ public class ResultInfo {
         //是否隐射的实体类
         boolean fieldTypeIsEntity = targetType.isAnnotationPresent(Table.class);
         if (!fieldTypeIsEntity) {
-            if (targetType.isAnnotationPresent(OnValue.class)) {
-                parseResult.onValueList.add((OnValue) targetType.getAnnotation(OnValue.class));
+            if (targetType.isAnnotationPresent(CreatedEvent.class)) {
+                parseResult.createdEventList.add((CreatedEvent) targetType.getAnnotation(CreatedEvent.class));
             }
         }
 
@@ -454,8 +454,8 @@ public class ResultInfo {
         }
 
         if (!returnType.isAnnotationPresent(Table.class)) {
-            if (returnType.isAnnotationPresent(OnValue.class)) {
-                parseResult.onValueList.add((OnValue) returnType.getAnnotation(OnValue.class));
+            if (returnType.isAnnotationPresent(CreatedEvent.class)) {
+                parseResult.createdEventList.add((CreatedEvent) returnType.getAnnotation(CreatedEvent.class));
             }
         }
 
@@ -622,6 +622,6 @@ public class ResultInfo {
 
         public final Map<Class, List<PutEnumValueInfo>> putEnumValueInfoMap = new HashMap<>();
 
-        public final List<OnValue> onValueList = new ArrayList<>();
+        public final List<CreatedEvent> createdEventList = new ArrayList<>();
     }
 }
