@@ -163,7 +163,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 }
             }
 
-            Object targetValue = PutValueUtil.getValue(values, item);
+            Object targetValue = PutValueUtil.getPutValue(values, item);
 
             if (Objects.isNull(targetValue)) {
                 return;

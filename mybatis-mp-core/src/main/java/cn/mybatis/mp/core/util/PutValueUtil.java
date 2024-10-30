@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 public final class PutValueUtil {
 
-    public static Object getValue(Object[] values, PutValueInfo putValueInfo) {
+    public static Object getPutValue(Object[] values, PutValueInfo putValueInfo) {
         PutValue annotation = putValueInfo.getAnnotation();
         boolean allNull = !Arrays.stream(values).filter(java.util.Objects::nonNull).findFirst().isPresent();
         if (allNull) {
