@@ -1,16 +1,18 @@
 package com.mybatis.mp.core.test.DO;
 
 import cn.mybatis.mp.db.annotations.*;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
-@Setter
-@Getter
+@Data
 @Table
-@SuperBuilder
 @NoArgsConstructor
+@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class CompositeTest extends BaseEntity {
