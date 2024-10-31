@@ -93,7 +93,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (Objects.isNull(rowValue)) {
             return;
         }
-        if (rowValue.getClass() != returnType) {
+        if (rowValue.getClass().isAssignableFrom(returnType)) {
             return;
         }
         onRowEvent.accept(rowValue);
