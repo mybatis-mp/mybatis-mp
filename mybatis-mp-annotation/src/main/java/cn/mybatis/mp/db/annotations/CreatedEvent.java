@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 public @interface CreatedEvent {
 
     /**
-     * 指定类进行消费，需要实现一个createdEvent静态方法
+     * 指定类进行消费，需要实现一个onCreatedEvent静态方法,参数为所在直接的VO类
      *
      * @return
      */

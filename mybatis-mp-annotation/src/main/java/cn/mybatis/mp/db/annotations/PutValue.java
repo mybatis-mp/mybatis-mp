@@ -29,11 +29,16 @@ public @interface PutValue {
     int storey() default 1;
 
     /**
-     * 目标类 需要实现 指定getValueMethod名字的静态方法
+     * 目标类 需要实现 指定method名字的静态方法
      *
      * @return
      */
     Class factory();
+
+    /**
+     * @return
+     */
+    String method();
 
     /**
      * 是否必须有值
@@ -48,9 +53,4 @@ public @interface PutValue {
      * @return
      */
     String defaultValue() default "";
-
-    /**
-     * @return
-     */
-    String getValueMethod();
 }

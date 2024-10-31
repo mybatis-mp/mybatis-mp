@@ -11,6 +11,6 @@ public class GetPutValueFactory {
         Optional<PutValueEnum> e = Arrays.stream(PutValueEnum.values())
                 .filter(item -> item.getCode().equals(code))
                 .findFirst();
-        return e.isPresent() ? e.get().getName() : null;
+        return e.map(PutValueEnum::getName).orElse(null);
     }
 }

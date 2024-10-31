@@ -19,7 +19,7 @@ public class CreatedEventUtil {
 
         Method method = ON_METHOD_CACHE.computeIfAbsent(rowValue.getClass().getName() + createdEvent.value().getName(), key -> {
             try {
-                return createdEvent.value().getMethod("createdEvent", rowValue.getClass());
+                return createdEvent.value().getMethod("onCreatedEvent", rowValue.getClass());
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }

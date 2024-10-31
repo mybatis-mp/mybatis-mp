@@ -22,12 +22,12 @@ public final class PutValueUtil {
 
         Class<?>[] paramTypes = Arrays.stream(values).map(Object::getClass).toArray(Class[]::new);
         try {
-            Method putValueMethod = annotation.factory().getMethod(annotation.getValueMethod(), paramTypes);
+            Method putValueMethod = annotation.factory().getMethod(annotation.method(), paramTypes);
             putValueMethod.setAccessible(true);
             Object value = putValueMethod.invoke(null, values);
             if (Objects.isNull(value)) {
                 if (annotation.required()) {
-                    throw new RuntimeException(" value is  null from " + annotation.factory() + " " + annotation.getValueMethod());
+                    throw new RuntimeException(" value is  null from " + annotation.factory() + " " + annotation.method());
                 } else {
                     return putValueInfo.getDefaultValue();
                 }

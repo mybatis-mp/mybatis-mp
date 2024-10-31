@@ -12,10 +12,10 @@ public class PutValueVo {
 
     private Integer id;
 
-    @PutValue(source = SysUser.class, property = "id", factory = GetPutValueFactory.class, getValueMethod = "getPutValue1")
+    @PutValue(source = SysUser.class, property = "id", factory = GetPutValueFactory.class, method = "getPutValue1")
     private String enumName;
 
-    @PutValue(source = SysUser.class, property = "id", factory = GetPutValueFactory.class, getValueMethod = "getPutValue1", defaultValue = "NULL")
+    @PutValue(source = SysUser.class, property = "id", factory = GetPutValueFactory.class, method = "getPutValue1", defaultValue = "NULL")
     private String defaultEnumName;
 }
 

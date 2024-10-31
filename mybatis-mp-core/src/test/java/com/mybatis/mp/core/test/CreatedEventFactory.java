@@ -6,15 +6,15 @@ import com.mybatis.mp.core.test.vo.CreatedEventTestVo;
 
 public class CreatedEventFactory {
 
-    public static void createdEvent(CreatedEventTestVo createdEventTestVo) {
-        createdEventTestVo.setSourcePut("CreatedEventTestVo");
+    public static void onCreatedEvent(CreatedEventTestVo onCreatedEventTestVo) {
+        onCreatedEventTestVo.setSourcePut("CreatedEventTestVo");
     }
 
-    public static void createdEvent(CreatedEventNestedTestVo createdEventNestedTestVo) {
-        createdEventNestedTestVo.setSourcePut("CreatedEventNestedTestVo");
+    public static void onCreatedEvent(CreatedEventNestedTestVo onCreatedEventNestedTestVo) {
+        onCreatedEventNestedTestVo.setSourcePut("CreatedEventNestedTestVo");
     }
 
-    public static void createdEvent(CreatedEventFetchTestVo createdEventFetchTestVo) {
-        createdEventFetchTestVo.setSourcePut("CreatedEventFetchTestVo");
+    public static void onCreatedEvent(CreatedEventFetchTestVo onCreatedEventFetchTestVo) {
+        onCreatedEventFetchTestVo.setSourcePut("CreatedEventFetchTestVo");
     }
 }
