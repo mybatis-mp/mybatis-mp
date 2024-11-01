@@ -34,6 +34,6 @@ public class FieldInfo {
         this.clazz = clazz;
         this.field = field;
         this.typeClass = FieldUtil.getFieldType(clazz, field);
-        this.finalClass = FieldUtil.getFieldMappingType(clazz, field);
+        this.finalClass = FieldUtil.getFieldFinalType(clazz, field);
     }
 }

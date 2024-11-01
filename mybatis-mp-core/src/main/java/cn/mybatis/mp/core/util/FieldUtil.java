@@ -63,7 +63,7 @@ public final class FieldUtil {
      * @param field
      * @return
      */
-    public static Class<?> getFieldMappingType(Class clazz, Field field) {
+    public static Class<?> getFieldFinalType(Class clazz, Field field) {
         Type type = TypeParameterResolver.resolveFieldType(field, clazz);
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
