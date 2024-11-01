@@ -13,16 +13,15 @@ public class ResultTableFieldInfo extends ResultFieldInfo {
 
     private final int storey;
 
-    private final Class entityType;
+    private final Class type;
 
-    public ResultTableFieldInfo(Class entityType, int storey, String tablePrefix, TableInfo tableInfo, TableFieldInfo tableFieldInfo, Field field) {
-        this(true, entityType, storey, tablePrefix, tableInfo, tableFieldInfo, field);
-
+    public ResultTableFieldInfo(Class type, int storey, String tablePrefix, TableInfo tableInfo, TableFieldInfo tableFieldInfo, Field field) {
+        this(true, type, storey, tablePrefix, tableInfo, tableFieldInfo, field);
     }
 
-    public ResultTableFieldInfo(boolean resultMapping, Class entityType, int storey, String tablePrefix, TableInfo tableInfo, TableFieldInfo tableFieldInfo, Field field) {
-        super(resultMapping, field, tablePrefix + tableFieldInfo.getColumnName(), getTypeHandler(field, tableFieldInfo), tableFieldInfo.getTableFieldAnnotation().jdbcType());
-        this.entityType = entityType;
+    public ResultTableFieldInfo(boolean resultMapping, Class type, int storey, String tablePrefix, TableInfo tableInfo, TableFieldInfo tableFieldInfo, Field field) {
+        super(resultMapping, type, field, tablePrefix + tableFieldInfo.getColumnName(), getTypeHandler(field, tableFieldInfo), tableFieldInfo.getTableFieldAnnotation().jdbcType());
+        this.type = type;
         this.tableInfo = tableInfo;
         this.tableFieldInfo = tableFieldInfo;
         this.storey = storey;
@@ -41,8 +40,8 @@ public class ResultTableFieldInfo extends ResultFieldInfo {
         return storey;
     }
 
-    public Class getEntityType() {
-        return entityType;
+    public Class getType() {
+        return type;
     }
 
     public TableFieldInfo getTableFieldInfo() {

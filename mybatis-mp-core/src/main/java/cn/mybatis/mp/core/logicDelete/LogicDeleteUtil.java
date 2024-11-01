@@ -61,7 +61,7 @@ public final class LogicDeleteUtil {
     public static Object getLogicAfterValue(TableFieldInfo logicDeleteFieldInfo) {
         Object value;
         LogicDelete logicDelete = logicDeleteFieldInfo.getLogicDeleteAnnotation();
-        Class type = logicDeleteFieldInfo.getField().getType();
+        Class type = logicDeleteFieldInfo.getFieldInfo().getTypeClass();
         value = MybatisMpConfig.getDefaultValue(type, logicDelete.afterValue());
         if (value == null) {
             throw new RuntimeException("Unable to obtain deleted value，please use MybatisMpConfig.setDefaultValue(\"" + logicDelete.afterValue() + "\") to resolve it");
@@ -82,7 +82,7 @@ public final class LogicDeleteUtil {
             throw new RuntimeException("the attribute: " + deleteTimeFieldName + " in @LogicDelete is not found in class: " + tableInfo.getType().getName());
         }
 
-        Class type = deleteTimeField.getField().getType();
+        Class type = deleteTimeField.getFieldInfo().getTypeClass();
         if (type == LocalDateTime.class) {
             return LocalDateTime.now();
         } else if (type == Date.class) {

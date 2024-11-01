@@ -88,7 +88,7 @@ public class ResultInfo {
             if (field.isAnnotationPresent(ResultField.class)) {
                 //普通字段
                 ResultField resultField = field.getAnnotation(ResultField.class);
-                parseResult.resultFieldInfos.add(new ResultFieldInfo(field, resultField));
+                parseResult.resultFieldInfos.add(new ResultFieldInfo(clazz, field, resultField));
                 continue;
             }
 
@@ -113,7 +113,7 @@ public class ResultInfo {
             if (field.isAnnotationPresent(NestedResultEntity.class)) {
                 //内嵌类字段
                 NestedResultEntity nestedResultEntity = field.getAnnotation(NestedResultEntity.class);
-                NestedResultInfo nestedResultInfo = new NestedResultInfo(field, nestedResultEntity, new ArrayList<>(), new ArrayList<>());
+                NestedResultInfo nestedResultInfo = new NestedResultInfo(clazz, field, nestedResultEntity, new ArrayList<>(), new ArrayList<>());
 
                 parseResult.nestedResultInfos.add(nestedResultInfo);
 
@@ -172,7 +172,7 @@ public class ResultInfo {
             //获取前缀
             String tablePrefix = getTablePrefix(parseResult.tablePrefixes, entity, storey);
             //表字段
-            parseResult.resultFieldInfos.add(new ResultTableFieldInfo(entity, storey, tablePrefix, tableInfo, tableFieldInfo, field));
+            parseResult.resultFieldInfos.add(new ResultTableFieldInfo(clazz, storey, tablePrefix, tableInfo, tableFieldInfo, field));
         }
     }
 
@@ -190,7 +190,7 @@ public class ResultInfo {
         //添加前缀
         tableCount = createPrefix(nestedResultEntity.target(), nestedResultEntity.storey(), parseResult.tablePrefixes, tableCount);
 
-        Class targetType = nestedResultInfo.getField().getType();
+        Class targetType = nestedResultInfo.getFieldInfo().getTypeClass();
         //假如是集合类型
         if (Collection.class.isAssignableFrom(targetType)) {
             List<Class<?>> types = GenericUtil.getGeneric(nestedResultInfo.getField().getGenericType());
@@ -217,13 +217,14 @@ public class ResultInfo {
             if (field.isAnnotationPresent(ResultField.class)) {
                 //普通字段
                 ResultField resultField = field.getAnnotation(ResultField.class);
-                nestedResultInfo.getResultFieldInfos().add(new ResultFieldInfo(field, resultField));
+                nestedResultInfo.getResultFieldInfos().add(new ResultFieldInfo(targetType, field, resultField));
                 continue;
             }
 
             if (field.isAnnotationPresent(Fetch.class)) {
                 //Fetch
-                Class fetchType = Collection.class.isAssignableFrom(sourceField.getType()) ? GenericUtil.getGeneric(sourceField.getGenericType()).get(0) : sourceField.getType();
+                FieldInfo fieldInfo = new FieldInfo(targetType, sourceField);
+                Class fetchType = fieldInfo.getFinalClass();
 
                 tableCount = parseFetch(parseResult, nestedResultInfo.getResultFieldInfos(), fetchType, field, tableCount);
                 continue;
@@ -259,7 +260,7 @@ public class ResultInfo {
                 String tablePrefix = getTablePrefix(parseResult.tablePrefixes, entity, storey);
 
                 //表字段
-                nestedResultInfo.getResultFieldInfos().add(new ResultTableFieldInfo(entity, storey, tablePrefix, tableInfo, tableFieldInfo, field));
+                nestedResultInfo.getResultFieldInfos().add(new ResultTableFieldInfo(targetType, storey, tablePrefix, tableInfo, tableFieldInfo, field));
                 continue;
             }
 
@@ -268,7 +269,7 @@ public class ResultInfo {
                 //内嵌类字段
                 NestedResultEntity newNestedResultEntity = field.getAnnotation(NestedResultEntity.class);
 
-                NestedResultInfo newNestedResultInfo = new NestedResultInfo(field, newNestedResultEntity, new ArrayList<>(), new ArrayList<>());
+                NestedResultInfo newNestedResultInfo = new NestedResultInfo(targetType, field, newNestedResultEntity, new ArrayList<>(), new ArrayList<>());
                 nestedResultInfo.getNestedResultInfos().add(newNestedResultInfo);
 
                 tableCount = parseNestedResultEntity(parseResult, newNestedResultInfo, field, newNestedResultEntity, tableCount);
@@ -295,7 +296,7 @@ public class ResultInfo {
             String tablePrefix = getTablePrefix(parseResult.tablePrefixes, nestedResultEntity.target(), nestedResultEntity.storey());
 
             //表字段
-            nestedResultInfo.getResultFieldInfos().add(new ResultTableFieldInfo(nestedResultEntity.target(), nestedResultEntity.storey(), tablePrefix, tableInfo, tableFieldInfo, field));
+            nestedResultInfo.getResultFieldInfos().add(new ResultTableFieldInfo(targetType, nestedResultEntity.storey(), tablePrefix, tableInfo, tableFieldInfo, field));
         }
 
         return tableCount;
@@ -407,7 +408,7 @@ public class ResultInfo {
             //获取前缀
             String tablePrefix = getTablePrefix(parseResult.tablePrefixes, fetch.source(), fetch.storey());
 
-            resultFieldInfos.add(new ResultTableFieldInfo(false, fetch.source(), fetch.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
+            resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, fetch.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
             valueColumn = tablePrefix + fetchFieldInfo.getColumnName();
 
         }
@@ -433,7 +434,9 @@ public class ResultInfo {
 
         String targetMatchColumn = fetchTargetFieldInfo.getColumnName();
 
-        Class returnType = Collection.class.isAssignableFrom(field.getType()) ? GenericUtil.getGeneric(field.getGenericType()).get(0) : field.getType();
+        FieldInfo fieldInfo = new FieldInfo(clazz, field);
+
+        Class returnType = fieldInfo.getFinalClass();
 
         Field targetMatchField = null;
         if (returnType.isAnnotationPresent(ResultEntity.class)) {
@@ -459,7 +462,7 @@ public class ResultInfo {
             }
         }
 
-        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(field, fetch, returnType, valueColumn, valueTypeHandler, targetMatchField, targetMatchColumn, targetSelectColumn, orderBy));
+        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(clazz, field, fetch, returnType, valueColumn, valueTypeHandler, targetMatchField, targetMatchColumn, targetSelectColumn, orderBy));
         return tableCount;
     }
 
@@ -493,13 +496,13 @@ public class ResultInfo {
             //获取前缀
             String tablePrefix = getTablePrefix(parseResult.tablePrefixes, putValue.source(), putValue.storey());
 
-            resultFieldInfos.add(new ResultTableFieldInfo(false, putValue.source(), putValue.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
+            resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, putValue.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
 
             valuesColumn[i] = tablePrefix + fetchFieldInfo.getColumnName();
             valuesTypeHandler[i] = fetchFieldInfo.getTypeHandler();
         }
 
-        parseResult.putValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutValueInfo(field, putValue, valuesColumn, valuesTypeHandler, putValue.factory()));
+        parseResult.putValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutValueInfo(clazz, field, putValue, valuesColumn, valuesTypeHandler, putValue.factory()));
         return tableCount;
     }
 
@@ -533,7 +536,7 @@ public class ResultInfo {
         //获取前缀
         String tablePrefix = getTablePrefix(parseResult.tablePrefixes, putEnumValue.source(), putEnumValue.storey());
 
-        resultFieldInfos.add(new ResultTableFieldInfo(false, putEnumValue.source(), putEnumValue.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
+        resultFieldInfos.add(new ResultTableFieldInfo(false, clazz, putEnumValue.storey(), tablePrefix, fetchTableInfo, fetchFieldInfo, field));
 
         String valueColumn = tablePrefix + fetchFieldInfo.getColumnName();
         TypeHandler<?> valueTypeHandler = fetchFieldInfo.getTypeHandler();

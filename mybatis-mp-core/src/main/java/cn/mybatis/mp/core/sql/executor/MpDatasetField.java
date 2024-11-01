@@ -1,5 +1,6 @@
 package cn.mybatis.mp.core.sql.executor;
 
+import cn.mybatis.mp.core.db.reflect.FieldInfo;
 import cn.mybatis.mp.core.mybatis.mapper.context.MybatisLikeQueryParameter;
 import cn.mybatis.mp.core.mybatis.mapper.context.MybatisParameter;
 import cn.mybatis.mp.core.mybatis.typeHandler.LikeQuerySupport;
@@ -14,15 +15,15 @@ import java.util.Objects;
 
 public class MpDatasetField extends DatasetField {
 
-    private final Class<?> type;
+    private final FieldInfo fieldInfo;
 
     private final TypeHandler<?> typeHandler;
 
     private final JdbcType jdbcType;
 
-    public MpDatasetField(IDataset dataset, String name, Class<?> type, TypeHandler<?> typeHandler, JdbcType jdbcType) {
+    public MpDatasetField(IDataset dataset, String name, FieldInfo fieldInfo, TypeHandler<?> typeHandler, JdbcType jdbcType) {
         super(dataset, name);
-        this.type = type;
+        this.fieldInfo = fieldInfo;
         this.typeHandler = typeHandler;
         this.jdbcType = jdbcType;
     }
@@ -32,7 +33,7 @@ public class MpDatasetField extends DatasetField {
         if (Objects.isNull(param) || param instanceof Cmd) {
             return param;
         }
-        if (!this.type.isAssignableFrom(param.getClass())) {
+        if (!this.fieldInfo.getTypeClass().isAssignableFrom(param.getClass())) {
             return param;
         }
         if (Objects.isNull(this.typeHandler)) {
@@ -46,7 +47,7 @@ public class MpDatasetField extends DatasetField {
         if (Objects.isNull(param) || param instanceof Cmd) {
             return param;
         }
-        if (!this.type.isAssignableFrom(param.getClass())) {
+        if (!this.fieldInfo.getTypeClass().isAssignableFrom(param.getClass())) {
             return param;
         }
         if (Objects.isNull(this.typeHandler)) {

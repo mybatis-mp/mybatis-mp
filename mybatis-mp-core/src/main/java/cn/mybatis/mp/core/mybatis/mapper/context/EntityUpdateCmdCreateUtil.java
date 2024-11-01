@@ -72,7 +72,7 @@ public class EntityUpdateCmdCreateUtil {
 
             if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
                 //设置默认值
-                value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getField().getType(), tableFieldInfo.getTableFieldAnnotation().updateDefaultValue());
+                value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getTypeClass(), tableFieldInfo.getTableFieldAnnotation().updateDefaultValue());
                 //默认值回写
                 TableInfoUtil.setValue(tableFieldInfo, t, value);
             }

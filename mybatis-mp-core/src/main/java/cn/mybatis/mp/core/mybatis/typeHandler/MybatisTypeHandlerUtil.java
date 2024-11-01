@@ -1,12 +1,12 @@
 package cn.mybatis.mp.core.mybatis.typeHandler;
 
+import cn.mybatis.mp.core.db.reflect.FieldInfo;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
@@ -16,14 +16,14 @@ public final class MybatisTypeHandlerUtil {
 
     private final static Map<Class<? extends TypeHandler<?>>, Map<Type, Map<Class<?>, TypeHandler<?>>>> GENERIC_TYPE_HANDLERS = new ConcurrentHashMap();
 
-    public static TypeHandler<?> createTypeHandler(Field field, Class<? extends TypeHandler<?>> typeHandlerClass) {
+    public static TypeHandler<?> createTypeHandler(FieldInfo fieldInfo, Class<? extends TypeHandler<?>> typeHandlerClass) {
         if (typeHandlerClass == UnknownTypeHandler.class) {
             return null;
         }
         ReflectiveOperationException exception;
         try {
             Constructor constructor = typeHandlerClass.getConstructor(Class.class, Type.class);
-            return (TypeHandler<?>) constructor.newInstance(field.getType(), field.getGenericType());
+            return (TypeHandler<?>) constructor.newInstance(fieldInfo.getTypeClass(), fieldInfo.getField().getGenericType());
         } catch (ReflectiveOperationException e) {
             //exception = e;
         }
@@ -31,7 +31,7 @@ public final class MybatisTypeHandlerUtil {
 
         try {
             Constructor constructor = typeHandlerClass.getConstructor(Class.class);
-            return (TypeHandler<?>) constructor.newInstance(field.getType());
+            return (TypeHandler<?>) constructor.newInstance(fieldInfo.getTypeClass());
         } catch (ReflectiveOperationException e) {
             //exception = e;
         }
@@ -57,9 +57,14 @@ public final class MybatisTypeHandlerUtil {
         return typeHandler;
     }
 
-    private static TypeHandler<?> getTypeHandler(Configuration cfg, Class<?> type, Class<? extends TypeHandler<?>> typeHandlerClass, JdbcType jdbcType) {
+    public static TypeHandler<?> getTypeHandler(Configuration cfg, FieldInfo fieldInfo, Class<? extends TypeHandler<?>> typeHandlerClass, JdbcType jdbcType) {
+        //假如是泛型TypeHandler
+        if (GenericTypeHandler.class.isAssignableFrom(typeHandlerClass)) {
+            return getGenericTypeHandler(typeHandlerClass, fieldInfo.getTypeClass(), fieldInfo.getField().getGenericType());
+        }
+
         if (typeHandlerClass == UnknownTypeHandler.class) {
-            TypeHandler typeHandler = cfg.getTypeHandlerRegistry().getTypeHandler(type, jdbcType);
+            TypeHandler typeHandler = cfg.getTypeHandlerRegistry().getTypeHandler(fieldInfo.getTypeClass(), jdbcType);
             if (Objects.nonNull(typeHandler)) {
                 return typeHandler;
             }
@@ -68,7 +73,7 @@ public final class MybatisTypeHandlerUtil {
         if (Objects.nonNull(typeHandler)) {
             return typeHandler;
         }
-        typeHandler = cfg.getTypeHandlerRegistry().getInstance(type, typeHandlerClass);
+        typeHandler = cfg.getTypeHandlerRegistry().getInstance(fieldInfo.getTypeClass(), typeHandlerClass);
         return typeHandler;
     }
 
@@ -90,12 +95,4 @@ public final class MybatisTypeHandlerUtil {
     }
 
 
-    public static TypeHandler<?> getTypeHandler(Configuration cfg, Field field, Class<? extends TypeHandler<?>> typeHandlerClass, JdbcType jdbcType) {
-        //假如是泛型TypeHandler
-        if (GenericTypeHandler.class.isAssignableFrom(typeHandlerClass)) {
-            return getGenericTypeHandler(typeHandlerClass, field.getType(), field.getGenericType());
-        }
-        //不再封装处理 走 mybatis 自带的
-        return getTypeHandler(cfg, field.getType(), typeHandlerClass, jdbcType);
-    }
 }

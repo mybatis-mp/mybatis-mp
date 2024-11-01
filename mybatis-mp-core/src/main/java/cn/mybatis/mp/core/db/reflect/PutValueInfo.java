@@ -13,6 +13,8 @@ public class PutValueInfo {
 
     private final Field field;
 
+    private final FieldInfo fieldInfo;
+
     private final PutValue annotation;
 
     private final String[] valuesColumn;
@@ -25,8 +27,9 @@ public class PutValueInfo {
 
     private final Object defaultValue;
 
-    public PutValueInfo(Field field, PutValue annotation, String[] valuesColumn, TypeHandler<?>[] valuesTypeHandler, Class<?> factory) {
+    public PutValueInfo(Class clazz, Field field, PutValue annotation, String[] valuesColumn, TypeHandler<?>[] valuesTypeHandler, Class<?> factory) {
         this.field = field;
+        this.fieldInfo = new FieldInfo(clazz, field);
         this.annotation = annotation;
         this.valuesColumn = valuesColumn;
         this.valuesTypeHandler = valuesTypeHandler;
@@ -34,7 +37,7 @@ public class PutValueInfo {
         ;
         this.factory = factory;
         if (!annotation.defaultValue().isEmpty()) {
-            this.defaultValue = TypeConvertUtil.convert(annotation.defaultValue(), field.getType());
+            this.defaultValue = TypeConvertUtil.convert(annotation.defaultValue(), this.fieldInfo.getTypeClass());
         } else {
             this.defaultValue = null;
         }

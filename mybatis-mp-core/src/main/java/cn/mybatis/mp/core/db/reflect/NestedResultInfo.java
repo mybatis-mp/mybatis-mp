@@ -14,6 +14,8 @@ public class NestedResultInfo {
 
 
     private final Field field;
+
+    private final FieldInfo fieldInfo;
     /**
      * 目标实体类
      */
@@ -27,8 +29,9 @@ public class NestedResultInfo {
      */
     private final List<ResultFieldInfo> resultFieldInfos;
 
-    public NestedResultInfo(Field field, NestedResultEntity nestedResultEntity, List<ResultFieldInfo> resultFieldInfos, List<NestedResultInfo> nestedResultInfos) {
+    public NestedResultInfo(Class clazz, Field field, NestedResultEntity nestedResultEntity, List<ResultFieldInfo> resultFieldInfos, List<NestedResultInfo> nestedResultInfos) {
         this.field = field;
+        this.fieldInfo = new FieldInfo(clazz, field);
         this.targetEntityType = nestedResultEntity.target();
         this.storey = nestedResultEntity.storey();
         this.resultFieldInfos = resultFieldInfos;
@@ -53,5 +56,9 @@ public class NestedResultInfo {
 
     public List<NestedResultInfo> getNestedResultInfos() {
         return nestedResultInfos;
+    }
+
+    public FieldInfo getFieldInfo() {
+        return fieldInfo;
     }
 }

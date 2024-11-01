@@ -108,7 +108,7 @@ public class TableIdGeneratorWrapper {
             //序列
             case SQL: {
                 SqlSource sqlSource = new StaticSqlSource(ms.getConfiguration(), tableId.sql());
-                ResultMap selectKeyResultMap = new ResultMap.Builder(ms.getConfiguration(), selectKeyId, tableInfo.getIdFieldInfo().getField().getType(),
+                ResultMap selectKeyResultMap = new ResultMap.Builder(ms.getConfiguration(), selectKeyId, tableInfo.getIdFieldInfo().getFieldInfo().getTypeClass(),
                         Collections.emptyList(), false).build();
                 MappedStatement selectKeyMappedStatement = new MappedStatement.Builder(ms.getConfiguration(), selectKeyId, sqlSource, SqlCommandType.SELECT)
                         .keyProperty("id")

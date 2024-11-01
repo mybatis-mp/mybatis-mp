@@ -19,6 +19,11 @@ public class TableFieldInfo {
     private final Field field;
 
     /**
+     * 字段类型信息
+     */
+    private final FieldInfo fieldInfo;
+
+    /**
      * 列名
      */
     private final String columnName;
@@ -53,8 +58,9 @@ public class TableFieldInfo {
 
     private final TypeHandler<?> typeHandler;
 
-    public TableFieldInfo(Field field) {
+    public TableFieldInfo(Class clazz, Field field) {
         this.field = field;
+        this.fieldInfo = new FieldInfo(clazz, field);
         this.tableFieldAnnotation = TableInfoUtil.getTableFieldAnnotation(field);
         this.columnName = TableInfoUtil.getFieldColumnName(field);
         this.readFieldInvoker = new GetFieldInvoker(field);
@@ -63,12 +69,12 @@ public class TableFieldInfo {
         this.tenantId = field.isAnnotationPresent(TenantId.class);
         this.logicDelete = field.isAnnotationPresent(LogicDelete.class);
         this.logicDeleteAnnotation = this.logicDelete ? field.getAnnotation(LogicDelete.class) : null;
-        this.logicDeleteInitValue = this.logicDelete ? TypeConvertUtil.convert(this.logicDeleteAnnotation.beforeValue(), field.getType()) : null;
+        this.logicDeleteInitValue = this.logicDelete ? TypeConvertUtil.convert(this.logicDeleteAnnotation.beforeValue(), fieldInfo.getTypeClass()) : null;
         if (this.logicDelete) {
             LogicDeleteUtil.getLogicAfterValue(this);
         }
         this.writeFieldInvoker = new SetFieldInvoker(field);
-        typeHandler = MybatisTypeHandlerUtil.createTypeHandler(field, this.tableFieldAnnotation.typeHandler());
+        typeHandler = MybatisTypeHandlerUtil.createTypeHandler(this.fieldInfo, this.tableFieldAnnotation.typeHandler());
     }
 
     public Object getValue(Object object) {
@@ -125,5 +131,9 @@ public class TableFieldInfo {
 
     public TypeHandler<?> getTypeHandler() {
         return typeHandler;
+    }
+
+    public FieldInfo getFieldInfo() {
+        return fieldInfo;
     }
 }

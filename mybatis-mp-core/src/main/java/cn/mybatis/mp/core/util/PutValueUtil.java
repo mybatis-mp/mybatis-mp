@@ -32,7 +32,7 @@ public final class PutValueUtil {
                     return putValueInfo.getDefaultValue();
                 }
             }
-            return TypeConvertUtil.convert(value, putValueInfo.getField().getType());
+            return TypeConvertUtil.convert(value, putValueInfo.getFieldInfo().getTypeClass());
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {

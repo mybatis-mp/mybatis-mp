@@ -1,7 +1,9 @@
 package cn.mybatis.mp.core.mybatis.configuration;
 
+import cn.mybatis.mp.core.db.reflect.FieldInfo;
 import cn.mybatis.mp.core.mybatis.typeHandler.GenericTypeHandler;
 import cn.mybatis.mp.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
+import cn.mybatis.mp.core.util.FieldUtil;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
@@ -13,6 +15,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ResultMapWrapper {
@@ -59,17 +62,23 @@ public class ResultMapWrapper {
             ResultMapping newItem = item;
             TypeHandler<?> typeHandler = item.getTypeHandler();
             if (typeHandler instanceof GenericTypeHandler) {
-                Field field;
-                try {
-                    field = resultMap.getType().getDeclaredField(item.getProperty());
-                } catch (NoSuchFieldException e) {
-                    throw new RuntimeException(e);
+
+
+                Optional<Field> fieldOptional = FieldUtil.getResultMappingFields(resultMap.getType())
+                        .stream().filter(i -> i.getName().equals(item.getProperty()))
+                        .findFirst();
+
+                if (!fieldOptional.isPresent()) {
+                    throw new RuntimeException("class " + resultMap.getType() + " can't found property " + item.getProperty());
                 }
 
+
+                FieldInfo fieldInfo = new FieldInfo(resultMap.getType(), fieldOptional.get());
+
                 //有泛型 需要替换mybatis-mp的实例
-                typeHandler = MybatisTypeHandlerUtil.getTypeHandler(configuration, field, (Class<? extends TypeHandler<?>>) typeHandler.getClass(), item.getJdbcType());
+                typeHandler = MybatisTypeHandlerUtil.getTypeHandler(configuration, fieldInfo, (Class<? extends TypeHandler<?>>) typeHandler.getClass(), item.getJdbcType());
                 newItem = new ResultMapping.Builder(configuration, item.getProperty(), item.getColumn(), typeHandler)
-                        .javaType(field.getType())
+                        .javaType(fieldInfo.getTypeClass())
                         .jdbcType(item.getJdbcType())
                         .nestedResultMapId(item.getNestedResultMapId())
                         .nestedQueryId(item.getNestedQueryId())

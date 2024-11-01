@@ -85,6 +85,6 @@ public class MybatisCmdFactory extends CmdFactory {
         } else if (dataset instanceof Table) {
             return (DATASET_FIELD) new TableField((Table) dataset, tableFieldInfo.getColumnName());
         }
-        return (DATASET_FIELD) new MpDatasetField(dataset, tableFieldInfo.getColumnName(), tableFieldInfo.getField().getType(), tableFieldInfo.getTypeHandler(), tableFieldInfo.getTableFieldAnnotation().jdbcType());
+        return (DATASET_FIELD) new MpDatasetField(dataset, tableFieldInfo.getColumnName(), tableFieldInfo.getFieldInfo(), tableFieldInfo.getTypeHandler(), tableFieldInfo.getTableFieldAnnotation().jdbcType());
     }
 }
