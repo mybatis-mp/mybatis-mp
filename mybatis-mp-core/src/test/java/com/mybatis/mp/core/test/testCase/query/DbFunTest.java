@@ -23,7 +23,7 @@ public class DbFunTest extends BaseTest {
                     .select(SysUser::getId)
                     .from(SysUser.class)
                     .and(SysUser::getId, c -> c.concat("x1").eq("2x1"))
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
             assertEquals(id, 2);
@@ -45,7 +45,7 @@ public class DbFunTest extends BaseTest {
                     .orderBy(GetterFields.of(SysUser::getId), c -> c[0])
                     .groupBy(GetterFields.of(SysUser::getId), c -> c[0])
                     .havingAnd(GetterFields.of(SysUser::getId, SysUser::getUserName), c -> c[0].count().gt(0))
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .count();
 
             assertEquals(id, 1);
@@ -62,7 +62,7 @@ public class DbFunTest extends BaseTest {
                     .orderBy(GetterFields.of(SysUser::getId), cs -> cs[0])
                     .groupBy(GetterFields.of(SysUser::getId), cs -> cs[0])
                     .havingAnd(GetterFields.of(SysUser::getId, SysUser::getUserName), cs -> cs[0].count().gt(0))
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .count();
 
             assertEquals(id, 1);
@@ -80,7 +80,7 @@ public class DbFunTest extends BaseTest {
                     .select(SysUser::getId, c -> Methods.if_(c.eq(1), 2, 3))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
             assertEquals(id, 2);
@@ -95,7 +95,7 @@ public class DbFunTest extends BaseTest {
                     .select(SysUser::getUserName, c -> c.instr("m"))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
             assertEquals(index, 3);

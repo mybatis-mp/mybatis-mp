@@ -186,7 +186,7 @@ public class QueryTest extends BaseTest {
                     .from(SysUser.class)
                     .groupBy(SysUser::getRole_id)
                     .orderBy(SysUser::getRole_id)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .list();
 
             assertEquals(counts.get(0), Integer.valueOf(1), "groupBy");
@@ -239,7 +239,7 @@ public class QueryTest extends BaseTest {
                     .from(SysUser.class)
                     .groupBy(SysUser::getRole_id)
                     .having(SysUser::getRole_id, c -> c.gt(0))
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
             assertEquals(count, Integer.valueOf(2), "having");
@@ -424,7 +424,7 @@ public class QueryTest extends BaseTest {
                     .select(SysUser::getRole_id)
                     .from(SysUser.class)
                     .orderBy(SysUser::getRole_id)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .list();
             assertEquals(roleIds.size(), 2, "selectDistinct");
             assertEquals(roleIds.get(0), Integer.valueOf(0), "selectDistinct");
@@ -551,7 +551,7 @@ public class QueryTest extends BaseTest {
                     .orderBy(SysUser::getId)
                     .limit(1)
 
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .list();
 
             assertEquals(2, (int) list.get(0), "selectSubQueryTest");

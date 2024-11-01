@@ -52,7 +52,7 @@ public interface BaseMapper extends CommonMapper {
             });
         });
 
-        query.setReturnType(Integer.TYPE);
+        query.setReturnType(Integer.class);
         Integer obj = (Integer) this.get(query);
         return Objects.nonNull(obj) && obj >= 1;
     }
@@ -176,7 +176,7 @@ public interface BaseMapper extends CommonMapper {
      * @return 返回count 数
      */
     default Integer count(BaseQuery<? extends BaseQuery, ?> query) {
-        query.setReturnType(Integer.TYPE);
+        query.setReturnType(Integer.class);
         return this.$count(new SQLCmdCountQueryContext(query));
     }
 
@@ -192,7 +192,7 @@ public interface BaseMapper extends CommonMapper {
         if (pager.isExecuteCount()) {
             Class returnType = query.getReturnType();
             TablePrefixUtil.prefixMapping(query, returnType);
-            query.setReturnType(Integer.TYPE);
+            query.setReturnType(Integer.class);
             Integer count = this.$countFromQuery(new SQLCmdCountFromQueryContext(query));
             query.setReturnType(returnType);
 
