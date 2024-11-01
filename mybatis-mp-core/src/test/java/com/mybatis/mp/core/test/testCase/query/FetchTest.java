@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FetchTest extends BaseTest {
 
     @Test
-    public void returnTypeEach() {
+    public void onRowEvent() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             LongAdder longAdder = new LongAdder();
@@ -44,7 +44,7 @@ public class FetchTest extends BaseTest {
     }
 
     @Test
-    public void returnTypeVoEach() {
+    public void onRowEventVO() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             LongAdder longAdder = new LongAdder();
