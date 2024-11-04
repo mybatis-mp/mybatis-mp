@@ -32,16 +32,16 @@ public interface IConditionChain<SELF extends IConditionChain,
     @Override
     default SELF andNested(Consumer<SELF> consumer) {
         SELF newSelf = newInstance();
-        this.and(newSelf, true);
         consumer.accept(newSelf);
+        this.and(newSelf, newSelf.hasContent());
         return (SELF) this;
     }
 
     @Override
     default SELF orNested(Consumer<SELF> consumer) {
         SELF newSelf = newInstance();
-        this.or(newSelf, true);
         consumer.accept(newSelf);
+        this.or(newSelf, newSelf.hasContent());
         return (SELF) this;
     }
 }
