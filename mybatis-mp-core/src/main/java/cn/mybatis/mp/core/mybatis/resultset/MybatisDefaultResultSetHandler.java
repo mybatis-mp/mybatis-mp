@@ -332,6 +332,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         });
     }
 
+    private boolean isUseMapForResult(FetchInfo fetchInfo){
+        return Objects.isNull(fetchInfo.getEqGetFieldInvoker()) && fetchInfo.getReturnType().getPackage().getName().startsWith("java.lang");
+    }
+
     protected List<Object> fetchData(FetchInfo fetchInfo, List conditionList, boolean single) {
         if (conditionList.isEmpty()) {
             return Collections.emptyList();
@@ -339,7 +343,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         int batchSize = 100;
         List queryValueList = new ArrayList<>(100);
         Query query = Query.create().returnType(fetchInfo.getReturnType());
-        if (!single && Objects.isNull(fetchInfo.getEqGetFieldInvoker()) && fetchInfo.getReturnType().getPackage().getName().startsWith("java.lang")) {
+        if (!single && isUseMapForResult(fetchInfo)) {
             query.setReturnType(Map.class);
         }
 
@@ -397,9 +401,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 fetchInfo.setValue(rowValue, matchValues);
                 return;
             }
-            if (Objects.isNull(fetchInfo.getEqGetFieldInvoker()) && matchValues.get(0) instanceof Map) {
-                matchValues = ((List<Map<String, Object>>) matchValues).stream().map(m -> TypeConvertUtil.convert(m.get(fetchInfo.getTargetSelectColumn()),
-                        fetchInfo.getFieldInfo().getFinalClass())).collect(Collectors.toList());
+            if (isUseMapForResult(fetchInfo) && matchValues.get(0) instanceof Map) {
+                matchValues = ((List<Map<String, Object>>) matchValues)
+                        .stream().map(m -> TypeConvertUtil.convert(m.get(fetchInfo.getTargetSelectColumn()), fetchInfo.getFieldInfo().getFinalClass()))
+                        .collect(Collectors.toList());
             }
             fetchInfo.setValue(rowValue, matchValues);
         } else {
