@@ -17,6 +17,8 @@ public class ModelFieldInfo {
 
     private final Field field;
 
+    private final FieldInfo fieldInfo;
+
     /**
      * 字段读取反射方法
      */
@@ -37,6 +39,7 @@ public class ModelFieldInfo {
             throw new RuntimeException(MessageFormat.format("unable match field {0} in class {1} ,The field {2} can''t found in entity class {3}", field.getName(), model.getName(), entityFieldName, entity.getName()));
         }
         this.field = field;
+        this.fieldInfo = new FieldInfo(model, field);
         this.readFieldInvoker = new GetFieldInvoker(field);
         this.writeFieldInvoker = new SetFieldInvoker(field);
     }
@@ -63,5 +66,9 @@ public class ModelFieldInfo {
 
     public SetFieldInvoker getWriteFieldInvoker() {
         return writeFieldInvoker;
+    }
+
+    public FieldInfo getFieldInfo() {
+        return fieldInfo;
     }
 }

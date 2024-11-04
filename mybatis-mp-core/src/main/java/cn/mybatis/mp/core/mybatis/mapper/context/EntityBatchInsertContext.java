@@ -106,7 +106,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
                         value = TenantUtil.setTenantId(t);
                     } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
                         //设置默认值
-                        value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getField().getType(), tableFieldInfo.getTableFieldAnnotation().defaultValue());
+                        value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getTypeClass(), tableFieldInfo.getTableFieldAnnotation().defaultValue());
 
                         //默认值回写
                         TableInfoUtil.setValue(tableFieldInfo, t, value);

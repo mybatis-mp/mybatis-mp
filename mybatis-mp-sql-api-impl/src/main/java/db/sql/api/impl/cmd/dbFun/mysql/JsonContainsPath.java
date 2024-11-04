@@ -15,18 +15,19 @@ public class JsonContainsPath extends BasicFunction<JsonContainsPath> {
         this(key, true, paths);
     }
 
-    public JsonContainsPath(Cmd key,boolean allMatch, String[] paths) {
+    public JsonContainsPath(Cmd key, boolean allMatch, String[] paths) {
         super(SqlConst.JSON_CONTAINS_PATH, key);
-        this.allMatch=allMatch;
+        this.allMatch = allMatch;
         this.paths = paths;
     }
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);;
+        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
+        ;
         this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
-        sqlBuilder.append(this.allMatch?"'ONE'":"'ALL'");
+        sqlBuilder.append(this.allMatch ? "'ONE'" : "'ALL'");
         for (String path : paths) {
             sqlBuilder.append(SqlConst.DELIMITER);
             sqlBuilder.append(SqlConst.SINGLE_QUOT);

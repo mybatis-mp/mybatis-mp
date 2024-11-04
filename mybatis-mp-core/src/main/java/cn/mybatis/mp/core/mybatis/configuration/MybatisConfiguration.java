@@ -2,6 +2,7 @@ package cn.mybatis.mp.core.mybatis.configuration;
 
 
 import cn.mybatis.mp.core.NotTableClassException;
+import cn.mybatis.mp.core.db.reflect.FieldInfo;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.resultset.MybatisDefaultResultSetHandler;
@@ -25,7 +26,6 @@ import org.apache.ibatis.type.TypeHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -138,12 +138,12 @@ public class MybatisConfiguration extends Configuration {
         return super.getMapper(type, sqlSession);
     }
 
-    public ResultMapping buildResultMapping(boolean id, Field property, String columnName, JdbcType jdbcType, Class<? extends TypeHandler<?>> typeHandlerClass) {
-        ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(this, property.getName())
+    public ResultMapping buildResultMapping(boolean id, FieldInfo fieldInfo, String columnName, JdbcType jdbcType, Class<? extends TypeHandler<?>> typeHandlerClass) {
+        ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(this, fieldInfo.getField().getName())
                 .column(columnName)
-                .javaType(property.getType())
+                .javaType(fieldInfo.getTypeClass())
                 .jdbcType(jdbcType)
-                .typeHandler(MybatisTypeHandlerUtil.getTypeHandler(this, property, typeHandlerClass, jdbcType));
+                .typeHandler(MybatisTypeHandlerUtil.getTypeHandler(this, fieldInfo, typeHandlerClass, jdbcType));
         if (id) {
             resultMappingBuilder.flags(Collections.singletonList(ResultFlag.ID));
         }

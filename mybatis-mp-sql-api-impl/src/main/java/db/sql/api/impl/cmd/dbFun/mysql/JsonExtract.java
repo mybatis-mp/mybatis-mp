@@ -9,14 +9,15 @@ public class JsonExtract extends BasicFunction<JsonExtract> {
 
     private final String[] paths;
 
-    public JsonExtract(Cmd key,String[] paths) {
+    public JsonExtract(Cmd key, String[] paths) {
         super(SqlConst.JSON_EXTRACT, key);
         this.paths = paths;
     }
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);;
+        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
+        ;
         this.key.sql(module, this, context, sqlBuilder);
         for (String path : paths) {
             sqlBuilder.append(SqlConst.DELIMITER);

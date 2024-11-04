@@ -40,7 +40,7 @@ public class FunTest extends BaseTest {
                     .from(SysUser.class)
                     .like(LikeMode.RIGHT, SysUser::getUserName, "test")
                     .and()
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .count();
 
             assertEquals(Integer.valueOf(2), count, "count");
@@ -55,7 +55,7 @@ public class FunTest extends BaseTest {
                     .select(SysUser::getId, c -> c.min())
                     .from(SysUser.class)
                     .like(LikeMode.RIGHT, SysUser::getUserName, "test")
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
             assertEquals(Integer.valueOf(2), count, "min");
@@ -70,7 +70,7 @@ public class FunTest extends BaseTest {
                     .select(SysUser::getId, c -> c.max())
                     .from(SysUser.class)
                     .like(LikeMode.RIGHT, SysUser::getUserName, "test")
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
             assertEquals(Integer.valueOf(3), count, "max");

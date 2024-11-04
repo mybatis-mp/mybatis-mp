@@ -54,10 +54,10 @@ public final class ResultMapUtils {
         }
     }
 
-    private static List<ResultMapping> createResultMapping(MybatisConfiguration configuration, boolean isTableId, Field field, String columnName, JdbcType jdbcType, Class<? extends TypeHandler<?>> typeHandler) {
+    private static List<ResultMapping> createResultMapping(MybatisConfiguration configuration, boolean isTableId, FieldInfo fieldInfo, String columnName, JdbcType jdbcType, Class<? extends TypeHandler<?>> typeHandler) {
         return Arrays.asList(
-                configuration.buildResultMapping(isTableId, field, columnName, jdbcType, typeHandler),
-                configuration.buildResultMapping(isTableId, field, SqlUtil.getAsName(field), jdbcType, typeHandler)
+                configuration.buildResultMapping(isTableId, fieldInfo, columnName, jdbcType, typeHandler),
+                configuration.buildResultMapping(isTableId, fieldInfo, SqlUtil.getAsName(fieldInfo.getClazz(), fieldInfo.getField()), jdbcType, typeHandler)
         );
     }
 
@@ -65,7 +65,7 @@ public final class ResultMapUtils {
         TableInfo tableInfo = Tables.get(entity);
         List<ResultMapping> resultMappings = new ArrayList<>(tableInfo.getTableFieldInfos().size() * 2);
         for (TableFieldInfo tableFieldInfo : tableInfo.getTableFieldInfos()) {
-            resultMappings.addAll(createResultMapping(configuration, tableFieldInfo.isTableId(), tableFieldInfo.getField(), tableFieldInfo.getColumnName(), tableFieldInfo.getTableFieldAnnotation().jdbcType(), tableFieldInfo.getTableFieldAnnotation().typeHandler()));
+            resultMappings.addAll(createResultMapping(configuration, tableFieldInfo.isTableId(), tableFieldInfo.getFieldInfo(), tableFieldInfo.getColumnName(), tableFieldInfo.getTableFieldAnnotation().jdbcType(), tableFieldInfo.getTableFieldAnnotation().typeHandler()));
         }
         return Collections.unmodifiableList(resultMappings);
     }
@@ -82,9 +82,10 @@ public final class ResultMapUtils {
 
         List<ResultMapping> resultMappings = new ArrayList<>(list.size() * 4);
         list.forEach(field -> {
-            resultMappings.add(configuration.buildResultMapping(false, field, field.getName(), JdbcType.UNDEFINED, UnknownTypeHandler.class));
-            resultMappings.add(configuration.buildResultMapping(false, field, PropertyNamer.camelToUnderscore(field.getName()), JdbcType.UNDEFINED, UnknownTypeHandler.class));
-            resultMappings.add(configuration.buildResultMapping(false, field, SqlUtil.getAsName(field), JdbcType.UNDEFINED, UnknownTypeHandler.class));
+            FieldInfo fieldInfo = new FieldInfo(clazz, field);
+            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, field.getName(), JdbcType.UNDEFINED, UnknownTypeHandler.class));
+            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, PropertyNamer.camelToUnderscore(field.getName()), JdbcType.UNDEFINED, UnknownTypeHandler.class));
+            resultMappings.add(configuration.buildResultMapping(false, fieldInfo, SqlUtil.getAsName(clazz, field), JdbcType.UNDEFINED, UnknownTypeHandler.class));
         });
 
         return Collections.unmodifiableList(resultMappings);
@@ -99,7 +100,7 @@ public final class ResultMapUtils {
         resultMappings.addAll(createResultMapping(configuration, resultInfo.getResultFieldInfos()));
 
         //内嵌字段（多个） 构建
-        resultMappings.addAll(createNestedResultMapping(configuration, resultInfo.getNestedResultInfos(), "mp-" + clazz.getSimpleName()));
+        resultMappings.addAll(createNestedResultMapping(configuration, resultInfo.getNestedResultInfos(), "mp-" + clazz.getName()));
         return Collections.unmodifiableList(resultMappings);
     }
 
@@ -137,7 +138,7 @@ public final class ResultMapUtils {
 
         nestedMappings.addAll(createNestedResultMapping(configuration, nestedResultInfo.getNestedResultInfos(), nestedPath));
 
-        Class targetType = nestedResultInfo.getField().getType();
+        Class targetType = nestedResultInfo.getFieldInfo().getTypeClass();
         //假如是集合类型
         if (Collection.class.isAssignableFrom(targetType)) {
             List<Class<?>> types = GenericUtil.getGeneric(nestedResultInfo.getField().getGenericType());
@@ -153,7 +154,7 @@ public final class ResultMapUtils {
 
         //构建内嵌ResultMapping
         return new ResultMapping.Builder(configuration, nestedResultInfo.getField().getName())
-                .javaType(nestedResultInfo.getField().getType())
+                .javaType(nestedResultInfo.getFieldInfo().getTypeClass())
                 .jdbcType(JdbcType.UNDEFINED)
                 .nestedResultMapId(nestedPath).build();
     }
@@ -190,12 +191,12 @@ public final class ResultMapUtils {
     private static List<ResultMapping> createResultMapping(MybatisConfiguration configuration, ResultFieldInfo resultFieldInfo) {
         List<ResultMapping> resultMappingList = new ArrayList<>(5);
 
-        ResultMapping resultMapping = configuration.buildResultMapping(false, resultFieldInfo.getField(), resultFieldInfo.getMappingColumnName(), resultFieldInfo.getJdbcType(), resultFieldInfo.getTypeHandler());
+        ResultMapping resultMapping = configuration.buildResultMapping(false, resultFieldInfo.getFieldInfo(), resultFieldInfo.getMappingColumnName(), resultFieldInfo.getJdbcType(), resultFieldInfo.getTypeHandler());
         resultMappingList.add(resultMapping);
 
-        if (!SqlUtil.isAsName(resultFieldInfo.getField(), resultFieldInfo.getMappingColumnName())) {
-            String asName = SqlUtil.getAsName(resultFieldInfo.getField());
-            resultMapping = configuration.buildResultMapping(false, resultFieldInfo.getField(), asName, resultFieldInfo.getJdbcType(), resultFieldInfo.getTypeHandler());
+        if (!SqlUtil.isAsName(resultFieldInfo.getFieldInfo().getClazz(), resultFieldInfo.getFieldInfo().getField(), resultFieldInfo.getMappingColumnName())) {
+            String asName = SqlUtil.getAsName(resultFieldInfo.getFieldInfo().getClazz(), resultFieldInfo.getFieldInfo().getField());
+            resultMapping = configuration.buildResultMapping(false, resultFieldInfo.getFieldInfo(), asName, resultFieldInfo.getJdbcType(), resultFieldInfo.getTypeHandler());
             resultMappingList.add(resultMapping);
         }
         return resultMappingList;
@@ -209,6 +210,6 @@ public final class ResultMapUtils {
      * @return
      */
     private static List<ResultMapping> createResultMapping(MybatisConfiguration configuration, ResultTableFieldInfo resultTableFieldInfo) {
-        return createResultMapping(configuration, resultTableFieldInfo.getTableFieldInfo().isTableId(), resultTableFieldInfo.getField(), resultTableFieldInfo.getMappingColumnName(), resultTableFieldInfo.getJdbcType(), resultTableFieldInfo.getTypeHandler());
+        return createResultMapping(configuration, resultTableFieldInfo.getTableFieldInfo().isTableId(), resultTableFieldInfo.getFieldInfo(), resultTableFieldInfo.getMappingColumnName(), resultTableFieldInfo.getJdbcType(), resultTableFieldInfo.getTypeHandler());
     }
 }

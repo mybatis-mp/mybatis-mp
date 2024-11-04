@@ -18,6 +18,11 @@ public class ResultFieldInfo {
     private final Field field;
 
     /**
+     * 字段类型信息
+     */
+    private final FieldInfo fieldInfo;
+
+    /**
      * 隐射的列名
      */
     private final String mappingColumnName;
@@ -34,13 +39,14 @@ public class ResultFieldInfo {
      */
     private final JdbcType jdbcType;
 
-    public ResultFieldInfo(Field field, ResultField resultField) {
-        this(true, field, getColumnName(field, resultField), getTypeHandler(field, resultField), resultField.jdbcType());
+    public ResultFieldInfo(Class clazz, Field field, ResultField resultField) {
+        this(true, clazz, field, getColumnName(clazz, field, resultField), getTypeHandler(field, resultField), resultField.jdbcType());
     }
 
-    public ResultFieldInfo(boolean resultMapping, Field field, String mappingColumnName, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType) {
+    public ResultFieldInfo(boolean resultMapping, Class clazz, Field field, String mappingColumnName, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType) {
         this.resultMapping = resultMapping;
         this.field = field;
+        this.fieldInfo = new FieldInfo(clazz, field);
         this.mappingColumnName = mappingColumnName;
         this.typeHandler = typeHandler;
         this.jdbcType = jdbcType;
@@ -54,10 +60,10 @@ public class ResultFieldInfo {
         return resultField.typeHandler();
     }
 
-    static String getColumnName(Field field, ResultField resultField) {
+    static String getColumnName(Class clazz, Field field, ResultField resultField) {
         String name = resultField.value();
         if (name.isEmpty()) {
-            name = SqlUtil.getAsName(field);
+            name = SqlUtil.getAsName(clazz, field);
         }
         return name;
     }
@@ -80,5 +86,9 @@ public class ResultFieldInfo {
 
     public Class<? extends TypeHandler<?>> getTypeHandler() {
         return typeHandler;
+    }
+
+    public FieldInfo getFieldInfo() {
+        return fieldInfo;
     }
 }

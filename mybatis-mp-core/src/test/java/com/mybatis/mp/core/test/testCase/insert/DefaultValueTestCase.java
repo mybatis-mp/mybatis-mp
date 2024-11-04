@@ -25,7 +25,7 @@ public class DefaultValueTestCase extends BaseTest {
 
     @Test
     public void insertAllowNullTest() {
-        if(TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL){
+        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

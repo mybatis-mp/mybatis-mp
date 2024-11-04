@@ -13,14 +13,14 @@ public final class SqlUtil {
         return lambdaFieldInfo.getType().getSimpleName() + AS_SPLIT + lambdaFieldInfo.getName();
     }
 
-    public static String getAsName(Field field) {
-        return field.getDeclaringClass().getSimpleName() + AS_SPLIT + field.getName();
+    public static String getAsName(Class clazz, Field field) {
+        return clazz.getSimpleName() + AS_SPLIT + field.getName();
     }
 
-    public static boolean isAsName(Field field, String name) {
+    public static boolean isAsName(Class clazz, Field field, String name) {
         if (!name.contains(AS_SPLIT)) {
             return false;
         }
-        return getAsName(field).equals(name);
+        return getAsName(clazz, field).equals(name);
     }
 }

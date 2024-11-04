@@ -66,9 +66,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
                         isNeedInsert = true;
                         IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
                         Object id = identifierGenerator.nextId(modelInfo.getType());
-                        if (modelInfo.getIdFieldInfo().getField().getType() == String.class) {
-                            id = id instanceof String ? id : String.valueOf(id);
-                        }
+
                         if (IdUtil.setId(model, modelFieldInfo, id)) {
                             value = id;
                         }
@@ -82,7 +80,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
                 isNeedInsert = true;
 
                 //设置默认值
-                value = MybatisMpConfig.getDefaultValue(modelFieldInfo.getField().getType(), modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue());
+                value = MybatisMpConfig.getDefaultValue(modelFieldInfo.getFieldInfo().getTypeClass(), modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue());
                 //默认值回写
                 ModelInfoUtil.setValue(modelFieldInfo, model, value);
             } else if (modelFieldInfo.getTableFieldInfo().isVersion()) {

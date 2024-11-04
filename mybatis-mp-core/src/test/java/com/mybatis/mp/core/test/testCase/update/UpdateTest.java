@@ -10,7 +10,9 @@ import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.model.SysUserModel;
 import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
+import db.sql.api.Cmd;
 import db.sql.api.DbType;
+import db.sql.api.impl.cmd.basic.TableField;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
@@ -20,6 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -185,7 +188,7 @@ public class UpdateTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser old = sysUserMapper.getById(1);
             UpdateChain.of(sysUserMapper)
-                    .set(SysUser::getRole_id, c -> c.plus(1))
+                    .set(SysUser::getRole_id, (Function<TableField, Cmd>) c -> c.plus(1))
                     .eq(SysUser::getId, 1)
                     .execute();
 
@@ -405,6 +408,7 @@ public class UpdateTest extends BaseTest {
             assertEquals("admin", sysUser.getUserName());
         }
     }
+
     @Test
     public void updateEmpty() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -420,6 +424,23 @@ public class UpdateTest extends BaseTest {
                 assertEquals("", sysUser.getUserName());
             }
 
+        }
+    }
+
+    @Test
+    public void updateJoin() {
+        if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            int cnt = UpdateChain.of(sysUserMapper)
+                    .set(SysUser::getRole_id, SysRole::getId)
+                    .join(SysUser.class, SysRole.class)
+                    .eq(SysUser::getId, 2)
+                    .execute();
+
+            assertEquals(cnt, 1);
         }
     }
 }

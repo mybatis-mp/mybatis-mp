@@ -1,13 +1,17 @@
 package cn.mybatis.mp.core.mybatis.resultset;
 
-import cn.mybatis.mp.core.db.reflect.FetchInfo;
-import cn.mybatis.mp.core.db.reflect.ResultInfos;
+import cn.mybatis.mp.core.db.reflect.*;
 import cn.mybatis.mp.core.mybatis.configuration.FetchObject;
 import cn.mybatis.mp.core.mybatis.configuration.SqlSessionThreadLocalUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdQueryContext;
+import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.Query;
+import cn.mybatis.mp.core.util.CreatedEventUtil;
+import cn.mybatis.mp.core.util.PutEnumValueUtil;
+import cn.mybatis.mp.core.util.PutValueUtil;
 import cn.mybatis.mp.core.util.StringPool;
+import cn.mybatis.mp.db.annotations.CreatedEvent;
 import cn.mybatis.mp.db.annotations.ResultEntity;
 import db.sql.api.impl.cmd.basic.Column;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
@@ -44,27 +48,158 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     private Map<String, Consumer<Where>> fetchFilters;
 
+    private Consumer onRowEvent;
+
+    private Class<?> returnType;
+
+    private Map<Class, List<PutEnumValueInfo>> putEnumValueInfoMap;
+
+    private Map<Class, List<PutValueInfo>> putValueInfoMap;
+
+    private List<CreatedEvent> createdEventList;
+
     public MybatisDefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
         if (mappedStatement.getResultMaps().size() == 1) {
             Class<?> returnType = mappedStatement.getResultMaps().get(0).getType();
             if (returnType.isAnnotationPresent(ResultEntity.class)) {
-                this.fetchInfosMap = ResultInfos.get(returnType).getFetchInfoMap();
+                ResultInfo resultInfo = ResultInfos.get(returnType);
+                this.fetchInfosMap = resultInfo.getFetchInfoMap();
                 if (Objects.nonNull(this.fetchInfosMap) && !this.fetchInfosMap.isEmpty()) {
                     this.needFetchValuesMap = new HashMap<>();
                 }
 
                 if (boundSql.getParameterObject() instanceof SQLCmdQueryContext) {
-                    fetchFilters = ((SQLCmdQueryContext) boundSql.getParameterObject()).getExecution().getFetchFilters();
+                    BaseQuery<?, ?> baseQuery = ((SQLCmdQueryContext) boundSql.getParameterObject()).getExecution();
+                    this.fetchFilters = baseQuery.getFetchFilters();
+                    this.putEnumValueInfoMap = resultInfo.getPutEnumValueInfoMap();
+                    this.putValueInfoMap = resultInfo.getPutValueInfoMap();
+                    this.createdEventList = resultInfo.getCreatedEventList();
                 }
             }
+
+            if (boundSql.getParameterObject() instanceof SQLCmdQueryContext) {
+                BaseQuery<?, ?> baseQuery = ((SQLCmdQueryContext) boundSql.getParameterObject()).getExecution();
+                this.onRowEvent = baseQuery.getOnRowEvent();
+                this.returnType = baseQuery.getReturnType();
+            }
         }
+    }
+
+    private void onRowEvent(Object rowValue) {
+        if (Objects.isNull(onRowEvent)) {
+            return;
+        }
+        if (Objects.isNull(rowValue)) {
+            return;
+        }
+        if (!rowValue.getClass().isAssignableFrom(returnType)) {
+            return;
+        }
+        onRowEvent.accept(rowValue);
+    }
+
+    private void putEnumValue(Object rowValue, ResultSet resultSet) {
+        if (Objects.isNull(putEnumValueInfoMap)) {
+            return;
+        }
+        if (Objects.isNull(rowValue)) {
+            return;
+        }
+
+        List<PutEnumValueInfo> putEnumValueInfos = putEnumValueInfoMap.get(rowValue.getClass());
+        if (Objects.isNull(putEnumValueInfos) || putEnumValueInfos.isEmpty()) {
+            return;
+        }
+        putEnumValueInfos.stream().forEach(item -> {
+            Object codeValue;
+            try {
+                if (Objects.nonNull(item.getValueTypeHandler())) {
+                    codeValue = item.getValueTypeHandler().getResult(resultSet, item.getValueColumn());
+                } else {
+                    codeValue = resultSet.getObject(item.getValueColumn());
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+            Object targetValue = PutEnumValueUtil.getEnumValue(codeValue, item);
+            if (Objects.isNull(targetValue)) {
+                return;
+            }
+            try {
+                item.getWriteFieldInvoker().invoke(rowValue,
+                        new Object[]{targetValue});
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+
+    private void putValue(Object rowValue, ResultSet resultSet) {
+        if (Objects.isNull(putValueInfoMap)) {
+            return;
+        }
+        if (Objects.isNull(rowValue)) {
+            return;
+        }
+
+        List<PutValueInfo> putValueInfos = putValueInfoMap.get(rowValue.getClass());
+        if (Objects.isNull(putValueInfos) || putValueInfos.isEmpty()) {
+            return;
+        }
+        putValueInfos.stream().forEach(item -> {
+            Object[] values = new Object[item.getValuesColumn().length];
+            for (int i = 0; i < item.getValuesColumn().length; i++) {
+                try {
+                    if (Objects.nonNull(item.getValuesTypeHandler()[i])) {
+                        values[i] = item.getValuesTypeHandler()[i].getResult(resultSet, item.getValuesColumn()[i]);
+                    } else {
+                        values[i] = resultSet.getObject(item.getValuesColumn()[i]);
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            Object targetValue = PutValueUtil.getPutValue(values, item);
+
+            if (Objects.isNull(targetValue)) {
+                return;
+            }
+
+            try {
+                item.getWriteFieldInvoker().invoke(rowValue,
+                        new Object[]{targetValue});
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+    }
+
+    private void putValues(Object rowValue) {
+        if (Objects.isNull(this.createdEventList)) {
+            return;
+        }
+        if (Objects.isNull(rowValue)) {
+            return;
+        }
+        this.createdEventList.stream().forEach(item -> {
+            CreatedEventUtil.onCreated(rowValue, item);
+        });
+
     }
 
     @Override
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
         Object rowValue = super.getRowValue(rsw, resultMap, columnPrefix);
         rowValue = this.loadFetchValue(resultMap.getType(), rowValue, rsw.getResultSet());
+        this.putEnumValue(rowValue, rsw.getResultSet());
+        this.putValue(rowValue, rsw.getResultSet());
+        this.onRowEvent(rowValue);
+        this.putValues(rowValue);
         return rowValue;
     }
 
@@ -72,6 +207,10 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, CacheKey combinedKey, String columnPrefix, Object partialObject) throws SQLException {
         Object rowValue = super.getRowValue(rsw, resultMap, combinedKey, columnPrefix, partialObject);
         rowValue = this.loadFetchValue(resultMap.getType(), rowValue, rsw.getResultSet());
+        this.putEnumValue(rowValue, rsw.getResultSet());
+        this.putValue(rowValue, rsw.getResultSet());
+        this.onRowEvent(rowValue);
+        this.putValues(rowValue);
         return rowValue;
     }
 

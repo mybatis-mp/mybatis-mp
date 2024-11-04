@@ -83,7 +83,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
                 isNeedInsert = true;
 
                 //设置默认值
-                value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getField().getType(), tableFieldInfo.getTableFieldAnnotation().defaultValue());
+                value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getTypeClass(), tableFieldInfo.getTableFieldAnnotation().defaultValue());
                 //默认值回写
                 TableInfoUtil.setValue(tableFieldInfo, entity, value);
             } else if (tableFieldInfo.isVersion()) {

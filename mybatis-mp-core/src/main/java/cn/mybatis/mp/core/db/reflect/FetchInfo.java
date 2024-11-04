@@ -17,6 +17,8 @@ public class FetchInfo {
 
     private final Field field;
 
+    private final FieldInfo fieldInfo;
+
     private final Fetch fetch;
 
     private final String valueColumn;
@@ -37,8 +39,9 @@ public class FetchInfo {
 
     private final Class<?> returnType;
 
-    public FetchInfo(Field field, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler, Field targetMatchField, String targetMatchColumn, String targetSelectColumn, String orderBy) {
+    public FetchInfo(Class clazz, Field field, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler, Field targetMatchField, String targetMatchColumn, String targetSelectColumn, String orderBy) {
         this.field = field;
+        this.fieldInfo = new FieldInfo(clazz, field);
         this.fetch = fetch;
         this.writeFieldInvoker = new SetFieldInvoker(field);
         this.valueColumn = valueColumn;
@@ -46,7 +49,7 @@ public class FetchInfo {
         this.eqGetFieldInvoker = Objects.isNull(targetMatchField) ? null : new GetFieldInvoker(targetMatchField);
         this.targetMatchColumn = targetMatchColumn;
         this.targetSelectColumn = targetSelectColumn;
-        this.multiple = Collection.class.isAssignableFrom(field.getType());
+        this.multiple = Collection.class.isAssignableFrom(this.fieldInfo.getTypeClass());
         this.returnType = returnType;
         this.orderBy = orderBy;
     }

@@ -31,7 +31,7 @@ public class MpTableField extends TableField {
         if (Objects.isNull(tableFieldInfo.getTypeHandler())) {
             return param;
         }
-        if (!tableFieldInfo.getField().getType().isAssignableFrom(param.getClass())) {
+        if (!tableFieldInfo.getFieldInfo().getTypeClass().isAssignableFrom(param.getClass())) {
             return param;
         }
         return new MybatisParameter(param, tableFieldInfo.getTableFieldAnnotation().typeHandler(), tableFieldInfo.getTableFieldAnnotation().jdbcType());
@@ -42,7 +42,7 @@ public class MpTableField extends TableField {
         if (Objects.isNull(param) || param instanceof Cmd) {
             return param;
         }
-        if (!tableFieldInfo.getField().getType().isAssignableFrom(param.getClass())) {
+        if (!tableFieldInfo.getFieldInfo().getTypeClass().isAssignableFrom(param.getClass())) {
             return param;
         }
         Class typeHandler = tableFieldInfo.getTableFieldAnnotation().typeHandler();

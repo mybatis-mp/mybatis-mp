@@ -14,31 +14,31 @@ public class JsonContains extends BasicFunction<JsonContains> {
     private final String path;
 
     public JsonContains(Cmd key, Serializable containValue) {
-        this(key, containValue,null);
+        this(key, containValue, null);
     }
 
 
-
-    public JsonContains(Cmd key,Serializable containValue, String path) {
+    public JsonContains(Cmd key, Serializable containValue, String path) {
         super(SqlConst.JSON_CONTAINS, key);
-        this.containValue=containValue;
+        this.containValue = containValue;
         this.path = path;
     }
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);;
+        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
+        ;
         this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
-        if(containValue instanceof Number){
+        if (containValue instanceof Number) {
             sqlBuilder.append(SqlConst.SINGLE_QUOT);
             sqlBuilder.append(containValue);
             sqlBuilder.append(SqlConst.SINGLE_QUOT);
-        }else {
+        } else {
             new JsonQuote(containValue).sql(module, this, context, sqlBuilder);
         }
 
-        if(path!=null) {
+        if (path != null) {
             sqlBuilder.append(SqlConst.DELIMITER);
             sqlBuilder.append(SqlConst.SINGLE_QUOT);
             sqlBuilder.append(path);

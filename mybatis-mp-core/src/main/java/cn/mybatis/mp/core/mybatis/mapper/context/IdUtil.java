@@ -39,10 +39,7 @@ public final class IdUtil {
             return false;
         }
 
-        if (idFieldInfo.getField().getType() == String.class) {
-            id = id instanceof String ? id : String.valueOf(id);
-        }
-        id = IdValueConverter.convert(id, idFieldInfo.getField().getType());
+        id = IdValueConverter.convert(id, idFieldInfo.getFieldInfo().getTypeClass());
         TableInfoUtil.setValue(idFieldInfo, obj, id);
         return true;
     }
@@ -52,10 +49,10 @@ public final class IdUtil {
             return false;
         }
 
-        if (idFieldInfo.getField().getType() == String.class) {
+        if (idFieldInfo.getFieldInfo().getTypeClass() == String.class) {
             id = id instanceof String ? id : String.valueOf(id);
         }
-        id = IdValueConverter.convert(id, idFieldInfo.getField().getType());
+        id = IdValueConverter.convert(id, idFieldInfo.getFieldInfo().getTypeClass());
         //默认值回写
         ModelInfoUtil.setValue(idFieldInfo, obj, id);
         return true;

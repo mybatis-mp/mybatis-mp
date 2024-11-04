@@ -1,9 +1,6 @@
 package com.mybatis.mp.core.test.DO;
 
-import cn.mybatis.mp.db.annotations.LogicDelete;
-import cn.mybatis.mp.db.annotations.Table;
-import cn.mybatis.mp.db.annotations.TableField;
-import cn.mybatis.mp.db.annotations.TenantId;
+import cn.mybatis.mp.db.annotations.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,12 +11,14 @@ import java.time.LocalDateTime;
 
 @Data
 @Table
-@SuperBuilder
 @NoArgsConstructor
+@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class CompositeTest extends BaseEntity {
 
+    @Version
+    private Integer version;
 
     @TenantId
     private Integer tenantId;

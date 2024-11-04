@@ -30,7 +30,7 @@ public class ConditionTest extends BaseTest {
                     .from(SysUser.class)
                     .eq(SysUser::getId, 1, Objects::nonNull)
                     .empty(SysUser::getUserName)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
             assertNull(id, "eq");
@@ -46,7 +46,7 @@ public class ConditionTest extends BaseTest {
                     .from(SysUser.class)
                     .eq(SysUser::getId, 2)
                     .notEmpty(SysUser::getUserName)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
             assertEquals(Integer.valueOf(2), id, "eq");
@@ -61,7 +61,7 @@ public class ConditionTest extends BaseTest {
                     .select(SysUser::getId)
                     .from(SysUser.class)
                     .eq(SysUser::getId, 2)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
             assertEquals(Integer.valueOf(2), id, "eq");
@@ -76,7 +76,7 @@ public class ConditionTest extends BaseTest {
                     .selectCountAll()
                     .from(SysUser.class)
                     .eq(SysUser::getId, 2).and().or().eq(SysUser::getId, 1)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
             assertEquals(Integer.valueOf(2), count, "andOr");
         }
@@ -91,7 +91,7 @@ public class ConditionTest extends BaseTest {
                     .from(SysUser.class)
                     .ne(SysUser::getId, 2)
                     .like(SysUser::getUserName, "test")
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
             assertEquals(Integer.valueOf(3), id, "eq");
@@ -108,7 +108,7 @@ public class ConditionTest extends BaseTest {
                     .gt(SysUser::getId, 1)
                     .orderBy(SysUser::getId)
                     .limit(1)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
             assertEquals(Integer.valueOf(2), id, "gt");
         }
@@ -124,7 +124,7 @@ public class ConditionTest extends BaseTest {
                     .gte(SysUser::getId, 2)
                     .orderBy(SysUser::getId)
                     .limit(1)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
             assertEquals(Integer.valueOf(2), id, "gte");
@@ -141,7 +141,7 @@ public class ConditionTest extends BaseTest {
                     .lt(SysUser::getId, 2)
                     .orderBy(SysUser::getId)
                     .limit(1)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
             assertEquals(Integer.valueOf(1), id, "lt");
         }
@@ -157,7 +157,7 @@ public class ConditionTest extends BaseTest {
                     .lte(SysUser::getId, 1)
                     .orderBy(SysUser::getId)
                     .limit(1)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
             assertEquals(Integer.valueOf(1), id, "lte");
         }
@@ -222,7 +222,7 @@ public class ConditionTest extends BaseTest {
                     .select(SysUser::getId, c -> c.count())
                     .from(SysUser.class)
                     .like(LikeMode.RIGHT, SysUser::getUserName, "test")
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .count();
 
 
@@ -316,7 +316,7 @@ public class ConditionTest extends BaseTest {
                     .select(SysUser::getId)
                     .from(SysUser.class)
                     .between(SysUser::getId, 1, 2)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .list();
 
 
@@ -334,7 +334,7 @@ public class ConditionTest extends BaseTest {
                     .from(SysUser.class)
                     .between(SysUser::getId, 1, 3)
                     .notBetween(SysUser::getId, 1, 2)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .list();
             assertEquals(1, list.size(), "notLeftLike");
             assertEquals(Integer.valueOf(3), list.get(0), "notLeftLike");
@@ -353,7 +353,7 @@ public class ConditionTest extends BaseTest {
                     .in(SysUser::getId, Arrays.asList(1, 2))
                     .in(SysUser::getId, Arrays.asList(1, 2).stream().collect(Collectors.toSet()))
                     .in(true, SysUser::getId, Arrays.asList(1, 2))
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .list();
 
             assertEquals(2, list.size());
@@ -378,7 +378,7 @@ public class ConditionTest extends BaseTest {
                     .notIn(true, SysUser::getId, 5, 6)
                     .notIn(SysUser::getId, Arrays.asList(5, 6))
                     .notIn(true, SysUser::getId, Arrays.asList(5, 6))
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .list();
 
             assertEquals(2, list.size());
@@ -396,7 +396,7 @@ public class ConditionTest extends BaseTest {
                     .select(SysUser::getId)
                     .from(SysUser.class)
                     .in(SysUser::getId, 1, 2, null)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .list();
 
 
@@ -414,7 +414,7 @@ public class ConditionTest extends BaseTest {
                         .select(SysUser::getId)
                         .from(SysUser.class)
                         .in(SysUser::getId, 1, 2, null)
-                        .returnType(Integer.TYPE)
+                        .returnType(Integer.class)
                         .list();
             }
         });

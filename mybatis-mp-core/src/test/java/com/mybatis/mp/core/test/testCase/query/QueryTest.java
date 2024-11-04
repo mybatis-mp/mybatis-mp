@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -185,7 +186,7 @@ public class QueryTest extends BaseTest {
                     .from(SysUser.class)
                     .groupBy(SysUser::getRole_id)
                     .orderBy(SysUser::getRole_id)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .list();
 
             assertEquals(counts.get(0), Integer.valueOf(1), "groupBy");
@@ -238,7 +239,7 @@ public class QueryTest extends BaseTest {
                     .from(SysUser.class)
                     .groupBy(SysUser::getRole_id)
                     .having(SysUser::getRole_id, c -> c.gt(0))
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
             assertEquals(count, Integer.valueOf(2), "having");
@@ -249,11 +250,17 @@ public class QueryTest extends BaseTest {
     public void count1Test() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            final LongAdder adder=new LongAdder();
             Integer count = QueryChain.of(sysUserMapper)
                     .selectCount1()
                     .from(SysUser.class)
+                    .returnType(Integer.class,(cnt)->{
+                        System.out.println(">>>"+cnt);
+                        adder.add(cnt);
+                    })
                     .count();
             assertEquals(count, Integer.valueOf(3), "count1");
+            assertEquals(adder.intValue(), Integer.valueOf(3), "count1");
         }
     }
 
@@ -417,7 +424,7 @@ public class QueryTest extends BaseTest {
                     .select(SysUser::getRole_id)
                     .from(SysUser.class)
                     .orderBy(SysUser::getRole_id)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .list();
             assertEquals(roleIds.size(), 2, "selectDistinct");
             assertEquals(roleIds.get(0), Integer.valueOf(0), "selectDistinct");
@@ -544,7 +551,7 @@ public class QueryTest extends BaseTest {
                     .orderBy(SysUser::getId)
                     .limit(1)
 
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .list();
 
             assertEquals(2, (int) list.get(0), "selectSubQueryTest");

@@ -21,10 +21,6 @@ import java.util.stream.Collectors;
  */
 public final class Methods {
 
-    public MysqlFunctions mysql(Cmd key) {
-        return new MysqlFunctions(key);
-    }
-
     public static Cmd paramWrapAndConvertToCmd(Cmd key, Object param) {
         if (java.util.Objects.isNull(param)) {
             return null;
@@ -320,7 +316,6 @@ public final class Methods {
         return new Round(key, precision);
     }
 
-
     /**
      * ceil返回大于或等于 x 的最小整数（向上取整） 函数
      *
@@ -443,7 +438,6 @@ public final class Methods {
         Objects.requireNonNull(key);
         return new Exp(key);
     }
-
 
     /**
      * 返回自然对数（以 e 为底的对数） 函数
@@ -755,7 +749,6 @@ public final class Methods {
         return new Repeat(key, n);
     }
 
-
     /**
      * 替换 函数
      *
@@ -931,7 +924,6 @@ public final class Methods {
         Objects.requireNonNull(key);
         return new Weekday(key);
     }
-
 
     /**
      * 获取小时
@@ -1202,8 +1194,6 @@ public final class Methods {
         return new Case();
     }
 
-    /* --------------------------------------以下为判断条件----------------------------------------------*/
-
     /**
      * eq等于 判断
      *
@@ -1214,6 +1204,8 @@ public final class Methods {
         Objects.requireNonNull(value);
         return new Eq(key, paramWrapAndConvertToCmd(key, value));
     }
+
+    /* --------------------------------------以下为判断条件----------------------------------------------*/
 
     /**
      * ne不等于 判断
@@ -1246,7 +1238,6 @@ public final class Methods {
         return new Empty(key);
     }
 
-
     /**
      * gt大于 判断
      *
@@ -1257,7 +1248,6 @@ public final class Methods {
         Objects.requireNonNull(value);
         return new Gt(key, paramWrapAndConvertToCmd(key, value));
     }
-
 
     /**
      * gte大于等于 判断
@@ -1291,7 +1281,6 @@ public final class Methods {
         Objects.requireNonNull(value);
         return new Lte(key, paramWrapAndConvertToCmd(key, value));
     }
-
 
     /**
      * in 多个值
@@ -1563,5 +1552,9 @@ public final class Methods {
         Objects.requireNonNull(key);
         Objects.requireNonEmpty(str);
         return new Instr(key, str);
+    }
+
+    public MysqlFunctions mysql(Cmd key) {
+        return new MysqlFunctions(key);
     }
 }

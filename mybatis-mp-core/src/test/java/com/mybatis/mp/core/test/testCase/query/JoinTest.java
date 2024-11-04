@@ -25,10 +25,10 @@ public class JoinTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer count = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getId, FunctionInterface::count)
+                    .select(SysUser::getId, c -> c.count())
                     .from(SysUser.class)
                     .join(SysUser.class, SysRole.class)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
 
@@ -44,7 +44,7 @@ public class JoinTest extends BaseTest {
                     .select(SysUser::getId, FunctionInterface::count)
                     .from(SysUser.class)
                     .join(SysUser.class, SysRole.class, on -> on.eq(SysUser::getRole_id, SysRole::getId).like(SysUser::getUserName, "test1"))
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
 
 
@@ -60,7 +60,7 @@ public class JoinTest extends BaseTest {
                     .select(SysUser::getId, FunctionInterface::count)
                     .from(SysUser.class)
                     .join(SysUser.class, SysRole.class)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
             assertEquals(Integer.valueOf(2), count, "innerJoin");
         }
@@ -97,7 +97,7 @@ public class JoinTest extends BaseTest {
                     .select(SysUser::getId, FunctionInterface::count)
                     .from(SysUser.class)
                     .join(JoinMode.LEFT, SysUser.class, SysRole.class)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
             assertEquals(Integer.valueOf(3), count, "leftJoin");
         }
@@ -111,7 +111,7 @@ public class JoinTest extends BaseTest {
                     .select(SysUser::getId, c -> c.count())
                     .from(SysUser.class)
                     .join(JoinMode.RIGHT, SysUser.class, SysRole.class)
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
             assertEquals(Integer.valueOf(2), count, "rightJoin");
         }
@@ -125,7 +125,7 @@ public class JoinTest extends BaseTest {
                 .from(SysUser.class)
                 .join(JoinMode.FULL, SysUser.class, SysRole.class);
 
-        query.setReturnType(Integer.TYPE);
+        query.setReturnType(Integer.class);
         check("fullJoin", "SELECT  COUNT( t.id) FROM t_sys_user t  FULL OUTER JOIN sys_role t2 ON  t2.id =  t.role_id", query);
 
     }
@@ -138,7 +138,7 @@ public class JoinTest extends BaseTest {
                     .select(SysUser::getId, FunctionInterface::count)
                     .from(SysUser.class)
                     .join(JoinMode.INNER, SysUser.class, 1, SysUser.class, 2, on -> on.eq(SysUser::getId, 1, SysUser::getRole_id, 2))
-                    .returnType(Integer.TYPE)
+                    .returnType(Integer.class)
                     .get();
             assertEquals(Integer.valueOf(2), count, "joinSelf");
         }

@@ -78,7 +78,7 @@ public final class PagingUtil {
     private static void addPagingCountMappedStatement(MappedStatement ms, Paging paging) {
         String id = ms.getId() + "-count";
 
-        ResultMap resultMap = new ResultMap.Builder(ms.getConfiguration(), id + "-inline", Integer.TYPE, Collections.emptyList()).build();
+        ResultMap resultMap = new ResultMap.Builder(ms.getConfiguration(), id + "-inline", Integer.class, Collections.emptyList()).build();
         List<ResultMap> resultMaps = Collections.singletonList(resultMap);
 
         SqlSource sqlSource = new PagingCountSqlSource(ms.getConfiguration(), ms.getSqlSource(), paging.optimize());
