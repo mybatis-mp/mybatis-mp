@@ -451,7 +451,7 @@ public class ResultInfo {
             }
         } else if (returnType.isAnnotationPresent(Table.class)) {
             if (returnType != fetchTargetTableInfo.getType()) {
-                throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the type can't" + returnType.getName());
+                throw new RuntimeException(clazz.getName() + "->" + field.getName() + " fetch config error,the type can't be" + returnType.getName());
             }
             targetMatchField = fetchTargetFieldInfo.getField();
         }

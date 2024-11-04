@@ -1,5 +1,6 @@
 package com.mybatis.mp.core.test.testCase.query;
 
+import cn.mybatis.mp.core.db.reflect.ResultInfo;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.DO.SysUser;
@@ -22,6 +23,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FetchTest extends BaseTest {
+
+    @Test
+    public void fetchCnt() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            LongAdder longAdder = new LongAdder();
+            Map<Integer, FetchSysRoleVo2> map = QueryChain.of(sysRoleMapper)
+                    .fetchFilter(FetchSysRoleVo2::getSysRoleNames, where -> {
+                        longAdder.increment();
+                    })
+                    .returnType(FetchSysRoleVo2.class)
+                    .mapWithKey(FetchSysRoleVo2::getId);
+            System.out.println(map);
+
+            System.out.println(longAdder.sum());
+            assertEquals(longAdder.sum(), 1);
+            assertEquals(map.get(1).getCnts(), 2);
+            assertEquals(map.get(1).getSysRoleNames().get(0), "test1");
+            assertEquals(map.get(1).getSysRoleNames().get(1), "test2");
+        }
+    }
 
     @Test
     public void onRowEvent() {

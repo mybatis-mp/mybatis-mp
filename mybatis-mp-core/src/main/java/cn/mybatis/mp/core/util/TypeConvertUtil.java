@@ -31,7 +31,9 @@ public final class TypeConvertUtil {
         }
 
         Object newValue;
-        if (targetType == Boolean.class) {
+        if (targetType == String.class) {
+            newValue = value.toString();
+        } else if (targetType == Boolean.class) {
             String v = value.toString().trim();
             if (v.equals("1")) {
                 return (T) Boolean.TRUE;
@@ -56,7 +58,7 @@ public final class TypeConvertUtil {
         } else if (targetType == Character.class) {
             newValue = value.toString().charAt(0);
         } else {
-            throw new RuntimeException("Inconsistent types");
+            throw new RuntimeException("Inconsistent types value : " + value + " can't convert to a " + targetType);
         }
 
         return (T) newValue;
