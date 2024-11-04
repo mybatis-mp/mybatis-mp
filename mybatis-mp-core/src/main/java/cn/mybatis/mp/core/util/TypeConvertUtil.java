@@ -37,8 +37,12 @@ public final class TypeConvertUtil {
                 return (T) Boolean.TRUE;
             } else if (v.equals("0")) {
                 return (T) Boolean.FALSE;
+            } else if (v.equalsIgnoreCase("true")) {
+                return (T) Boolean.TRUE;
+            } else if (v.equalsIgnoreCase("false")) {
+                return (T) Boolean.FALSE;
             }
-            newValue = Boolean.valueOf(value.toString());
+            throw new RuntimeException("value : " + value + " can't convert to a boolean");
         } else if (targetType == Byte.class) {
             newValue = Byte.valueOf(value.toString());
         } else if (targetType == Integer.class) {
