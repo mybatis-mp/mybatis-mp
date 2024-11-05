@@ -16,7 +16,7 @@ public @interface LogicDelete {
      *
      * @return 初始值
      */
-    String beforeValue() default "";
+    String beforeValue() default "0";
 
     /**
      * 删除后的值
@@ -24,7 +24,7 @@ public @interface LogicDelete {
      *
      * @return 删除后的值
      */
-    String afterValue();
+    String afterValue() default "1";
 
     /**
      * 删除时间字段
