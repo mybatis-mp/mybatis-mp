@@ -35,6 +35,19 @@ public class UpdateTest extends BaseTest {
     }
 
     @Test
+    public void forceUpdateTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            sysUserMapper.update(sysUser, true);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+
+    @Test
     public void nullUpdateTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);

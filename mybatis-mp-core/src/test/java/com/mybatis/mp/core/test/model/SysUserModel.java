@@ -1,11 +1,13 @@
 package com.mybatis.mp.core.test.model;
 
 import cn.mybatis.mp.db.Model;
+import cn.mybatis.mp.db.annotations.ResultEntity;
 import com.mybatis.mp.core.test.DO.SysUser;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@ResultEntity(SysUser.class)
 @Data
 public class SysUserModel implements Model<SysUser> {
 

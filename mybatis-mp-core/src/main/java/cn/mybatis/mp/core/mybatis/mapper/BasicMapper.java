@@ -219,6 +219,14 @@ public interface BasicMapper extends BaseMapper {
         return this.update(entity, where, (Getter[]) null);
     }
 
+    default <E> int update(E entity, Where where) {
+        return this.update(entity, where, (Getter[]) null);
+    }
+
+    default <E> int update(E entity, boolean allFieldForce, Where where) {
+        return this.$update(new EntityUpdateWithWhereContext(entity, where, allFieldForce));
+    }
+
     default <E> int update(E entity, boolean allFieldForce, Consumer<Where> consumer) {
         Where where = WhereUtil.create();
         consumer.accept(where);

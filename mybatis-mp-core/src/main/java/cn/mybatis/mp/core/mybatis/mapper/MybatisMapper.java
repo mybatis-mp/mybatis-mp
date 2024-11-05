@@ -194,6 +194,17 @@ public interface MybatisMapper<T> extends CommonMapper {
     }
 
     /**
+     * 实体类修改
+     *
+     * @param entity
+     * @return 影响条数
+     * @allFieldForce 所有字段都强制保存
+     */
+    default int update(T entity, boolean allFieldForce) {
+        return getBasicMapper().update(entity, allFieldForce);
+    }
+
+    /**
      * 多个修改，非批量行为
      *
      * @param list
@@ -201,6 +212,17 @@ public interface MybatisMapper<T> extends CommonMapper {
      */
     default int update(Collection<T> list) {
         return getBasicMapper().update(list);
+    }
+
+    /**
+     * 多个修改，非批量行为
+     *
+     * @param list
+     * @return 影响条数
+     * @allFieldForce 所有字段都强制保存
+     */
+    default int update(Collection<T> list, boolean allFieldForce) {
+        return getBasicMapper().update(list, allFieldForce);
     }
 
     /**
@@ -224,9 +246,18 @@ public interface MybatisMapper<T> extends CommonMapper {
         return getBasicMapper().update(entity, forceUpdateFields);
     }
 
-
     default int update(T entity, Consumer<Where> consumer) {
         return getBasicMapper().update(entity, consumer);
+    }
+
+    /**
+     * @param entity        实体类
+     * @param allFieldForce
+     * @param consumer
+     * @return
+     */
+    default int update(T entity, boolean allFieldForce, Consumer<Where> consumer) {
+        return getBasicMapper().update(entity, allFieldForce, consumer);
     }
 
     /**
@@ -236,6 +267,16 @@ public interface MybatisMapper<T> extends CommonMapper {
      */
     default int update(T entity, Where where) {
         return getBasicMapper().update(entity, where, (Getter<T>[]) null);
+    }
+
+    /**
+     * @param entity        实体类
+     * @param where         可通过Wheres.create()创建
+     * @param allFieldForce 强制更新指定，解决需要修改为null的需求
+     * @return
+     */
+    default int update(T entity, boolean allFieldForce, Where where) {
+        return getBasicMapper().update(entity, allFieldForce, where);
     }
 
     /**
