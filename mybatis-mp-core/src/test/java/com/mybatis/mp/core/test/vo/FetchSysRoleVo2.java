@@ -1,7 +1,6 @@
 package com.mybatis.mp.core.test.vo;
 
 import cn.mybatis.mp.db.annotations.Fetch;
-import cn.mybatis.mp.db.annotations.Ignore;
 import cn.mybatis.mp.db.annotations.ResultEntity;
 import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.DO.SysUser;
@@ -22,4 +21,7 @@ public class FetchSysRoleVo2 {
 
     @Fetch(column = "id", target = SysUser.class, targetProperty = "role_id",targetSelectProperty = "[count({id})]")
     private Integer cnts;
+
+    @Fetch(column = "id", target = SysRole.class, targetProperty = "id", targetSelectProperty = "name")
+    private String roleName;
 }

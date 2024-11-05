@@ -31,6 +31,23 @@ import static org.junit.jupiter.api.Assertions.*;
 public class QueryTest extends BaseTest {
 
     @Test
+    public void entityAsTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Object[] sysUsers = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, c -> c.as(SysUser::getId))
+                    .select(SysUser::getUserName, c -> c.as(SysUser::getUserName))
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 2)
+                    .returnType(Object[].class)
+                    .get();
+            System.out.println(sysUsers);
+
+
+        }
+    }
+
+    @Test
     public void onDBTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);

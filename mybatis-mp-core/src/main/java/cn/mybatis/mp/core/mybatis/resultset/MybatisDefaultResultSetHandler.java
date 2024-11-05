@@ -413,7 +413,16 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             } else if (matchValues.size() > 1 && !fetchInfo.getFetch().multiValueErrorIgnore()) {
                 throw new TooManyResultsException("fetch action found more than 1 record");
             }
-            fetchInfo.setValue(rowValue, matchValues.get(0));
+
+            Object value;
+            if (isUseMapForResult(fetchInfo) && matchValues.get(0) instanceof Map) {
+                value = ((List<Map<String, Object>>) matchValues)
+                        .stream().map(m -> TypeConvertUtil.convert(m.get(fetchInfo.getTargetSelectColumn()), fetchInfo.getFieldInfo().getFinalClass()))
+                        .findFirst().get();
+            } else {
+                value = matchValues.get(0);
+            }
+            fetchInfo.setValue(rowValue, value);
         }
     }
 }

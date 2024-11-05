@@ -1,6 +1,5 @@
 package com.mybatis.mp.core.test.testCase.query;
 
-import cn.mybatis.mp.core.db.reflect.ResultInfo;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.DO.SysUser;
@@ -42,6 +41,8 @@ public class FetchTest extends BaseTest {
             assertEquals(map.get(1).getCnts(), 2);
             assertEquals(map.get(1).getSysRoleNames().get(0), "test1");
             assertEquals(map.get(1).getSysRoleNames().get(1), "test2");
+            assertEquals(map.get(1).getRoleName(), "测试");
+            assertEquals(map.get(2).getRoleName(), "运维");
         }
     }
 
