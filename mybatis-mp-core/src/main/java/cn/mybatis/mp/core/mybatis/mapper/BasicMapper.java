@@ -333,6 +333,19 @@ public interface BasicMapper extends BaseMapper {
      * @return
      */
     default <E> int saveOrUpdate(E entity) {
+        return this.saveOrUpdate(entity, false);
+    }
+
+    /**
+     * 实体类新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param entity
+     * @param @allFieldForce 所有字段都强制保存
+     * @param <E>
+     * @return
+     */
+    default <E> int saveOrUpdate(E entity, boolean allFieldForce) {
         Class<?> entityType = entity.getClass();
         TableInfo tableInfo = Tables.get(entityType);
 
@@ -359,9 +372,9 @@ public interface BasicMapper extends BaseMapper {
 
         boolean exists = this.exists(query);
         if (exists) {
-            return this.update(entity);
+            return this.update(entity, allFieldForce);
         } else {
-            return this.save(entity);
+            return this.save(entity, allFieldForce);
         }
     }
 
@@ -374,6 +387,19 @@ public interface BasicMapper extends BaseMapper {
      * @return
      */
     default <E> int saveOrUpdate(Model<E> model) {
+        return this.saveOrUpdate(model, false);
+    }
+
+    /**
+     * 实体类Model新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param model
+     * @param @allFieldForce 所有字段都强制保存
+     * @param <E>
+     * @return
+     */
+    default <E> int saveOrUpdate(Model<E> model, boolean allFieldForce) {
         Class modelType = model.getClass();
         ModelInfo modelInfo = Models.get(modelType);
         if (modelInfo.getIdFieldInfos().isEmpty()) {
@@ -398,9 +424,9 @@ public interface BasicMapper extends BaseMapper {
 
         boolean exists = this.exists(query);
         if (exists) {
-            return this.update(model);
+            return this.update(model, allFieldForce);
         } else {
-            return this.save(model);
+            return this.save(model, allFieldForce);
         }
     }
 
