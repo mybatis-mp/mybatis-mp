@@ -31,6 +31,8 @@ public class FetchInfo {
 
     private final String orderBy;
 
+    private final String groupBy;
+
     private final GetFieldInvoker eqGetFieldInvoker;
 
     private final SetFieldInvoker writeFieldInvoker;
@@ -39,7 +41,11 @@ public class FetchInfo {
 
     private final Class<?> returnType;
 
-    public FetchInfo(Class clazz, Field field, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler, Field targetMatchField, String targetMatchColumn, String targetSelectColumn, String orderBy) {
+    private final boolean isUseIn;
+
+    private final boolean isUseResultMap;
+
+    public FetchInfo(Class clazz, Field field, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler, Field targetMatchField, String targetMatchColumn, String targetSelectColumn, String orderBy, String groupBy) {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
         this.fetch = fetch;
@@ -52,6 +58,18 @@ public class FetchInfo {
         this.multiple = Collection.class.isAssignableFrom(this.fieldInfo.getTypeClass());
         this.returnType = returnType;
         this.orderBy = orderBy;
+        this.groupBy = groupBy;
+
+        boolean isUseIn = true;
+
+        if (fetch.limit() >= 1) {
+            isUseIn = false;
+        } else if (!fetch.forceUseIn() && Objects.isNull(this.eqGetFieldInvoker) && this.targetSelectColumn.contains("(")) {
+            isUseIn = false;
+        }
+
+        this.isUseIn = isUseIn;
+        this.isUseResultMap = this.isUseIn && Objects.isNull(this.eqGetFieldInvoker) && this.returnType.getPackage().getName().contains("java.lang");
     }
 
     public void setValue(Object object, Object value) {

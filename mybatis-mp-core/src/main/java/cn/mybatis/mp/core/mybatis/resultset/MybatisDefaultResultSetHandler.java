@@ -249,7 +249,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 rowValue = configuration.getObjectFactory().create(resultType);
             }
 
-            if (fetchInfo.getFetch().limit() > 0 || (Objects.nonNull(fetchInfo.getTargetSelectColumn()) && fetchInfo.getTargetSelectColumn().contains("("))) {
+            if (!fetchInfo.getFetch().forceUseIn() &&
+                    (fetchInfo.getFetch().limit() > 0 || (Objects.nonNull(fetchInfo.getTargetSelectColumn()) && fetchInfo.getTargetSelectColumn().contains("(")))) {
                 this.singleConditionFetch(rowValue, fetchInfo, onValue);
             } else {
                 MapUtil.computeIfAbsent(needFetchValuesMap, fetchInfo, key -> new ArrayList<>()).add(new FetchObject(onValue, onValue.toString(), rowValue));
@@ -313,7 +314,11 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 if (Objects.nonNull(fetchInfo.getEqGetFieldInvoker())) {
                     eqValue = fetchInfo.getEqGetFieldInvoker().invoke(item, null);
                 } else {
-                    eqValue = ((Map) item).get(fetchInfo.getTargetMatchColumn());
+                    if (fetchInfo.isUseResultMap()) {
+                        eqValue = ((Map) item).get(fetchInfo.getTargetMatchColumn());
+                    } else {
+                        eqValue = item;
+                    }
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
@@ -332,10 +337,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         });
     }
 
-    private boolean isUseMapForResult(FetchInfo fetchInfo){
-        return Objects.isNull(fetchInfo.getEqGetFieldInvoker()) && fetchInfo.getReturnType().getPackage().getName().startsWith("java.lang");
-    }
-
     protected List<Object> fetchData(FetchInfo fetchInfo, List conditionList, boolean single) {
         if (conditionList.isEmpty()) {
             return Collections.emptyList();
@@ -343,7 +344,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         int batchSize = 100;
         List queryValueList = new ArrayList<>(100);
         Query query = Query.create().returnType(fetchInfo.getReturnType());
-        if (!single && isUseMapForResult(fetchInfo)) {
+        if (!single && fetchInfo.isUseResultMap()) {
             query.setReturnType(Map.class);
         }
 
@@ -351,14 +352,16 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             query.select(fetchInfo.getReturnType());
         } else {
             query.select(new Column(fetchInfo.getTargetSelectColumn()));
-            if (!fetchInfo.getTargetSelectColumn().contains("(")) {
+            if (!fetchInfo.getTargetSelectColumn().contains("(") || fetchInfo.isUseResultMap()) {
                 query.select(new Column(fetchInfo.getTargetMatchColumn()));
             }
-
-
         }
         if (Objects.nonNull(fetchInfo.getOrderBy()) && !StringPool.EMPTY.equals(fetchInfo.getOrderBy())) {
             query.orderBy(OrderByDirection.NONE, fetchInfo.getOrderBy());
+        }
+
+        if (Objects.nonNull(fetchInfo.getGroupBy()) && !StringPool.EMPTY.equals(fetchInfo.getGroupBy())) {
+            query.groupBy(fetchInfo.getGroupBy());
         }
 
         List<Object> resultList = new ArrayList<>(conditionList.size());
@@ -401,7 +404,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 fetchInfo.setValue(rowValue, matchValues);
                 return;
             }
-            if (isUseMapForResult(fetchInfo) && matchValues.get(0) instanceof Map) {
+            if (fetchInfo.isUseResultMap() && matchValues.get(0) instanceof Map) {
                 matchValues = ((List<Map<String, Object>>) matchValues)
                         .stream().map(m -> TypeConvertUtil.convert(m.get(fetchInfo.getTargetSelectColumn()), fetchInfo.getFieldInfo().getFinalClass()))
                         .collect(Collectors.toList());
@@ -415,7 +418,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
 
             Object value;
-            if (isUseMapForResult(fetchInfo) && matchValues.get(0) instanceof Map) {
+            if (fetchInfo.isUseResultMap() && matchValues.get(0) instanceof Map) {
                 value = ((List<Map<String, Object>>) matchValues)
                         .stream().map(m -> TypeConvertUtil.convert(m.get(fetchInfo.getTargetSelectColumn()), fetchInfo.getFieldInfo().getFinalClass()))
                         .findFirst().get();

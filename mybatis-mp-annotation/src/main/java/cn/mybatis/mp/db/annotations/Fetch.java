@@ -89,4 +89,11 @@ public @interface Fetch {
      * @return
      */
     int limit() default 0;
+
+    /**
+     * 强制使用in 查询，减少查询次数
+     *
+     * @return
+     */
+    boolean forceUseIn() default false;
 }

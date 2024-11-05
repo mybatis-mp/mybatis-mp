@@ -370,12 +370,23 @@ public class ResultInfo {
             }
         }
 
-        TableFieldInfo targetSelectTargetFieldInfo = targetTableInfo.getFieldInfo(value);
-        if (Objects.isNull(targetSelectTargetFieldInfo)) {
-            throw buildException(clazz, field, annotationName, annotationPropertyName, value + " is not a entity field");
+        StringBuilder columns = new StringBuilder();
+        String[] strs = value.split(",");
+        for (int i = 0; i < strs.length; i++) {
+            String property = strs[i].trim();
+            if (StringPool.EMPTY.equals(property)) {
+                throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
+            }
+            TableFieldInfo tableFieldInfo = targetTableInfo.getFieldInfo(property);
+            if (Objects.isNull(tableFieldInfo)) {
+                throw buildException(clazz, field, annotationName, annotationPropertyName, " the field:" + property + " is not entity field");
+            }
+            if (i != 0) {
+                columns.append(",");
+            }
+            columns.append(tableFieldInfo.getColumnName());
         }
-        return targetSelectTargetFieldInfo.getColumnName();
-
+        return columns.toString();
     }
 
     /**
@@ -432,6 +443,8 @@ public class ResultInfo {
 
         String orderBy = parseOrderByColumn(clazz, field, fetchTargetTableInfo, "@Fetch", "orderBy", fetch.orderBy());
 
+        String groupBy = parseDynamicColumn(clazz, field, fetchTargetTableInfo, "@Fetch", "groupBy", fetch.groupBy());
+
         String targetMatchColumn = fetchTargetFieldInfo.getColumnName();
 
         FieldInfo fieldInfo = new FieldInfo(clazz, field);
@@ -462,7 +475,7 @@ public class ResultInfo {
             }
         }
 
-        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(clazz, field, fetch, returnType, valueColumn, valueTypeHandler, targetMatchField, targetMatchColumn, targetSelectColumn, orderBy));
+        parseResult.fetchInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new FetchInfo(clazz, field, fetch, returnType, valueColumn, valueTypeHandler, targetMatchField, targetMatchColumn, targetSelectColumn, orderBy, groupBy));
         return tableCount;
     }
 

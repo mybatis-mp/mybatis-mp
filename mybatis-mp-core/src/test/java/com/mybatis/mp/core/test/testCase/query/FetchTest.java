@@ -39,6 +39,8 @@ public class FetchTest extends BaseTest {
             System.out.println(longAdder.sum());
             assertEquals(longAdder.sum(), 1);
             assertEquals(map.get(1).getCnts(), 2);
+            assertEquals(map.get(1).getCnts2(), 2);
+            assertEquals(map.get(1).getCnts3(), 2);
             assertEquals(map.get(1).getSysRoleNames().get(0), "test1");
             assertEquals(map.get(1).getSysRoleNames().get(1), "test2");
             assertEquals(map.get(1).getRoleName(), "测试");
