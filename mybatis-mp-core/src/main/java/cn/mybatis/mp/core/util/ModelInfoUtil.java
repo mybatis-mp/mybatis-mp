@@ -20,8 +20,8 @@ public final class ModelInfoUtil {
      * @param model 实体类的model类实例
      * @return 返回ID
      */
-    public static Serializable getEntityIdValue(Model model) {
-        return getEntityIdValue(Models.get(model.getClass()), model, false);
+    public static Serializable getModelIdValue(Model model) {
+        return getModelIdValue(Models.get(model.getClass()), model, false);
     }
 
     /**
@@ -31,8 +31,8 @@ public final class ModelInfoUtil {
      * @param model     实体类的model类实例
      * @return 返回ID
      */
-    public static Serializable getEntityIdValue(ModelInfo modelInfo, Model model) {
-        return getEntityIdValue(modelInfo, model, true);
+    public static Serializable getModelIdValue(ModelInfo modelInfo, Model model) {
+        return getModelIdValue(modelInfo, model, true);
     }
 
     /**
@@ -43,8 +43,8 @@ public final class ModelInfoUtil {
      * @param check     是否检查
      * @return 返回ID
      */
-    public static Serializable getEntityIdValue(ModelInfo modelInfo, Model model, boolean check) {
-        return getEntityIdValue(modelInfo, Tables.get(modelInfo.getEntityType()), model, check);
+    public static Serializable getModelIdValue(ModelInfo modelInfo, Model model, boolean check) {
+        return getModelIdValue(modelInfo, Tables.get(modelInfo.getEntityType()), model, check);
     }
 
     /**
@@ -54,7 +54,7 @@ public final class ModelInfoUtil {
      * @param model     实体类的model类实例
      * @return 返回ID
      */
-    public static Serializable getEntityIdValue(ModelInfo modelInfo, TableInfo tableInfo, Model model, boolean check) {
+    public static Serializable getModelIdValue(ModelInfo modelInfo, TableInfo tableInfo, Model model, boolean check) {
         if (check) {
             if (model.getClass() != modelInfo.getType()) {
                 throw new RuntimeException("Not Supported");
@@ -63,7 +63,7 @@ public final class ModelInfoUtil {
         TableInfoUtil.checkId(tableInfo);
         Serializable id;
         try {
-            id = (Serializable) modelInfo.getIdFieldInfo().getReadFieldInvoker().invoke(model, null);
+            id = (Serializable) modelInfo.getSingleIdFieldInfo(true).getReadFieldInvoker().invoke(model, null);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }

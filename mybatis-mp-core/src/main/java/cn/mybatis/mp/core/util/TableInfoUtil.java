@@ -34,9 +34,7 @@ public final class TableInfoUtil {
      * @param tableInfo
      */
     public static void checkId(TableInfo tableInfo) {
-        if (tableInfo.getIdFieldInfo() == null) {
-            throw new RuntimeException("Table does not have an ID");
-        }
+        tableInfo.getSingleIdFieldInfo(true);
     }
 
     /**
@@ -77,7 +75,7 @@ public final class TableInfoUtil {
         TableInfoUtil.checkId(tableInfo);
         Serializable id;
         try {
-            id = (Serializable) tableInfo.getIdFieldInfo().getReadFieldInvoker().invoke(entity, null);
+            id = (Serializable) tableInfo.getSingleIdFieldInfo(true).getReadFieldInvoker().invoke(entity, null);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }

@@ -14,10 +14,15 @@ public class EntityUpdateWithWhereContext<T> extends SQLCmdUpdateContext {
     }
 
     public EntityUpdateWithWhereContext(T t, Where where, Set<String> forceUpdateFields) {
-        super(createCmd(t, where, forceUpdateFields));
+        super(createCmd(t, where, forceUpdateFields, false));
     }
 
-    private static Update createCmd(Object t, Where where, Set<String> forceUpdateFields) {
-        return EntityUpdateCmdCreateUtil.create(t, where, forceUpdateFields);
+    public EntityUpdateWithWhereContext(T t, Where where, boolean allFieldForce) {
+        super(createCmd(t, where, null, allFieldForce));
+    }
+
+
+    private static Update createCmd(Object t, Where where, Set<String> forceUpdateFields, boolean allFieldForce) {
+        return EntityUpdateCmdCreateUtil.create(t, where, forceUpdateFields, allFieldForce);
     }
 }

@@ -64,7 +64,18 @@ public interface BaseMapper extends CommonMapper {
      * @return 影响条数
      */
     default <E> int save(E entity) {
-        return this.$saveEntity(new EntityInsertContext(entity));
+        return this.save(entity, false);
+    }
+
+    /**
+     * 实体类新增
+     *
+     * @param entity        实体类实例
+     * @param allFieldForce 所有字段都强制保存
+     * @return 影响条数
+     */
+    default <E> int save(E entity, boolean allFieldForce) {
+        return this.$saveEntity(new EntityInsertContext(entity, allFieldForce));
     }
 
     /**
@@ -74,9 +85,20 @@ public interface BaseMapper extends CommonMapper {
      * @return 插入条数
      */
     default <E> int save(List<E> list) {
+        return this.save(list, false);
+    }
+
+    /**
+     * 多个保存，非批量行为
+     *
+     * @param list
+     * @param allFieldForce 所有字段都强制保存
+     * @return 插入条数
+     */
+    default <E> int save(List<E> list, boolean allFieldForce) {
         int cnt = 0;
         for (Object entity : list) {
-            cnt += this.save(entity);
+            cnt += this.save(entity, allFieldForce);
         }
         return cnt;
     }
@@ -114,7 +136,45 @@ public interface BaseMapper extends CommonMapper {
      * @return
      */
     default <E> int save(Model<E> model) {
-        return this.$saveModel(new ModelInsertContext<>(model));
+        return this.save(model, false);
+    }
+
+    /**
+     * model插入 部分字段插入
+     *
+     * @param model
+     * @param allFieldForce 所有字段都强制保存
+     * @return
+     */
+    default <E> int save(Model<E> model, boolean allFieldForce) {
+        return this.$saveModel(new ModelInsertContext<>(model, allFieldForce));
+    }
+
+    /**
+     * 批量保存
+     *
+     * @param list
+     * @param <E>
+     * @return
+     */
+    default <E> int saveModels(List<Model<E>> list) {
+        return this.saveModels(list, false);
+    }
+
+    /**
+     * 多个保存，非批量操作
+     *
+     * @param list
+     * @param allFieldForce 所有字段都强制保存
+     * @param <E>
+     * @return
+     */
+    default <E> int saveModels(List<Model<E>> list, boolean allFieldForce) {
+        int cnt = 0;
+        for (Model<E> entity : list) {
+            cnt += this.save(entity, allFieldForce);
+        }
+        return cnt;
     }
 
     /**
