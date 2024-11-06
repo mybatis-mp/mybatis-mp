@@ -30,6 +30,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class QueryTest extends BaseTest {
     @Test
+    public void getAll(){
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list= sysUserMapper.getAll();
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 3);
+        }
+    }
+
+    @Test
     public void onDBTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
