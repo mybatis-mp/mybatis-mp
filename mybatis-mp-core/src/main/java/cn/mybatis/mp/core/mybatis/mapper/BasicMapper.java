@@ -312,6 +312,30 @@ public interface BasicMapper extends BaseMapper {
         return this.$update(new ModelUpdateWithWhereContext(model, where, forceUpdateFieldsSet, allFieldForce));
     }
 
+    /**
+     * 多个修改，非批量行为
+     *
+     * @param list
+     * @return 影响条数
+     */
+    default <E> int updateModels(Collection<Model<E>> list) {
+        return this.updateModels(list, false);
+    }
+
+    /**
+     * 多个修改，非批量行为
+     *
+     * @param list
+     * @return 影响条数
+     * @allFieldForce 所有字段都强制保存
+     */
+    default <E> int updateModels(Collection<Model<E>> list, boolean allFieldForce) {
+        int cnt = 0;
+        for (Model<E> model : list) {
+            cnt += this.update(model, allFieldForce);
+        }
+        return cnt;
+    }
 
     /**
      * 根据id删除

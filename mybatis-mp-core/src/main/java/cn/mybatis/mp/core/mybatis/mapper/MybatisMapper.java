@@ -351,6 +351,27 @@ public interface MybatisMapper<T> extends CommonMapper {
     }
 
     /**
+     * 多个修改，非批量行为
+     *
+     * @param list
+     * @return 影响条数
+     */
+    default int updateModels(Collection<Model<T>> list) {
+        return getBasicMapper().updateModels(list);
+    }
+
+    /**
+     * 多个修改，非批量行为
+     *
+     * @param list
+     * @return 影响条数
+     * @allFieldForce 所有字段都强制保存
+     */
+    default int updateModels(Collection<Model<T>> list, boolean allFieldForce) {
+        return getBasicMapper().updateModels(list, allFieldForce);
+    }
+
+    /**
      * 实体类新增或修改
      * 先查是否存在，再进行新增或修改
      *
