@@ -12,6 +12,7 @@ import com.mybatis.mp.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
 import db.sql.api.impl.cmd.dbFun.FunctionInterface;
+import db.sql.api.impl.tookit.Objects;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class QueryTest extends BaseTest {
-
     @Test
     public void onDBTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -386,6 +386,12 @@ public class QueryTest extends BaseTest {
                                     subQuery.eq(SysUser::getId, queryChain.$().field(SysUser::getId));
                                     subQuery.eq(SysUser::getId, queryChain.$(SysUser::getId));
                                     subQuery.eq(SysUser::getId, queryChain.$(SysUser.class, "id"));
+                                })
+                                .andNested(where -> {
+                                    where.eq(SysUser::getId, null, Objects::nonNull);
+                                    where.andNested(t -> {
+                                        t.eq(SysUser::getId, null, Objects::nonNull);
+                                    });
                                 })
                                 .isNotNull(SysUser::getPassword)
                                 .connect(subQuery -> {

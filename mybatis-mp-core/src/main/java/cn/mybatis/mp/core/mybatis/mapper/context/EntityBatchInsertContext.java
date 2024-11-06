@@ -48,12 +48,14 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
         TableId tableId = null;
 
         //拼上主键
-        if (Objects.nonNull(tableInfo.getIdFieldInfo())) {
+        if (!tableInfo.getIdFieldInfos().isEmpty()) {
             tableId = TableIds.get(entityType, dbType);
             if (tableId.value() == IdAutoType.GENERATOR) {
-                if (!saveFieldInfoSet.contains(tableInfo.getIdFieldInfo())) {
-                    saveFieldInfoSet.add(tableInfo.getIdFieldInfo());
-                }
+                tableInfo.getIdFieldInfos().stream().forEach(item -> {
+                    if (!saveFieldInfoSet.contains(item)) {
+                        saveFieldInfoSet.add(item);
+                    }
+                });
             }
         }
 

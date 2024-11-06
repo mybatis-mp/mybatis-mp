@@ -1,16 +1,12 @@
 package cn.mybatis.mp.core.mybatis.resultset;
 
 import cn.mybatis.mp.core.db.reflect.*;
-import cn.mybatis.mp.core.mybatis.configuration.FetchObject;
 import cn.mybatis.mp.core.mybatis.configuration.SqlSessionThreadLocalUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdQueryContext;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.Query;
-import cn.mybatis.mp.core.util.CreatedEventUtil;
-import cn.mybatis.mp.core.util.PutEnumValueUtil;
-import cn.mybatis.mp.core.util.PutValueUtil;
-import cn.mybatis.mp.core.util.StringPool;
+import cn.mybatis.mp.core.util.*;
 import cn.mybatis.mp.db.annotations.CreatedEvent;
 import cn.mybatis.mp.db.annotations.ResultEntity;
 import db.sql.api.impl.cmd.basic.Column;
@@ -252,7 +248,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 rowValue = configuration.getObjectFactory().create(resultType);
             }
 
-            if (Objects.isNull(fetchInfo.getEqGetFieldInvoker()) || fetchInfo.getFetch().limit() > 0 || (Objects.nonNull(fetchInfo.getTargetSelectColumn()) && fetchInfo.getTargetSelectColumn().contains("("))) {
+            if (!fetchInfo.getFetch().forceUseIn() &&
+                    (fetchInfo.getFetch().limit() > 0 || (Objects.nonNull(fetchInfo.getTargetSelectColumn()) && fetchInfo.getTargetSelectColumn().contains("(")))) {
                 this.singleConditionFetch(rowValue, fetchInfo, onValue);
             } else {
                 MapUtil.computeIfAbsent(needFetchValuesMap, fetchInfo, key -> new ArrayList<>()).add(new FetchObject(onValue, onValue.toString(), rowValue));
@@ -267,7 +264,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             return;
         }
         needFetchValuesMap.forEach(((fetchInfo, fetchObjects) -> {
-            List<Object> list = this.fetchData(fetchInfo, fetchObjects.stream().map(item -> item.getSourceKey()).distinct().collect(Collectors.toList()));
+            List<Object> list = this.fetchData(fetchInfo, fetchObjects.stream().map(item -> item.getSourceKey()).distinct().collect(Collectors.toList()), false);
             this.fillFetchData(fetchInfo, fetchObjects, list);
         }));
     }
@@ -313,7 +310,15 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         fetchData.forEach(item -> {
             Object eqValue;
             try {
-                eqValue = fetchInfo.getEqGetFieldInvoker().invoke(item, new Object[]{});
+                if (Objects.nonNull(fetchInfo.getEqGetFieldInvoker())) {
+                    eqValue = fetchInfo.getEqGetFieldInvoker().invoke(item, null);
+                } else {
+                    if (fetchInfo.isUseResultFetchKeyValue()) {
+                        eqValue = ((FetchKeyValue) item).getKey();
+                    } else {
+                        eqValue = item;
+                    }
+                }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -331,7 +336,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         });
     }
 
-    protected List<Object> fetchData(FetchInfo fetchInfo, List conditionList) {
+    protected List<Object> fetchData(FetchInfo fetchInfo, List conditionList, boolean single) {
         if (conditionList.isEmpty()) {
             return Collections.emptyList();
         }
@@ -342,13 +347,23 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (Objects.isNull(fetchInfo.getTargetSelectColumn()) || StringPool.EMPTY.equals(fetchInfo.getTargetSelectColumn())) {
             query.select(fetchInfo.getReturnType());
         } else {
-            query.select(new Column(fetchInfo.getTargetSelectColumn()));
-            if (!fetchInfo.getTargetSelectColumn().contains("(")) {
+            if (!single && fetchInfo.isUseResultFetchKeyValue()) {
+                query.setReturnType(FetchKeyValue.class);
+                query.select(new Column(fetchInfo.getTargetMatchColumn()).as(FetchKeyValue::getKey));
+                query.select(new Column(fetchInfo.getTargetSelectColumn()).as(FetchKeyValue::getValue));
+            } else if (!fetchInfo.getTargetSelectColumn().contains("(")) {
+                query.select(new Column(fetchInfo.getTargetSelectColumn()));
                 query.select(new Column(fetchInfo.getTargetMatchColumn()));
+            } else {
+                query.select(new Column(fetchInfo.getTargetSelectColumn()));
             }
         }
         if (Objects.nonNull(fetchInfo.getOrderBy()) && !StringPool.EMPTY.equals(fetchInfo.getOrderBy())) {
             query.orderBy(OrderByDirection.NONE, fetchInfo.getOrderBy());
+        }
+
+        if (Objects.nonNull(fetchInfo.getGroupBy()) && !StringPool.EMPTY.equals(fetchInfo.getGroupBy())) {
+            query.groupBy(fetchInfo.getGroupBy());
         }
 
         List<Object> resultList = new ArrayList<>(conditionList.size());
@@ -376,7 +391,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         List<Object> list;
         if (Objects.nonNull(onValue)) {
             list = singleFetchCache.computeIfAbsent(fetchInfo, key -> new HashMap<>()).computeIfAbsent(onValue, key2 -> {
-                return this.fetchData(fetchInfo, Collections.singletonList(onValue));
+                return this.fetchData(fetchInfo, Collections.singletonList(onValue), true);
             });
         } else {
             list = new ArrayList<>();
@@ -387,6 +402,15 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     protected void setValue(Object rowValue, List<?> matchValues, FetchInfo fetchInfo) {
         if (fetchInfo.isMultiple()) {
             matchValues = Objects.isNull(matchValues) ? new ArrayList<>() : matchValues;
+            if (matchValues.isEmpty()) {
+                fetchInfo.setValue(rowValue, matchValues);
+                return;
+            }
+            if (fetchInfo.isUseResultFetchKeyValue() && matchValues.get(0) instanceof FetchKeyValue) {
+                matchValues = ((List<FetchKeyValue>) matchValues)
+                        .stream().map(m -> TypeConvertUtil.convert(m.getValue(), fetchInfo.getFieldInfo().getFinalClass()))
+                        .collect(Collectors.toList());
+            }
             fetchInfo.setValue(rowValue, matchValues);
         } else {
             if (Objects.isNull(matchValues) || matchValues.isEmpty()) {
@@ -394,7 +418,16 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             } else if (matchValues.size() > 1 && !fetchInfo.getFetch().multiValueErrorIgnore()) {
                 throw new TooManyResultsException("fetch action found more than 1 record");
             }
-            fetchInfo.setValue(rowValue, matchValues.get(0));
+
+            Object value;
+            if (fetchInfo.isUseResultFetchKeyValue() && matchValues.get(0) instanceof FetchKeyValue) {
+                value = ((List<FetchKeyValue>) matchValues)
+                        .stream().map(m -> TypeConvertUtil.convert(m.getValue(), fetchInfo.getFieldInfo().getFinalClass()))
+                        .findFirst().get();
+            } else {
+                value = matchValues.get(0);
+            }
+            fetchInfo.setValue(rowValue, value);
         }
     }
 }

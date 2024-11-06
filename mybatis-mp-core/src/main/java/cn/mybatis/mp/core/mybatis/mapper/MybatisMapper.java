@@ -152,6 +152,15 @@ public interface MybatisMapper<T> extends CommonMapper {
         return getBasicMapper().delete(getEntityType(), where);
     }
 
+    /**
+     * 删除所有数据
+     *
+     * @return
+     */
+    default int deleteAll() {
+        return getBasicMapper().deleteAll(getEntityType());
+    }
+
 
     /**
      * 单个查询
@@ -194,6 +203,17 @@ public interface MybatisMapper<T> extends CommonMapper {
     }
 
     /**
+     * 实体类修改
+     *
+     * @param entity
+     * @return 影响条数
+     * @allFieldForce 所有字段都强制保存
+     */
+    default int update(T entity, boolean allFieldForce) {
+        return getBasicMapper().update(entity, allFieldForce);
+    }
+
+    /**
      * 多个修改，非批量行为
      *
      * @param list
@@ -201,6 +221,17 @@ public interface MybatisMapper<T> extends CommonMapper {
      */
     default int update(Collection<T> list) {
         return getBasicMapper().update(list);
+    }
+
+    /**
+     * 多个修改，非批量行为
+     *
+     * @param list
+     * @return 影响条数
+     * @allFieldForce 所有字段都强制保存
+     */
+    default int update(Collection<T> list, boolean allFieldForce) {
+        return getBasicMapper().update(list, allFieldForce);
     }
 
     /**
@@ -224,9 +255,18 @@ public interface MybatisMapper<T> extends CommonMapper {
         return getBasicMapper().update(entity, forceUpdateFields);
     }
 
-
     default int update(T entity, Consumer<Where> consumer) {
         return getBasicMapper().update(entity, consumer);
+    }
+
+    /**
+     * @param entity        实体类
+     * @param allFieldForce
+     * @param consumer
+     * @return
+     */
+    default int update(T entity, boolean allFieldForce, Consumer<Where> consumer) {
+        return getBasicMapper().update(entity, allFieldForce, consumer);
     }
 
     /**
@@ -236,6 +276,16 @@ public interface MybatisMapper<T> extends CommonMapper {
      */
     default int update(T entity, Where where) {
         return getBasicMapper().update(entity, where, (Getter<T>[]) null);
+    }
+
+    /**
+     * @param entity        实体类
+     * @param where         可通过Wheres.create()创建
+     * @param allFieldForce 强制更新指定，解决需要修改为null的需求
+     * @return
+     */
+    default int update(T entity, boolean allFieldForce, Where where) {
+        return getBasicMapper().update(entity, allFieldForce, where);
     }
 
     /**
@@ -254,8 +304,19 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param model 实体类model
      * @return 修改的条数
      */
-    default int update(Model<T> model) {
+    default <E> int update(Model<E> model) {
         return getBasicMapper().update(model);
+    }
+
+    /**
+     * model修改 部分字段修改
+     *
+     * @param model         实体类model
+     * @param allFieldForce 所有字段都强制保存
+     * @return 修改的条数
+     */
+    default <E> int update(Model<E> model, boolean allFieldForce) {
+        return getBasicMapper().update(model, allFieldForce);
     }
 
     /**
@@ -265,12 +326,28 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param forceUpdateFields 强制更新指定，解决需要修改为null的需求
      * @return 修改的条数
      */
-    default int update(Model<T> model, Getter<T>... forceUpdateFields) {
+    default <E> int update(Model<E> model, Getter<E>... forceUpdateFields) {
         return getBasicMapper().update(model, forceUpdateFields);
     }
 
-    default int update(Model<T> model, Where consumer, Getter<T>... forceUpdateFields) {
-        return getBasicMapper().update(model, consumer, forceUpdateFields);
+    default <E> int update(Model<E> model, Consumer<Where> consumer) {
+        return getBasicMapper().update(model, consumer);
+    }
+
+    default <E> int update(Model<E> model, boolean allFieldForce, Consumer<Where> consumer) {
+        return getBasicMapper().update(model, allFieldForce, consumer);
+    }
+
+    default <E> int update(Model<E> model, Where where, Getter<E>... forceUpdateFields) {
+        return getBasicMapper().update(model, where, forceUpdateFields);
+    }
+
+    default <E> int update(Model<E> model, boolean allFieldForce, Where where) {
+        return getBasicMapper().update(model, allFieldForce, where);
+    }
+
+    default <E> int update(Model<E> model, Where where, boolean allFieldForce, Getter<E>... forceUpdateFields) {
+        return getBasicMapper().update(model, where, allFieldForce, forceUpdateFields);
     }
 
     /**
@@ -284,6 +361,46 @@ public interface MybatisMapper<T> extends CommonMapper {
     default <E> int saveOrUpdate(E entity) {
         return getBasicMapper().saveOrUpdate(entity);
     }
+
+    /**
+     * 实体类新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param entity
+     * @param @allFieldForce 所有字段都强制保存
+     * @param <E>
+     * @return
+     */
+    default <E> int saveOrUpdate(E entity, boolean allFieldForce) {
+        return getBasicMapper().saveOrUpdate(entity, allFieldForce);
+    }
+
+
+    /**
+     * 实体类Model新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param model
+     * @param <E>
+     * @return
+     */
+    default <E> int saveOrUpdate(Model<E> model) {
+        return getBasicMapper().saveOrUpdate(model);
+    }
+
+    /**
+     * 实体类Model新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param model
+     * @param @allFieldForce 所有字段都强制保存
+     * @param <E>
+     * @return
+     */
+    default <E> int saveOrUpdate(Model<E> model, boolean allFieldForce) {
+        return getBasicMapper().saveOrUpdate(model, allFieldForce);
+    }
+
 
     /**
      * 列表查询,返回类型，当前实体类
@@ -436,8 +553,19 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param entity
      * @return 影响条数
      */
-    default int save(T entity) {
-        return this.$saveEntity(new EntityInsertContext(entity));
+    default <E> int save(E entity) {
+        return this.save(entity, false);
+    }
+
+    /**
+     * 实体类新增
+     *
+     * @param entity        实体类实例
+     * @param allFieldForce 所有字段都强制保存
+     * @return 影响条数
+     */
+    default <E> int save(E entity, boolean allFieldForce) {
+        return this.$saveEntity(new EntityInsertContext(entity, allFieldForce));
     }
 
     /**
@@ -446,10 +574,21 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param list
      * @return 插入条数
      */
-    default int save(Collection<T> list) {
+    default <E> int save(List<E> list) {
+        return this.save(list, false);
+    }
+
+    /**
+     * 多个保存，非批量行为
+     *
+     * @param list
+     * @param allFieldForce 所有字段都强制保存
+     * @return 插入条数
+     */
+    default <E> int save(List<E> list, boolean allFieldForce) {
         int cnt = 0;
-        for (T entity : list) {
-            cnt += this.save(entity);
+        for (Object entity : list) {
+            cnt += this.save(entity, allFieldForce);
         }
         return cnt;
     }
@@ -528,8 +667,46 @@ public interface MybatisMapper<T> extends CommonMapper {
      * @param model
      * @return
      */
-    default int save(Model<T> model) {
-        return this.$saveModel(new ModelInsertContext<>(model));
+    default <E> int save(Model<E> model) {
+        return this.save(model, false);
+    }
+
+    /**
+     * model插入 部分字段插入
+     *
+     * @param model
+     * @param allFieldForce 所有字段都强制保存
+     * @return
+     */
+    default <E> int save(Model<E> model, boolean allFieldForce) {
+        return this.$saveModel(new ModelInsertContext<>(model, allFieldForce));
+    }
+
+    /**
+     * 批量保存
+     *
+     * @param list
+     * @param <E>
+     * @return
+     */
+    default <E> int saveModels(List<Model<E>> list) {
+        return this.saveModels(list, false);
+    }
+
+    /**
+     * 多个保存，非批量操作
+     *
+     * @param list
+     * @param allFieldForce 所有字段都强制保存
+     * @param <E>
+     * @return
+     */
+    default <E> int saveModels(List<Model<E>> list, boolean allFieldForce) {
+        int cnt = 0;
+        for (Model<E> entity : list) {
+            cnt += this.save(entity, allFieldForce);
+        }
+        return cnt;
     }
 
     /**

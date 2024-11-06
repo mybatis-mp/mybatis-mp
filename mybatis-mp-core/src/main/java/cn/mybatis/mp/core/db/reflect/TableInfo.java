@@ -41,14 +41,11 @@ public class TableInfo {
      */
     private final int fieldSize;
 
-    /**
-     * id字段信息
-     */
-    private final TableFieldInfo idFieldInfo;
-
     private final List<TableFieldInfo> idFieldInfos;
 
-    private final boolean hasMutilId;
+    private final boolean hasMultiId;
+
+    private final TableFieldInfo idFieldInfo;
 
     /**
      * 乐观锁字段
@@ -151,9 +148,9 @@ public class TableInfo {
 
         this.tableFieldInfos = Collections.unmodifiableList(tableFieldInfos);
         this.fieldSize = this.tableFieldInfos.size();
-        this.idFieldInfo = idFieldInfo;
-        this.hasMutilId = hasMutilId;
+        this.hasMultiId = hasMutilId;
         this.idFieldInfos = Collections.unmodifiableList(idFieldInfos);
+        this.idFieldInfo = idFieldInfo;
         this.versionFieldInfo = versionFieldInfo;
         this.tenantIdFieldInfo = tenantIdFieldInfo;
         this.logicDeleteFieldInfo = logicDeleteFieldInfo;
@@ -234,10 +231,6 @@ public class TableInfo {
         return fieldSize;
     }
 
-    public TableFieldInfo getIdFieldInfo() {
-        return idFieldInfo;
-    }
-
     public TableFieldInfo getVersionFieldInfo() {
         return versionFieldInfo;
     }
@@ -255,10 +248,18 @@ public class TableInfo {
     }
 
     public boolean isHasMultiId() {
-        return hasMutilId;
+        return hasMultiId;
     }
 
     public List<TableFieldInfo> getIdFieldInfos() {
         return idFieldInfos;
+    }
+
+
+    public TableFieldInfo getSingleIdFieldInfo(boolean throwException) {
+        if (throwException && Objects.isNull(this.idFieldInfo)) {
+            throw new RuntimeException("Entity:" + this.type + " has multi ID or non-single ID.");
+        }
+        return this.idFieldInfo;
     }
 }

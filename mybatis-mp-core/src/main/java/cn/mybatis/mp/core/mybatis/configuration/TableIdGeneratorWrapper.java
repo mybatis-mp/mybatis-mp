@@ -59,7 +59,7 @@ public class TableIdGeneratorWrapper {
         }
         try {
             TableInfo tableInfo = Tables.get(entityClass);
-            if (Objects.nonNull(tableInfo.getIdFieldInfo())) {
+            if (tableInfo.getIdFieldInfos().size() == 1) {
                 addEntityKeyGenerator(ms, selectKeyId, tableInfo);
             }
         } catch (NotTableClassException e) {
@@ -79,7 +79,7 @@ public class TableIdGeneratorWrapper {
             }
             try {
                 TableInfo tableInfo = Tables.get(entityClass);
-                if (Objects.nonNull(tableInfo.getIdFieldInfo())) {
+                if (tableInfo.getIdFieldInfos().size() == 1) {
                     addEntityKeyGenerator(ms, selectKeyId, tableInfo);
                 }
             } catch (NotTableClassException e) {
@@ -108,7 +108,7 @@ public class TableIdGeneratorWrapper {
             //序列
             case SQL: {
                 SqlSource sqlSource = new StaticSqlSource(ms.getConfiguration(), tableId.sql());
-                ResultMap selectKeyResultMap = new ResultMap.Builder(ms.getConfiguration(), selectKeyId, tableInfo.getIdFieldInfo().getFieldInfo().getTypeClass(),
+                ResultMap selectKeyResultMap = new ResultMap.Builder(ms.getConfiguration(), selectKeyId, tableInfo.getSingleIdFieldInfo(true).getFieldInfo().getTypeClass(),
                         Collections.emptyList(), false).build();
                 MappedStatement selectKeyMappedStatement = new MappedStatement.Builder(ms.getConfiguration(), selectKeyId, sqlSource, SqlCommandType.SELECT)
                         .keyProperty("id")
@@ -127,7 +127,7 @@ public class TableIdGeneratorWrapper {
             MetaObject msMetaObject = ms.getConfiguration().newMetaObject(ms);
             msMetaObject.setValue("keyGenerator", keyGenerator);
             msMetaObject.setValue("keyProperties", new String[]{"id"});
-            msMetaObject.setValue("keyColumns", new String[]{tableInfo.getIdFieldInfo().getColumnName()});
+            msMetaObject.setValue("keyColumns", new String[]{tableInfo.getSingleIdFieldInfo(true).getColumnName()});
         }
         if (ms.getConfiguration().hasKeyGenerator(selectKeyId)) {
             ms.getConfiguration().addKeyGenerator(selectKeyId, keyGenerator);

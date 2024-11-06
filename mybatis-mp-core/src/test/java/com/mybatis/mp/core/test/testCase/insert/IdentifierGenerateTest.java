@@ -67,6 +67,32 @@ public class IdentifierGenerateTest extends BaseTest {
     }
 
     @Test
+    public void insertOrUpdateModelTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            IdTestMapper idTestMapper = session.getMapper(IdTestMapper.class);
+            IdTestModel idTest = new IdTestModel();
+            idTest.setXxid(1L);
+            idTest.setCreateTime2(LocalDateTime.now());
+            idTestMapper.saveOrUpdate(idTest);
+            //System.out.println(idTest);
+            assertNotNull(idTest.getXxid());
+
+            idTestMapper.saveOrUpdate(idTest);
+            //System.out.println(idTest);
+            assertNotNull(idTest.getXxid());
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            IdTestMapper idTestMapper = session.getMapper(IdTestMapper.class);
+            IdTestModel idTest = new IdTestModel();
+            idTest.setCreateTime2(LocalDateTime.now());
+            idTestMapper.getBasicMapper().save(idTest);
+            //System.out.println(idTest);
+            assertNotNull(idTest.getXxid());
+        }
+    }
+
+    @Test
     public void insertWithIdTest() {
         if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2) {
             //sql server 不支持自增ID插入

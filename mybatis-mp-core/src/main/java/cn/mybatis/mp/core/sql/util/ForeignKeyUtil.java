@@ -35,10 +35,10 @@ public final class ForeignKeyUtil {
             ForeignInfo foreignInfo;
             if ((foreignInfo = secondTableInfo.getForeignInfo(mainTable)) != null) {
                 TableFieldInfo foreignFieldInfo = foreignInfo.getTableFieldInfo();
-                on.eq(mybatisCmdFactory.field(mainTable, mainTableInfo.getIdFieldInfo().getField().getName(), mainTableStorey), mybatisCmdFactory.field(secondTable, foreignFieldInfo.getField().getName(), secondTableStorey));
+                on.eq(mybatisCmdFactory.field(mainTable, mainTableInfo.getSingleIdFieldInfo(true).getField().getName(), mainTableStorey), mybatisCmdFactory.field(secondTable, foreignFieldInfo.getField().getName(), secondTableStorey));
             } else if ((foreignInfo = mainTableInfo.getForeignInfo(secondTable)) != null) {
                 TableFieldInfo foreignFieldInfo = foreignInfo.getTableFieldInfo();
-                on.eq(mybatisCmdFactory.field(secondTable, secondTableInfo.getIdFieldInfo().getField().getName(), secondTableStorey), mybatisCmdFactory.field(mainTable, foreignFieldInfo.getField().getName(), mainTableStorey));
+                on.eq(mybatisCmdFactory.field(secondTable, secondTableInfo.getSingleIdFieldInfo(true).getField().getName(), secondTableStorey), mybatisCmdFactory.field(mainTable, foreignFieldInfo.getField().getName(), mainTableStorey));
             }
         };
     }

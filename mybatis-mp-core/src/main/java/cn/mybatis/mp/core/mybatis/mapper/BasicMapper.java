@@ -1,5 +1,7 @@
 package cn.mybatis.mp.core.mybatis.mapper;
 
+import cn.mybatis.mp.core.db.reflect.ModelInfo;
+import cn.mybatis.mp.core.db.reflect.Models;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
@@ -12,6 +14,7 @@ import cn.mybatis.mp.db.Model;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.SelectorCall;
 import db.sql.api.impl.cmd.struct.Where;
@@ -133,7 +136,18 @@ public interface BasicMapper extends BaseMapper {
      * @return 影响条数
      */
     default <E> int update(E entity) {
-        return this.$update(new EntityUpdateContext(entity));
+        return this.update(entity, false);
+    }
+
+    /**
+     * 实体类修改
+     *
+     * @param entity
+     * @return 影响条数
+     * @allFieldForce 所有字段都强制保存
+     */
+    default <E> int update(E entity, boolean allFieldForce) {
+        return this.$update(new EntityUpdateContext(entity, null, allFieldForce));
     }
 
     /**
@@ -143,9 +157,20 @@ public interface BasicMapper extends BaseMapper {
      * @return 影响条数
      */
     default <E> int update(Collection<E> list) {
+        return this.update(list, false);
+    }
+
+    /**
+     * 多个修改，非批量行为
+     *
+     * @param list
+     * @return 影响条数
+     * @allFieldForce 所有字段都强制保存
+     */
+    default <E> int update(Collection<E> list, boolean allFieldForce) {
         int cnt = 0;
         for (E entity : list) {
-            cnt += this.update(entity);
+            cnt += this.update(entity, allFieldForce);
         }
         return cnt;
     }
@@ -166,7 +191,7 @@ public interface BasicMapper extends BaseMapper {
 
         int cnt = 0;
         for (E entity : list) {
-            cnt += this.$update(new EntityUpdateContext(entity, forceUpdateFieldsSet));
+            cnt += this.$update(new EntityUpdateContext(entity, forceUpdateFieldsSet, false));
         }
         return cnt;
     }
@@ -185,7 +210,7 @@ public interface BasicMapper extends BaseMapper {
                 forceUpdateFieldsSet.add(LambdaUtil.getName(getter));
             }
         }
-        return this.$update(new EntityUpdateContext<>(entity, forceUpdateFieldsSet));
+        return this.$update(new EntityUpdateContext<>(entity, forceUpdateFieldsSet, false));
     }
 
 
@@ -193,6 +218,20 @@ public interface BasicMapper extends BaseMapper {
         Where where = WhereUtil.create();
         consumer.accept(where);
         return this.update(entity, where, (Getter[]) null);
+    }
+
+    default <E> int update(E entity, Where where) {
+        return this.update(entity, where, (Getter[]) null);
+    }
+
+    default <E> int update(E entity, boolean allFieldForce, Where where) {
+        return this.$update(new EntityUpdateWithWhereContext(entity, where, allFieldForce));
+    }
+
+    default <E> int update(E entity, boolean allFieldForce, Consumer<Where> consumer) {
+        Where where = WhereUtil.create();
+        consumer.accept(where);
+        return this.$update(new EntityUpdateWithWhereContext(entity, where, allFieldForce));
     }
 
     default <E> int update(E entity, Where where, Getter<E>... forceUpdateFields) {
@@ -212,7 +251,18 @@ public interface BasicMapper extends BaseMapper {
      * @return 修改的条数
      */
     default <E> int update(Model<E> model) {
-        return this.$update(new ModelUpdateContext<>(model));
+        return this.$update(new ModelUpdateContext<>(model, null, false));
+    }
+
+    /**
+     * model修改 部分字段修改
+     *
+     * @param model         实体类model
+     * @param allFieldForce 所有字段都强制保存
+     * @return 修改的条数
+     */
+    default <E> int update(Model<E> model, boolean allFieldForce) {
+        return this.$update(new ModelUpdateContext<>(model, null, allFieldForce));
     }
 
     /**
@@ -229,7 +279,7 @@ public interface BasicMapper extends BaseMapper {
                 forceUpdateFieldsSet.add(LambdaUtil.getName(getter));
             }
         }
-        return this.$update(new ModelUpdateContext<>(model, forceUpdateFieldsSet));
+        return this.$update(new ModelUpdateContext<>(model, forceUpdateFieldsSet, false));
     }
 
     default <E> int update(Model<E> model, Consumer<Where> consumer) {
@@ -238,14 +288,28 @@ public interface BasicMapper extends BaseMapper {
         return this.update(model, where, (Getter<E>) null);
     }
 
+    default <E> int update(Model<E> model, boolean allFieldForce, Consumer<Where> consumer) {
+        Where where = WhereUtil.create();
+        consumer.accept(where);
+        return this.update(model, where, allFieldForce);
+    }
+
     default <E> int update(Model<E> model, Where where, Getter<E>... forceUpdateFields) {
+        return this.update(model, where, false, forceUpdateFields);
+    }
+
+    default <E> int update(Model<E> model, boolean allFieldForce, Where where) {
+        return this.update(model, where, allFieldForce, null);
+    }
+
+    default <E> int update(Model<E> model, Where where, boolean allFieldForce, Getter<E>... forceUpdateFields) {
         Set<String> forceUpdateFieldsSet = new HashSet<>();
         if (Objects.nonNull(forceUpdateFields)) {
             for (Getter getter : forceUpdateFields) {
                 forceUpdateFieldsSet.add(LambdaUtil.getName(getter));
             }
         }
-        return this.$update(new ModelUpdateWithWhereContext(model, where, forceUpdateFieldsSet));
+        return this.$update(new ModelUpdateWithWhereContext(model, where, forceUpdateFieldsSet, allFieldForce));
     }
 
 
@@ -270,6 +334,19 @@ public interface BasicMapper extends BaseMapper {
      * @return
      */
     default <E> int saveOrUpdate(E entity) {
+        return this.saveOrUpdate(entity, false);
+    }
+
+    /**
+     * 实体类新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param entity
+     * @param @allFieldForce 所有字段都强制保存
+     * @param <E>
+     * @return
+     */
+    default <E> int saveOrUpdate(E entity, boolean allFieldForce) {
         Class<?> entityType = entity.getClass();
         TableInfo tableInfo = Tables.get(entityType);
 
@@ -296,9 +373,61 @@ public interface BasicMapper extends BaseMapper {
 
         boolean exists = this.exists(query);
         if (exists) {
-            return this.update(entity);
+            return this.update(entity, allFieldForce);
         } else {
-            return this.save(entity);
+            return this.save(entity, allFieldForce);
+        }
+    }
+
+    /**
+     * 实体类Model新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param model
+     * @param <E>
+     * @return
+     */
+    default <E> int saveOrUpdate(Model<E> model) {
+        return this.saveOrUpdate(model, false);
+    }
+
+    /**
+     * 实体类Model新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param model
+     * @param @allFieldForce 所有字段都强制保存
+     * @param <E>
+     * @return
+     */
+    default <E> int saveOrUpdate(Model<E> model, boolean allFieldForce) {
+        Class modelType = model.getClass();
+        ModelInfo modelInfo = Models.get(modelType);
+        if (modelInfo.getIdFieldInfos().isEmpty()) {
+            throw new RuntimeException(modelType.getName() + " has no id");
+        }
+        Object id;
+        try {
+            id = modelInfo.getIdFieldInfos().get(0).getReadFieldInvoker().invoke(model, null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (Objects.isNull(id)) {
+            return this.save(model);
+        }
+
+        Query<E> query = Query.create();
+        Table table = query.$(modelInfo.getEntityType());
+        query.select1().from(table);
+
+        WhereUtil.appendIdWhereWithModel(query.$where(), modelInfo, model);
+
+        boolean exists = this.exists(query);
+        if (exists) {
+            return this.update(model, allFieldForce);
+        } else {
+            return this.save(model, allFieldForce);
         }
     }
 
@@ -404,6 +533,10 @@ public interface BasicMapper extends BaseMapper {
         delete.delete(entityType);
         delete.from(entityType);
         return this.delete(delete);
+    }
+
+    default <E> int deleteAll(Class<E> entityType) {
+        return this.delete(entityType, where -> where.eq(Methods.column("1"), 1));
     }
 
     /**

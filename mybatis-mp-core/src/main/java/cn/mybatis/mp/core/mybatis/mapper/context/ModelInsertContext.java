@@ -19,6 +19,7 @@ import cn.mybatis.mp.db.annotations.TableId;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 
 import java.util.ArrayList;
@@ -31,8 +32,11 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
 
     private final ModelInfo modelInfo;
 
-    public ModelInsertContext(T model) {
+    private final boolean allFieldForce;
+
+    public ModelInsertContext(T model, boolean allFieldForce) {
         this.model = model;
+        this.allFieldForce = allFieldForce;
         this.modelInfo = Models.get(model.getClass());
         this.entityType = modelInfo.getEntityType();
     }
@@ -90,13 +94,19 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
                 value = 1;
                 //乐观锁回写
                 ModelInfoUtil.setValue(modelFieldInfo, model, value);
+            } else if (allFieldForce) {
+                isNeedInsert = true;
             }
 
             if (isNeedInsert) {
                 insert.fields($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()));
-                TableField tableField = modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation();
-                MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                values.add(Methods.value(mybatisParameter));
+                if (Objects.isNull(value)) {
+                    values.add(NULL.NULL);
+                } else {
+                    TableField tableField = modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation();
+                    MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
+                    values.add(Methods.value(mybatisParameter));
+                }
             }
         }
         insert.values(values);
@@ -106,7 +116,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
 
     @Override
     public void setId(Object id) {
-        IdUtil.setId(this.model, this.modelInfo.getIdFieldInfo(), id);
+        IdUtil.setId(this.model, this.modelInfo.getSingleIdFieldInfo(true), id);
     }
 
 }

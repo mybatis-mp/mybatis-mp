@@ -31,14 +31,20 @@ public final class TypeConvertUtil {
         }
 
         Object newValue;
-        if (targetType == Boolean.class) {
+        if (targetType == String.class) {
+            newValue = value.toString();
+        } else if (targetType == Boolean.class) {
             String v = value.toString().trim();
             if (v.equals("1")) {
                 return (T) Boolean.TRUE;
             } else if (v.equals("0")) {
                 return (T) Boolean.FALSE;
+            } else if (v.equalsIgnoreCase("true")) {
+                return (T) Boolean.TRUE;
+            } else if (v.equalsIgnoreCase("false")) {
+                return (T) Boolean.FALSE;
             }
-            newValue = Boolean.valueOf(value.toString());
+            throw new RuntimeException("value : " + value + " can't convert to a boolean");
         } else if (targetType == Byte.class) {
             newValue = Byte.valueOf(value.toString());
         } else if (targetType == Integer.class) {
@@ -52,7 +58,7 @@ public final class TypeConvertUtil {
         } else if (targetType == Character.class) {
             newValue = value.toString().charAt(0);
         } else {
-            throw new RuntimeException("Inconsistent types");
+            throw new RuntimeException("Inconsistent types value : " + value + " can't convert to a " + targetType);
         }
 
         return (T) newValue;

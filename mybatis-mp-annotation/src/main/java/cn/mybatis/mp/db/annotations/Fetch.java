@@ -69,6 +69,14 @@ public @interface Fetch {
     String orderBy() default "";
 
     /**
+     * 用于查询group by 例如 "xx,xx2"; 其中 xx xx2 均为 实体类属性，不是列，多个逗号分割
+     * 可以动态 例如:[{id} desc,{createTime}]等
+     *
+     * @return
+     */
+    String groupBy() default "";
+
+    /**
      * 1 对 1 多条时，发现多条不报错
      *
      * @return
@@ -81,4 +89,11 @@ public @interface Fetch {
      * @return
      */
     int limit() default 0;
+
+    /**
+     * 强制使用in 查询，减少查询次数
+     *
+     * @return
+     */
+    boolean forceUseIn() default false;
 }

@@ -1,4 +1,4 @@
-package cn.mybatis.mp.core.mybatis.configuration;
+package cn.mybatis.mp.core.mybatis.resultset;
 
 import lombok.Data;
 

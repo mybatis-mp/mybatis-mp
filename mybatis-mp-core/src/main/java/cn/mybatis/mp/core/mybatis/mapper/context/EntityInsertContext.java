@@ -18,6 +18,7 @@ import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 
 import java.util.ArrayList;
@@ -30,11 +31,13 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
 
     private final TableInfo tableInfo;
 
-    public EntityInsertContext(T entity) {
+    private final boolean allFieldForce;
+
+    public EntityInsertContext(T entity, boolean allFieldForce) {
         this.entity = entity;
+        this.allFieldForce = allFieldForce;
         this.entityType = entity.getClass();
         this.tableInfo = Tables.get(entity.getClass());
-
     }
 
     @Override
@@ -93,13 +96,19 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
                 value = 1;
                 //乐观锁回写
                 TableInfoUtil.setValue(tableFieldInfo, entity, value);
+            } else if (allFieldForce) {
+                isNeedInsert = true;
             }
 
             if (isNeedInsert) {
                 insert.fields($.field(table, tableFieldInfo.getColumnName()));
-                TableField tableField = tableFieldInfo.getTableFieldAnnotation();
-                MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                values.add(Methods.value(mybatisParameter));
+                if (Objects.isNull(value)) {
+                    values.add(NULL.NULL);
+                } else {
+                    TableField tableField = tableFieldInfo.getTableFieldAnnotation();
+                    MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
+                    values.add(Methods.value(mybatisParameter));
+                }
             }
         }
         insert.values(values);
@@ -109,6 +118,6 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
 
     @Override
     public void setId(Object id) {
-        IdUtil.setId(this.entity, this.tableInfo.getIdFieldInfo(), id);
+        IdUtil.setId(this.entity, this.tableInfo.getSingleIdFieldInfo(true), id);
     }
 }

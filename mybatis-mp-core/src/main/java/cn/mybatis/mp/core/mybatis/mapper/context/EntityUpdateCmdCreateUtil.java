@@ -6,6 +6,7 @@ import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.Update;
+import cn.mybatis.mp.core.sql.util.WhereUtil;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
@@ -20,7 +21,7 @@ import java.util.Set;
 
 public class EntityUpdateCmdCreateUtil {
 
-    private static Update warp(Update update, TableInfo tableInfo, Object t, Set<String> forceUpdateFields) {
+    private static Update warp(Update update, TableInfo tableInfo, Object t, Set<String> forceUpdateFields, boolean allFieldForce) {
 
         MybatisCmdFactory $ = update.$();
 
@@ -31,11 +32,6 @@ public class EntityUpdateCmdCreateUtil {
 
         for (int i = 0; i < tableInfo.getFieldSize(); i++) {
             TableFieldInfo tableFieldInfo = tableInfo.getTableFieldInfos().get(i);
-
-            boolean isForceUpdate = forceUpdateFields.contains(tableFieldInfo.getField().getName());
-            if (!isForceUpdate && !tableFieldInfo.getTableFieldAnnotation().update()) {
-                continue;
-            }
 
             Object value = tableFieldInfo.getValue(t);
 
@@ -77,7 +73,12 @@ public class EntityUpdateCmdCreateUtil {
                 TableInfoUtil.setValue(tableFieldInfo, t, value);
             }
 
-            if (isForceUpdate) {
+            boolean isForceUpdate = Objects.nonNull(forceUpdateFields) && forceUpdateFields.contains(tableFieldInfo.getField().getName());
+            if (!isForceUpdate && !tableFieldInfo.getTableFieldAnnotation().update()) {
+                continue;
+            }
+
+            if (isForceUpdate || allFieldForce) {
                 if (Objects.isNull(value)) {
                     update.set($.field(table, tableFieldInfo.getColumnName()), NULL.NULL);
                     continue;
@@ -100,22 +101,18 @@ public class EntityUpdateCmdCreateUtil {
     }
 
 
-    public static Update create(Object entity, Set<String> forceUpdateFields) {
+    public static Update create(Object entity, Set<String> forceUpdateFields, boolean allFieldForce) {
         TableInfo tableInfo = Tables.get(entity.getClass());
-        if (!tableInfo.isHasMultiId()) {
-            Object id = TableInfoUtil.getEntityIdValue(tableInfo, entity, true);
-            if (Objects.isNull(id)) {
-                throw new RuntimeException(" can't found id value");
-            }
-        }
-        return warp(new Update(), tableInfo, entity, forceUpdateFields);
+        Where where = WhereUtil.create();
+        WhereUtil.appendIdWhereWithEntity(where, tableInfo, entity);
+        return warp(new Update(), tableInfo, entity, forceUpdateFields, allFieldForce);
     }
 
-    public static Update create(Object entity, Where where, Set<String> forceUpdateFields) {
+    public static Update create(Object entity, Where where, Set<String> forceUpdateFields, boolean allFieldForce) {
         if (Objects.isNull(where) || !where.hasContent()) {
             throw new RuntimeException("update has no where condition content ");
         }
         TableInfo tableInfo = Tables.get(entity.getClass());
-        return warp(new Update(where), tableInfo, entity, forceUpdateFields);
+        return warp(new Update(where), tableInfo, entity, forceUpdateFields, allFieldForce);
     }
 }

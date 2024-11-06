@@ -18,7 +18,8 @@ public final class TableIds {
 
     public static TableId get(Class entity, DbType dbType) {
         return CACHE.computeIfAbsent(entity.getName() + dbType, key -> {
-            TableFieldInfo tableFieldInfo = Tables.get(entity).getIdFieldInfo();
+
+            TableFieldInfo tableFieldInfo = Tables.get(entity).getSingleIdFieldInfo(false);
             if (Objects.isNull(tableFieldInfo)) {
                 return null;
             }

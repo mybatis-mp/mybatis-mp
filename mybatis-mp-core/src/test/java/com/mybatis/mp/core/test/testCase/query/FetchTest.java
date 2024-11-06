@@ -24,6 +24,31 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FetchTest extends BaseTest {
 
     @Test
+    public void fetchCnt() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            LongAdder longAdder = new LongAdder();
+            Map<Integer, FetchSysRoleVo2> map = QueryChain.of(sysRoleMapper)
+                    .fetchFilter(FetchSysRoleVo2::getSysRoleNames, where -> {
+                        longAdder.increment();
+                    })
+                    .returnType(FetchSysRoleVo2.class)
+                    .mapWithKey(FetchSysRoleVo2::getId);
+            System.out.println(map);
+
+            System.out.println(longAdder.sum());
+            assertEquals(longAdder.sum(), 1);
+            assertEquals(map.get(1).getCnts(), 2);
+            assertEquals(map.get(1).getCnts2(), 2);
+            assertEquals(map.get(1).getCnts3(), 2);
+            assertEquals(map.get(1).getSysRoleNames().get(0), "test1");
+            assertEquals(map.get(1).getSysRoleNames().get(1), "test2");
+            assertEquals(map.get(1).getRoleName(), "测试");
+            assertEquals(map.get(2).getRoleName(), "运维");
+        }
+    }
+
+    @Test
     public void onRowEvent() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);

@@ -1,8 +1,10 @@
 package cn.mybatis.mp.core.sql.util;
 
+import cn.mybatis.mp.core.db.reflect.ModelInfo;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.util.TableInfoUtil;
+import cn.mybatis.mp.db.Model;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.struct.Where;
 
@@ -40,7 +42,7 @@ public final class WhereUtil {
         TableInfoUtil.checkId(tableInfo);
         CmdFactory $ = where.getConditionFactory().getCmdFactory();
         Objects.requireNonNull(id, "id can't be null");
-        where.eq($.field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName(), 1), id);
+        where.eq($.field(tableInfo.getType(), tableInfo.getSingleIdFieldInfo(true).getField().getName(), 1), id);
     }
 
     /**
@@ -52,23 +54,44 @@ public final class WhereUtil {
      */
     public static void appendIdWhereWithEntity(Where where, TableInfo tableInfo, Object entity) {
         CmdFactory $ = where.getConditionFactory().getCmdFactory();
-        if (!tableInfo.isHasMultiId()) {
-            TableInfoUtil.checkId(tableInfo);
-            Serializable id = TableInfoUtil.getEntityIdValue(tableInfo, entity);
-            Objects.requireNonNull(id, "id can't be null");
-            where.eq($.field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName(), 1), id);
-        } else {
-            tableInfo.getIdFieldInfos().forEach(item -> {
-                Object id;
-                try {
-                    id = item.getReadFieldInvoker().invoke(entity, null);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-                Objects.requireNonNull(id, "id can't be null");
-                where.eq($.field(tableInfo.getType(), item.getField().getName(), 1), id);
-            });
+        if (tableInfo.getIdFieldInfos().isEmpty()) {
+            throw new RuntimeException(tableInfo.getType().getName() + " has no id");
         }
+
+        tableInfo.getIdFieldInfos().forEach(item -> {
+            Object id;
+            try {
+                id = item.getReadFieldInvoker().invoke(entity, null);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            Objects.requireNonNull(id, "id can't be null");
+            where.eq($.field(tableInfo.getType(), item.getField().getName(), 1), id);
+        });
+    }
+
+    /**
+     * 拼接id条件
+     *
+     * @param where
+     * @param modelInfo
+     * @param model
+     */
+    public static void appendIdWhereWithModel(Where where, ModelInfo modelInfo, Model<?> model) {
+        if (modelInfo.getIdFieldInfos().isEmpty()) {
+            throw new RuntimeException(modelInfo.getType().getName() + " has no id");
+        }
+        CmdFactory $ = where.getConditionFactory().getCmdFactory();
+        modelInfo.getIdFieldInfos().forEach(item -> {
+            Object id;
+            try {
+                id = item.getReadFieldInvoker().invoke(model, null);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            Objects.requireNonNull(id, "id can't be null");
+            where.eq($.field(modelInfo.getTableInfo().getType(), item.getTableFieldInfo().getField().getName(), 1), id);
+        });
     }
 
     /**
@@ -96,7 +119,7 @@ public final class WhereUtil {
         ids.forEach(id -> {
             Objects.requireNonNull(id, "id can't be null");
         });
-        where.in($.field(tableInfo.getType(), tableInfo.getIdFieldInfo().getField().getName(), 1), ids);
+        where.in($.field(tableInfo.getType(), tableInfo.getSingleIdFieldInfo(true).getField().getName(), 1), ids);
     }
 
     /**

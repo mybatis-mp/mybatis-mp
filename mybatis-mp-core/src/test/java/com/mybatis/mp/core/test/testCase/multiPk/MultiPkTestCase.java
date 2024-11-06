@@ -52,7 +52,7 @@ public class MultiPkTestCase extends BaseTest {
             entity.setId1(1);
             entity.setId2(2);
             entity.setName("12");
-            mapper.save(entity);
+            mapper.saveOrUpdate(entity);
 
             assertEquals(entity, getById(mapper, 1, 2));
             entity.setName("12update");
