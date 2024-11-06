@@ -586,6 +586,14 @@ public interface BasicMapper extends BaseMapper {
         return this.list(query);
     }
 
+    default <E> List<E> getAll(Class<E> entityType) {
+        return this.list(Query.create()
+                .select(entityType)
+                .from(entityType)
+                .returnType(entityType)
+        );
+    }
+
     /**
      * 列表查询
      *

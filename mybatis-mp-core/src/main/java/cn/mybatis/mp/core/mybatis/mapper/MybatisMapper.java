@@ -441,6 +441,10 @@ public interface MybatisMapper<T> extends CommonMapper {
         return getBasicMapper().listWithQueryFun(getEntityType(), consumer);
     }
 
+    default List<T> getAll() {
+        return getBasicMapper().getAll(getEntityType());
+    }
+
     /**
      * 游标查询,返回类型，当前实体类
      *
