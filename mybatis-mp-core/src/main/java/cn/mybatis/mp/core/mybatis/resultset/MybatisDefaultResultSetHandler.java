@@ -349,8 +349,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         } else {
             if (!single && fetchInfo.isUseResultFetchKeyValue()) {
                 query.setReturnType(FetchKeyValue.class);
-                query.select(new Column(fetchInfo.getTargetSelectColumn()).as(FetchKeyValue::getValue));
                 query.select(new Column(fetchInfo.getTargetMatchColumn()).as(FetchKeyValue::getKey));
+                query.select(new Column(fetchInfo.getTargetSelectColumn()).as(FetchKeyValue::getValue));
             } else if (!fetchInfo.getTargetSelectColumn().contains("(")) {
                 query.select(new Column(fetchInfo.getTargetSelectColumn()));
                 query.select(new Column(fetchInfo.getTargetMatchColumn()));
