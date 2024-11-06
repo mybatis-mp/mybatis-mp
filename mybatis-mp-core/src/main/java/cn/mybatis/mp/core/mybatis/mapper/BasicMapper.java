@@ -14,6 +14,7 @@ import cn.mybatis.mp.db.Model;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.GetterFun;
+import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.SelectorCall;
 import db.sql.api.impl.cmd.struct.Where;
@@ -532,6 +533,10 @@ public interface BasicMapper extends BaseMapper {
         delete.delete(entityType);
         delete.from(entityType);
         return this.delete(delete);
+    }
+
+    default <E> int deleteAll(Class<E> entityType) {
+        return this.delete(entityType, where -> where.eq(Methods.column("1"), 1));
     }
 
     /**

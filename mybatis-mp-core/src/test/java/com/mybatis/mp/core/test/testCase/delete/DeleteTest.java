@@ -19,6 +19,17 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class DeleteTest extends BaseTest {
 
     @Test
+    public void deleteAll() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            sysUserMapper.deleteAll();
+            int cnt = sysUserMapper.count(where -> {
+            });
+            assertEquals(0, cnt);
+        }
+    }
+
+    @Test
     public void onDBTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);

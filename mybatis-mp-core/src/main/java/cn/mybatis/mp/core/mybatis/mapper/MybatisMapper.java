@@ -152,6 +152,15 @@ public interface MybatisMapper<T> extends CommonMapper {
         return getBasicMapper().delete(getEntityType(), where);
     }
 
+    /**
+     * 删除所有数据
+     *
+     * @return
+     */
+    default int deleteAll() {
+        return getBasicMapper().deleteAll(getEntityType());
+    }
+
 
     /**
      * 单个查询
