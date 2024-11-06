@@ -347,7 +347,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (Objects.isNull(fetchInfo.getTargetSelectColumn()) || StringPool.EMPTY.equals(fetchInfo.getTargetSelectColumn())) {
             query.select(fetchInfo.getReturnType());
         } else {
-            query.select(new Column(fetchInfo.getTargetSelectColumn()));
             if (!single && fetchInfo.isUseResultFetchKeyValue()) {
                 query.setReturnType(FetchKeyValue.class);
                 query.select(new Column(fetchInfo.getTargetSelectColumn()).as(FetchKeyValue::getValue));
