@@ -43,7 +43,7 @@ public class FetchInfo {
 
     private final boolean isUseIn;
 
-    private final boolean isUseResultMap;
+    private final boolean isUseResultFetchKeyValue;
 
     public FetchInfo(Class clazz, Field field, Fetch fetch, Class returnType, String valueColumn, TypeHandler<?> valueTypeHandler, Field targetMatchField, String targetMatchColumn, String targetSelectColumn, String orderBy, String groupBy) {
         this.field = field;
@@ -69,7 +69,7 @@ public class FetchInfo {
         }
 
         this.isUseIn = isUseIn;
-        this.isUseResultMap = this.isUseIn && Objects.isNull(this.eqGetFieldInvoker) && this.returnType.getPackage().getName().contains("java.lang");
+        this.isUseResultFetchKeyValue = this.isUseIn && Objects.isNull(this.eqGetFieldInvoker) && this.returnType.getPackage().getName().contains("java.lang");
     }
 
     public void setValue(Object object, Object value) {

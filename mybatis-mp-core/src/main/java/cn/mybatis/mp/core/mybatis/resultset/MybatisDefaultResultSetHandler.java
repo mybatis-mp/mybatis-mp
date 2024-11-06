@@ -1,7 +1,6 @@
 package cn.mybatis.mp.core.mybatis.resultset;
 
 import cn.mybatis.mp.core.db.reflect.*;
-import cn.mybatis.mp.core.mybatis.configuration.FetchObject;
 import cn.mybatis.mp.core.mybatis.configuration.SqlSessionThreadLocalUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdQueryContext;
@@ -314,8 +313,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 if (Objects.nonNull(fetchInfo.getEqGetFieldInvoker())) {
                     eqValue = fetchInfo.getEqGetFieldInvoker().invoke(item, null);
                 } else {
-                    if (fetchInfo.isUseResultMap()) {
-                        eqValue = ((Map) item).get(fetchInfo.getTargetMatchColumn());
+                    if (fetchInfo.isUseResultFetchKeyValue()) {
+                        eqValue = ((FetchKeyValue) item).getKey();
                     } else {
                         eqValue = item;
                     }
@@ -344,16 +343,20 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         int batchSize = 100;
         List queryValueList = new ArrayList<>(100);
         Query query = Query.create().returnType(fetchInfo.getReturnType());
-        if (!single && fetchInfo.isUseResultMap()) {
-            query.setReturnType(Map.class);
-        }
 
         if (Objects.isNull(fetchInfo.getTargetSelectColumn()) || StringPool.EMPTY.equals(fetchInfo.getTargetSelectColumn())) {
             query.select(fetchInfo.getReturnType());
         } else {
             query.select(new Column(fetchInfo.getTargetSelectColumn()));
-            if (!fetchInfo.getTargetSelectColumn().contains("(") || fetchInfo.isUseResultMap()) {
+            if (!single && fetchInfo.isUseResultFetchKeyValue()) {
+                query.setReturnType(FetchKeyValue.class);
+                query.select(new Column(fetchInfo.getTargetSelectColumn()).as(FetchKeyValue::getValue));
+                query.select(new Column(fetchInfo.getTargetMatchColumn()).as(FetchKeyValue::getKey));
+            } else if (!fetchInfo.getTargetSelectColumn().contains("(")) {
+                query.select(new Column(fetchInfo.getTargetSelectColumn()));
                 query.select(new Column(fetchInfo.getTargetMatchColumn()));
+            } else {
+                query.select(new Column(fetchInfo.getTargetSelectColumn()));
             }
         }
         if (Objects.nonNull(fetchInfo.getOrderBy()) && !StringPool.EMPTY.equals(fetchInfo.getOrderBy())) {
@@ -404,9 +407,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 fetchInfo.setValue(rowValue, matchValues);
                 return;
             }
-            if (fetchInfo.isUseResultMap() && matchValues.get(0) instanceof Map) {
-                matchValues = ((List<Map<String, Object>>) matchValues)
-                        .stream().map(m -> TypeConvertUtil.convert(m.get(fetchInfo.getTargetSelectColumn()), fetchInfo.getFieldInfo().getFinalClass()))
+            if (fetchInfo.isUseResultFetchKeyValue() && matchValues.get(0) instanceof FetchKeyValue) {
+                matchValues = ((List<FetchKeyValue>) matchValues)
+                        .stream().map(m -> TypeConvertUtil.convert(m.getValue(), fetchInfo.getFieldInfo().getFinalClass()))
                         .collect(Collectors.toList());
             }
             fetchInfo.setValue(rowValue, matchValues);
@@ -418,9 +421,9 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
 
             Object value;
-            if (fetchInfo.isUseResultMap() && matchValues.get(0) instanceof Map) {
-                value = ((List<Map<String, Object>>) matchValues)
-                        .stream().map(m -> TypeConvertUtil.convert(m.get(fetchInfo.getTargetSelectColumn()), fetchInfo.getFieldInfo().getFinalClass()))
+            if (fetchInfo.isUseResultFetchKeyValue() && matchValues.get(0) instanceof FetchKeyValue) {
+                value = ((List<FetchKeyValue>) matchValues)
+                        .stream().map(m -> TypeConvertUtil.convert(m.getValue(), fetchInfo.getFieldInfo().getFinalClass()))
                         .findFirst().get();
             } else {
                 value = matchValues.get(0);
