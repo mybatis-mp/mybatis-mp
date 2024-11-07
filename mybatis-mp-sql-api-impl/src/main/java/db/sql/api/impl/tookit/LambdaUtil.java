@@ -49,7 +49,7 @@ public final class LambdaUtil {
         return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), getter.getClass().getClassLoader()));
     }
 
-    private static <T, R> SerializedLambda getSerializedLambda(GetterFun<T, R> getter) {
+    public static <T, R> SerializedLambda getSerializedLambda(GetterFun<T, R> getter) {
         try {
             Method method = getter.getClass().getDeclaredMethod("writeReplace");
             method.setAccessible(Boolean.TRUE);
