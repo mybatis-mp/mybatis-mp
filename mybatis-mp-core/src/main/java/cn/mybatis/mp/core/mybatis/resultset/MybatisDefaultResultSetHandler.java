@@ -54,6 +54,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     private List<CreatedEvent> createdEventList;
 
+    private Map<String, Object> putValueSessionCache;
+
     public MybatisDefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
         if (mappedStatement.getResultMaps().size() == 1) {
@@ -132,6 +134,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         });
     }
 
+    private Map<String, Object> getPutValueSessionCache() {
+        if(putValueSessionCache ==null){
+            putValueSessionCache=new HashMap<>();
+        }
+        return putValueSessionCache;
+    }
 
     private void putValue(Object rowValue, ResultSet resultSet) {
         if (Objects.isNull(putValueInfoMap)) {
@@ -160,7 +168,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 }
             }
 
-            Object targetValue = PutValueUtil.getPutValue(values, item, sessionCache);
+            Object targetValue = PutValueUtil.getPutValue(values, item, getPutValueSessionCache());
             if (Objects.isNull(targetValue)) {
                 return;
             }
