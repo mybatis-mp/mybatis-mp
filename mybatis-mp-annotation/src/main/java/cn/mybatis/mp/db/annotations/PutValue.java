@@ -2,6 +2,9 @@ package cn.mybatis.mp.db.annotations;
 
 import java.lang.annotation.*;
 
+/**
+ * 此注解会根据值，method，factory做session级的缓存，请注意
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
