@@ -18,17 +18,17 @@ public final class PutValueUtil {
             Object value = getPutValue(values, putValueInfo);
             return value == null ? NULL_VALUE : value;
         });
-        return v == NULL_VALUE ? null : v;
+        return v == NULL_VALUE ? putValueInfo.getDefaultValue() : v;
     }
 
-    public static Object getPutValue(Object[] values, PutValueInfo putValueInfo) {
+    private static Object getPutValue(Object[] values, PutValueInfo putValueInfo) {
         PutValue annotation = putValueInfo.getAnnotation();
         boolean allNull = !Arrays.stream(values).filter(java.util.Objects::nonNull).findFirst().isPresent();
         if (allNull) {
             if (annotation.required()) {
                 throw new RuntimeException(" values are all null from table");
             }
-            return putValueInfo.getDefaultValue();
+            return null;
         }
 
         Class<?>[] paramTypes = Arrays.stream(values).map(Object::getClass).toArray(Class[]::new);
