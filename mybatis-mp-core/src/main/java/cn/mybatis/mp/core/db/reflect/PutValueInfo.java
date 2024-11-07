@@ -23,19 +23,16 @@ public class PutValueInfo {
 
     private final SetFieldInvoker writeFieldInvoker;
 
-    private final Class<?> factory;
-
     private final Object defaultValue;
 
-    public PutValueInfo(Class clazz, Field field, PutValue annotation, String[] valuesColumn, TypeHandler<?>[] valuesTypeHandler, Class<?> factory) {
+    public PutValueInfo(Class clazz, Field field, PutValue annotation, String[] valuesColumn, TypeHandler<?>[] valuesTypeHandler) {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
         this.annotation = annotation;
         this.valuesColumn = valuesColumn;
         this.valuesTypeHandler = valuesTypeHandler;
         this.writeFieldInvoker = new SetFieldInvoker(field);
-        ;
-        this.factory = factory;
+
         if (!annotation.defaultValue().isEmpty()) {
             this.defaultValue = TypeConvertUtil.convert(annotation.defaultValue(), this.fieldInfo.getTypeClass());
         } else {

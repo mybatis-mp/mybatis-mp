@@ -515,7 +515,7 @@ public class ResultInfo {
             valuesTypeHandler[i] = fetchFieldInfo.getTypeHandler();
         }
 
-        parseResult.putValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutValueInfo(clazz, field, putValue, valuesColumn, valuesTypeHandler, putValue.factory()));
+        parseResult.putValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutValueInfo(clazz, field, putValue, valuesColumn, valuesTypeHandler));
         return tableCount;
     }
 
