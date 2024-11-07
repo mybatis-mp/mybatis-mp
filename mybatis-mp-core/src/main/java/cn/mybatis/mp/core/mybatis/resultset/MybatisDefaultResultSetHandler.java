@@ -145,6 +145,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (Objects.isNull(putValueInfos) || putValueInfos.isEmpty()) {
             return;
         }
+        final Map<String, Object> sessionCache = new HashMap<>();
         putValueInfos.stream().forEach(item -> {
             Object[] values = new Object[item.getValuesColumn().length];
             for (int i = 0; i < item.getValuesColumn().length; i++) {
@@ -159,15 +160,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 }
             }
 
-            Object targetValue = PutValueUtil.getPutValue(values, item);
-
+            Object targetValue = PutValueUtil.getPutValue(values, item, sessionCache);
             if (Objects.isNull(targetValue)) {
                 return;
             }
-
             try {
-                item.getWriteFieldInvoker().invoke(rowValue,
-                        new Object[]{targetValue});
+                item.getWriteFieldInvoker().invoke(rowValue, new Object[]{targetValue});
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
