@@ -1,6 +1,5 @@
 package com.mybatis.mp.core.test.testCase.insert;
 
-import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.model.SysUserModel;
@@ -25,7 +24,7 @@ public class ModelInsertTest extends BaseTest {
             sysUserModel.setCreate_time(LocalDateTime.now());
             sysUserModel.setRole_id(1);
             sysUserModel.setUserName(null);
-            sysUserMapper.save(sysUserModel,true);
+            sysUserMapper.save(sysUserModel, true);
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
             assertEquals(sysUser.getUserName(), null);
         }
@@ -41,7 +40,7 @@ public class ModelInsertTest extends BaseTest {
             sysUserModel.setCreate_time(LocalDateTime.now());
             sysUserModel.setRole_id(1);
             sysUserModel.setUserName(null);
-            sysUserMapper.save(sysUserModel,false);
+            sysUserMapper.save(sysUserModel, false);
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
             assertEquals(sysUser.getUserName(), null);
         }
@@ -57,7 +56,7 @@ public class ModelInsertTest extends BaseTest {
             sysUserModel.setCreate_time(LocalDateTime.now());
             sysUserModel.setRole_id(1);
             sysUserModel.setUserName(null);
-            sysUserMapper.saveModels(Collections.singletonList(sysUserModel),true);
+            sysUserMapper.saveModel(Collections.singletonList(sysUserModel), true);
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
             assertEquals(sysUser.getUserName(), null);
         }
@@ -73,7 +72,7 @@ public class ModelInsertTest extends BaseTest {
             sysUserModel.setCreate_time(LocalDateTime.now());
             sysUserModel.setRole_id(1);
             sysUserModel.setUserName(null);
-            sysUserMapper.saveModels(Collections.singletonList(sysUserModel),false);
+            sysUserMapper.saveModel(Collections.singletonList(sysUserModel), false);
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
             assertEquals(sysUser.getUserName(), null);
         }

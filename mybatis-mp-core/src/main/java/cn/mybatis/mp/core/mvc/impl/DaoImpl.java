@@ -3,18 +3,14 @@ package cn.mybatis.mp.core.mvc.impl;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.mvc.Dao;
-import cn.mybatis.mp.core.mybatis.mapper.MapperCmdBuilderUtil;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
-import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.chain.DeleteChain;
 import cn.mybatis.mp.core.sql.executor.chain.InsertChain;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import cn.mybatis.mp.core.sql.executor.chain.UpdateChain;
-import cn.mybatis.mp.core.sql.util.WhereUtil;
 import cn.mybatis.mp.core.util.GenericUtil;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
-import db.sql.api.impl.cmd.struct.Where;
 
 import java.io.Serializable;
 import java.util.*;
@@ -148,7 +144,7 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     @Override
-    public int update(Model<T> model, Getter<T>... forceUpdateFields) {
+    public int update(Model<T> model, Getter<Model<T>>... forceUpdateFields) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
@@ -197,9 +193,7 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     @Override
     public Map<K, T> map(Collection<K> ids) {
         this.checkIdType();
-        Where where = WhereUtil.create();
-        BaseQuery<?, T> query = MapperCmdBuilderUtil.buildQuery(getMapper().getEntityType(), where);
-        query.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
-        return getMapper().mapWithKey(getTableInfo().getSingleIdFieldInfo(true).getField().getName(), query);
+
+        return (Map<K, T>) getMapper().map((Collection<Serializable>) ids);
     }
 }

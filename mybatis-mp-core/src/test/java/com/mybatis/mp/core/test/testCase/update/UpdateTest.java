@@ -1,7 +1,6 @@
 package com.mybatis.mp.core.test.testCase.update;
 
 import cn.mybatis.mp.core.sql.executor.SubQuery;
-import cn.mybatis.mp.core.sql.executor.Where;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import cn.mybatis.mp.core.sql.executor.chain.UpdateChain;
 import com.mybatis.mp.core.test.DO.SysRole;
@@ -13,6 +12,7 @@ import com.mybatis.mp.core.test.testCase.TestDataSource;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.impl.cmd.struct.Where;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
@@ -22,6 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -305,7 +306,7 @@ public class UpdateTest extends BaseTest {
             SysUserModel updateSysUser = new SysUserModel();
             updateSysUser.setId(1);
             updateSysUser.setUserName("adminxx");
-            sysUserMapper.update(updateSysUser, SysUser::getPassword);
+            sysUserMapper.update(updateSysUser, SysUserModel::getPassword);
             SysUser eqSysUser = new SysUser();
             eqSysUser.setId(1);
             eqSysUser.setUserName("adminxx");
@@ -350,7 +351,7 @@ public class UpdateTest extends BaseTest {
 
             SysUser updateSysUser = new SysUser();
             updateSysUser.setUserName("adminxx");
-            sysUserMapper.update(updateSysUser, Where.create().eq(SysUser::getId, 1), SysUser::getPassword);
+            sysUserMapper.update(updateSysUser, (Consumer<Where>) where -> where.eq(SysUser::getId, 1), SysUser::getPassword);
 
 
             SysUser eqSysUser = new SysUser();

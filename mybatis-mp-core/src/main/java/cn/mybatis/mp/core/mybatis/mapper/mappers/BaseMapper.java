@@ -1,6 +1,7 @@
-package cn.mybatis.mp.core.mybatis.mapper;
+package cn.mybatis.mp.core.mybatis.mapper.mappers;
 
 import cn.mybatis.mp.core.mybatis.configuration.MapKeySQLCmdQueryContext;
+import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.*;
 import cn.mybatis.mp.core.mybatis.provider.MybatisSQLProvider;
 import cn.mybatis.mp.core.mybatis.provider.TablePrefixUtil;
@@ -8,11 +9,9 @@ import cn.mybatis.mp.core.sql.executor.BaseDelete;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.BaseUpdate;
-import cn.mybatis.mp.db.Model;
 import db.sql.api.DbType;
-import db.sql.api.Getter;
-import db.sql.api.GetterFun;
-import db.sql.api.impl.tookit.LambdaUtil;
+import db.sql.api.impl.cmd.executor.SelectorCall;
+import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.builder.annotation.ProviderContext;
@@ -20,16 +19,39 @@ import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.*;
+import java.util.function.Consumer;
 
-public interface BaseMapper extends CommonMapper {
+public interface BaseMapper {
+
+    /**
+     * 获取当前数据库的类型
+     *
+     * @return
+     */
+    DbType getCurrentDbType();
+
+    /**
+     * 选择器 不同数据库执行不同的方法
+     *
+     * @param consumer
+     */
+    <R> R dbAdapt(Consumer<SelectorCall<R>> consumer);
+
+    /**
+     * 获取基础Mapper
+     *
+     * @return BasicMapper
+     */
+    BasicMapper getBasicMapper();
+
     /**
      * 动态查询
      *
      * @param query 查询query
-     * @param <E>   返回类
+     * @param <T>   返回类
      * @return 返回单个对象
      */
-    default <E> E get(BaseQuery<? extends BaseQuery, E> query) {
+    default <T> T get(BaseQuery<? extends BaseQuery, T> query) {
         return this.$get(new SQLCmdQueryContext(query), new RowBounds(0, 2));
     }
 
@@ -37,10 +59,10 @@ public interface BaseMapper extends CommonMapper {
      * 是否存在
      *
      * @param query 子查询
-     * @param <E>   返回类
+     * @param <T>   返回类
      * @return 是否存在
      */
-    default <E> boolean exists(BaseQuery<? extends BaseQuery, E> query) {
+    default <T> boolean exists(BaseQuery<? extends BaseQuery, T> query) {
         if (Objects.isNull(query.getSelect())) {
             query.select1();
         }
@@ -55,126 +77,6 @@ public interface BaseMapper extends CommonMapper {
         query.setReturnType(Integer.class);
         Integer obj = (Integer) this.get(query);
         return Objects.nonNull(obj) && obj >= 1;
-    }
-
-    /**
-     * 实体类新增
-     *
-     * @param entity
-     * @return 影响条数
-     */
-    default <E> int save(E entity) {
-        return this.save(entity, false);
-    }
-
-    /**
-     * 实体类新增
-     *
-     * @param entity        实体类实例
-     * @param allFieldForce 所有字段都强制保存
-     * @return 影响条数
-     */
-    default <E> int save(E entity, boolean allFieldForce) {
-        return this.$saveEntity(new EntityInsertContext(entity, allFieldForce));
-    }
-
-    /**
-     * 多个保存，非批量行为
-     *
-     * @param list
-     * @return 插入条数
-     */
-    default <E> int save(List<E> list) {
-        return this.save(list, false);
-    }
-
-    /**
-     * 多个保存，非批量行为
-     *
-     * @param list
-     * @param allFieldForce 所有字段都强制保存
-     * @return 插入条数
-     */
-    default <E> int save(List<E> list, boolean allFieldForce) {
-        int cnt = 0;
-        for (Object entity : list) {
-            cnt += this.save(entity, allFieldForce);
-        }
-        return cnt;
-    }
-
-    /**
-     * 使用数据库原生方式批量插入
-     * 一次最好在100条内
-     * <p>
-     * 会自动加入 主键 租户ID 逻辑删除列 乐观锁
-     * 自动设置 默认值,不会忽略NULL值字段
-     *
-     * @param list
-     * @param saveFields 指定那些列插入
-     * @return 插入的条数
-     */
-    default <E> int saveBatch(List<E> list, Getter<E>... saveFields) {
-        Objects.requireNonNull(list);
-        if (list.isEmpty()) {
-            return 0;
-        }
-        if (Objects.isNull(saveFields) || saveFields.length < 1) {
-            throw new RuntimeException("saveFields can't be null or empty");
-        }
-        Set<String> saveFieldSet = new HashSet<>();
-        for (Getter<?> column : saveFields) {
-            saveFieldSet.add(LambdaUtil.getName(column));
-        }
-        return this.$save(new EntityBatchInsertContext(list, saveFieldSet));
-    }
-
-    /**
-     * model插入 部分字段插入
-     *
-     * @param model
-     * @return
-     */
-    default <E> int save(Model<E> model) {
-        return this.save(model, false);
-    }
-
-    /**
-     * model插入 部分字段插入
-     *
-     * @param model
-     * @param allFieldForce 所有字段都强制保存
-     * @return
-     */
-    default <E> int save(Model<E> model, boolean allFieldForce) {
-        return this.$saveModel(new ModelInsertContext<>(model, allFieldForce));
-    }
-
-    /**
-     * 批量保存
-     *
-     * @param list
-     * @param <E>
-     * @return
-     */
-    default <E> int saveModels(List<Model<E>> list) {
-        return this.saveModels(list, false);
-    }
-
-    /**
-     * 多个保存，非批量操作
-     *
-     * @param list
-     * @param allFieldForce 所有字段都强制保存
-     * @param <E>
-     * @return
-     */
-    default <E> int saveModels(List<Model<E>> list, boolean allFieldForce) {
-        int cnt = 0;
-        for (Model<E> entity : list) {
-            cnt += this.save(entity, allFieldForce);
-        }
-        return cnt;
     }
 
     /**
@@ -214,7 +116,7 @@ public interface BaseMapper extends CommonMapper {
      * @param query 查询query
      * @return 返回查询列表
      */
-    default <E> List<E> list(BaseQuery<? extends BaseQuery, E> query) {
+    default <T> List<T> list(BaseQuery<? extends BaseQuery, T> query) {
         return this.$list(new SQLCmdQueryContext(query));
     }
 
@@ -224,7 +126,7 @@ public interface BaseMapper extends CommonMapper {
      * @param query 查询query
      * @return 返回游标
      */
-    default <E> Cursor<E> cursor(BaseQuery<? extends BaseQuery, E> query) {
+    default <T> Cursor<T> cursor(BaseQuery<? extends BaseQuery, T> query) {
         return this.$cursor(new SQLCmdQueryContext(query));
     }
 
@@ -248,7 +150,7 @@ public interface BaseMapper extends CommonMapper {
      * @param pager 分页参数
      * @return 分页结果
      */
-    default <E, P extends Pager<E>> P paging(BaseQuery<? extends BaseQuery, E> query, P pager) {
+    default <T, P extends Pager<T>> P paging(BaseQuery<? extends BaseQuery, T> query, P pager) {
         if (pager.isExecuteCount()) {
             Class returnType = query.getReturnType();
             TablePrefixUtil.prefixMapping(query, returnType);
@@ -276,19 +178,6 @@ public interface BaseMapper extends CommonMapper {
      * @param <V>    map的value
      * @return
      */
-    default <K, V> Map<K, V> mapWithKey(GetterFun<V, K> mapKey, BaseQuery<? extends BaseQuery, V> query) {
-        return this.mapWithKey(LambdaUtil.getName(mapKey), query);
-    }
-
-    /**
-     * 将结果转成map
-     *
-     * @param mapKey 指定的map的key属性
-     * @param query  查询对象
-     * @param <K>    map的key
-     * @param <V>    map的value
-     * @return
-     */
     default <K, V> Map<K, V> mapWithKey(String mapKey, BaseQuery<? extends BaseQuery, V> query) {
         return this.$mapWithKey(new MapKeySQLCmdQueryContext(mapKey, query));
     }
@@ -303,7 +192,6 @@ public interface BaseMapper extends CommonMapper {
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.GET_QUERY_NAME)
     <R> R $get(SQLCmdQueryContext queryContext, RowBounds rowBounds);
 
-
     /**
      * ID查询 返回单个
      *
@@ -315,13 +203,38 @@ public interface BaseMapper extends CommonMapper {
     <R> R $getById(SQLCmdQueryContext queryContext, RowBounds rowBounds);
 
     /**
+     * @param insertContext 上下文
+     * @return 插入的条数
+     * @see MybatisSQLProvider#save(SQLCmdInsertContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
+     */
+    @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
+    int $save(SQLCmdInsertContext insertContext);
+
+
+    /**
+     * @param insertContext 上下文
+     * @return 返回插入的条数
+     * @see MybatisSQLProvider#save(SQLCmdInsertContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
+     */
+    @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
+    int $saveEntity(EntityInsertContext insertContext);
+
+
+    /**
+     * @param insertContext 上下文
+     * @return 插入的条数
+     * @see MybatisSQLProvider#save(SQLCmdInsertContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
+     */
+    @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
+    int $saveModel(ModelInsertContext insertContext);
+
+    /**
      * @param updateContext 上下文
      * @return 修改的条数
      * @see MybatisSQLProvider#update(SQLCmdUpdateContext, ProviderContext, DbType)
      */
     @UpdateProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.UPDATE_NAME)
     int $update(SQLCmdUpdateContext updateContext);
-
 
     /**
      * @param deleteContext 上下文
@@ -331,7 +244,6 @@ public interface BaseMapper extends CommonMapper {
     @UpdateProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.DELETE_NAME)
     int $delete(SQLCmdDeleteContext deleteContext);
 
-
     /**
      * 列表查询
      *
@@ -340,7 +252,7 @@ public interface BaseMapper extends CommonMapper {
      * @see MybatisSQLProvider#cmdCount(SQLCmdCountQueryContext, ProviderContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.QUERY_NAME)
-    <E> List<E> $list(SQLCmdQueryContext queryContext);
+    <T> List<T> $list(SQLCmdQueryContext queryContext);
 
     /**
      * 游标查询
@@ -350,7 +262,7 @@ public interface BaseMapper extends CommonMapper {
      * @see MybatisSQLProvider#cmdQuery(SQLCmdQueryContext, ProviderContext, DbType)
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.QUERY_NAME)
-    <E> Cursor<E> $cursor(SQLCmdQueryContext queryContext);
+    <T> Cursor<T> $cursor(SQLCmdQueryContext queryContext);
 
     /**
      * count查询
@@ -372,7 +284,6 @@ public interface BaseMapper extends CommonMapper {
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.QUERY_COUNT_NAME)
     Integer $countFromQuery(SQLCmdCountFromQueryContext queryContext);
 
-
     /**
      * 将结果转成map
      *
@@ -383,5 +294,4 @@ public interface BaseMapper extends CommonMapper {
      */
     @SelectProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.QUERY_NAME)
     <K, V> Map<K, V> $mapWithKey(MapKeySQLCmdQueryContext queryContext);
-
 }

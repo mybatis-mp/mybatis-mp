@@ -19,6 +19,9 @@ public class Query<T> extends BaseQuery<Query<T>, T> {
     }
 
     public static <T> Query<T> create(Where where) {
+        if (where == null) {
+            return create();
+        }
         return new Query(where);
     }
 

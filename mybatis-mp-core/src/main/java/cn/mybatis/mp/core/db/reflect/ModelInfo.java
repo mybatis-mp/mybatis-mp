@@ -9,6 +9,7 @@ import db.sql.api.impl.tookit.Objects;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ModelInfo {
@@ -34,6 +35,11 @@ public class ModelInfo {
     private final List<ModelFieldInfo> modelFieldInfos;
 
     /**
+     * 字段信息 key为属性字段名 value为字段信息
+     */
+    private final Map<String, ModelFieldInfo> modelFieldInfoMap;
+
+    /**
      * 字段个数
      */
     private final int fieldSize;
@@ -47,6 +53,11 @@ public class ModelInfo {
      * 乐观锁字段
      */
     private final ModelFieldInfo versionFieldInfo;
+
+    /**
+     * 逻辑删除字段
+     */
+    private final ModelFieldInfo logicDeleteFieldInfo;
 
     /**
      * 多租户ID
@@ -68,10 +79,13 @@ public class ModelInfo {
 
         List<ModelFieldInfo> modelFieldInfos = FieldUtil.getResultMappingFields(model).stream().map(field -> new ModelFieldInfo(entity, model, field)).collect(Collectors.toList());
 
+        this.modelFieldInfoMap = modelFieldInfos.stream().collect(Collectors.toMap((item) -> item.getField().getName(), account -> account));
+
         this.idFieldInfos = modelFieldInfos.stream().filter(item -> item.getTableFieldInfo().isTableId()).collect(Collectors.toList());
         this.idFieldInfo = this.idFieldInfos.size() == 1 ? this.idFieldInfos.get(0) : null;
         this.versionFieldInfo = modelFieldInfos.stream().filter(item -> item.getTableFieldInfo().isVersion()).findFirst().orElse(null);
         this.tenantIdFieldInfo = modelFieldInfos.stream().filter(item -> item.getTableFieldInfo().isTenantId()).findFirst().orElse(null);
+        this.logicDeleteFieldInfo = modelFieldInfos.stream().filter(item -> item.getTableFieldInfo().isLogicDelete()).findFirst().orElse(null);
 
         this.modelFieldInfos = Collections.unmodifiableList(modelFieldInfos);
         this.fieldSize = this.modelFieldInfos.size();
@@ -93,6 +107,10 @@ public class ModelInfo {
         return versionFieldInfo;
     }
 
+    public ModelFieldInfo getLogicDeleteFieldInfo() {
+        return logicDeleteFieldInfo;
+    }
+
     public ModelFieldInfo getTenantIdFieldInfo() {
         return tenantIdFieldInfo;
     }
@@ -103,6 +121,16 @@ public class ModelInfo {
 
     public List<ModelFieldInfo> getIdFieldInfos() {
         return idFieldInfos;
+    }
+
+    /**
+     * 根据字段名获取字段信息
+     *
+     * @param property
+     * @return
+     */
+    public final ModelFieldInfo getFieldInfo(String property) {
+        return modelFieldInfoMap.get(property);
     }
 
     public int getFieldSize() {

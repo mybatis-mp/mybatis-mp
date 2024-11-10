@@ -4,7 +4,6 @@ import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableIds;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
-import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.incrementer.IdentifierGenerator;
 import cn.mybatis.mp.core.incrementer.IdentifierGeneratorFactory;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
@@ -29,16 +28,19 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
 
     private final Set<String> saveFieldSet;
 
+    private final TableInfo tableInfo;
 
-    public EntityBatchInsertContext(Collection<T> list, Set<String> saveFieldSet) {
+
+    public EntityBatchInsertContext(TableInfo tableInfo, Collection<T> list, Set<String> saveFieldSet) {
+        this.tableInfo = tableInfo;
         this.list = list;
         this.saveFieldSet = saveFieldSet;
     }
 
-    private static Insert createCmd(Collection<?> list, Set<String> saveFieldSet, DbType dbType) {
+    private static Insert createCmd(TableInfo tableInfo, Collection<?> list, Set<String> saveFieldSet, DbType dbType) {
         Insert insert = new Insert();
         Class<?> entityType = list.stream().findFirst().get().getClass();
-        TableInfo tableInfo = Tables.get(entityType);
+        insert.$().cacheTableInfo(tableInfo);
         Table table = insert.$().table(tableInfo.getSchemaAndTableName());
         insert.insert(table);
 
@@ -138,7 +140,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
     public void init(DbType dbType) {
         super.init(dbType);
         if (Objects.isNull(this.execution)) {
-            this.execution = createCmd(this.list, this.saveFieldSet, dbType);
+            this.execution = createCmd(this.tableInfo, this.list, this.saveFieldSet, dbType);
         }
     }
 }

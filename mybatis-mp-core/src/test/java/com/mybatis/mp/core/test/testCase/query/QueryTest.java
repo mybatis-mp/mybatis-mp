@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class QueryTest extends BaseTest {
     @Test
-    public void getAll(){
+    public void getAll() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            List<SysUser> list= sysUserMapper.getAll();
+            List<SysUser> list = sysUserMapper.listAll();
             list.stream().forEach(System.out::println);
             assertEquals(list.size(), 3);
         }
@@ -260,12 +260,12 @@ public class QueryTest extends BaseTest {
     public void count1Test() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            final LongAdder adder=new LongAdder();
+            final LongAdder adder = new LongAdder();
             Integer count = QueryChain.of(sysUserMapper)
                     .selectCount1()
                     .from(SysUser.class)
-                    .returnType(Integer.class,(cnt)->{
-                        System.out.println(">>>"+cnt);
+                    .returnType(Integer.class, (cnt) -> {
+                        System.out.println(">>>" + cnt);
                         adder.add(cnt);
                     })
                     .count();

@@ -16,22 +16,35 @@
 package db.sql.api.impl.tookit;
 
 
+import db.sql.api.Getter;
 import db.sql.api.GetterFun;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class LambdaUtil {
 
     private static final Map<GetterFun, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(65535);
-
     private static final Map<String, Class<?>> CLASS_MAP = new ConcurrentHashMap();
-
 
     private LambdaUtil() {
 
+    }
+
+    public static <T> Set<String> getFieldNames(Getter<T>[] fieldGetters) {
+        Set<String> fieldsSet = null;
+        if (Objects.nonNull(fieldGetters) && fieldGetters.length > 0) {
+            fieldsSet = new HashSet<>(fieldGetters.length);
+            for (Getter<?> column : fieldGetters) {
+                fieldsSet.add(LambdaUtil.getName(column));
+            }
+        }
+        return fieldsSet;
     }
 
     public static <T, R> String getName(GetterFun<T, R> getter) {
@@ -103,5 +116,4 @@ public final class LambdaUtil {
             return name;
         }
     }
-
 }

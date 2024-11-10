@@ -30,7 +30,7 @@ public interface Dao<T, K> {
 
     int update(Model<T> model);
 
-    int update(Model<T> model, Getter<T>... forceUpdateFields);
+    int update(Model<T> model, Getter<Model<T>>... forceUpdateFields);
 
     int delete(T entity);
 

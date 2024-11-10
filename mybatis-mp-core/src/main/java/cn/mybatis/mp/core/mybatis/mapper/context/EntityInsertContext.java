@@ -4,7 +4,6 @@ import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableIds;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
-import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.incrementer.IdentifierGenerator;
 import cn.mybatis.mp.core.incrementer.IdentifierGeneratorFactory;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
@@ -13,6 +12,7 @@ import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
+import cn.mybatis.mp.core.util.TypeConvertUtil;
 import cn.mybatis.mp.db.IdAutoType;
 import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;
@@ -24,6 +24,7 @@ import db.sql.api.impl.cmd.basic.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> implements SetIdMethod {
 
@@ -33,11 +34,14 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
 
     private final boolean allFieldForce;
 
-    public EntityInsertContext(T entity, boolean allFieldForce) {
+    private final Set<String> forceSaveFields;
+
+    public EntityInsertContext(TableInfo tableInfo, T entity, boolean allFieldForce, Set<String> forceSaveFields) {
         this.entity = entity;
         this.allFieldForce = allFieldForce;
         this.entityType = entity.getClass();
-        this.tableInfo = Tables.get(entity.getClass());
+        this.tableInfo = tableInfo;
+        this.forceSaveFields = forceSaveFields;
     }
 
     @Override
@@ -93,10 +97,10 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
                 isNeedInsert = true;
 
                 //乐观锁设置 默认值1
-                value = 1;
+                value = TypeConvertUtil.convert(1, tableFieldInfo.getField().getType());
                 //乐观锁回写
                 TableInfoUtil.setValue(tableFieldInfo, entity, value);
-            } else if (allFieldForce) {
+            } else if (allFieldForce || (Objects.nonNull(this.forceSaveFields) && this.forceSaveFields.contains(tableFieldInfo.getField().getName()))) {
                 isNeedInsert = true;
             }
 

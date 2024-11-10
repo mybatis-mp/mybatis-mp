@@ -11,6 +11,7 @@ import org.apache.ibatis.type.TypeHandler;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 public class ResultInfo {
@@ -48,7 +49,7 @@ public class ResultInfo {
     /**
      * 类上的PutValues注解
      */
-    private final List<CreatedEvent> createdEventList;
+    private final Map<Class, List<CreatedEventInfo>> createdEventInfos;
 
     public ResultInfo(Class<?> clazz) {
 
@@ -59,7 +60,7 @@ public class ResultInfo {
         this.resultFieldInfos = Collections.unmodifiableList(parseResult.resultFieldInfos);
         this.tablePrefixes = Collections.unmodifiableMap(parseResult.tablePrefixes);
         this.nestedResultInfos = Collections.unmodifiableList(parseResult.nestedResultInfos);
-        this.createdEventList = Collections.unmodifiableList(parseResult.createdEventList);
+        this.createdEventInfos = Collections.unmodifiableMap(parseResult.createdEventInfos.stream().collect(Collectors.groupingBy(CreatedEventInfo::getClazz)));
     }
 
     private static ParseResult parse(Class<?> clazz) {
@@ -72,7 +73,7 @@ public class ResultInfo {
 
     private static void parseResultEntity(ParseResult parseResult, Class<?> clazz, ResultEntity resultEntity) {
         if (clazz.isAnnotationPresent(CreatedEvent.class)) {
-            parseResult.createdEventList.add(clazz.getAnnotation(CreatedEvent.class));
+            parseResult.createdEventInfos.add(new CreatedEventInfo(clazz, clazz.getAnnotation(CreatedEvent.class)));
         }
         TableInfo resultEntityTableInfo = resultEntity.value().isAnnotationPresent(Table.class) ? Tables.get(resultEntity.value()) : null;
 
@@ -204,7 +205,7 @@ public class ResultInfo {
         boolean fieldTypeIsEntity = targetType.isAnnotationPresent(Table.class);
         if (!fieldTypeIsEntity) {
             if (targetType.isAnnotationPresent(CreatedEvent.class)) {
-                parseResult.createdEventList.add((CreatedEvent) targetType.getAnnotation(CreatedEvent.class));
+                parseResult.createdEventInfos.add(new CreatedEventInfo(targetType, (CreatedEvent) targetType.getAnnotation(CreatedEvent.class)));
             }
         }
 
@@ -471,7 +472,7 @@ public class ResultInfo {
 
         if (!returnType.isAnnotationPresent(Table.class)) {
             if (returnType.isAnnotationPresent(CreatedEvent.class)) {
-                parseResult.createdEventList.add((CreatedEvent) returnType.getAnnotation(CreatedEvent.class));
+                parseResult.createdEventInfos.add(new CreatedEventInfo(returnType, (CreatedEvent) returnType.getAnnotation(CreatedEvent.class)));
             }
         }
 
@@ -638,6 +639,6 @@ public class ResultInfo {
 
         public final Map<Class, List<PutEnumValueInfo>> putEnumValueInfoMap = new HashMap<>();
 
-        public final List<CreatedEvent> createdEventList = new ArrayList<>();
+        public final List<CreatedEventInfo> createdEventInfos = new ArrayList<>();
     }
 }

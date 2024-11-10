@@ -7,7 +7,6 @@ import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdQueryContext;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.util.*;
-import cn.mybatis.mp.db.annotations.CreatedEvent;
 import cn.mybatis.mp.db.annotations.ResultEntity;
 import db.sql.api.impl.cmd.basic.Column;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
@@ -26,6 +25,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.util.MapUtil;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -35,26 +35,18 @@ import java.util.stream.Collectors;
 public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     private final Map<FetchInfo, Map<Object, List<Object>>> singleFetchCache = new HashMap<>();
-
+    private final Map<Method, Map> createdEventContextMap = new HashMap<>();
     private volatile BasicMapper basicMapper;
-
     private Map<FetchInfo, List<FetchObject>> needFetchValuesMap;
     //Fetch 信息
     private Map<Class, List<FetchInfo>> fetchInfosMap;
-
     private Map<String, Consumer<Where>> fetchFilters;
-
     private Consumer onRowEvent;
-
     private Class<?> returnType;
-
     private Map<Class, List<PutEnumValueInfo>> putEnumValueInfoMap;
-
     private Map<Class, List<PutValueInfo>> putValueInfoMap;
-
-    private List<CreatedEvent> createdEventList;
-
     private Map<String, Object> putValueSessionCache;
+    private Map<Class, List<CreatedEventInfo>> createdEventInfos;
 
     public MybatisDefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
@@ -72,7 +64,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                     this.fetchFilters = baseQuery.getFetchFilters();
                     this.putEnumValueInfoMap = resultInfo.getPutEnumValueInfoMap();
                     this.putValueInfoMap = resultInfo.getPutValueInfoMap();
-                    this.createdEventList = resultInfo.getCreatedEventList();
+                    this.createdEventInfos = resultInfo.getCreatedEventInfos();
                 }
             }
 
@@ -135,8 +127,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     }
 
     private Map<String, Object> getPutValueSessionCache() {
-        if(putValueSessionCache ==null){
-            putValueSessionCache=new HashMap<>();
+        if (putValueSessionCache == null) {
+            putValueSessionCache = new HashMap<>();
         }
         return putValueSessionCache;
     }
@@ -153,7 +145,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (Objects.isNull(putValueInfos) || putValueInfos.isEmpty()) {
             return;
         }
-        final Map<String, Object> sessionCache = new HashMap<>();
         putValueInfos.stream().forEach(item -> {
             Object[] values = new Object[item.getValuesColumn().length];
             for (int i = 0; i < item.getValuesColumn().length; i++) {
@@ -181,17 +172,26 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     }
 
-    private void putValues(Object rowValue) {
-        if (Objects.isNull(this.createdEventList)) {
+    private void onCreatedEvent(Object rowValue) {
+        if (Objects.isNull(this.createdEventInfos) || this.createdEventInfos.isEmpty()) {
             return;
         }
         if (Objects.isNull(rowValue)) {
             return;
         }
-        this.createdEventList.stream().forEach(item -> {
-            CreatedEventUtil.onCreated(rowValue, item);
-        });
-
+        List<CreatedEventInfo> list = createdEventInfos.get(rowValue.getClass());
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return;
+        }
+        Map context = null;
+        for (CreatedEventInfo item : createdEventInfos.get(rowValue.getClass())) {
+            if (item.isHasContextParam() && Objects.isNull(context)) {
+                context = createdEventContextMap.computeIfAbsent(item.getMethod(), k -> new HashMap<>());
+            } else {
+                context = null;
+            }
+            CreatedEventUtil.onCreated(rowValue, context, item);
+        }
     }
 
     @Override
@@ -201,7 +201,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         this.putEnumValue(rowValue, rsw.getResultSet());
         this.putValue(rowValue, rsw.getResultSet());
         this.onRowEvent(rowValue);
-        this.putValues(rowValue);
+        this.onCreatedEvent(rowValue);
         return rowValue;
     }
 
@@ -212,7 +212,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         this.putEnumValue(rowValue, rsw.getResultSet());
         this.putValue(rowValue, rsw.getResultSet());
         this.onRowEvent(rowValue);
-        this.putValues(rowValue);
+        this.onCreatedEvent(rowValue);
         return rowValue;
     }
 

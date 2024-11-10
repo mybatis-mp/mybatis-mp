@@ -21,7 +21,7 @@ public class FetchSysRoleVo2 {
     private List<String> sysRoleNames;
 
 
-    @Fetch(column = "id", target = SysUser.class, targetProperty = "role_id",targetSelectProperty = "[count({id})]")
+    @Fetch(column = "id", target = SysUser.class, targetProperty = "role_id", targetSelectProperty = "[count({id})]")
     private Integer cnts;
 
     @Fetch(column = "id", target = SysRole.class, targetProperty = "id", targetSelectProperty = "name")

@@ -3,10 +3,8 @@ package cn.mybatis.mp.core.mybatis.mapper.context;
 import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
-import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.Update;
-import cn.mybatis.mp.core.sql.util.WhereUtil;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
@@ -100,19 +98,14 @@ public class EntityUpdateCmdCreateUtil {
         return update;
     }
 
-
-    public static Update create(Object entity, Set<String> forceUpdateFields, boolean allFieldForce) {
-        TableInfo tableInfo = Tables.get(entity.getClass());
-        Where where = WhereUtil.create();
-        WhereUtil.appendIdWhereWithEntity(where, tableInfo, entity);
+    public static Update create(TableInfo tableInfo, Object entity, boolean allFieldForce, Set<String> forceUpdateFields) {
         return warp(new Update(), tableInfo, entity, forceUpdateFields, allFieldForce);
     }
 
-    public static Update create(Object entity, Where where, Set<String> forceUpdateFields, boolean allFieldForce) {
+    public static Update create(TableInfo tableInfo, Object entity, Where where, boolean allFieldForce, Set<String> forceUpdateFields) {
         if (Objects.isNull(where) || !where.hasContent()) {
             throw new RuntimeException("update has no where condition content ");
         }
-        TableInfo tableInfo = Tables.get(entity.getClass());
         return warp(new Update(where), tableInfo, entity, forceUpdateFields, allFieldForce);
     }
 }

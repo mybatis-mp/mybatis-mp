@@ -7,6 +7,7 @@ import cn.mybatis.mp.core.db.reflect.Models;
 import cn.mybatis.mp.core.db.reflect.TableIds;
 import cn.mybatis.mp.core.incrementer.IdentifierGenerator;
 import cn.mybatis.mp.core.incrementer.IdentifierGeneratorFactory;
+import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.tenant.TenantUtil;
@@ -17,7 +18,6 @@ import cn.mybatis.mp.db.Model;
 import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;
 import db.sql.api.DbType;
-import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
@@ -25,6 +25,7 @@ import db.sql.api.impl.cmd.basic.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<BaseInsert> implements SetIdMethod {
 
@@ -34,11 +35,14 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
 
     private final boolean allFieldForce;
 
-    public ModelInsertContext(T model, boolean allFieldForce) {
+    private final Set<String> forceSaveFields;
+
+    public ModelInsertContext(T model, boolean allFieldForce, Set<String> forceSaveFields) {
         this.model = model;
         this.allFieldForce = allFieldForce;
         this.modelInfo = Models.get(model.getClass());
         this.entityType = modelInfo.getEntityType();
+        this.forceSaveFields = forceSaveFields;
     }
 
 
@@ -55,7 +59,9 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
         //设置租户ID
         TenantUtil.setTenantId(model);
         Insert insert = new Insert();
-        CmdFactory $ = insert.$();
+        MybatisCmdFactory $ = insert.$();
+        $.cacheTableInfo(modelInfo.getTableInfo());
+
         Table table = $.table(modelInfo.getTableInfo().getSchemaAndTableName());
         insert.insert(table);
         List<Object> values = new ArrayList<>();
@@ -94,7 +100,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
                 value = 1;
                 //乐观锁回写
                 ModelInfoUtil.setValue(modelFieldInfo, model, value);
-            } else if (allFieldForce) {
+            } else if (allFieldForce || (Objects.nonNull(this.forceSaveFields) && this.forceSaveFields.contains(modelFieldInfo.getField().getName()))) {
                 isNeedInsert = true;
             }
 

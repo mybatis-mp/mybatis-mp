@@ -8,11 +8,11 @@ import java.util.Set;
 
 public class ModelUpdateContext<T extends Model> extends SQLCmdUpdateContext {
 
-    public ModelUpdateContext(T t, Set<String> forceUpdateFields, boolean allFieldForce) {
-        super(createCmd(t, forceUpdateFields, allFieldForce));
+    public ModelUpdateContext(T t, boolean allFieldForce, Set<String> forceUpdateFields) {
+        super(createCmd(t, allFieldForce, forceUpdateFields));
     }
 
-    private static Update createCmd(Model t, Set<String> forceUpdateFields, boolean allFieldForce) {
+    private static Update createCmd(Model t, boolean allFieldForce, Set<String> forceUpdateFields) {
         return ModelUpdateCmdCreateUtil.create(t, forceUpdateFields, allFieldForce);
     }
 }
