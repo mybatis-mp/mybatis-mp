@@ -115,6 +115,9 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
 
     @Override
     public int saveOrUpdate(Model<T> model) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
         return getMapper().saveOrUpdate(model);
     }
 
@@ -194,13 +197,13 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
 
     @Override
     public Map<K, T> map(K... ids) {
+        this.checkIdType();
         return (Map<K, T>) getMapper().map(ids);
     }
 
     @Override
     public Map<K, T> map(Collection<K> ids) {
         this.checkIdType();
-
         return (Map<K, T>) getMapper().map((Collection<Serializable>) ids);
     }
 }
