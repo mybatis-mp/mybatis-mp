@@ -1,7 +1,6 @@
 package cn.mybatis.mp.core.mvc.impl;
 
 import cn.mybatis.mp.core.db.reflect.TableInfo;
-import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.mvc.Dao;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.sql.executor.chain.DeleteChain;
@@ -13,7 +12,10 @@ import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public abstract class DaoImpl<T, K> implements Dao<T, K> {
 
@@ -39,7 +41,7 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
 
     protected TableInfo getTableInfo() {
         if (Objects.isNull(tableInfo)) {
-            tableInfo = Tables.get(getMapper().getEntityType());
+            tableInfo = getMapper().getTableInfo();
         }
         return tableInfo;
     }
@@ -94,6 +96,14 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     @Override
+    public int saveOrUpdate(T entity) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().saveOrUpdate(entity);
+    }
+
+    @Override
     public int save(Collection<T> list) {
         return getMapper().save(list);
     }
@@ -104,19 +114,16 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     @Override
+    public int saveOrUpdate(Model<T> model) {
+        return getMapper().saveOrUpdate(model);
+    }
+
+    @Override
     public int update(T entity) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
         return getMapper().update(entity);
-    }
-
-    @Override
-    public int saveOrUpdate(T entity) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
-        return getMapper().saveOrUpdate(entity);
     }
 
     @Override
@@ -187,7 +194,7 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
 
     @Override
     public Map<K, T> map(K... ids) {
-        return this.map(Arrays.asList(ids));
+        return (Map<K, T>) getMapper().map(ids);
     }
 
     @Override

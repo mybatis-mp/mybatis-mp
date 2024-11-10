@@ -20,6 +20,8 @@ public interface Dao<T, K> {
 
     int save(Model<T> model);
 
+    int saveOrUpdate(Model<T> model);
+
     int update(T entity);
 
     int saveOrUpdate(T entity);
