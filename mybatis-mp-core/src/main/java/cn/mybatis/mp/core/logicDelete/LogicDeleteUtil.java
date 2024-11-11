@@ -32,7 +32,7 @@ public final class LogicDeleteUtil {
      *
      * @param state    开关状态
      * @param supplier 返回函数
-     * @param <T> 返回值
+     * @param <T>      返回值
      * @return 函数执行后的返回值
      */
     public static <T> T execute(boolean state, Supplier<T> supplier) {

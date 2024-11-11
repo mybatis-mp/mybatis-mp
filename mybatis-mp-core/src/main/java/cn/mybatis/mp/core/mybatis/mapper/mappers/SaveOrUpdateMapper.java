@@ -5,7 +5,7 @@ import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveOrUpdateMethodUtil;
 
 import java.util.Collection;
 
-public interface SaveOrUpdateMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
+public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
 
     /**
      * 实体类新增或修改

@@ -1,6 +1,5 @@
 package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 
-import cn.mybatis.mp.core.mybatis.mapper.mappers.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveModelMethodUtil;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
@@ -8,7 +7,7 @@ import db.sql.api.Getter;
 import java.util.Collection;
 import java.util.Objects;
 
-public interface SaveModelBasicMapper extends BaseMapper, BaseBasicMapper {
+public interface SaveModelBasicMapper extends BaseBasicMapper {
     /**
      * 实体类新增
      *

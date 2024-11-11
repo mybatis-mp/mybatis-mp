@@ -1,13 +1,12 @@
 package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 
 import cn.mybatis.mp.core.db.reflect.Tables;
-import cn.mybatis.mp.core.mybatis.mapper.mappers.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.ExistsMethodUtil;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.function.Consumer;
 
-public interface ExistsBasicMapper extends BaseMapper, BaseBasicMapper {
+public interface ExistsBasicMapper extends BaseBasicMapper {
 
     /**
      * 是否存在

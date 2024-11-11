@@ -21,10 +21,8 @@ import java.util.function.Consumer;
 
 public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQuery<Q, MybatisCmdFactory> {
 
-    protected Class returnType;
-
     protected final OptimizeOptions optimizeOptions = new OptimizeOptions();
-
+    protected Class returnType;
     protected Consumer<E> onRowEvent;
 
     public BaseQuery() {

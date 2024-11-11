@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface ListMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
+public interface ListMapper<T> extends BaseMapper<T> {
 
     /**
      * 列表查询,返回类型，当前实体类
@@ -27,7 +27,7 @@ public interface ListMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      *
      * @param ids          指定ID
      * @param selectFields select指定列
-     * @param <ID> ID
+     * @param <ID>         ID
      * @return 返回结果列表
      */
     default <ID extends Serializable> List<T> listByIds(ID[] ids, Getter<T>... selectFields) {
@@ -50,7 +50,7 @@ public interface ListMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      *
      * @param ids          指定ID
      * @param selectFields select指定列
-     * @param <ID> ID
+     * @param <ID>         ID
      * @return 返回结果列表
      */
     default <ID extends Serializable> List<T> listByIds(Collection<ID> ids, Getter<T>... selectFields) {

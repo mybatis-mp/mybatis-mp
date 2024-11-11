@@ -8,7 +8,7 @@ import db.sql.api.impl.cmd.struct.Where;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public interface UpdateModelMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
+public interface UpdateModelMapper<T> extends BaseMapper<T> {
 
     /**
      * 实体类修改

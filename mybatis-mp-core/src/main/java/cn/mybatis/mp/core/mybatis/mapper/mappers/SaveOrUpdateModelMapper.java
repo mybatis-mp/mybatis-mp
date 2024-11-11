@@ -7,7 +7,7 @@ import cn.mybatis.mp.db.Model;
 
 import java.util.Collection;
 
-public interface SaveOrUpdateModelMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
+public interface SaveOrUpdateModelMapper<T> extends BaseMapper<T> {
 
     /**
      * 实体类Model新增或修改

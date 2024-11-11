@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public interface CursorMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
+public interface CursorMapper<T> extends BaseMapper<T> {
 
     /**
      * 列表查询,返回类型，当前实体类

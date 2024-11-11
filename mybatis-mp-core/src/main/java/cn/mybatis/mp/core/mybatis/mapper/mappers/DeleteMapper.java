@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public interface DeleteMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
+public interface DeleteMapper<T> extends BaseMapper<T> {
     /**
      * 根据实体类删除
      *

@@ -7,7 +7,7 @@ import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.function.Consumer;
 
-public interface PagingMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
+public interface PagingMapper<T> extends BaseMapper<T> {
 
     /**
      * 分页查询

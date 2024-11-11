@@ -7,7 +7,7 @@ import db.sql.api.Getter;
 import java.util.Collection;
 import java.util.Objects;
 
-public interface SaveMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
+public interface SaveMapper<T> extends BaseMapper<T> {
 
     /**
      * 实体类新增

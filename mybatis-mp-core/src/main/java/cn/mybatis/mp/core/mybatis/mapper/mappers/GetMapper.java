@@ -7,7 +7,7 @@ import db.sql.api.impl.cmd.struct.Where;
 import java.io.Serializable;
 import java.util.function.Consumer;
 
-public interface GetMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
+public interface GetMapper<T> extends BaseMapper<T> {
 
     /**
      * 根据ID查询

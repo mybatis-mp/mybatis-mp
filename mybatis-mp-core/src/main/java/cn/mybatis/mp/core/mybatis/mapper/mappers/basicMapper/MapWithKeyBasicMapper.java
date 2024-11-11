@@ -3,7 +3,6 @@ package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.mybatis.mapper.QueryUtil;
-import cn.mybatis.mp.core.mybatis.mapper.mappers.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.MapWithKeyMapperUtil;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
 import db.sql.api.GetterFun;
@@ -17,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public interface MapWithKeyBasicMapper extends BaseMapper, BaseBasicMapper {
+public interface MapWithKeyBasicMapper extends BaseBasicMapper {
 
     /**
      * 根据多个id查询结果转map
@@ -63,7 +62,7 @@ public interface MapWithKeyBasicMapper extends BaseMapper, BaseBasicMapper {
     default <T, K> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, Consumer<Where> consumer) {
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(mapKey);
         TableInfo tableInfo = Tables.get(lambdaFieldInfo.getType());
-        return this.mapWithKey(lambdaFieldInfo.getName(), QueryUtil.buildNoOptimizationQuery(tableInfo, WhereUtil.create(tableInfo, consumer)));
+        return getBasicMapper().mapWithKey(lambdaFieldInfo.getName(), QueryUtil.buildNoOptimizationQuery(tableInfo, WhereUtil.create(tableInfo, consumer)));
     }
 
     /**

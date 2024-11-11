@@ -2,13 +2,12 @@ package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 
 
 import cn.mybatis.mp.core.db.reflect.Models;
-import cn.mybatis.mp.core.mybatis.mapper.mappers.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveOrUpdateModelMethodUtil;
 import cn.mybatis.mp.db.Model;
 
 import java.util.Collection;
 
-public interface SaveOrUpdateModelBasicMapper extends BaseMapper, BaseBasicMapper {
+public interface SaveOrUpdateModelBasicMapper extends BaseBasicMapper {
 
     /**
      * 实体类Model新增或修改

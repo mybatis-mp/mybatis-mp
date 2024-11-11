@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public interface MapWithKeyMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
+public interface MapWithKeyMapper<T> extends BaseMapper<T> {
 
     /**
      * 根据多个id查询结果转map

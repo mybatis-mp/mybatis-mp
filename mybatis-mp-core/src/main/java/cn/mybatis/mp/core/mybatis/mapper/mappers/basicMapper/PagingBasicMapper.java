@@ -2,14 +2,13 @@ package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 
 import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
-import cn.mybatis.mp.core.mybatis.mapper.mappers.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.PagingMethodUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.function.Consumer;
 
-public interface PagingBasicMapper extends BaseMapper, BaseBasicMapper {
+public interface PagingBasicMapper extends BaseBasicMapper {
 
     /**
      * 分页查询

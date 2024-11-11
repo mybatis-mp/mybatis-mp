@@ -1,7 +1,6 @@
 package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 
 import cn.mybatis.mp.core.db.reflect.Tables;
-import cn.mybatis.mp.core.mybatis.mapper.mappers.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.GetMethodUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
@@ -9,7 +8,7 @@ import db.sql.api.impl.cmd.struct.Where;
 import java.io.Serializable;
 import java.util.function.Consumer;
 
-public interface GetBasicMapper extends BaseMapper, BaseBasicMapper {
+public interface GetBasicMapper extends BaseBasicMapper {
 
     /**
      * 根据ID查询
