@@ -20,9 +20,8 @@ public class BaseUserTestCase extends BaseTest {
         try {
             SysUserIDMapper sysUserMapper = session.getMapper(SysUserIDMapper.class);
             sysUserMapper.save(baseIDSysUser);
-        } catch (Exception e) {
+        } finally {
             session.close();
-            throw new RuntimeException(e);
         }
 
     }
@@ -31,9 +30,8 @@ public class BaseUserTestCase extends BaseTest {
         try {
             SysUserIDMapper sysUserMapper = session.getMapper(SysUserIDMapper.class);
             sysUserMapper.save(baseIDSysUser);
-        } catch (Exception e) {
+        } finally {
             session.close();
-            throw new RuntimeException(e);
         }
     }
 
@@ -42,28 +40,27 @@ public class BaseUserTestCase extends BaseTest {
         if (TestDataSource.DB_TYPE == DbType.ORACLE) {
             return;
         }
-        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
-            BaseIDSysUser baseIDSysUser = new BaseIDSysUser();
-            baseIDSysUser.setUserName("aaa2");
-            baseIDSysUser.setRole_id(1);
-            baseIDSysUser.setPassword("xx");
-            baseIDSysUser.setCreate_time(LocalDateTime.now());
-            for (int i = 0; i < 20; i++) {
-                try {
-                    save(this.sqlSessionFactory.openSession(false), baseIDSysUser);
-                    break;
-                } catch (Exception e) {
-                    if (i > 10) {
-                        e.printStackTrace();
-                    }
-                    System.out.println(i);
-                }
-            }
 
-            System.out.println(baseIDSysUser);
-            System.out.println(baseIDSysUser.getId().getClass());
-            assertEquals(baseIDSysUser.getId().getClass(), Long.class);
+        BaseIDSysUser baseIDSysUser = new BaseIDSysUser();
+        baseIDSysUser.setUserName("aaa2");
+        baseIDSysUser.setRole_id(1);
+        baseIDSysUser.setPassword("xx");
+        baseIDSysUser.setCreate_time(LocalDateTime.now());
+        for (int i = 0; i < 20; i++) {
+            try {
+                save(this.sqlSessionFactory.openSession(false), baseIDSysUser);
+                break;
+            } catch (Exception e) {
+                if (i > 10) {
+                    e.printStackTrace();
+                }
+                System.out.println(i);
+            }
         }
+
+        System.out.println(baseIDSysUser);
+        System.out.println(baseIDSysUser.getId().getClass());
+        assertEquals(baseIDSysUser.getId().getClass(), Long.class);
     }
 
     @Test
@@ -88,26 +85,25 @@ public class BaseUserTestCase extends BaseTest {
         if (TestDataSource.DB_TYPE == DbType.ORACLE) {
             return;
         }
-        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
-            SysUserIDMapper sysUserMapper = session.getMapper(SysUserIDMapper.class);
-            BaseIDSysUserModel baseIDSysUser = new BaseIDSysUserModel();
-            baseIDSysUser.setUserName("aaa2");
-            baseIDSysUser.setRole_id(1);
-            baseIDSysUser.setPassword("xx");
-            baseIDSysUser.setCreate_time(LocalDateTime.now());
-            for (int i = 0; i < 20; i++) {
-                try {
-                    save(this.sqlSessionFactory.openSession(false), baseIDSysUser);
-                    break;
-                } catch (Exception e) {
-                    System.out.println(i);
-                }
-            }
 
-            System.out.println(baseIDSysUser);
-            System.out.println(baseIDSysUser.getId().getClass());
-            assertEquals(baseIDSysUser.getId().getClass(), Long.class);
+        BaseIDSysUserModel baseIDSysUser = new BaseIDSysUserModel();
+        baseIDSysUser.setUserName("aaa2");
+        baseIDSysUser.setRole_id(1);
+        baseIDSysUser.setPassword("xx");
+        baseIDSysUser.setCreate_time(LocalDateTime.now());
+        for (int i = 0; i < 20; i++) {
+            try {
+                save(this.sqlSessionFactory.openSession(false), baseIDSysUser);
+                break;
+            } catch (Exception e) {
+                System.out.println(i);
+            }
         }
+
+        System.out.println(baseIDSysUser);
+        System.out.println(baseIDSysUser.getId().getClass());
+        assertEquals(baseIDSysUser.getId().getClass(), Long.class);
+
     }
 
     @Test

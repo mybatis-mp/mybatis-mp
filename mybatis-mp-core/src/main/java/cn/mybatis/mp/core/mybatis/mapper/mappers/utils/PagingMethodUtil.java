@@ -36,9 +36,7 @@ public final class PagingMethodUtil {
                             //没有主键 取第一个
                             q.orderBy(q.$(tableInfo.getType(), tableInfo.getTableFieldInfos().get(0).getField().getName()));
                         } else {
-                            tableInfo.getIdFieldInfos().forEach(item -> {
-                                q.orderBy(q.$(tableInfo.getType(), item.getField().getName()));
-                            });
+                            tableInfo.getIdFieldInfos().forEach(item -> q.orderBy(q.$(tableInfo.getType(), item.getField().getName())));
                         }
                     }
                 }).otherwise();

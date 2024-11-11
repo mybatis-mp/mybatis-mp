@@ -21,15 +21,11 @@ public final class ListMethodUtil {
     }
 
     public static <T> List<T> listByIds(BasicMapper basicMapper, TableInfo tableInfo, Serializable[] ids, Getter<T>[] selectFields) {
-        return listByIds(basicMapper, tableInfo, selectFields, where -> {
-            WhereUtil.appendIdsWhere(where, tableInfo, ids);
-        });
+        return listByIds(basicMapper, tableInfo, selectFields, where -> WhereUtil.appendIdsWhere(where, tableInfo, ids));
     }
 
     public static <T, ID extends Serializable> List<T> listByIds(BasicMapper basicMapper, TableInfo tableInfo, Collection<ID> ids, Getter<T>[] selectFields) {
-        return listByIds(basicMapper, tableInfo, selectFields, where -> {
-            WhereUtil.appendIdsWhere(where, tableInfo, ids);
-        });
+        return listByIds(basicMapper, tableInfo, selectFields, where -> WhereUtil.appendIdsWhere(where, tableInfo, ids));
     }
 
     public static <T> List<T> list(BasicMapper basicMapper, TableInfo tableInfo, Integer limit, Consumer<Where> consumer) {
@@ -52,9 +48,7 @@ public final class ListMethodUtil {
                                 query.$select().top(limit);
                                 query.removeLimit();
                             } else {
-                                tableInfo.getIdFieldInfos().forEach(item -> {
-                                    q.orderBy(q.$(tableInfo.getType(), item.getField().getName()));
-                                });
+                                tableInfo.getIdFieldInfos().forEach(item -> q.orderBy(q.$(tableInfo.getType(), item.getField().getName())));
                             }
                         }
                     }).otherwise();

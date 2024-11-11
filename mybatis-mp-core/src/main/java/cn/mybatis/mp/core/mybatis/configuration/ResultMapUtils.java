@@ -113,9 +113,7 @@ public final class ResultMapUtils {
      */
     private static List<ResultMapping> createNestedResultMapping(MybatisConfiguration configuration, List<NestedResultInfo> nestedResultInfos, String path) {
         List<ResultMapping> resultMappings = new ArrayList<>();
-        nestedResultInfos.forEach(item -> {
-            resultMappings.add(createNestedResultMapping(configuration, item, path));
-        });
+        nestedResultInfos.forEach(item -> resultMappings.add(createNestedResultMapping(configuration, item, path)));
         return resultMappings;
     }
 
@@ -170,15 +168,14 @@ public final class ResultMapUtils {
     private static List<ResultMapping> createResultMapping(MybatisConfiguration configuration, List<ResultFieldInfo> resultFieldInfos) {
         List<ResultMapping> resultMappings = new ArrayList<>();
         //  字段 构建
-        resultFieldInfos.stream().filter(item -> item.isResultMapping())
-                .forEach(item -> {
-                    if (item instanceof ResultTableFieldInfo) {
-                        ResultTableFieldInfo resultTableFieldInfo = (ResultTableFieldInfo) item;
-                        resultMappings.addAll(createResultMapping(configuration, resultTableFieldInfo));
-                    } else {
-                        resultMappings.addAll(createResultMapping(configuration, item));
-                    }
-                });
+        resultFieldInfos.stream().filter(ResultFieldInfo::isResultMapping).forEach(item -> {
+            if (item instanceof ResultTableFieldInfo) {
+                ResultTableFieldInfo resultTableFieldInfo = (ResultTableFieldInfo) item;
+                resultMappings.addAll(createResultMapping(configuration, resultTableFieldInfo));
+            } else {
+                resultMappings.addAll(createResultMapping(configuration, item));
+            }
+        });
         return resultMappings;
     }
 

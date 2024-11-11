@@ -455,11 +455,16 @@ public class ResultInfo {
         Field targetMatchField = null;
         if (returnType.isAnnotationPresent(ResultEntity.class)) {
             ResultInfo resultInfo = ResultInfos.get(returnType);
-            Optional<Field> eqFieldOptional = resultInfo.getResultFieldInfos().stream()
-                    .filter(item -> item instanceof ResultTableFieldInfo)
-                    .filter(item -> ((ResultTableFieldInfo) item).getTableFieldInfo().getField() == fetchTargetFieldInfo.getField())
-                    .map(item -> item.getField())
-                    .findFirst();
+            Optional<Field> eqFieldOptional = Optional.empty();
+            for (ResultFieldInfo item : resultInfo.getResultFieldInfos()) {
+                if (item instanceof ResultTableFieldInfo) {
+                    if (((ResultTableFieldInfo) item).getTableFieldInfo().getField() == fetchTargetFieldInfo.getField()) {
+                        Field itemField = item.getField();
+                        eqFieldOptional = Optional.of(itemField);
+                        break;
+                    }
+                }
+            }
             if (eqFieldOptional.isPresent()) {
                 targetMatchField = eqFieldOptional.get();
             }

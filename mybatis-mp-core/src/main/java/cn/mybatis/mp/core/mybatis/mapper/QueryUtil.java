@@ -7,6 +7,7 @@ import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
+import db.sql.api.impl.tookit.OptimizeOptions;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -114,7 +115,7 @@ public final class QueryUtil {
 
     public static <T, Q extends BaseQuery<Q, T>> Q buildNoOptimizationQuery(TableInfo tableInfo, Where where, Consumer<Q> consumer) {
         Q query = buildQuery(tableInfo, where, consumer);
-        query.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
+        query.optimizeOptions(OptimizeOptions::disableAll);
         return query;
     }
 

@@ -134,9 +134,7 @@ public final class WhereUtil {
      */
     public static <ID extends Serializable> void appendIdsWhere(Where where, TableInfo tableInfo, Collection<ID> ids) {
         Objects.requireNonNull(ids, "id can't be null");
-        ids.forEach(id -> {
-            Objects.requireNonNull(id, "id can't be null");
-        });
+        ids.forEach(id -> Objects.requireNonNull(id, "id can't be null"));
         appendWhereWithIdTableField(where, tableInfo, idTableField -> where.in(idTableField, ids));
     }
 

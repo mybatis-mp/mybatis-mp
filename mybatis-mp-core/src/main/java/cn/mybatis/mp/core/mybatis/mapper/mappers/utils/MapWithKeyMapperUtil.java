@@ -19,10 +19,7 @@ public final class MapWithKeyMapperUtil {
 
 
     public static <T, K> Map<K, T> mapWithKey(BasicMapper basicMapper, TableInfo tableInfo, String mapKey, Consumer<Where> consumer) {
-        return basicMapper.mapWithKey(mapKey,
-                QueryUtil.buildNoOptimizationQuery(tableInfo, WhereUtil.create(tableInfo, consumer), q -> {
-                    QueryUtil.fillQueryDefault(q, tableInfo);
-                }));
+        return basicMapper.mapWithKey(mapKey, QueryUtil.buildNoOptimizationQuery(tableInfo, WhereUtil.create(tableInfo, consumer), q -> QueryUtil.fillQueryDefault(q, tableInfo)));
     }
 
     public static <T, K, ID extends Serializable> Map<K, T> mapWithKey(BasicMapper basicMapper, TableInfo tableInfo, String mapKey, ID[] ids) {

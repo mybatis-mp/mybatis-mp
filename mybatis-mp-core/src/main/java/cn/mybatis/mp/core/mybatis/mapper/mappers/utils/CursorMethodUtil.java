@@ -19,15 +19,11 @@ public final class CursorMethodUtil {
     }
 
     public static <T> Cursor<T> cursorByIds(BasicMapper basicMapper, TableInfo tableInfo, Serializable[] ids, Getter<T>[] selectFields) {
-        return cursorByIds(basicMapper, tableInfo, selectFields, where -> {
-            WhereUtil.appendIdsWhere(where, tableInfo, ids);
-        });
+        return cursorByIds(basicMapper, tableInfo, selectFields, where -> WhereUtil.appendIdsWhere(where, tableInfo, ids));
     }
 
     public static <T, ID extends Serializable> Cursor<T> cursorByIds(BasicMapper basicMapper, TableInfo tableInfo, Collection<ID> ids, Getter<T>[] selectFields) {
-        return cursorByIds(basicMapper, tableInfo, selectFields, where -> {
-            WhereUtil.appendIdsWhere(where, tableInfo, ids);
-        });
+        return cursorByIds(basicMapper, tableInfo, selectFields, where -> WhereUtil.appendIdsWhere(where, tableInfo, ids));
     }
 
     public static <T> Cursor<T> cursor(BasicMapper basicMapper, TableInfo tableInfo, Consumer<Where> consumer) {

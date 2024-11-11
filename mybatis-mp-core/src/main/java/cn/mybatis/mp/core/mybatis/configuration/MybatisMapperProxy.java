@@ -44,14 +44,15 @@ public class MybatisMapperProxy<T> extends BaseMapperProxy<T> {
         }
         try {
             SqlSessionThreadLocalUtil.set(sqlSession);
-            if (method.getName().equals(ENTITY_TYPE_METHOD_NAME)) {
-                return this.entityType;
-            } else if (method.getName().equals(MAPPER_TYPE_METHOD_NAME)) {
-                return this.mapperInterface;
-            } else if (method.getName().equals(TABLE_INFO_METHOD_NAME)) {
-                return this.tableInfo;
-            } else if (method.getName().equals(GET_BASIC_MAPPER_METHOD_NAME)) {
-                return getBasicMapper();
+            switch (method.getName()) {
+                case ENTITY_TYPE_METHOD_NAME:
+                    return this.entityType;
+                case MAPPER_TYPE_METHOD_NAME:
+                    return this.mapperInterface;
+                case TABLE_INFO_METHOD_NAME:
+                    return this.tableInfo;
+                case GET_BASIC_MAPPER_METHOD_NAME:
+                    return getBasicMapper();
             }
             return super.invoke(proxy, method, args);
         } finally {

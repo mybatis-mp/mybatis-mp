@@ -11,6 +11,7 @@ import cn.mybatis.mp.db.annotations.ResultEntity;
 import db.sql.api.impl.cmd.basic.Column;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
 import db.sql.api.impl.cmd.struct.Where;
+import db.sql.api.impl.tookit.OptimizeOptions;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.executor.Executor;
@@ -278,10 +279,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (Objects.isNull(this.needFetchValuesMap) || this.needFetchValuesMap.isEmpty()) {
             return;
         }
-        needFetchValuesMap.forEach(((fetchInfo, fetchObjects) -> {
+        for (Map.Entry<FetchInfo, List<FetchObject>> entry : needFetchValuesMap.entrySet()) {
+            FetchInfo fetchInfo = entry.getKey();
+            List<FetchObject> fetchObjects = entry.getValue();
             List<Object> list = this.fetchData(fetchInfo, fetchObjects.stream().map(item -> item.getSourceKey()).distinct().collect(Collectors.toList()), false);
             this.fillFetchData(fetchInfo, fetchObjects, list);
-        }));
+        }
     }
 
     private List<Object> fetchData(FetchInfo fetchInfo, Query<Object> query, List<Serializable> queryValueList) {
@@ -312,7 +315,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (hasFetchFilter) {
             fetchFilters.get(fetchKey).accept(query.$where());
         }
-        query.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll());
+        query.optimizeOptions(OptimizeOptions::disableAll);
         return basicMapper.list(query);
     }
 
@@ -405,9 +408,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
         List<Object> list;
         if (Objects.nonNull(onValue)) {
-            list = singleFetchCache.computeIfAbsent(fetchInfo, key -> new HashMap<>()).computeIfAbsent(onValue, key2 -> {
-                return this.fetchData(fetchInfo, Collections.singletonList(onValue), true);
-            });
+            list = singleFetchCache.computeIfAbsent(fetchInfo, key -> new HashMap<>()).computeIfAbsent(onValue, key2 -> this.fetchData(fetchInfo, Collections.singletonList(onValue), true));
         } else {
             list = new ArrayList<>();
         }
