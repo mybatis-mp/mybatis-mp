@@ -11,8 +11,9 @@ public interface ExistsBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 是否存在
+     *
      * @param entityType 实体类
-     * @param consumer where consumer
+     * @param consumer   where consumer
      * @return 是否存在
      */
     default <T> boolean exists(Class<T> entityType, Consumer<Where> consumer) {
@@ -21,6 +22,7 @@ public interface ExistsBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 是否存在
+     *
      * @param entityType 实体类
      * @param where
      * @return 是否存在

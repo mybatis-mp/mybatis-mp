@@ -13,9 +13,10 @@ public interface PagingBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 分页查询
+     *
      * @param entityType 实体类
-     * @param consumer where consumer
-     * @param pager    分页参数
+     * @param consumer   where consumer
+     * @param pager      分页参数
      * @return 分页结果
      */
     default <T, P extends Pager<T>> P paging(Class<T> entityType, P pager, Consumer<Where> consumer) {
@@ -24,7 +25,8 @@ public interface PagingBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 分页查询
-     * @param entityType 实体类
+     *
+     * @param entityType   实体类
      * @param consumer     where consumer
      * @param pager        pager
      * @param selectFields select指定列
@@ -36,9 +38,10 @@ public interface PagingBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 分页查询
+     *
      * @param entityType 实体类
-     * @param where where
-     * @param pager 分页参数
+     * @param where      where
+     * @param pager      分页参数
      * @return 分页结果
      */
     default <T, P extends Pager<T>> P paging(Class<T> entityType, P pager, Where where) {

@@ -17,7 +17,7 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
      * 列表查询,返回类型，当前实体类
      *
      * @param entityType 实体类
-     * @param ids  指定ID
+     * @param ids        指定ID
      * @param <ID>
      * @return 返回结果列表
      */
@@ -27,7 +27,8 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 列表查询,返回类型，当前实体类
-     * @param entityType 实体类
+     *
+     * @param entityType   实体类
      * @param ids          指定ID
      * @param selectFields select指定列
      * @param <ID>
@@ -39,8 +40,9 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 列表查询,返回类型，当前实体类
+     *
      * @param entityType 实体类
-     * @param ids  指定ID
+     * @param ids        指定ID
      * @param <ID>
      * @return 返回结果列表
      */
@@ -50,7 +52,8 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 列表查询,返回类型，当前实体类
-     * @param entityType 实体类
+     *
+     * @param entityType   实体类
      * @param ids          指定ID
      * @param selectFields select指定列
      * @param <ID>
@@ -62,8 +65,9 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 列表查询,返回类型，当前实体类
+     *
      * @param entityType 实体类
-     * @param consumer where consumer
+     * @param consumer   where consumer
      * @return 返回结果列表
      */
     default <T> List<T> list(Class<T> entityType, Consumer<Where> consumer) {
@@ -72,7 +76,8 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 列表查询,返回类型，当前实体类
-     * @param entityType 实体类
+     *
+     * @param entityType   实体类
      * @param consumer     where consumer
      * @param selectFields select指定列
      * @return 返回结果列表
@@ -83,8 +88,9 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 列表查询,返回类型，当前实体类
+     *
      * @param entityType 实体类
-     * @param where where
+     * @param where      where
      * @return 返回结果列表
      */
     default <T> List<T> list(Class<T> entityType, Where where) {
@@ -93,7 +99,8 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 列表查询,返回类型，当前实体类
-     * @param entityType 实体类
+     *
+     * @param entityType   实体类
      * @param where        where
      * @param selectFields select指定列
      * @return 返回结果列表

@@ -11,6 +11,7 @@ public interface CountBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 总数
+     *
      * @param entityType 实体类
      * @return count数
      */
@@ -20,8 +21,9 @@ public interface CountBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 是否存在
+     *
      * @param entityType 实体类
-     * @param consumer where consumer
+     * @param consumer   where consumer
      * @return count数
      */
     default <T> int count(Class<T> entityType, Consumer<Where> consumer) {
@@ -30,8 +32,9 @@ public interface CountBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 是否存在
+     *
      * @param entityType 实体类
-     * @param where where
+     * @param where      where
      * @return count数
      */
     default <T> int count(Class<T> entityType, Where where) {

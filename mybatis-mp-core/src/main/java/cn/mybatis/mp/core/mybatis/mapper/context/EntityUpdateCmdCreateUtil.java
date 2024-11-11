@@ -15,7 +15,6 @@ import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.struct.Where;
 
-import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 
@@ -54,9 +53,9 @@ public class EntityUpdateCmdCreateUtil {
                     //乐观锁字段无值 不增加乐观锁条件
                     continue;
                 }
-                Serializable version = (Serializable) TypeConvertUtil.convert(Integer.valueOf(1), tableFieldInfo.getField().getType());
+                Object version = TypeConvertUtil.convert(Long.valueOf(1) + 1, tableFieldInfo.getField().getType());
                 //乐观锁设置
-                update.set($.field(table, tableFieldInfo.getColumnName()), Methods.value(version));
+                update.set($.field(table, tableFieldInfo.getColumnName()), Methods.cmd(version));
 
                 //乐观锁条件
                 update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), Methods.cmd(value));

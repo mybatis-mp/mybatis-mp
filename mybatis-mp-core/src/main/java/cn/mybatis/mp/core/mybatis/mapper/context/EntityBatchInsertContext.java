@@ -119,7 +119,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
                         //乐观锁设置 默认值1
                         value = TypeConvertUtil.convert(Integer.valueOf(1), tableFieldInfo.getField().getType());
                         //乐观锁回写
-                        TableInfoUtil.setValue(tableFieldInfo, t, TypeConvertUtil.convert(value, tableFieldInfo.getField().getType()));
+                        TableInfoUtil.setValue(tableFieldInfo, t, value);
                     }
                 }
 

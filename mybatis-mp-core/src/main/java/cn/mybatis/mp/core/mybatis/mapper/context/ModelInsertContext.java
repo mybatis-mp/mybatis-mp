@@ -99,7 +99,6 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
 
                 //乐观锁设置 默认值1
                 value = TypeConvertUtil.convert(Integer.valueOf(1), modelFieldInfo.getField().getType());
-                ;
                 //乐观锁回写
                 ModelInfoUtil.setValue(modelFieldInfo, model, value);
             } else if (allFieldForce || (Objects.nonNull(this.forceSaveFields) && this.forceSaveFields.contains(modelFieldInfo.getField().getName()))) {

@@ -52,13 +52,14 @@ public class ModelUpdateCmdCreateUtil {
                     //乐观锁字段无值 不增加乐观锁条件
                     continue;
                 }
-                Long version = Long.valueOf(value.toString()) + 1;
-                value = TypeConvertUtil.convert(version, modelFieldInfo.getField().getType());
+                //乐观锁+1
+                Object version = TypeConvertUtil.convert(Long.valueOf(value.toString()) + 1, modelFieldInfo.getField().getType());
                 //乐观锁设置
-                update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(value));
-
+                update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(version));
                 //乐观锁条件
                 update.$where().extConditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(value));
+                //乐观锁回写
+                ModelInfoUtil.setValue(modelFieldInfo, t, version);
                 continue;
             }
 

@@ -69,6 +69,7 @@ public class VersionTestCase extends BaseTest {
             versionTest.setName("我是1");
             versionTest.setCreateTime(LocalDateTime.now());
             versionTestMapper.save(versionTest);
+            System.out.println(versionTest);
 
             versionTest.setName("我是2");
             versionTestMapper.update(versionTest);

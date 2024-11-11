@@ -15,18 +15,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BaseUserTestCase extends BaseTest {
 
+    private void save(SqlSession session, BaseIDSysUser baseIDSysUser) {
+        SysUserIDMapper sysUserMapper = session.getMapper(SysUserIDMapper.class);
+        sysUserMapper.save(baseIDSysUser);
+    }
+
+    private void save(SqlSession session, BaseIDSysUserModel baseIDSysUser) {
+        SysUserIDMapper sysUserMapper = session.getMapper(SysUserIDMapper.class);
+        sysUserMapper.save(baseIDSysUser);
+    }
+
     @Test
     public void save() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
-            SysUserIDMapper sysUserMapper = session.getMapper(SysUserIDMapper.class);
             BaseIDSysUser baseIDSysUser = new BaseIDSysUser();
             baseIDSysUser.setUserName("aaa2");
             baseIDSysUser.setRole_id(1);
             baseIDSysUser.setPassword("xx");
             baseIDSysUser.setCreate_time(LocalDateTime.now());
-            for (int i = 0; i < 11; i++) {
+            for (int i = 0; i < 100; i++) {
                 try {
-                    sysUserMapper.save(baseIDSysUser);
+                    save(this.sqlSessionFactory.openSession(false), baseIDSysUser);
+                    break;
                 } catch (Exception e) {
                     System.out.println(i);
                 }
@@ -64,9 +74,10 @@ public class BaseUserTestCase extends BaseTest {
             baseIDSysUser.setRole_id(1);
             baseIDSysUser.setPassword("xx");
             baseIDSysUser.setCreate_time(LocalDateTime.now());
-            for (int i = 0; i < 11; i++) {
+            for (int i = 0; i < 100; i++) {
                 try {
-                    sysUserMapper.save(baseIDSysUser);
+                    save(this.sqlSessionFactory.openSession(false), baseIDSysUser);
+                    break;
                 } catch (Exception e) {
                     System.out.println(i);
                 }
