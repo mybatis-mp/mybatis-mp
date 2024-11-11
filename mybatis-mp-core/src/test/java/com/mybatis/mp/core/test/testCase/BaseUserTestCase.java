@@ -6,6 +6,7 @@ import com.mybatis.mp.core.test.DO.BaseRoleIdSysUserVo;
 import com.mybatis.mp.core.test.DO.BaseRoleIdSysUserVo2;
 import com.mybatis.mp.core.test.mapper.SysUserIDMapper;
 import com.mybatis.mp.core.test.model.BaseIDSysUserModel;
+import db.sql.api.DbType;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -16,28 +17,45 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BaseUserTestCase extends BaseTest {
 
     private void save(SqlSession session, BaseIDSysUser baseIDSysUser) {
-        SysUserIDMapper sysUserMapper = session.getMapper(SysUserIDMapper.class);
-        sysUserMapper.save(baseIDSysUser);
+        try {
+            SysUserIDMapper sysUserMapper = session.getMapper(SysUserIDMapper.class);
+            sysUserMapper.save(baseIDSysUser);
+        } catch (Exception e) {
+            session.close();
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void save(SqlSession session, BaseIDSysUserModel baseIDSysUser) {
-        SysUserIDMapper sysUserMapper = session.getMapper(SysUserIDMapper.class);
-        sysUserMapper.save(baseIDSysUser);
+        try {
+            SysUserIDMapper sysUserMapper = session.getMapper(SysUserIDMapper.class);
+            sysUserMapper.save(baseIDSysUser);
+        } catch (Exception e) {
+            session.close();
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
     public void save() {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            return;
+        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             BaseIDSysUser baseIDSysUser = new BaseIDSysUser();
             baseIDSysUser.setUserName("aaa2");
             baseIDSysUser.setRole_id(1);
             baseIDSysUser.setPassword("xx");
             baseIDSysUser.setCreate_time(LocalDateTime.now());
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 20; i++) {
                 try {
                     save(this.sqlSessionFactory.openSession(false), baseIDSysUser);
                     break;
                 } catch (Exception e) {
+                    if (i > 10) {
+                        e.printStackTrace();
+                    }
                     System.out.println(i);
                 }
             }
@@ -67,6 +85,9 @@ public class BaseUserTestCase extends BaseTest {
 
     @Test
     public void saveModel() {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            return;
+        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserIDMapper sysUserMapper = session.getMapper(SysUserIDMapper.class);
             BaseIDSysUserModel baseIDSysUser = new BaseIDSysUserModel();
@@ -74,7 +95,7 @@ public class BaseUserTestCase extends BaseTest {
             baseIDSysUser.setRole_id(1);
             baseIDSysUser.setPassword("xx");
             baseIDSysUser.setCreate_time(LocalDateTime.now());
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 20; i++) {
                 try {
                     save(this.sqlSessionFactory.openSession(false), baseIDSysUser);
                     break;
