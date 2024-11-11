@@ -53,13 +53,12 @@ public class EntityUpdateCmdCreateUtil {
                     //乐观锁字段无值 不增加乐观锁条件
                     continue;
                 }
+                //乐观锁+1
                 Object version = TypeConvertUtil.convert(Long.valueOf(1) + 1, tableFieldInfo.getField().getType());
                 //乐观锁设置
                 update.set($.field(table, tableFieldInfo.getColumnName()), Methods.cmd(version));
-
                 //乐观锁条件
                 update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), Methods.cmd(value));
-
                 //乐观锁回写
                 TableInfoUtil.setValue(tableFieldInfo, t, version);
                 continue;
