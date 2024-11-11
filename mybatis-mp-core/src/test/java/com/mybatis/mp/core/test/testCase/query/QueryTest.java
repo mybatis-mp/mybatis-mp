@@ -4,6 +4,7 @@ import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.sql.executor.SubQuery;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
+import cn.mybatis.mp.core.sql.util.WhereUtil;
 import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
@@ -60,6 +61,18 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             List<SysUser> list = sysUserMapper.list(2, where -> where.in(SysUser::getId, 1, 2, 3));
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 2);
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 2);
+        }
+    }
+
+    @Test
+    public void listWithLimit2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = sysUserMapper.list(2, WhereUtil.create().in(SysUser::getId, 1, 2, 3));
             list.stream().forEach(System.out::println);
             assertEquals(list.size(), 2);
             assertEquals(list.get(0).getId(), 1);

@@ -36,7 +36,7 @@ public final class PagingMethodUtil {
                             q.orderBy(q.$(tableInfo.getType(), item.getField().getName()));
                         });
                     }
-                });
+                }).otherwise();
             }));
         }), pager);
     }

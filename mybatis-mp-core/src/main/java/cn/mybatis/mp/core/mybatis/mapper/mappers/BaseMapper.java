@@ -69,6 +69,7 @@ public interface BaseMapper {
         query.dbAdapt((q, selector) -> {
             selector.when(DbType.SQL_SERVER, () -> {
                 query.getSelect().top(1);
+                query.removeLimit();
             }).otherwise(() -> {
                 query.limit(1);
             });

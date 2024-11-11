@@ -188,6 +188,7 @@ public interface IQuery<SELF extends IQuery
         return (SELF) this;
     }
 
+    boolean removeLimit();
 
     @Override
     default SELF forUpdate(boolean wait) {

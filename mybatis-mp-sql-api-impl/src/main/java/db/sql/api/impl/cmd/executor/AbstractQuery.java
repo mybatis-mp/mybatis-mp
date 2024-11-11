@@ -752,6 +752,14 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
+    public boolean removeLimit() {
+        if (Objects.isNull(getLimit())) {
+            return false;
+        }
+        return this.cmds().remove(getLimit());
+    }
+
+    @Override
     public Unions getUnions() {
         return this.unions;
     }

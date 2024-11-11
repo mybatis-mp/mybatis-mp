@@ -52,7 +52,7 @@ public final class ListMethodUtil {
                                 q.orderBy(q.$(tableInfo.getType(), item.getField().getName()));
                             });
                         }
-                    });
+                    }).otherwise();
                 }));
             }
         }));
