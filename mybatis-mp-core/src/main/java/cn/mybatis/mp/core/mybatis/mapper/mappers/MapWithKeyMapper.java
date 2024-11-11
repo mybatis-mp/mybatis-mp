@@ -19,7 +19,7 @@ public interface MapWithKeyMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      * @param <K>    map的key的类型
      * @return 一个map
      */
-    default <K> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, Serializable... ids) {
+    default <K, ID extends Serializable> Map<K, T> mapWithKey(GetterFun<T, K> mapKey, ID... ids) {
         return MapWithKeyMapperUtil.mapWithKey(getBasicMapper(), getTableInfo(), mapKey, ids);
     }
 
@@ -48,11 +48,25 @@ public interface MapWithKeyMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
         return MapWithKeyMapperUtil.mapWithKey(getBasicMapper(), getTableInfo(), mapKey, consumer);
     }
 
+    /**
+     * 以主键为key的查询
+     *
+     * @param ids  指定ID
+     * @param <ID>
+     * @return 以主键为key的MAP
+     */
     default <ID extends Serializable> Map<ID, T> map(ID... ids) {
         return MapWithKeyMapperUtil.map(getBasicMapper(), getTableInfo(), ids);
     }
 
-    default <ID extends Serializable, T> Map<ID, T> map(Collection<ID> ids) {
+    /**
+     * 以主键为key的查询
+     *
+     * @param ids  指定ID
+     * @param <ID>
+     * @return 以主键为key的MAP
+     */
+    default <ID extends Serializable> Map<ID, T> map(Collection<ID> ids) {
         return MapWithKeyMapperUtil.map(getBasicMapper(), getTableInfo(), ids);
     }
 }

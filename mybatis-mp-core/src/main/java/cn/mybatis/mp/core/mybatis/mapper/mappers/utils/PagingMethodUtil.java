@@ -5,8 +5,10 @@ import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.QueryUtil;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
+import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
+import db.sql.api.impl.tookit.Objects;
 
 import java.util.function.Consumer;
 
@@ -25,6 +27,17 @@ public final class PagingMethodUtil {
     }
 
     public static <T, P extends Pager<T>> P paging(BasicMapper basicMapper, TableInfo tableInfo, P pager, Where where, Getter<T>[] selectFields) {
-        return basicMapper.paging(QueryUtil.buildNoOptimizationQuery(tableInfo, where, q -> QueryUtil.fillQueryDefault(q, tableInfo, selectFields)), pager);
+        return basicMapper.paging(QueryUtil.buildNoOptimizationQuery(tableInfo, where, query -> {
+            QueryUtil.fillQueryDefault(query, tableInfo, selectFields);
+            query.dbAdapt(((q, selector) -> {
+                selector.when(DbType.SQL_SERVER, () -> {
+                    if (Objects.isNull(q.getOrderBy())) {
+                        tableInfo.getIdFieldInfos().stream().forEach(item -> {
+                            q.orderBy(q.$(tableInfo.getType(), item.getField().getName()));
+                        });
+                    }
+                });
+            }));
+        }), pager);
     }
 }

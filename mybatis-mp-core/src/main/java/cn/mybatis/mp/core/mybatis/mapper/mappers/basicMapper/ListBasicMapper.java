@@ -21,7 +21,7 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
      * @param <ID>
      * @return 返回结果列表
      */
-    default <T, ID extends Serializable> List<T> listByIds(Class<T> entityType, ID[] ids) {
+    default <T, ID extends Serializable> List<T> listByIds(Class<T> entityType, ID... ids) {
         return this.listByIds(entityType, ids, (Getter<T>[]) null);
     }
 
@@ -83,7 +83,32 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
      * @return 返回结果列表
      */
     default <T> List<T> list(Class<T> entityType, Consumer<Where> consumer, Getter<T>... selectFields) {
-        return ListMethodUtil.list(getBasicMapper(), Tables.get(entityType), consumer, selectFields);
+        return ListMethodUtil.list(getBasicMapper(), Tables.get(entityType), null, consumer, selectFields);
+    }
+
+    /**
+     * 列表查询,返回类型，当前实体类
+     *
+     * @param limit      条数
+     * @param entityType 实体类
+     * @param consumer   where consumer
+     * @return 返回结果列表
+     */
+    default <T> List<T> list(Class<T> entityType, Integer limit, Consumer<Where> consumer) {
+        return this.list(entityType, limit, consumer, (Getter<T>[]) null);
+    }
+
+    /**
+     * 列表查询,返回类型，当前实体类
+     *
+     * @param limit        条数
+     * @param entityType   实体类
+     * @param consumer     where consumer
+     * @param selectFields select指定列
+     * @return 返回结果列表
+     */
+    default <T> List<T> list(Class<T> entityType, Integer limit, Consumer<Where> consumer, Getter<T>... selectFields) {
+        return ListMethodUtil.list(getBasicMapper(), Tables.get(entityType), limit, consumer, selectFields);
     }
 
     /**
@@ -106,7 +131,30 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
      * @return 返回结果列表
      */
     default <T> List<T> list(Class<T> entityType, Where where, Getter<T>... selectFields) {
-        return ListMethodUtil.list(getBasicMapper(), Tables.get(entityType), where, selectFields);
+        return ListMethodUtil.list(getBasicMapper(), Tables.get(entityType), null, where, selectFields);
+    }
+
+    /**
+     * 列表查询,返回类型，当前实体类
+     *
+     * @param entityType 实体类
+     * @param where      where
+     * @return 返回结果列表
+     */
+    default <T> List<T> list(Class<T> entityType, Integer limit, Where where) {
+        return this.list(entityType, limit, where, (Getter<T>[]) null);
+    }
+
+    /**
+     * 列表查询,返回类型，当前实体类
+     *
+     * @param entityType   实体类
+     * @param where        where
+     * @param selectFields select指定列
+     * @return 返回结果列表
+     */
+    default <T> List<T> list(Class<T> entityType, Integer limit, Where where, Getter<T>... selectFields) {
+        return ListMethodUtil.list(getBasicMapper(), Tables.get(entityType), limit, where, selectFields);
     }
 
     /**

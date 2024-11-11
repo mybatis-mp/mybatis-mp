@@ -18,7 +18,7 @@ public interface CursorMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      * @param <ID>
      * @return 返回结果列表
      */
-    default <ID extends Serializable> Cursor<T> cursorByIds(ID[] ids) {
+    default <ID extends Serializable> Cursor<T> cursorByIds(ID... ids) {
         return this.cursorByIds(ids, (Getter<T>[]) null);
     }
 

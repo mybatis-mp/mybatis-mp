@@ -65,4 +65,30 @@ public interface MapWithKeyBasicMapper extends BaseMapper, BaseBasicMapper {
         TableInfo tableInfo = Tables.get(lambdaFieldInfo.getType());
         return this.mapWithKey(lambdaFieldInfo.getName(), QueryUtil.buildNoOptimizationQuery(tableInfo, WhereUtil.create(tableInfo, consumer)));
     }
+
+    /**
+     * 以主键为key的查询
+     *
+     * @param entityType 实体类
+     * @param ids        指定ID
+     * @param <ID>
+     * @param <T>
+     * @return 以主键为key的MAP
+     */
+    default <ID extends Serializable, T> Map<ID, T> map(Class<T> entityType, ID... ids) {
+        return MapWithKeyMapperUtil.map(getBasicMapper(), Tables.get(entityType), ids);
+    }
+
+    /**
+     * 以主键为key的查询
+     *
+     * @param entityType 实体类
+     * @param ids        指定ID
+     * @param <ID>
+     * @param <T>
+     * @return 以主键为key的MAP
+     */
+    default <ID extends Serializable, T> Map<ID, T> map(Class<T> entityType, Collection<ID> ids) {
+        return MapWithKeyMapperUtil.map(getBasicMapper(), Tables.get(entityType), ids);
+    }
 }

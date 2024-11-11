@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +30,45 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class QueryTest extends BaseTest {
+
     @Test
-    public void getAll() {
+    public void listByIds() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = sysUserMapper.listByIds(1, 2);
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 2);
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 2);
+        }
+    }
+
+    @Test
+    public void listByIds2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = sysUserMapper.listByIds(Arrays.asList(1, 2));
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 2);
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 2);
+        }
+    }
+
+    @Test
+    public void listWithLimit() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = sysUserMapper.list(2, where -> where.in(SysUser::getId, 1, 2, 3));
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 2);
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 2);
+        }
+    }
+
+    @Test
+    public void listAll() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             List<SysUser> list = sysUserMapper.listAll();

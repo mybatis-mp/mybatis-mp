@@ -21,7 +21,7 @@ public interface CursorBasicMapper extends BaseMapper, BaseBasicMapper {
      * @param <ID>
      * @return 返回结果列表
      */
-    default <T, ID extends Serializable> Cursor<T> cursorByIds(Class<T> entityType, ID[] ids) {
+    default <T, ID extends Serializable> Cursor<T> cursorByIds(Class<T> entityType, ID... ids) {
         return this.cursorByIds(entityType, ids, (Getter<T>[]) null);
     }
 
