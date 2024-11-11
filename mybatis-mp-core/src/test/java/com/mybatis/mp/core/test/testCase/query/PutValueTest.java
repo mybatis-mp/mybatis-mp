@@ -27,6 +27,8 @@ public class PutValueTest extends BaseTest {
             list.stream().forEach(System.out::println);
             assertEquals(list.get(0).getEnumName(), PutValueEnum.ENUM1.getName());
             assertEquals(list.get(1).getEnumName(), PutValueEnum.ENUM2.getName());
+            assertEquals(list.get(0).getEnumName2(), PutValueEnum.ENUM1.getName());
+            assertEquals(list.get(1).getEnumName2(), PutValueEnum.ENUM2.getName());
         }
     }
 
@@ -41,6 +43,8 @@ public class PutValueTest extends BaseTest {
             System.out.println(vo);
             assertNull(vo.getEnumName());
             assertEquals(vo.getDefaultEnumName(), "NULL");
+            assertNull(vo.getEnumName2());
+            assertEquals(vo.getDefaultEnumName2(), "NULL");
         }
     }
 
@@ -55,6 +59,8 @@ public class PutValueTest extends BaseTest {
             list.stream().forEach(System.out::println);
             assertEquals(list.get(0).getEnumName(), PutValueEnum.ENUM1.getName());
             assertEquals(list.get(1).getEnumName(), PutValueEnum.ENUM2.getName());
+            assertEquals(list.get(0).getEnumName2(), PutValueEnum.ENUM1.getName());
+            assertEquals(list.get(1).getEnumName2(), PutValueEnum.ENUM2.getName());
         }
     }
 
@@ -69,6 +75,8 @@ public class PutValueTest extends BaseTest {
             System.out.println(vo);
             assertNull(vo.getEnumName());
             assertEquals(vo.getDefaultEnumName(), "NULL");
+            assertNull(vo.getEnumName2());
+            assertEquals(vo.getDefaultEnumName2(), "NULL");
         }
     }
 }
