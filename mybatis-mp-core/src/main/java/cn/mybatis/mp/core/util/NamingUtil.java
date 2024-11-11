@@ -122,7 +122,7 @@ public final class NamingUtil {
         }
         for (String prefix : prefixes) {
             String target = removePrefix(original, prefix);
-            if (target != original) {
+            if (!Objects.equals(target, original)) {
                 return target;
             }
         }

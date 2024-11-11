@@ -52,7 +52,7 @@ public final class ListMethodUtil {
                                 query.$select().top(limit);
                                 query.removeLimit();
                             } else {
-                                tableInfo.getIdFieldInfos().stream().forEach(item -> {
+                                tableInfo.getIdFieldInfos().forEach(item -> {
                                     q.orderBy(q.$(tableInfo.getType(), item.getField().getName()));
                                 });
                             }

@@ -26,7 +26,7 @@ public final class GetMethodUtil {
     }
 
     public static <T> T get(BasicMapper basicMapper, TableInfo tableInfo, Consumer<Where> consumer) {
-        return get(basicMapper, tableInfo, WhereUtil.create(tableInfo, where -> consumer.accept(where)), null);
+        return get(basicMapper, tableInfo, WhereUtil.create(tableInfo, consumer::accept), null);
     }
 
     public static <T> T get(BasicMapper basicMapper, TableInfo tableInfo, Consumer<Where> consumer, Getter<T>[] selectFields) {

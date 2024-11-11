@@ -131,7 +131,7 @@ public class ResultInfo {
             TableFieldInfo tableFieldInfo;
             String tableFieldName;
             Class<?> entity;
-            Integer storey;
+            int storey;
 
             if (field.isAnnotationPresent(ResultEntityField.class)) {
                 ResultEntityField resultEntityField = field.getAnnotation(ResultEntityField.class);
@@ -353,7 +353,7 @@ public class ResultInfo {
                     if (targetSelectColumnBuilder.length() == 0) {
                         throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
                     } else {
-                        targetSelectColumnBuilder.append(value.substring(startIndex, value.length() - 1));
+                        targetSelectColumnBuilder.append(value, startIndex, value.length() - 1);
                         return targetSelectColumnBuilder.toString();
                     }
                 }
@@ -366,7 +366,7 @@ public class ResultInfo {
                 if (Objects.isNull(targetSelectTargetFieldInfo)) {
                     throw buildException(clazz, field, annotationName, annotationPropertyName, property + " is not a entity field");
                 }
-                targetSelectColumnBuilder.append(value.substring(startIndex, start)).append(targetSelectTargetFieldInfo.getColumnName());
+                targetSelectColumnBuilder.append(value, startIndex, start).append(targetSelectTargetFieldInfo.getColumnName());
                 startIndex = end + 1;
             }
         }

@@ -43,9 +43,9 @@ public class Pager<T> {
         return executeCount;
     }
 
-    public <T> Pager<T> setExecuteCount(boolean executeCount) {
+    public Pager<T> setExecuteCount(boolean executeCount) {
         this.executeCount = executeCount;
-        return (Pager<T>) this;
+        return this;
     }
 
     public List<T> getResults() {

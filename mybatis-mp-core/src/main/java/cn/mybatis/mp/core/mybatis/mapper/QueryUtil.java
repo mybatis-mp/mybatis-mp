@@ -45,8 +45,7 @@ public final class QueryUtil {
     }
 
     public static <T, Q extends BaseQuery<Q, T>> Q buildQuery(TableInfo tableInfo) {
-        Q query = (Q) Query.create().from(tableInfo.getType());
-        return query;
+        return (Q) Query.create().from(tableInfo.getType());
     }
 
     public static <T, Q extends BaseQuery<Q, T>> Q buildQuery(Where where, Consumer<Q> consumer) {

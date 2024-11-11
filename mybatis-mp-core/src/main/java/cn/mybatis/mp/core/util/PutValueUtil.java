@@ -23,7 +23,7 @@ public final class PutValueUtil {
 
     private static Object getPutValue(Object[] values, PutValueInfo putValueInfo) {
         PutValue annotation = putValueInfo.getAnnotation();
-        boolean allNull = !Arrays.stream(values).filter(java.util.Objects::nonNull).findFirst().isPresent();
+        boolean allNull = !Arrays.stream(values).anyMatch(java.util.Objects::nonNull);
         if (allNull) {
             if (annotation.required()) {
                 throw new RuntimeException(" values are all null from table");

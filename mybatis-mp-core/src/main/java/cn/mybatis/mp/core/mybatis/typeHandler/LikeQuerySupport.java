@@ -13,7 +13,7 @@ public interface LikeQuerySupport<T> {
      *
      * @param likeMode  like模式
      * @param isNotLike 是否notLike
-     * @return
+     * @return LikeMode
      */
     default LikeMode convertLikeMode(LikeMode likeMode, boolean isNotLike) {
         return likeMode;

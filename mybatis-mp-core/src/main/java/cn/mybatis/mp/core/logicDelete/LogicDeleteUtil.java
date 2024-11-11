@@ -31,8 +31,8 @@ public final class LogicDeleteUtil {
      * 在指定逻辑开关下执行
      *
      * @param state    开关状态
-     * @param supplier 函数
-     * @param <T>
+     * @param supplier 返回函数
+     * @param <T> 返回值
      * @return 函数执行后的返回值
      */
     public static <T> T execute(boolean state, Supplier<T> supplier) {
@@ -44,8 +44,8 @@ public final class LogicDeleteUtil {
     /**
      * 是否需要逻辑删除
      *
-     * @param tableInfo
-     * @return
+     * @param tableInfo 实体类tableInfo
+     * @return 是否需要逻辑删除
      */
     public static boolean isNeedLogicDelete(TableInfo tableInfo) {
         return MybatisMpConfig.isLogicDeleteSwitchOpen() && Objects.nonNull(tableInfo.getLogicDeleteFieldInfo());

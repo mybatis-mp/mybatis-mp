@@ -18,7 +18,7 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
      *
      * @param entityType 实体类
      * @param ids        指定ID
-     * @param <ID>
+     * @param <ID> ID
      * @return 返回结果列表
      */
     default <T, ID extends Serializable> List<T> listByIds(Class<T> entityType, ID... ids) {
@@ -31,7 +31,7 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
      * @param entityType   实体类
      * @param ids          指定ID
      * @param selectFields select指定列
-     * @param <ID>
+     * @param <ID> ID
      * @return 返回结果列表
      */
     default <T, ID extends Serializable> List<T> listByIds(Class<T> entityType, ID[] ids, Getter<T>... selectFields) {
@@ -43,7 +43,7 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
      *
      * @param entityType 实体类
      * @param ids        指定ID
-     * @param <ID>
+     * @param <ID> ID
      * @return 返回结果列表
      */
     default <T, ID extends Serializable> List<T> listByIds(Class<T> entityType, Collection<ID> ids) {
@@ -56,7 +56,7 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
      * @param entityType   实体类
      * @param ids          指定ID
      * @param selectFields select指定列
-     * @param <ID>
+     * @param <ID> ID
      * @return 返回结果列表
      */
     default <T, ID extends Serializable> List<T> listByIds(Class<T> entityType, Collection<ID> ids, Getter<T>... selectFields) {

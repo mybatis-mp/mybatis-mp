@@ -19,7 +19,7 @@ public final class LogicDeleteSwitch implements AutoCloseable {
     /**
      * 获得开关状态
      *
-     * @return
+     * @return 状态
      */
     public static Boolean getState() {
         return THREAD_LOCAL.get();
@@ -28,8 +28,8 @@ public final class LogicDeleteSwitch implements AutoCloseable {
     /**
      * 设置开关
      *
-     * @param state
-     * @return
+     * @param state 状态
+     * @return LogicDeleteSwitch
      */
     public static LogicDeleteSwitch with(boolean state) {
         LogicDeleteSwitch logicDeleteSwitch = new LogicDeleteSwitch();

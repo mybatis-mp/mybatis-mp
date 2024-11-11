@@ -55,7 +55,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
         return new QueryChain<>(mapper, where);
     }
 
-    public <T> QueryChain<T> disableAutoSelect() {
+    public QueryChain<T> disableAutoSelect() {
         this.autoSelect = false;
         return (QueryChain<T>) this;
     }

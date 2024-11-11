@@ -102,7 +102,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (Objects.isNull(putEnumValueInfos) || putEnumValueInfos.isEmpty()) {
             return;
         }
-        putEnumValueInfos.stream().forEach(item -> {
+        putEnumValueInfos.forEach(item -> {
             Object codeValue;
             try {
                 TypeHandler<?> typeHandler = item.getValueTypeHandler();
@@ -150,7 +150,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         if (Objects.isNull(putValueInfos) || putValueInfos.isEmpty()) {
             return;
         }
-        putValueInfos.stream().forEach(item -> {
+        putValueInfos.forEach(item -> {
             Object[] values = new Object[item.getValuesColumn().length];
             for (int i = 0; i < item.getValuesColumn().length; i++) {
                 try {

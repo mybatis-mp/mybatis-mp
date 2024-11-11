@@ -12,7 +12,7 @@ import java.util.List;
 
 public final class SelectClassUtil {
 
-    private static List<Cmd> buildSelect(AbstractQuery query, List<ResultFieldInfo> resultFieldInfos, List<Cmd> cmdList) {
+    private static void buildSelect(AbstractQuery query, List<ResultFieldInfo> resultFieldInfos, List<Cmd> cmdList) {
         resultFieldInfos.stream().filter(item -> item instanceof ResultTableFieldInfo)
                 .forEach(item -> {
                     ResultTableFieldInfo resultTableFieldInfo = (ResultTableFieldInfo) item;
@@ -21,15 +21,13 @@ public final class SelectClassUtil {
                         cmdList.add(tableField);
                     }
                 });
-        return cmdList;
     }
 
-    private static List<Cmd> buildNestedSelect(AbstractQuery query, List<NestedResultInfo> nestedResultInfos, List<Cmd> cmdList) {
+    private static void buildNestedSelect(AbstractQuery query, List<NestedResultInfo> nestedResultInfos, List<Cmd> cmdList) {
         nestedResultInfos.forEach(item -> {
             buildSelect(query, item.getResultFieldInfos(), cmdList);
             buildNestedSelect(query, item.getNestedResultInfos(), cmdList);
         });
-        return cmdList;
     }
 
     private static List<Cmd> buildSelect(AbstractQuery query, Class clazz, int storey, List<Cmd> cmdList) {

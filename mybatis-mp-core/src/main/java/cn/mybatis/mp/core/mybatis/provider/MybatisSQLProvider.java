@@ -81,9 +81,7 @@ public class MybatisSQLProvider {
                 queryContext.getExecution().limit(2);
             }
         }
-        queryContext.init(dbType);
-        handlerPrefixMapping(queryContext);
-        return queryContext.sql(dbType);
+        return cmdQuery(queryContext, null, dbType);
     }
 
     public static String cmdCount(SQLCmdCountQueryContext queryContext, ProviderContext providerContext, DbType dbType) {

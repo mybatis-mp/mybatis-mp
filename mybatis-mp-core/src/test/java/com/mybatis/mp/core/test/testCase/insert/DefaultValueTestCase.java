@@ -51,6 +51,7 @@ public class DefaultValueTestCase extends BaseTest {
             defaultValueTest.setValue3(TestEnum.X1);
             DbType.H2.getKeywords().add("value3");
             mapper.save(defaultValueTest);
+            assertNotNull(defaultValueTest.getCreateTime());
 
             System.out.println(defaultValueTest);
             assertNotNull(defaultValueTest.getId());

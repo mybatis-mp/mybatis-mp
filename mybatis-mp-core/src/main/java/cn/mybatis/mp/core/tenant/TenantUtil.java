@@ -84,18 +84,16 @@ public final class TenantUtil {
      * @param entity     实体类
      * @param storey     实体类表的存储层级
      */
-    public static Serializable addTenantCondition(Where where, CmdFactory cmdFactory, Class entity, int storey) {
+    public static void addTenantCondition(Where where, CmdFactory cmdFactory, Class entity, int storey) {
         Serializable tenantId = TenantUtil.getTenantId();
         if (Objects.isNull(tenantId)) {
-            return null;
+            return;
         }
         TableInfo tableInfo = Tables.get(entity);
         if (Objects.isNull(tableInfo.getTenantIdFieldInfo())) {
-            return null;
+            return;
         }
         where.extConditionChain().eq(cmdFactory.field(entity, tableInfo.getTenantIdFieldInfo().getField().getName(), storey), tenantId);
-
-        return tenantId;
     }
 
     /**
@@ -106,17 +104,16 @@ public final class TenantUtil {
      * @param tableInfo  tableInfo
      * @param storey     实体类表的存储层级
      */
-    public static Serializable addTenantCondition(Where where, CmdFactory cmdFactory, TableInfo tableInfo, int storey) {
+    public static void addTenantCondition(Where where, CmdFactory cmdFactory, TableInfo tableInfo, int storey) {
         Serializable tenantId = TenantUtil.getTenantId();
         if (Objects.isNull(tenantId)) {
-            return null;
+            return;
         }
 
         if (Objects.isNull(tableInfo.getTenantIdFieldInfo())) {
-            return null;
+            return;
         }
         where.extConditionChain().eq(cmdFactory.field(tableInfo.getType(), tableInfo.getTenantIdFieldInfo().getField().getName(), storey), tenantId);
-        return tenantId;
     }
 
     /**

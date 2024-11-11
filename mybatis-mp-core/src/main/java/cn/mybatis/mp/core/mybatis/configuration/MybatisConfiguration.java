@@ -107,7 +107,7 @@ public class MybatisConfiguration extends Configuration {
             List<Class<?>> list = GenericUtil.getGenericInterfaceClass(type);
             Optional<Class<?>> entityOptional = list.stream().filter(item -> item.isAnnotationPresent(Table.class)).findFirst();
             if (!entityOptional.isPresent()) {
-                if (list.isEmpty() || list.size() > 1) {
+                if (list.size() != 1) {
                     throw new RuntimeException(type + " did not add a generic");
                 } else {
                     throw new NotTableClassException(list.get(0));

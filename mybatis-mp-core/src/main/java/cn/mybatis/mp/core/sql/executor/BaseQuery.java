@@ -23,7 +23,7 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
 
     protected Class returnType;
 
-    protected OptimizeOptions optimizeOptions = new OptimizeOptions();
+    protected final OptimizeOptions optimizeOptions = new OptimizeOptions();
 
     protected Consumer<E> onRowEvent;
 

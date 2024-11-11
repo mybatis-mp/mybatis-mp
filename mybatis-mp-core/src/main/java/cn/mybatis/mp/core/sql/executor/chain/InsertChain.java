@@ -80,7 +80,7 @@ public class InsertChain extends BaseInsert<InsertChain> {
                     selectQuery.select((Getter<?>) entry.getValue());
                 }
             }
-            this.fields(fields.toArray(new Getter[fields.size()]));
+            this.fields(fields.toArray(new Getter[0]));
             this.fromSelect(selectQuery);
             insertSelectFields.clear();
         }
@@ -152,9 +152,9 @@ public class InsertChain extends BaseInsert<InsertChain> {
 
     private static class SelectGetterFun<T> {
 
-        public Getter<T> field;
+        public final Getter<T> field;
 
-        public Function<TableField, Cmd> fun;
+        public final Function<TableField, Cmd> fun;
 
         public SelectGetterFun(Getter<T> field, Function<TableField, Cmd> fun) {
             this.field = field;
@@ -164,9 +164,9 @@ public class InsertChain extends BaseInsert<InsertChain> {
 
     private static class SelectGetterFieldsFun {
 
-        public GetterField[] fields;
+        public final GetterField[] fields;
 
-        public Function<TableField[], Cmd> fun;
+        public final Function<TableField[], Cmd> fun;
 
         public SelectGetterFieldsFun(GetterField[] fields, Function<TableField[], Cmd> fun) {
             this.fields = fields;
