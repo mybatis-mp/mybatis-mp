@@ -497,6 +497,7 @@ public class ResultInfo {
 
         String[] properties = putValue.property().split(",");
         String[] valuesColumn = new String[properties.length];
+        Class<?>[] valueTypes = new Class[properties.length];
         TypeHandler<?>[] valuesTypeHandler = new TypeHandler[properties.length];
         for (int i = 0; i < properties.length; i++) {
             TableInfo fetchTableInfo = Tables.get(putValue.source());
@@ -514,9 +515,10 @@ public class ResultInfo {
 
             valuesColumn[i] = tablePrefix + fetchFieldInfo.getColumnName();
             valuesTypeHandler[i] = fetchFieldInfo.getTypeHandler();
+            valueTypes[i] = fetchFieldInfo.getFieldInfo().getTypeClass();
         }
 
-        parseResult.putValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutValueInfo(clazz, field, putValue, valuesColumn, valuesTypeHandler));
+        parseResult.putValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutValueInfo(clazz, field, putValue, valueTypes, valuesColumn, valuesTypeHandler));
         return tableCount;
     }
 
@@ -556,7 +558,7 @@ public class ResultInfo {
         TypeHandler<?> valueTypeHandler = fetchFieldInfo.getTypeHandler();
 
 
-        parseResult.putEnumValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutEnumValueInfo(field, valueColumn, valueTypeHandler, putEnumValue));
+        parseResult.putEnumValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutEnumValueInfo(field, putEnumValue, fetchFieldInfo.getFieldInfo().getTypeClass(), valueColumn, valueTypeHandler));
         return tableCount;
     }
 

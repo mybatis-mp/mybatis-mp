@@ -17,14 +17,17 @@ public class PutEnumValueInfo {
 
     private final TypeHandler<?> valueTypeHandler;
 
+    private final Class<?> valueType;
+
     private final SetFieldInvoker writeFieldInvoker;
 
     private final PutEnumValue annotation;
 
     private final Object defaultValue;
 
-    public PutEnumValueInfo(Field field, String valueColumn, TypeHandler<?> valueTypeHandler, PutEnumValue annotation) {
+    public PutEnumValueInfo(Field field, PutEnumValue annotation, Class<?> valueType, String valueColumn, TypeHandler<?> valueTypeHandler) {
         this.field = field;
+        this.valueType = valueType;
         this.valueColumn = valueColumn;
         this.valueTypeHandler = valueTypeHandler;
         this.writeFieldInvoker = new SetFieldInvoker(field);

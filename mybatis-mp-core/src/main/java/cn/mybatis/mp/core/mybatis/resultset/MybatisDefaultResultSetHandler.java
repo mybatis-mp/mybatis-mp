@@ -22,6 +22,7 @@ import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.util.MapUtil;
 
 import java.io.Serializable;
@@ -104,8 +105,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         putEnumValueInfos.stream().forEach(item -> {
             Object codeValue;
             try {
-                if (Objects.nonNull(item.getValueTypeHandler())) {
-                    codeValue = item.getValueTypeHandler().getResult(resultSet, item.getValueColumn());
+                TypeHandler<?> typeHandler = item.getValueTypeHandler();
+                if (Objects.isNull(typeHandler)) {
+                    typeHandler = mappedStatement.getConfiguration().getTypeHandlerRegistry().getTypeHandler(item.getValueType());
+                }
+                if (Objects.nonNull(typeHandler)) {
+                    codeValue = typeHandler.getResult(resultSet, item.getValueColumn());
                 } else {
                     codeValue = resultSet.getObject(item.getValueColumn());
                 }
@@ -149,8 +154,12 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             Object[] values = new Object[item.getValuesColumn().length];
             for (int i = 0; i < item.getValuesColumn().length; i++) {
                 try {
-                    if (Objects.nonNull(item.getValuesTypeHandler()[i])) {
-                        values[i] = item.getValuesTypeHandler()[i].getResult(resultSet, item.getValuesColumn()[i]);
+                    TypeHandler<?> typeHandler = item.getValuesTypeHandler()[i];
+                    if (Objects.isNull(typeHandler)) {
+                        typeHandler = mappedStatement.getConfiguration().getTypeHandlerRegistry().getTypeHandler(item.getValueTypes()[i]);
+                    }
+                    if (Objects.nonNull(typeHandler)) {
+                        values[i] = typeHandler.getResult(resultSet, item.getValuesColumn()[i]);
                     } else {
                         values[i] = resultSet.getObject(item.getValuesColumn()[i]);
                     }

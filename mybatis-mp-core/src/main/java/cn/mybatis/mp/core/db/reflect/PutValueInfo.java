@@ -17,6 +17,8 @@ public class PutValueInfo {
 
     private final PutValue annotation;
 
+    private final Class<?>[] valueTypes;
+
     private final String[] valuesColumn;
 
     private final TypeHandler<?>[] valuesTypeHandler;
@@ -25,10 +27,11 @@ public class PutValueInfo {
 
     private final Object defaultValue;
 
-    public PutValueInfo(Class clazz, Field field, PutValue annotation, String[] valuesColumn, TypeHandler<?>[] valuesTypeHandler) {
+    public PutValueInfo(Class clazz, Field field, PutValue annotation, Class<?>[] valueTypes, String[] valuesColumn, TypeHandler<?>[] valuesTypeHandler) {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
         this.annotation = annotation;
+        this.valueTypes = valueTypes;
         this.valuesColumn = valuesColumn;
         this.valuesTypeHandler = valuesTypeHandler;
         this.writeFieldInvoker = new SetFieldInvoker(field);
