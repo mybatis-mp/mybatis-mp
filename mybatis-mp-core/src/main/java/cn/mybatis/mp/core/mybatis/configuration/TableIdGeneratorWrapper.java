@@ -46,26 +46,26 @@ public class TableIdGeneratorWrapper {
         }
     }
 
-    public static void addEntityKeyGenerator(MappedStatement ms) {
-        if (ms.getSqlCommandType() != SqlCommandType.INSERT || !(ms.getSqlSource() instanceof ProviderSqlSource)
-                || (ms.getParameterMap().getType() != EntityInsertContext.class && ms.getParameterMap().getType() != ModelInsertContext.class)) {
-            return;
-        }
-        String selectKeyId = ms.getId() + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-        Class entityClass = getEntityClass(ms);
-        if (Objects.isNull(entityClass)) {
-            //可能是动态的 所以无法获取entityClass
-            return;
-        }
-        try {
-            TableInfo tableInfo = Tables.get(entityClass);
-            if (tableInfo.getIdFieldInfos().size() == 1) {
-                addEntityKeyGenerator(ms, selectKeyId, tableInfo);
-            }
-        } catch (NotTableClassException e) {
-            //忽略
-        }
-    }
+//    public static void addEntityKeyGenerator(MappedStatement ms) {
+//        if (ms.getSqlCommandType() != SqlCommandType.INSERT || !(ms.getSqlSource() instanceof ProviderSqlSource)
+//                || (ms.getParameterMap().getType() != EntityInsertContext.class && ms.getParameterMap().getType() != ModelInsertContext.class)) {
+//            return;
+//        }
+//        String selectKeyId = ms.getId() + SelectKeyGenerator.SELECT_KEY_SUFFIX;
+//        Class entityClass = getEntityClass(ms);
+//        if (Objects.isNull(entityClass)) {
+//            //可能是动态的 所以无法获取entityClass
+//            return;
+//        }
+//        try {
+//            TableInfo tableInfo = Tables.get(entityClass);
+//            if (tableInfo.getIdFieldInfos().size() == 1) {
+//                addEntityKeyGenerator(ms, selectKeyId, tableInfo);
+//            }
+//        } catch (NotTableClassException e) {
+//            //忽略
+//        }
+//    }
 
     public static void addEntityKeyGenerator(MappedStatement ms, Class entityClass) {
         String selectKeyId = ms.getId() + SelectKeyGenerator.SELECT_KEY_SUFFIX;
@@ -129,7 +129,7 @@ public class TableIdGeneratorWrapper {
             msMetaObject.setValue("keyProperties", new String[]{"id"});
             msMetaObject.setValue("keyColumns", new String[]{tableInfo.getSingleIdFieldInfo(true).getColumnName()});
         }
-        if (ms.getConfiguration().hasKeyGenerator(selectKeyId)) {
+        if (!ms.getConfiguration().hasKeyGenerator(selectKeyId)) {
             ms.getConfiguration().addKeyGenerator(selectKeyId, keyGenerator);
         }
     }
