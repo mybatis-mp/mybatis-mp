@@ -27,7 +27,7 @@ public final class PagingMethodUtil {
     }
 
     public static <T, P extends Pager<T>> P paging(BasicMapper basicMapper, TableInfo tableInfo, P pager, Where where, Getter<T>[] selectFields) {
-        return basicMapper.paging(QueryUtil.buildNoOptimizationQuery(tableInfo, where, query -> {
+        return basicMapper.paging(QueryUtil.buildQuery(tableInfo, where, query -> {
             QueryUtil.fillQueryDefault(query, tableInfo, selectFields);
             query.dbAdapt(((q, selector) -> {
                 selector.when(DbType.SQL_SERVER, () -> {
