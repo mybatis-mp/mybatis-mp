@@ -44,13 +44,18 @@ public final class ListMethodUtil {
         return basicMapper.list(QueryUtil.buildNoOptimizationQuery(tableInfo, where, query -> {
             QueryUtil.fillQueryDefault(query, tableInfo, selectFields);
             if (Objects.nonNull(limit)) {
-                query.limit(2);
+                query.limit(limit);
                 query.dbAdapt(((q, selector) -> {
                     selector.when(DbType.SQL_SERVER, () -> {
                         if (Objects.isNull(q.getOrderBy())) {
-                            tableInfo.getIdFieldInfos().stream().forEach(item -> {
-                                q.orderBy(q.$(tableInfo.getType(), item.getField().getName()));
-                            });
+                            if (tableInfo.getIdFieldInfos().isEmpty()) {
+                                query.$select().top(limit);
+                                query.removeLimit();
+                            } else {
+                                tableInfo.getIdFieldInfos().stream().forEach(item -> {
+                                    q.orderBy(q.$(tableInfo.getType(), item.getField().getName()));
+                                });
+                            }
                         }
                     }).otherwise();
                 }));

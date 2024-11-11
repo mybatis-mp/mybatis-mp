@@ -32,9 +32,14 @@ public final class PagingMethodUtil {
             query.dbAdapt(((q, selector) -> {
                 selector.when(DbType.SQL_SERVER, () -> {
                     if (Objects.isNull(q.getOrderBy())) {
-                        tableInfo.getIdFieldInfos().stream().forEach(item -> {
-                            q.orderBy(q.$(tableInfo.getType(), item.getField().getName()));
-                        });
+                        if (tableInfo.getIdFieldInfos().isEmpty()) {
+                            //没有主键 取第一个
+                            q.orderBy(q.$(tableInfo.getType(), tableInfo.getTableFieldInfos().get(0).getField().getName()));
+                        } else {
+                            tableInfo.getIdFieldInfos().stream().forEach(item -> {
+                                q.orderBy(q.$(tableInfo.getType(), item.getField().getName()));
+                            });
+                        }
                     }
                 }).otherwise();
             }));
