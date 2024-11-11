@@ -10,7 +10,7 @@ public interface CountMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
     /**
      * 总数
      *
-     * @return
+     * @return count数
      */
     default int countAll() {
         return CountMethodUtil.countAll(getBasicMapper(), getTableInfo());
@@ -20,7 +20,7 @@ public interface CountMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      * 是否存在
      *
      * @param consumer where consumer
-     * @return 是否存在
+     * @return count数
      */
     default int count(Consumer<Where> consumer) {
         return CountMethodUtil.count(getBasicMapper(), getTableInfo(), consumer);
@@ -30,7 +30,7 @@ public interface CountMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      * 是否存在
      *
      * @param where
-     * @return 是否存在
+     * @return count数
      */
     default int count(Where where) {
         return CountMethodUtil.count(getBasicMapper(), getTableInfo(), where);

@@ -16,17 +16,18 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
     /**
      * 列表查询,返回类型，当前实体类
      *
+     * @param entityType 实体类
      * @param ids  指定ID
      * @param <ID>
      * @return 返回结果列表
      */
     default <T, ID extends Serializable> List<T> listByIds(Class<T> entityType, ID[] ids) {
-        return this.listByIds(entityType, ids, null);
+        return this.listByIds(entityType, ids, (Getter<T>[]) null);
     }
 
     /**
      * 列表查询,返回类型，当前实体类
-     *
+     * @param entityType 实体类
      * @param ids          指定ID
      * @param selectFields select指定列
      * @param <ID>
@@ -38,18 +39,18 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 列表查询,返回类型，当前实体类
-     *
+     * @param entityType 实体类
      * @param ids  指定ID
      * @param <ID>
      * @return 返回结果列表
      */
     default <T, ID extends Serializable> List<T> listByIds(Class<T> entityType, Collection<ID> ids) {
-        return this.listByIds(entityType, ids, null);
+        return this.listByIds(entityType, ids, (Getter<T>[]) null);
     }
 
     /**
      * 列表查询,返回类型，当前实体类
-     *
+     * @param entityType 实体类
      * @param ids          指定ID
      * @param selectFields select指定列
      * @param <ID>
@@ -61,17 +62,17 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 列表查询,返回类型，当前实体类
-     *
+     * @param entityType 实体类
      * @param consumer where consumer
      * @return 返回结果列表
      */
     default <T> List<T> list(Class<T> entityType, Consumer<Where> consumer) {
-        return this.list(entityType, consumer, null);
+        return this.list(entityType, consumer, (Getter<T>[]) null);
     }
 
     /**
      * 列表查询,返回类型，当前实体类
-     *
+     * @param entityType 实体类
      * @param consumer     where consumer
      * @param selectFields select指定列
      * @return 返回结果列表
@@ -82,17 +83,17 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 列表查询,返回类型，当前实体类
-     *
+     * @param entityType 实体类
      * @param where where
      * @return 返回结果列表
      */
     default <T> List<T> list(Class<T> entityType, Where where) {
-        return this.list(entityType, where, null);
+        return this.list(entityType, where, (Getter<T>[]) null);
     }
 
     /**
      * 列表查询,返回类型，当前实体类
-     *
+     * @param entityType 实体类
      * @param where        where
      * @param selectFields select指定列
      * @return 返回结果列表
@@ -101,6 +102,13 @@ public interface ListBasicMapper extends BaseMapper, BaseBasicMapper {
         return ListMethodUtil.list(getBasicMapper(), Tables.get(entityType), where, selectFields);
     }
 
+    /**
+     * 查所有
+     *
+     * @param entityType 实体类
+     * @param <T>        实体类
+     * @return 所有list
+     */
     default <T> List<T> listAll(Class<T> entityType) {
         return ListMethodUtil.listAll(getBasicMapper(), Tables.get(entityType));
     }

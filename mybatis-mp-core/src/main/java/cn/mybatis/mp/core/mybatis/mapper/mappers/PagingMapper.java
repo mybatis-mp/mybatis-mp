@@ -17,7 +17,7 @@ public interface PagingMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      * @return 分页结果
      */
     default <P extends Pager<T>> P paging(P pager, Consumer<Where> consumer) {
-        return this.paging(pager, consumer, null);
+        return this.paging(pager, consumer, (Getter<T>[]) null);
     }
 
     /**
@@ -40,7 +40,7 @@ public interface PagingMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      * @return 分页结果
      */
     default <P extends Pager<T>> P paging(P pager, Where where) {
-        return this.paging(pager, where, null);
+        return this.paging(pager, where, (Getter<T>[]) null);
     }
 
     default <P extends Pager<T>> P paging(P pager, Where where, Getter<T>... selectFields) {

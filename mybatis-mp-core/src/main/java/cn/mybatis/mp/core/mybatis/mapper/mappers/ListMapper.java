@@ -19,7 +19,7 @@ public interface ListMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      * @return 返回结果列表
      */
     default <ID extends Serializable> List<T> listByIds(ID[] ids) {
-        return this.listByIds(ids, null);
+        return this.listByIds(ids, (Getter<T>[]) null);
     }
 
     /**
@@ -42,7 +42,7 @@ public interface ListMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      * @return 返回结果列表
      */
     default <ID extends Serializable> List<T> listByIds(Collection<ID> ids) {
-        return this.listByIds(ids, null);
+        return this.listByIds(ids, (Getter<T>[]) null);
     }
 
     /**
@@ -64,7 +64,7 @@ public interface ListMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      * @return 返回结果列表
      */
     default List<T> list(Consumer<Where> consumer) {
-        return this.list(consumer, null);
+        return this.list(consumer, (Getter<T>[]) null);
     }
 
     /**
@@ -85,7 +85,7 @@ public interface ListMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      * @return 返回结果列表
      */
     default List<T> list(Where where) {
-        return this.list(where, null);
+        return this.list(where, (Getter<T>[]) null);
     }
 
     /**

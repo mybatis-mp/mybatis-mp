@@ -11,6 +11,7 @@ import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
+import cn.mybatis.mp.core.util.TypeConvertUtil;
 import cn.mybatis.mp.db.IdAutoType;
 import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;
@@ -116,9 +117,9 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
                         TableInfoUtil.setValue(tableFieldInfo, t, value);
                     } else if (tableFieldInfo.isVersion()) {
                         //乐观锁设置 默认值1
-                        value = 1;
+                        value = TypeConvertUtil.convert(Integer.valueOf(1), tableFieldInfo.getField().getType());
                         //乐观锁回写
-                        TableInfoUtil.setValue(tableFieldInfo, t, value);
+                        TableInfoUtil.setValue(tableFieldInfo, t, TypeConvertUtil.convert(value, tableFieldInfo.getField().getType()));
                     }
                 }
 

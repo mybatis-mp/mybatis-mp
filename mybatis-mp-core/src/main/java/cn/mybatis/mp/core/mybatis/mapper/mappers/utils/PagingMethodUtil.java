@@ -16,7 +16,7 @@ public final class PagingMethodUtil {
         return paging(basicMapper, tableInfo, pager, consumer, null);
     }
 
-    public static <T, P extends Pager<T>> P paging(BasicMapper basicMapper, TableInfo tableInfo, P pager, Consumer<Where> consumer, Getter<T>... selectFields) {
+    public static <T, P extends Pager<T>> P paging(BasicMapper basicMapper, TableInfo tableInfo, P pager, Consumer<Where> consumer, Getter<T>[] selectFields) {
         return paging(basicMapper, tableInfo, pager, WhereUtil.create(tableInfo, consumer), selectFields);
     }
 
@@ -24,7 +24,7 @@ public final class PagingMethodUtil {
         return paging(basicMapper, tableInfo, pager, where, null);
     }
 
-    public static <T, P extends Pager<T>> P paging(BasicMapper basicMapper, TableInfo tableInfo, P pager, Where where, Getter<T>... selectFields) {
+    public static <T, P extends Pager<T>> P paging(BasicMapper basicMapper, TableInfo tableInfo, P pager, Where where, Getter<T>[] selectFields) {
         return basicMapper.paging(QueryUtil.buildNoOptimizationQuery(tableInfo, where, q -> QueryUtil.fillQueryDefault(q, tableInfo, selectFields)), pager);
     }
 }

@@ -119,7 +119,7 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
                         ModelInfoUtil.setValue(modelFieldInfo, t, value);
                     } else if (modelFieldInfo.getTableFieldInfo().isVersion()) {
                         //乐观锁设置 默认值1
-                        value = TypeConvertUtil.convert(1, modelFieldInfo.getField().getType());
+                        value = TypeConvertUtil.convert(Integer.valueOf(1), modelFieldInfo.getField().getType());
                         //乐观锁回写
                         ModelInfoUtil.setValue(modelFieldInfo, t, value);
                     }

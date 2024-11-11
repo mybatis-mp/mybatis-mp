@@ -10,6 +10,7 @@ import cn.mybatis.mp.core.sql.util.WhereUtil;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.ModelInfoUtil;
 import cn.mybatis.mp.core.util.StringPool;
+import cn.mybatis.mp.core.util.TypeConvertUtil;
 import cn.mybatis.mp.db.Model;
 import cn.mybatis.mp.db.annotations.TableField;
 import db.sql.api.impl.cmd.Methods;
@@ -51,9 +52,10 @@ public class ModelUpdateCmdCreateUtil {
                     //乐观锁字段无值 不增加乐观锁条件
                     continue;
                 }
-                Integer version = (Integer) value + 1;
+                Long version = Long.valueOf(value.toString()) + 1;
+                value = TypeConvertUtil.convert(version, modelFieldInfo.getField().getType());
                 //乐观锁设置
-                update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.value(version));
+                update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(value));
 
                 //乐观锁条件
                 update.$where().extConditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(value));

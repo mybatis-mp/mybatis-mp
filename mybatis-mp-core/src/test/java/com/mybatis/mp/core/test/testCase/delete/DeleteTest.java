@@ -2,6 +2,7 @@ package com.mybatis.mp.core.test.testCase.delete;
 
 import cn.mybatis.mp.core.sql.executor.chain.DeleteChain;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
+import cn.mybatis.mp.core.sql.util.WhereUtil;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
@@ -11,6 +12,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,7 +65,8 @@ public class DeleteTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUser = sysUserMapper.getById(1);
             System.out.println(sysUser);
-            sysUserMapper.deleteById(1);
+            int cnt = sysUserMapper.deleteById(1);
+            assertEquals(cnt, 1);
             sysUser = sysUserMapper.getById(1);
             assertNull(sysUser);
             List<SysUser> list = QueryChain.of(sysUserMapper).list();
@@ -76,14 +79,16 @@ public class DeleteTest extends BaseTest {
     public void deleteIdsTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            sysUserMapper.deleteByIds(1, 2);
+            int cnt = sysUserMapper.deleteByIds(1, 2);
+            assertEquals(cnt, 2);
             List<SysUser> list = QueryChain.of(sysUserMapper).list();
             assertEquals(list.size(), 1);
         }
 
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            sysUserMapper.deleteByIds(Arrays.asList(1, 2));
+            int cnt = sysUserMapper.deleteByIds(Arrays.asList(1, 2));
+            assertEquals(cnt, 2);
             List<SysUser> list = QueryChain.of(sysUserMapper).list();
             assertEquals(list.size(), 1);
         }
@@ -93,7 +98,19 @@ public class DeleteTest extends BaseTest {
     public void deleteEntityTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            sysUserMapper.delete(sysUserMapper.getById(1));
+            int cnt = sysUserMapper.delete(sysUserMapper.getById(1));
+            assertEquals(cnt, 1);
+            List<SysUser> list = QueryChain.of(sysUserMapper).list();
+            assertEquals(list.size(), 2);
+        }
+    }
+
+    @Test
+    public void deleteEntityTests() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            int cnt = sysUserMapper.delete(Collections.singleton(sysUserMapper.getById(1)));
+            assertEquals(cnt, 1);
             List<SysUser> list = QueryChain.of(sysUserMapper).list();
             assertEquals(list.size(), 2);
         }
@@ -104,7 +121,19 @@ public class DeleteTest extends BaseTest {
     public void deleteWithWhereTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            sysUserMapper.delete(where -> where.eq(SysUser::getId, 1));
+            int cnt = sysUserMapper.delete(where -> where.eq(SysUser::getId, 1));
+            assertEquals(cnt, 1);
+            List<SysUser> list = QueryChain.of(sysUserMapper).list();
+            assertEquals(list.size(), 2);
+        }
+    }
+
+    @Test
+    public void deleteWithWhere2Test() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            int cnt = sysUserMapper.delete(WhereUtil.create().eq(SysUser::getId, 1));
+            assertEquals(cnt, 1);
             List<SysUser> list = QueryChain.of(sysUserMapper).list();
             assertEquals(list.size(), 2);
         }

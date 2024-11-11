@@ -13,6 +13,7 @@ import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.ModelInfoUtil;
 import cn.mybatis.mp.core.util.StringPool;
+import cn.mybatis.mp.core.util.TypeConvertUtil;
 import cn.mybatis.mp.db.IdAutoType;
 import cn.mybatis.mp.db.Model;
 import cn.mybatis.mp.db.annotations.TableField;
@@ -97,7 +98,8 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
                 isNeedInsert = true;
 
                 //乐观锁设置 默认值1
-                value = 1;
+                value = TypeConvertUtil.convert(Integer.valueOf(1), modelFieldInfo.getField().getType());
+                ;
                 //乐观锁回写
                 ModelInfoUtil.setValue(modelFieldInfo, model, value);
             } else if (allFieldForce || (Objects.nonNull(this.forceSaveFields) && this.forceSaveFields.contains(modelFieldInfo.getField().getName()))) {

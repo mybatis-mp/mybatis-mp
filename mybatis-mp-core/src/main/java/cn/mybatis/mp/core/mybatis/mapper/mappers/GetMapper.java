@@ -16,7 +16,7 @@ public interface GetMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      * @return 单个当前实体类
      */
     default <ID extends Serializable> T getById(ID id) {
-        return this.getById(id, null);
+        return this.getById(id, (Getter<T>[]) null);
     }
 
     /**
@@ -37,7 +37,7 @@ public interface GetMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      * @return 单个当前实体
      */
     default T get(Consumer<Where> consumer) {
-        return this.get(consumer, null);
+        return this.get(consumer, (Getter<T>[]) null);
     }
 
     /**
@@ -58,7 +58,7 @@ public interface GetMapper<T> extends BaseMapper, BaseMybatisMapper<T> {
      * @return 单个当前实体
      */
     default T get(Where where) {
-        return get(where, null);
+        return get(where, (Getter<T>[]) null);
     }
 
     /**

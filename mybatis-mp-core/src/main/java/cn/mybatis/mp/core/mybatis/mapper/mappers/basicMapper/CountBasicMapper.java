@@ -11,8 +11,8 @@ public interface CountBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 总数
-     *
-     * @return
+     * @param entityType 实体类
+     * @return count数
      */
     default <T> int countAll(Class<T> entityType) {
         return CountMethodUtil.countAll(getBasicMapper(), Tables.get(entityType));
@@ -20,9 +20,9 @@ public interface CountBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 是否存在
-     *
+     * @param entityType 实体类
      * @param consumer where consumer
-     * @return 是否存在
+     * @return count数
      */
     default <T> int count(Class<T> entityType, Consumer<Where> consumer) {
         return CountMethodUtil.count(getBasicMapper(), Tables.get(entityType), consumer);
@@ -30,9 +30,9 @@ public interface CountBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 是否存在
-     *
-     * @param where
-     * @return 是否存在
+     * @param entityType 实体类
+     * @param where where
+     * @return count数
      */
     default <T> int count(Class<T> entityType, Where where) {
         return CountMethodUtil.count(getBasicMapper(), Tables.get(entityType), where);

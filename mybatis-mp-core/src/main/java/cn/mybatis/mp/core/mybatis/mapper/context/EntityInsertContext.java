@@ -97,7 +97,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
                 isNeedInsert = true;
 
                 //乐观锁设置 默认值1
-                value = TypeConvertUtil.convert(1, tableFieldInfo.getField().getType());
+                value = TypeConvertUtil.convert(Integer.valueOf(1), tableFieldInfo.getField().getType());
                 //乐观锁回写
                 TableInfoUtil.setValue(tableFieldInfo, entity, value);
             } else if (allFieldForce || (Objects.nonNull(this.forceSaveFields) && this.forceSaveFields.contains(tableFieldInfo.getField().getName()))) {

@@ -37,7 +37,7 @@ public interface DeleteBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 根据id删除
-     *
+     * @param entityType 实体类
      * @param id ID
      * @return 影响的数量
      */
@@ -47,7 +47,7 @@ public interface DeleteBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 批量删除多个
-     *
+     * @param entityType 实体类
      * @param ids 多个ID
      * @return 影响的数量
      */
@@ -57,7 +57,7 @@ public interface DeleteBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 批量删除多个
-     *
+     * @param entityType 实体类
      * @param ids 多个ID
      * @return 影响数量
      */
@@ -67,7 +67,7 @@ public interface DeleteBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 动态条件删除
-     *
+     * @param entityType 实体类
      * @param consumer
      * @return
      */
@@ -77,7 +77,7 @@ public interface DeleteBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 动态条件删除
-     *
+     * @param entityType 实体类
      * @param where
      * @return
      */
@@ -87,7 +87,7 @@ public interface DeleteBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 删除所有数据
-     *
+     * @param entityType 实体类
      * @return
      */
     default <T> int deleteAll(Class<T> entityType) {

@@ -8,12 +8,14 @@ import cn.mybatis.mp.core.sql.executor.Update;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
+import cn.mybatis.mp.core.util.TypeConvertUtil;
 import cn.mybatis.mp.db.annotations.TableField;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.struct.Where;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 
@@ -52,7 +54,7 @@ public class EntityUpdateCmdCreateUtil {
                     //乐观锁字段无值 不增加乐观锁条件
                     continue;
                 }
-                Integer version = (Integer) value + 1;
+                Serializable version = (Serializable) TypeConvertUtil.convert(Integer.valueOf(1), tableFieldInfo.getField().getType());
                 //乐观锁设置
                 update.set($.field(table, tableFieldInfo.getColumnName()), Methods.value(version));
 

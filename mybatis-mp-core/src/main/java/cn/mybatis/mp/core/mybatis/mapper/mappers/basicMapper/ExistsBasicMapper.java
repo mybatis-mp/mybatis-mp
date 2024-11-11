@@ -11,7 +11,7 @@ public interface ExistsBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 是否存在
-     *
+     * @param entityType 实体类
      * @param consumer where consumer
      * @return 是否存在
      */
@@ -21,7 +21,7 @@ public interface ExistsBasicMapper extends BaseMapper, BaseBasicMapper {
 
     /**
      * 是否存在
-     *
+     * @param entityType 实体类
      * @param where
      * @return 是否存在
      */
