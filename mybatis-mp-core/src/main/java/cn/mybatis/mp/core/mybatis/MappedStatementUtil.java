@@ -24,20 +24,44 @@ public final class MappedStatementUtil {
             }
             mapperClass = Class.forName(mapperName);
         } catch (Exception e) {
-            throw new RuntimeException(ms.getId(), e);
+            return null;
         }
 
         if (methodName.contains("&")) {
             return null;
         }
 
-        Method mapperMethod = null;
-        for (Method method : mapperClass.getDeclaredMethods()) {
-            if (method.getName().equals(methodName)) {
-                mapperMethod = method;
-                break;
+        Method mapperMethod = getMethod(mapperClass, methodName);
+        if (mapperMethod == null) {
+            for (Class clazz : mapperClass.getInterfaces()) {
+                mapperMethod = getMethod(clazz, methodName);
+                if (mapperMethod != null) {
+                    break;
+                }
             }
         }
         return mapperMethod;
+    }
+
+    private static Method getMethod(Class<?> clazz, String methodName) {
+        Method method = getMethod(clazz.getMethods(), methodName);
+        if (method == null) {
+            for (Class c : clazz.getInterfaces()) {
+                method = getMethod(c.getMethods(), methodName);
+                if (method != null) {
+                    break;
+                }
+            }
+        }
+        return method;
+    }
+
+    private static Method getMethod(Method[] methods, String methodName) {
+        for (Method m : methods) {
+            if (m.getName().equals(methodName)) {
+                return m;
+            }
+        }
+        return null;
     }
 }
