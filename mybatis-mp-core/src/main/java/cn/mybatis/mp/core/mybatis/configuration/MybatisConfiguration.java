@@ -101,6 +101,7 @@ public class MybatisConfiguration extends Configuration {
         //添加基础 BasicMapper
         if (!this.hasMapper(BasicMapper.class)) {
             this.addBasicMapper(BasicMapper.class);
+            resultMaps.clear();
         }
 
         if (MybatisMapper.class.isAssignableFrom(type)) {
@@ -116,7 +117,7 @@ public class MybatisConfiguration extends Configuration {
             ResultMapUtils.getResultMap(this, entityOptional.get());
         }
 
-        if (BasicMapper.class.isAssignableFrom(type)) {
+        if (BasicMapper.class.isAssignableFrom(type) && type != BasicMapper.class) {
             this.addBasicMapper(type);
             return;
         }
