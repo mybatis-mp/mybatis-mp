@@ -1,4 +1,4 @@
-package cn.mybatis.mp.core.mybatis.mapper.mappers;
+package cn.mybatis.mp.core.mybatis.mapper;
 
 import cn.mybatis.mp.core.mybatis.configuration.MapKeySQLCmdQueryContext;
 import cn.mybatis.mp.core.mybatis.mapper.context.*;
