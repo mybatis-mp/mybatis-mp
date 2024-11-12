@@ -44,7 +44,7 @@ public class DynamicsMappedStatement {
 
         SQLCmdSqlSource sqlCmdSqlSource = (SQLCmdSqlSource) ms.getSqlSource();
 
-        String id = ms.getId() + "-" + MAPPED_STATEMENT_DB_KEY_NAME + "-" + sqlCmdSqlSource.getDbType() + "-" + sqlCmdInsertContext.getEntityType().getName();
+        String id = MybatisIdUtil.convertIdPath(sqlCmdInsertContext.getEntityType().getName()) + "-" + sqlCmdSqlSource.getDbType() + "-" + MAPPED_STATEMENT_DB_KEY_NAME + "@" + MybatisIdUtil.convertIdPath(ms.getId());
 
         if (ms.getConfiguration().hasStatement(id)) {
             return ms.getConfiguration().getMappedStatement(id);
@@ -81,7 +81,7 @@ public class DynamicsMappedStatement {
     }
 
     private static MappedStatement createQueryMappedStatement(Class returnTypeClass, MappedStatement ms) {
-        String id = ms.getId() + "-" + returnTypeClass.getName();
+        String id = MybatisIdUtil.convertIdPath(returnTypeClass.getName()) + "@" + MybatisIdUtil.convertIdPath(ms.getId());
         if (ms.getConfiguration().hasStatement(id)) {
             return ms.getConfiguration().getMappedStatement(id);
         }

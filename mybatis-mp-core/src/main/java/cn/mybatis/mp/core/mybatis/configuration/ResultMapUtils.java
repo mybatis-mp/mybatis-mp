@@ -18,12 +18,13 @@ import java.util.*;
 
 public final class ResultMapUtils {
 
+
     private ResultMapUtils() {
 
     }
 
     public static ResultMap getResultMap(MybatisConfiguration configuration, Class clazz) {
-        String id = "mp-" + clazz.getName();
+        String id = "mp-" + MybatisIdUtil.convertIdPath(clazz.getName());
         if (configuration.hasResultMap(id)) {
             return configuration.getResultMap(id);
         }
@@ -100,7 +101,7 @@ public final class ResultMapUtils {
         resultMappings.addAll(createResultMapping(configuration, resultInfo.getResultFieldInfos()));
 
         //内嵌字段（多个） 构建
-        resultMappings.addAll(createNestedResultMapping(configuration, resultInfo.getNestedResultInfos(), "mp-" + clazz.getName()));
+        resultMappings.addAll(createNestedResultMapping(configuration, resultInfo.getNestedResultInfos(), "mp-" + MybatisIdUtil.convertIdPath(clazz.getName())));
         return Collections.unmodifiableList(resultMappings);
     }
 
@@ -127,7 +128,7 @@ public final class ResultMapUtils {
     private static ResultMapping createNestedResultMapping(MybatisConfiguration configuration, NestedResultInfo nestedResultInfo, String parentPath) {
 
         // 内嵌ID
-        String nestedPath = parentPath + "." + nestedResultInfo.getField().getName();
+        String nestedPath = parentPath + "-" + nestedResultInfo.getField().getName();
 
         List<ResultMapping> nestedMappings = new ArrayList<>();
 

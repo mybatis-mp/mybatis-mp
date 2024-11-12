@@ -25,11 +25,7 @@ public final class QueryUtil {
             q.select(selectFields);
         } else {
             if (Objects.isNull(q.getSelect())) {
-                if (tableInfo.isHasIgnoreField()) {
-                    q.select(tableInfo.getType());
-                } else {
-                    q.select(q.$().table(tableInfo.getType(), 1).$("*"));
-                }
+                q.select(tableInfo.getType());
             }
         }
         if (Objects.isNull(q.getFrom())) {

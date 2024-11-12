@@ -33,7 +33,7 @@ public class ResultMapWrapper {
             if (!item.getResultMappings().isEmpty()) {
                 return replaceTypeHandler(configuration, item);
             }
-            String resultMapId = "mp-" + item.getType().getName();
+            String resultMapId = "mp-" + MybatisIdUtil.convertIdPath(item.getType().getName());
             if (configuration.hasResultMap(resultMapId)) {
                 return configuration.getResultMap(resultMapId);
             }

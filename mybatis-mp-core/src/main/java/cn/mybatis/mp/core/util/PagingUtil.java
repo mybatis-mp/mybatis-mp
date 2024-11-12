@@ -44,7 +44,7 @@ public final class PagingUtil {
     }
 
     private static void addPagingListMappedStatement(MappedStatement ms, Method mapperMethod) {
-        String id = ms.getId() + "-list";
+        String id = ms.getId() + "&list";
 
         Class returnType = ms.getResultMaps().get(0).getType();
 
@@ -76,7 +76,7 @@ public final class PagingUtil {
     }
 
     private static void addPagingCountMappedStatement(MappedStatement ms, Paging paging) {
-        String id = ms.getId() + "-count";
+        String id = ms.getId() + "&count";
 
         ResultMap resultMap = new ResultMap.Builder(ms.getConfiguration(), id + "-inline", Integer.class, Collections.emptyList()).build();
         List<ResultMap> resultMaps = Collections.singletonList(resultMap);

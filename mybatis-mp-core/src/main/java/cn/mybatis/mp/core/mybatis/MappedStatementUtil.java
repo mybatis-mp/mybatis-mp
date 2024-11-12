@@ -7,22 +7,28 @@ import java.lang.reflect.Method;
 public final class MappedStatementUtil {
 
     public static Method getMethod(MappedStatement ms) {
-        int dot = ms.getId().lastIndexOf(".");
-        String mapperName = ms.getId().substring(0, dot);
-        String methodName = ms.getId().substring(dot + 1);
+        String methodName;
         Class mapperClass;
         try {
-            mapperClass = Class.forName(mapperName);
-        } catch (ClassNotFoundException e) {
-            dot = mapperName.lastIndexOf(".");
-            mapperName = ms.getId().substring(0, dot);
-            methodName = ms.getId().substring(dot + 1);
-
-            try {
-                mapperClass = Class.forName(mapperName);
-            } catch (ClassNotFoundException e2) {
-                return null;
+            String mapperName;
+            int dot = ms.getId().lastIndexOf(".");
+            if (dot == -1) {
+                dot = ms.getId().indexOf("@");
+                String id = ms.getId().substring(dot + 1);
+                dot = id.lastIndexOf("-");
+                mapperName = id.substring(0, dot).replaceAll("-", ".");
+                methodName = id.substring(dot + 1);
+            } else {
+                mapperName = ms.getId().substring(0, dot);
+                methodName = ms.getId().substring(dot + 1);
             }
+            mapperClass = Class.forName(mapperName);
+        } catch (Exception e) {
+            throw new RuntimeException(ms.getId(), e);
+        }
+
+        if (methodName.contains("&")) {
+            return null;
         }
 
         Method mapperMethod = null;

@@ -82,19 +82,19 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         Pager pager = (Pager) args[0];
         Integer count = null;
         if (pager.isExecuteCount()) {
-            count = sqlSession.selectOne(statementId + "-count", params);
+            count = sqlSession.selectOne(statementId + "&count", params);
             count = Objects.isNull(count) ? 0 : count;
         }
 
         List list;
         if (pager.isExecuteCount()) {
             if (Objects.nonNull(count) && count > 0) {
-                list = sqlSession.selectList(statementId + "-list", params);
+                list = sqlSession.selectList(statementId + "&list", params);
             } else {
                 list = new ArrayList<>();
             }
         } else {
-            list = sqlSession.selectList(statementId + "-list", params);
+            list = sqlSession.selectList(statementId + "&list", params);
         }
 
         pager.setResults(list);
