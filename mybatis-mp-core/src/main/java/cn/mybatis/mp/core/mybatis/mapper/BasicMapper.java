@@ -16,7 +16,7 @@ import org.apache.ibatis.session.RowBounds;
 import java.util.*;
 import java.util.function.Consumer;
 
-public interface BasicMapper extends CRUDMapper, GetBasicMapper, ExistsBasicMapper, CountBasicMapper, ListBasicMapper, CursorBasicMapper,
+public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapper, CountBasicMapper, ListBasicMapper, CursorBasicMapper,
         PagingBasicMapper, MapWithKeyBasicMapper, SaveBasicMapper, SaveOrUpdateBasicMapper, SaveModelBasicMapper, SaveOrUpdateModelBasicMapper,
         UpdateBasicMapper, UpdateModelBasicMapper, DeleteBasicMapper {
 

@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  *
  * @param <T>
  */
-public interface MybatisMapper<T> extends CRUDMapper, GetMapper<T>, ExistsMapper<T>, CountMapper<T>, ListMapper<T>, CursorMapper<T>,
+public interface MybatisMapper<T> extends BaseMapper, GetMapper<T>, ExistsMapper<T>, CountMapper<T>, ListMapper<T>, CursorMapper<T>,
         PagingMapper<T>, MapWithKeyMapper<T>, SaveMapper<T>, SaveOrUpdateMapper<T>, SaveModelMapper<T>, SaveOrUpdateModelMapper<T>,
         UpdateMapper<T>, UpdateModelMapper<T>, DeleteMapper<T> {
 

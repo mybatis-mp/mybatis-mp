@@ -10,7 +10,7 @@ import org.apache.ibatis.cursor.Cursor;
 import java.util.List;
 import java.util.Map;
 
-public interface CRUDMapper {
+public interface BaseMapper {
     /**
      * 动态查询
      *
