@@ -2,8 +2,8 @@ package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
-import cn.mybatis.mp.core.mybatis.mapper.QueryUtil;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.MapWithKeyMapperUtil;
+import cn.mybatis.mp.core.sql.util.QueryUtil;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.struct.Where;

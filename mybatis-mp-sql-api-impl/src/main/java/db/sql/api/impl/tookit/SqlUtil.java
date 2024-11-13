@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 
 public final class SqlUtil {
 
-    private static final String AS_SPLIT = "$$";
+    public static final String AS_SPLIT = "$$";
 
     public static <T> String getAsName(Getter<T> getter) {
         LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(getter);

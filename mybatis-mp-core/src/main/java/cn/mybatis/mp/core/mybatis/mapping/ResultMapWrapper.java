@@ -1,6 +1,8 @@
-package cn.mybatis.mp.core.mybatis.configuration;
+package cn.mybatis.mp.core.mybatis.mapping;
 
 import cn.mybatis.mp.core.db.reflect.FieldInfo;
+import cn.mybatis.mp.core.mybatis.configuration.MybatisConfiguration;
+import cn.mybatis.mp.core.mybatis.executor.MybatisIdUtil;
 import cn.mybatis.mp.core.mybatis.typeHandler.GenericTypeHandler;
 import cn.mybatis.mp.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import cn.mybatis.mp.core.util.FieldUtil;

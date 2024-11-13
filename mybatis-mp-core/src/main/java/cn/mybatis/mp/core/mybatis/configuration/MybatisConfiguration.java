@@ -3,9 +3,11 @@ package cn.mybatis.mp.core.mybatis.configuration;
 
 import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.db.reflect.FieldInfo;
+import cn.mybatis.mp.core.mybatis.executor.*;
+import cn.mybatis.mp.core.mybatis.executor.resultset.MybatisDefaultResultSetHandler;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
-import cn.mybatis.mp.core.mybatis.resultset.MybatisDefaultResultSetHandler;
+import cn.mybatis.mp.core.mybatis.mapping.ResultMapUtils;
 import cn.mybatis.mp.core.mybatis.typeHandler.EnumTypeHandler;
 import cn.mybatis.mp.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import cn.mybatis.mp.core.util.GenericUtil;

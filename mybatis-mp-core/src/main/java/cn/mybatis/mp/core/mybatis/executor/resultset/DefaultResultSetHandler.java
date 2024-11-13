@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package cn.mybatis.mp.core.mybatis.resultset;
+package cn.mybatis.mp.core.mybatis.executor.resultset;
 
 import cn.mybatis.mp.core.util.NamingUtil;
 import org.apache.ibatis.annotations.AutomapConstructor;
@@ -453,6 +453,12 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         }
     }
 
+    private final Map<String, String> upperCaseColumnCache = new HashMap<>();
+
+    private String getUpperCase(String column) {
+        return upperCaseColumnCache.computeIfAbsent(column, k -> k.toUpperCase(Locale.ENGLISH));
+    }
+
     private boolean applyPropertyMappings(ResultSetWrapper rsw, ResultMap resultMap, MetaObject metaObject,
                                           ResultLoaderMap lazyLoader, String columnPrefix) throws SQLException {
         final Set<String> mappedColumnNames = rsw.getMappedColumnNames(resultMap, columnPrefix);
@@ -464,8 +470,9 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
                 // the user added a column attribute to a nested result map, ignore it
                 column = null;
             }
+
             if (propertyMapping.isCompositeResult()
-                    || column != null && mappedColumnNames.contains(column.toUpperCase(Locale.ENGLISH))
+                    || column != null && mappedColumnNames.contains(getUpperCase(column))
                     || propertyMapping.getResultSet() != null) {
                 Object value = getPropertyMappingValue(rsw.getResultSet(), metaObject, propertyMapping, lazyLoader,
                         columnPrefix);
@@ -541,7 +548,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
                 if (columnPrefix != null && !columnPrefix.isEmpty()) {
                     // When columnPrefix is specified,
                     // ignore columns without the prefix.
-                    if (!columnName.toUpperCase(Locale.ENGLISH).startsWith(columnPrefix)) {
+                    if (!getUpperCase(columnName).startsWith(columnPrefix)) {
                         continue;
                     }
                     propertyName = columnName.substring(columnPrefix.length());
@@ -853,7 +860,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
 
     private boolean columnMatchesParam(String columnName, String paramName, String columnPrefix) {
         if (columnPrefix != null) {
-            if (!columnName.toUpperCase(Locale.ENGLISH).startsWith(columnPrefix)) {
+            if (!getUpperCase(columnName).startsWith(columnPrefix)) {
                 return false;
             }
             columnName = columnName.substring(columnPrefix.length());
@@ -1103,7 +1110,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         if (resultMapping.getColumnPrefix() != null) {
             columnPrefixBuilder.append(resultMapping.getColumnPrefix());
         }
-        return columnPrefixBuilder.length() == 0 ? null : columnPrefixBuilder.toString().toUpperCase(Locale.ENGLISH);
+        return columnPrefixBuilder.length() == 0 ? null : getUpperCase(columnPrefixBuilder.toString());
     }
 
     //
@@ -1125,7 +1132,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         }
         if (columnPrefix != null) {
             for (String columnName : rsw.getColumnNames()) {
-                if (columnName.toUpperCase(Locale.ENGLISH).startsWith(columnPrefix.toUpperCase(Locale.ENGLISH))) {
+                if (getUpperCase(columnName).startsWith(getUpperCase(columnPrefix))) {
                     return true;
                 }
             }
@@ -1193,7 +1200,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
                 final TypeHandler<?> th = resultMapping.getTypeHandler();
                 Set<String> mappedColumnNames = rsw.getMappedColumnNames(resultMap, columnPrefix);
                 // Issue #114
-                if (column != null && mappedColumnNames.contains(column.toUpperCase(Locale.ENGLISH))) {
+                if (column != null && mappedColumnNames.contains(getUpperCase(column))) {
                     final Object value = th.getResult(rsw.getResultSet(), column);
                     if (value != null || configuration.isReturnInstanceForEmptyRow()) {
                         cacheKey.update(column);
@@ -1212,7 +1219,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
             String property = column;
             if (columnPrefix != null && !columnPrefix.isEmpty()) {
                 // When columnPrefix is specified, ignore columns without the prefix.
-                if (!column.toUpperCase(Locale.ENGLISH).startsWith(columnPrefix)) {
+                if (!getUpperCase(column).startsWith(columnPrefix)) {
                     continue;
                 }
                 property = column.substring(columnPrefix.length());

@@ -10,6 +10,49 @@ import db.sql.api.impl.cmd.Methods;
  */
 public interface DatePattern extends Cmd {
 
+    DatePattern HH = new DatePattern() {
+        @Override
+        public String pattern(DbType dbType) {
+            return hourPattern(dbType);
+        }
+    };
+
+    DatePattern DD = new DatePattern() {
+        @Override
+        public String pattern(DbType dbType) {
+            return dayPattern(dbType);
+        }
+    };
+
+    DatePattern MM = new DatePattern() {
+        @Override
+        public String pattern(DbType dbType) {
+            return monthPattern(dbType);
+        }
+    };
+
+    DatePattern YYYY = new DatePattern() {
+        @Override
+        public String pattern(DbType dbType) {
+            return yearPattern(dbType);
+        }
+    };
+
+
+    DatePattern MM_DD = new DatePattern() {
+        @Override
+        public String pattern(DbType dbType) {
+            return monthPattern(dbType) + '-' + dayPattern(dbType);
+        }
+    };
+
+    DatePattern YYYY_MM = new DatePattern() {
+        @Override
+        public String pattern(DbType dbType) {
+            return yearPattern(dbType) + '-' + monthPattern(dbType);
+        }
+    };
+
     DatePattern YYYY_MM_DD = new DatePattern() {
         @Override
         public String pattern(DbType dbType) {

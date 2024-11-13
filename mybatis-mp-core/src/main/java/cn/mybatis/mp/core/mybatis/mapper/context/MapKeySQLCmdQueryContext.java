@@ -1,6 +1,5 @@
-package cn.mybatis.mp.core.mybatis.configuration;
+package cn.mybatis.mp.core.mybatis.mapper.context;
 
-import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdQueryContext;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 
 public class MapKeySQLCmdQueryContext extends SQLCmdQueryContext {

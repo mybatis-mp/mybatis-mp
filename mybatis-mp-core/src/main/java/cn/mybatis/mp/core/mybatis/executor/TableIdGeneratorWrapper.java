@@ -1,4 +1,4 @@
-package cn.mybatis.mp.core.mybatis.configuration;
+package cn.mybatis.mp.core.mybatis.executor;
 
 import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.db.reflect.TableIds;

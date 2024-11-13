@@ -1,5 +1,6 @@
-package cn.mybatis.mp.core.mybatis.configuration;
+package cn.mybatis.mp.core.mybatis.executor;
 
+import cn.mybatis.mp.core.mybatis.mapping.ResultMapWrapper;
 import cn.mybatis.mp.core.mybatis.provider.MybatisSQLProvider;
 import cn.mybatis.mp.core.mybatis.provider.SQLCmdSqlSource;
 import cn.mybatis.mp.core.util.PagingUtil;

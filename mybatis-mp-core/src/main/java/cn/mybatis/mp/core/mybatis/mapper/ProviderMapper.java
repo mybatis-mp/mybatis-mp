@@ -1,6 +1,5 @@
 package cn.mybatis.mp.core.mybatis.mapper;
 
-import cn.mybatis.mp.core.mybatis.configuration.MapKeySQLCmdQueryContext;
 import cn.mybatis.mp.core.mybatis.mapper.context.*;
 import cn.mybatis.mp.core.mybatis.provider.MybatisSQLProvider;
 import db.sql.api.DbType;

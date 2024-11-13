@@ -1,6 +1,8 @@
-package cn.mybatis.mp.core.mybatis.configuration;
+package cn.mybatis.mp.core.mybatis.mapping;
 
 import cn.mybatis.mp.core.db.reflect.*;
+import cn.mybatis.mp.core.mybatis.configuration.MybatisConfiguration;
+import cn.mybatis.mp.core.mybatis.executor.MybatisIdUtil;
 import cn.mybatis.mp.core.util.FieldUtil;
 import cn.mybatis.mp.core.util.GenericUtil;
 import cn.mybatis.mp.db.annotations.ResultEntity;

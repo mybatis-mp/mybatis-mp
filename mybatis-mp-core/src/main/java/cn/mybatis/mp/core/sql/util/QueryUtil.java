@@ -1,10 +1,9 @@
-package cn.mybatis.mp.core.mybatis.mapper;
+package cn.mybatis.mp.core.sql.util;
 
 
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.Query;
-import cn.mybatis.mp.core.sql.util.WhereUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.OptimizeOptions;

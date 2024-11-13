@@ -1,5 +1,9 @@
 package cn.mybatis.mp.core.mybatis.configuration;
 
+import cn.mybatis.mp.core.mybatis.executor.BasicMapperThreadLocalUtil;
+import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
+import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
+import cn.mybatis.mp.core.mybatis.mapper.context.MapKeySQLCmdQueryContext;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.util.DbTypeUtil;
 import cn.mybatis.mp.db.annotations.Paging;
@@ -15,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class BaseMapperProxy<T> extends MapperProxy<T> {
 
@@ -43,13 +48,25 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         return dbType;
     }
 
+    protected boolean setBasicMapperToThreadLocal(Object proxy) {
+        if (proxy instanceof BasicMapper) {
+            BasicMapperThreadLocalUtil.set(proxy);
+            return true;
+        } else if (proxy instanceof MybatisMapper) {
+            BasicMapperThreadLocalUtil.set((Supplier<BasicMapper>) () -> ((MybatisMapper) proxy).getBasicMapper());
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.isDefault()) {
             return super.invoke(proxy, method, args);
         }
+        boolean isSetBasicMapperToThreadLocal = false;
         try {
-            SqlSessionThreadLocalUtil.set(sqlSession);
+            isSetBasicMapperToThreadLocal = setBasicMapperToThreadLocal(proxy);
             if (method.getName().equals(DB_ADAPT_METHOD_NAME)) {
                 Consumer<Object> consumer = (Consumer<Object>) args[0];
                 DbSelectorCall dbSelector = new DbSelectorCall();
@@ -64,7 +81,9 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             }
             return super.invoke(proxy, method, args);
         } finally {
-            SqlSessionThreadLocalUtil.clear();
+            if (isSetBasicMapperToThreadLocal) {
+                BasicMapperThreadLocalUtil.clear();
+            }
         }
 
     }
@@ -101,5 +120,4 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         pager.setTotal(count);
         return pager;
     }
-
 }

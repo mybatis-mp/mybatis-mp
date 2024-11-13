@@ -1,6 +1,6 @@
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
-import cn.mybatis.mp.core.mybatis.configuration.PreparedParameterContext;
+import cn.mybatis.mp.core.mybatis.executor.PreparedParameterContext;
 
 public class PreparedContext implements PreparedParameterContext {
 

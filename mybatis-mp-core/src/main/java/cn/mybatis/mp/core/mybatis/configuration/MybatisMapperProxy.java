@@ -15,16 +15,13 @@ public class MybatisMapperProxy<T> extends BaseMapperProxy<T> {
     public final static String TABLE_INFO_METHOD_NAME = "getTableInfo";
     public final static String GET_BASIC_MAPPER_METHOD_NAME = "getBasicMapper";
 
-    private final SqlSession sqlSession;
-
     private final Class<T> mapperInterface;
     private final Class<?> entityType;
     private final TableInfo tableInfo;
-    private volatile BasicMapper basicMapper;
+    private BasicMapper basicMapper;
 
     public MybatisMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache, Class<?> entityType, TableInfo tableInfo) {
         super(sqlSession, mapperInterface, methodCache);
-        this.sqlSession = sqlSession;
         this.mapperInterface = mapperInterface;
         this.entityType = entityType;
         this.tableInfo = tableInfo;
@@ -42,21 +39,16 @@ public class MybatisMapperProxy<T> extends BaseMapperProxy<T> {
         if (method.isDefault()) {
             return super.invoke(proxy, method, args);
         }
-        try {
-            SqlSessionThreadLocalUtil.set(sqlSession);
-            switch (method.getName()) {
-                case ENTITY_TYPE_METHOD_NAME:
-                    return this.entityType;
-                case MAPPER_TYPE_METHOD_NAME:
-                    return this.mapperInterface;
-                case TABLE_INFO_METHOD_NAME:
-                    return this.tableInfo;
-                case GET_BASIC_MAPPER_METHOD_NAME:
-                    return getBasicMapper();
-            }
-            return super.invoke(proxy, method, args);
-        } finally {
-            SqlSessionThreadLocalUtil.clear();
+        switch (method.getName()) {
+            case ENTITY_TYPE_METHOD_NAME:
+                return this.entityType;
+            case MAPPER_TYPE_METHOD_NAME:
+                return this.mapperInterface;
+            case TABLE_INFO_METHOD_NAME:
+                return this.tableInfo;
+            case GET_BASIC_MAPPER_METHOD_NAME:
+                return getBasicMapper();
         }
+        return super.invoke(proxy, method, args);
     }
 }

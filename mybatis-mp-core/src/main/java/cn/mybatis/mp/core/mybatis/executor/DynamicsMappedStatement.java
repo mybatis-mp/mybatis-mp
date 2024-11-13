@@ -1,7 +1,10 @@
-package cn.mybatis.mp.core.mybatis.configuration;
+package cn.mybatis.mp.core.mybatis.executor;
 
+import cn.mybatis.mp.core.mybatis.configuration.MybatisConfiguration;
+import cn.mybatis.mp.core.mybatis.configuration.MybatisMapperProxy;
 import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdInsertContext;
 import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdQueryContext;
+import cn.mybatis.mp.core.mybatis.mapping.ResultMapWrapper;
 import cn.mybatis.mp.core.mybatis.provider.SQLCmdSqlSource;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;

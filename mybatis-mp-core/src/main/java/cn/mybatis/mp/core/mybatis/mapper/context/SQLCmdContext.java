@@ -1,7 +1,7 @@
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
 
-import cn.mybatis.mp.core.mybatis.configuration.PreparedParameterContext;
+import cn.mybatis.mp.core.mybatis.executor.PreparedParameterContext;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.executor.Executor;
 

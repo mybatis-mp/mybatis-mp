@@ -1,5 +1,6 @@
-package cn.mybatis.mp.core.mybatis.configuration;
+package cn.mybatis.mp.core.mybatis.executor;
 
+import cn.mybatis.mp.core.mybatis.configuration.MybatisConfiguration;
 import cn.mybatis.mp.core.mybatis.mapper.context.MybatisLikeQueryParameter;
 import cn.mybatis.mp.core.mybatis.mapper.context.MybatisParameter;
 import cn.mybatis.mp.core.mybatis.typeHandler.LikeQuerySupport;

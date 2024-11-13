@@ -1,7 +1,7 @@
-package cn.mybatis.mp.core.mybatis.resultset;
+package cn.mybatis.mp.core.mybatis.executor.resultset;
 
 import cn.mybatis.mp.core.db.reflect.*;
-import cn.mybatis.mp.core.mybatis.configuration.SqlSessionThreadLocalUtil;
+import cn.mybatis.mp.core.mybatis.executor.BasicMapperThreadLocalUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdQueryContext;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
@@ -38,7 +38,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     private final Map<FetchInfo, Map<Object, List<Object>>> singleFetchCache = new HashMap<>();
     private final Map<Method, Map> createdEventContextMap = new HashMap<>();
-    private volatile BasicMapper basicMapper;
+    private BasicMapper basicMapper;
     private Map<FetchInfo, List<FetchObject>> needFetchValuesMap;
     //Fetch 信息
     private Map<Class, List<FetchInfo>> fetchInfosMap;
@@ -50,6 +50,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     private Map<String, Object> putValueSessionCache;
     private Map<Class, List<CreatedEventInfo>> createdEventInfos;
 
+
     public MybatisDefaultResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler, ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
         if (mappedStatement.getResultMaps().size() == 1) {
@@ -59,6 +60,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 this.fetchInfosMap = resultInfo.getFetchInfoMap();
                 if (Objects.nonNull(this.fetchInfosMap) && !this.fetchInfosMap.isEmpty()) {
                     this.needFetchValuesMap = new HashMap<>();
+                    this.basicMapper = BasicMapperThreadLocalUtil.get();
                 }
 
                 if (boundSql.getParameterObject() instanceof SQLCmdQueryContext) {
@@ -260,7 +262,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 continue;
             }
 
-            if (Objects.isNull(rowValue) && resultSet.getRow() > 0) {
+            if (Objects.isNull(rowValue)) {
                 rowValue = configuration.getObjectFactory().create(resultType);
             }
 
@@ -288,9 +290,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     }
 
     private List<Object> fetchData(FetchInfo fetchInfo, Query<Object> query, List<Serializable> queryValueList) {
-        if (Objects.isNull(basicMapper)) {
-            basicMapper = this.configuration.getMapper(BasicMapper.class, SqlSessionThreadLocalUtil.get());
-        }
         if (queryValueList.isEmpty()) {
             return Collections.emptyList();
         }
@@ -403,9 +402,6 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     }
 
     public void singleConditionFetch(Object rowValue, FetchInfo fetchInfo, Object onValue) {
-        if (Objects.isNull(basicMapper)) {
-            basicMapper = this.configuration.getMapper(BasicMapper.class, SqlSessionThreadLocalUtil.get());
-        }
         List<Object> list;
         if (Objects.nonNull(onValue)) {
             list = singleFetchCache.computeIfAbsent(fetchInfo, key -> new HashMap<>()).computeIfAbsent(onValue, key2 -> this.fetchData(fetchInfo, Collections.singletonList(onValue), true));

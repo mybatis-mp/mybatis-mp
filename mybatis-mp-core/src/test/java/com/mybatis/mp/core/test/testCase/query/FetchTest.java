@@ -9,10 +9,12 @@ import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
 import com.mybatis.mp.core.test.vo.*;
 import db.sql.api.DbType;
+import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -256,10 +258,64 @@ public class FetchTest extends BaseTest {
             System.out.println(list);
             assertEquals(roleVo, list.get(0));
 
+            Cursor<FetchSysRoleVo> cursor = queryChain
+                    .cursor();
+            list.clear();
+            cursor.forEach(item -> list.add(item));
 
+            System.out.println(list);
+            assertEquals(roleVo, list.get(0));
+
+            final List<FetchSysRoleVo3> list3 = queryChain
+                    .returnType(FetchSysRoleVo3.class)
+                    .list();
+
+            System.out.println(list3);
+            assertEquals(Arrays.asList("test1", "test2"), list3.get(0).getSysRoleNames());
+
+            Cursor<FetchSysRoleVo3> cursor3 = queryChain
+                    .returnType(FetchSysRoleVo3.class)
+                    .cursor();
+            list3.clear();
+            cursor3.forEach(item -> {
+                System.out.println(">>>xxxxxxxxxxxxx>>" + item);
+                list3.add(item);
+            });
+
+            System.out.println(list3);
+            assertEquals(Arrays.asList("test1", "test2"), list3.get(0).getSysRoleNames());
+
+
+            List<FetchSysRoleVo3> list4 = queryChain
+                    .eq(SysRole::getId, -1)
+                    .returnType(FetchSysRoleVo3.class)
+                    .list();
+
+            assertEquals(list4.size(), 0);
 //            assertEquals(Integer.valueOf(1), list.get(1).getSysRole().get(0).getId());
 //            assertEquals("测试", list.get(1).getSysRole().get(0).getName());
 //            assertEquals(Integer.valueOf(1), list.get(1).getSysRole().size());
+        }
+    }
+
+    @Test
+    public void fetchResultEntityVoidTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+
+            List<FetchSysRoleVo3> list3 = new ArrayList<>();
+            Cursor<FetchSysRoleVo3> cursor3 = QueryChain.of(sysRoleMapper)
+                    .select(FetchSysRoleVo3.class)
+                    .from(SysRole.class)
+                    .returnType(FetchSysRoleVo3.class)
+                    .cursor();
+
+            cursor3.forEach(item -> {
+                System.out.println(">>>xxxxxxxxxxxxx>>" + item);
+                list3.add(item);
+            });
+
+            assertEquals(Arrays.asList("test1", "test2"), list3.get(0).getSysRoleNames());
         }
     }
 }

@@ -1,4 +1,4 @@
-package cn.mybatis.mp.core.mybatis.configuration;
+package cn.mybatis.mp.core.mybatis.executor;
 
 import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdQueryContext;
 import org.apache.ibatis.cache.CacheKey;
@@ -63,7 +63,9 @@ public class MybatisExecutor implements Executor {
     public CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql) {
         CacheKey cacheKey = this.delegate.createCacheKey(ms, parameterObject, rowBounds, boundSql);
         if (parameterObject instanceof SQLCmdQueryContext) {
-            cacheKey.updateAll(((SQLCmdQueryContext) parameterObject).getParameters());
+            SQLCmdQueryContext context = (SQLCmdQueryContext) parameterObject;
+            cacheKey.updateAll(context.getParameters());
+            cacheKey.update(context.getExecution().getReturnType().getName());
         }
         return cacheKey;
     }
