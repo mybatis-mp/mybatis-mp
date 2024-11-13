@@ -382,7 +382,7 @@ public final class Methods {
      * 获取 column的符号，负数为-1 0为0、正数为1
      *
      * @param column 列
-     * @return
+     * @return Sign
      */
     public static Sign sign(Cmd column) {
         Objects.requireNonNull(column);
@@ -392,7 +392,7 @@ public final class Methods {
     /**
      * pi 返回圆周率 函数
      *
-     * @return
+     * @return Pi
      */
     public static Pi pi() {
         return new Pi();
@@ -402,7 +402,7 @@ public final class Methods {
      * 返回数值 column 整数位 函数
      *
      * @param column 列
-     * @return
+     * @return Truncate
      */
     public static Truncate truncate(Cmd column) {
         Objects.requireNonNull(column);
@@ -414,7 +414,7 @@ public final class Methods {
      *
      * @param column 列
      * @param precision 精度
-     * @return
+     * @return Truncate
      */
     public static Truncate truncate(Cmd column, int precision) {
         Objects.requireNonNull(column);
@@ -425,7 +425,7 @@ public final class Methods {
      * sqrt 平方根 函数
      *
      * @param column 列
-     * @return
+     * @return Sqrt
      */
     public static Sqrt sqrt(Cmd column) {
         Objects.requireNonNull(column);
@@ -436,7 +436,7 @@ public final class Methods {
      * mod 取模 函数
      *
      * @param column 列
-     * @return
+     * @return Mod
      */
     public static Mod mod(Cmd column, Number divisor) {
         Objects.requireNonNull(column);
