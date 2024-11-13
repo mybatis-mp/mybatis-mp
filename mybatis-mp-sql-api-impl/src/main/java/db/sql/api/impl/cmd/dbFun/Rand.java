@@ -10,12 +10,12 @@ public class Rand extends BasicFunction<Rand> {
 
     private final Number max;
 
-    public Rand(Cmd value) {
-        this(value, null);
+    public Rand() {
+        this(null);
     }
 
-    public Rand(Cmd value, Number max) {
-        super(SqlConst.RAND, value);
+    public Rand(Number max) {
+        super(SqlConst.RAND, null);
         this.max = max;
     }
 
