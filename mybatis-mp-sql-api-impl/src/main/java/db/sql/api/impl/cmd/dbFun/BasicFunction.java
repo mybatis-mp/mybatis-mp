@@ -38,14 +38,14 @@ public abstract class BasicFunction<T extends BasicFunction<T>> extends Abstract
 
     @Override
     @SafeVarargs
-    public final ConcatAs concatAs(String split, Serializable... values) {
-        return super.concatAs(split, values);
+    public final ConcatWs concatWs(String split, Serializable... values) {
+        return super.concatWs(split, values);
     }
 
     @Override
     @SafeVarargs
-    public final ConcatAs concatAs(String split, Cmd... values) {
-        return super.concatAs(split, values);
+    public final ConcatWs concatWs(String split, Cmd... values) {
+        return super.concatWs(split, values);
     }
 
     @Override

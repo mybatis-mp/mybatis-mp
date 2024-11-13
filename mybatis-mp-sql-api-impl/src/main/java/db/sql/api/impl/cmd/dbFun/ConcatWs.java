@@ -10,13 +10,13 @@ import db.sql.api.tookit.CmdUtils;
 
 import static db.sql.api.impl.tookit.SqlConst.CONCAT_WS;
 
-public class ConcatAs extends BasicFunction<ConcatAs> {
+public class ConcatWs extends BasicFunction<ConcatWs> {
 
     private final Cmd[] values;
 
     private final Cmd split;
 
-    public ConcatAs(Cmd key, String split, Object... values) {
+    public ConcatWs(Cmd key, String split, Object... values) {
         super(CONCAT_WS, key);
         this.split = Methods.cmd(split);
         Cmd[] vs = new Cmd[values.length];

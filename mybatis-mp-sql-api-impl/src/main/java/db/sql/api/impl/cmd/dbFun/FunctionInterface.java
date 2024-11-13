@@ -342,12 +342,12 @@ public interface FunctionInterface extends Cmd {
         return Methods.concat(this, (Object[]) values);
     }
 
-    default ConcatAs concatAs(String split, Serializable... values) {
-        return Methods.concatAs(this, split, (Object[]) values);
+    default ConcatWs concatWs(String split, Serializable... values) {
+        return Methods.concatWs(this, split, (Object[]) values);
     }
 
-    default ConcatAs concatAs(String split, Cmd... values) {
-        return Methods.concatAs(this, split, (Object[]) values);
+    default ConcatWs concatWs(String split, Cmd... values) {
+        return Methods.concatWs(this, split, (Object[]) values);
     }
 
     default IfNull ifNull(Object value) {

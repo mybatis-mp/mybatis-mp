@@ -193,16 +193,16 @@ public class FunTest extends BaseTest {
     }
 
     @Test
-    public void concatAs() {
+    public void concatWs() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String str = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getId, c -> c.concatAs("a", "2", "3"))
+                    .select(SysUser::getId, c -> c.concatWs("a", "2", "3"))
                     .from(SysUser.class)
                     .eq(SysUser::getId, 3)
                     .returnType(String.class)
                     .get();
-            assertEquals("3a2a3", str, "concatAs");
+            assertEquals("3a2a3", str, "concatWs");
         }
     }
 

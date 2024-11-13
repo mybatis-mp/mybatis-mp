@@ -119,8 +119,8 @@ public class QueryTest extends BaseTest {
                                 userTable().$("id").divide(userTable().$("id")),
                                 userTable().$("id").concat(1, "2", 3),
                                 userTable().$("id").concat(userTable().$("id")),
-                                userTable().$("id").concatAs("$", 1, "2", 3),
-                                userTable().$("id").concatAs("$", userTable().$("id")),
+                                userTable().$("id").concatWs("$", 1, "2", 3),
+                                userTable().$("id").concatWs("$", userTable().$("id")),
                                 userTable().$("id").count().concat("abc"),
                                 userTable().$("id").gt(2).if_(1, 2),
                                 userTable().$("id").lt(3).caseThen(1).when(

@@ -1040,7 +1040,7 @@ public final class Methods {
     }
 
     /**
-     * concatAs拼接 函数
+     * concatWs拼接 函数
      *
      * @param key
      * @param split
@@ -1048,11 +1048,11 @@ public final class Methods {
      * @return
      */
     @SafeVarargs
-    public static ConcatAs concatAs(Cmd key, String split, Object... values) {
+    public static ConcatWs concatWs(Cmd key, String split, Object... values) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(split);
         Objects.requireNonNull(values);
-        return new ConcatAs(key, split, values);
+        return new ConcatWs(key, split, values);
     }
 
     /**
