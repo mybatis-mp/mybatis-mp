@@ -104,9 +104,14 @@ public class MybatisConfiguration extends Configuration {
         if (!this.hasMapper(BasicMapper.class)) {
             this.addBasicMapper(BasicMapper.class);
             resultMaps.clear();
+            if (type == BasicMapper.class) {
+                return;
+            }
         }
-
-        if (MybatisMapper.class.isAssignableFrom(type)) {
+        if (BasicMapper.class.isAssignableFrom(type) && type != BasicMapper.class) {
+            this.addBasicMapper(type);
+            return;
+        } else if (MybatisMapper.class.isAssignableFrom(type)) {
             List<Class<?>> list = GenericUtil.getGenericInterfaceClass(type);
             Optional<Class<?>> entityOptional = list.stream().filter(item -> item.isAnnotationPresent(Table.class)).findFirst();
             if (!entityOptional.isPresent()) {
@@ -117,11 +122,6 @@ public class MybatisConfiguration extends Configuration {
                 }
             }
             ResultMapUtils.getResultMap(this, entityOptional.get());
-        }
-
-        if (BasicMapper.class.isAssignableFrom(type) && type != BasicMapper.class) {
-            this.addBasicMapper(type);
-            return;
         }
 
         super.addMapper(type);
