@@ -24,4 +24,17 @@ public class ModelUpdateTest extends BaseTest {
             assertEquals(sysUser.getUserName(), null);
         }
     }
+
+    @Test
+    public void forceUpdateTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUserModel sysUserModel = QueryChain.of(sysUserMapper).returnType(SysUserModel.class)
+                    .eq(SysUser::getId, 1).get();
+            sysUserModel.setUserName(null);
+            sysUserMapper.update(sysUserModel, SysUserModel::getUserName);
+            SysUser sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
 }
