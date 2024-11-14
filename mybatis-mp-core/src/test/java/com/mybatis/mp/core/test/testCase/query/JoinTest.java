@@ -159,8 +159,8 @@ public class JoinTest extends BaseTest {
                     .select(subQuery, "id")
                     .select(SysUser.class)
                     .from(SysUser.class)
-                    .join(JoinMode.INNER, SysUser.class, subQuery, on -> on.eq(SysUser::getRole_id, subQuery.$().field(subQuery, SysRole::getId)))
-                    .eq(subQuery.$(subQuery, SysRole::getId), 1)
+                    .join(JoinMode.INNER, SysUser.class, subQuery, on -> on.eq(SysUser::getRole_id, subQuery.$outerField(SysRole::getId)))
+                    .eq(subQuery.$outerField(SysRole::getId), 1)
                     .orderBy(subQuery, SysRole::getId)
                     .list();
             assertEquals(2, list.size(), "joinSelf");

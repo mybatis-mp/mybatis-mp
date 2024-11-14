@@ -43,7 +43,7 @@ public class SubQueryTest extends BaseTest {
                     .select("*")
                     .from(SysUser.class)
                     .join(SysUser.class, subQuery, on -> {
-                        on.eq(SysUser::getId, subQuery.$(subQuery, SysUser::getId));
+                        on.eq(SysUser::getId, subQuery.$outerField(SysUser::getId));
                     })
                     .returnMap()
                     .list()

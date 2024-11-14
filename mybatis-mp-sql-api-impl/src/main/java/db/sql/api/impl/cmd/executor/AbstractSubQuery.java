@@ -41,7 +41,8 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
         Limit,
         ForUpdate,
         Union
-        > {
+        >,
+        db.sql.api.cmd.basic.IDataset<SELF, DatasetField> {
 
     protected String alias;
 
@@ -64,13 +65,21 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
     }
 
     @Override
-    public <E, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD $(IDataset<DATASET, DATASET_FIELD> dataset, Getter<E> getter) {
+    protected <E, DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD $(IDataset<DATASET, DATASET_FIELD> dataset, Getter<E> getter) {
         return super.$(dataset, getter);
     }
 
     @Override
-    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD $(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
+    protected <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD $(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
         return super.$(dataset, columnName);
+    }
+
+    public DatasetField $outerField(String columnName) {
+        return super.$(this, columnName);
+    }
+
+    public <E> DatasetField $outerField(Getter<E> getter) {
+        return super.$(this, getter);
     }
 
     @Override

@@ -42,7 +42,7 @@ public class WithTest extends BaseTest {
                     .select(SysUser.class)
                     .from(SysUser.class)
                     .from(withQuery)
-                    .eq(SysUser::getRole_id, withQuery.$(withQuery, SysRole::getId))
+                    .eq(SysUser::getRole_id, withQuery.$outerField(SysRole::getId))
                     .orderBy(withQuery, SysRole::getId);
 
             Pager<SysUser> page = queryChain.paging(Pager.of(100));
@@ -104,7 +104,7 @@ public class WithTest extends BaseTest {
                     .select(withQuery, "id", c -> c.plus(1).as("xx2"))
                     .select(SysUser.class)
                     .from(SysUser.class)
-                    .join(SysUser.class, withQuery, on -> on.eq(SysUser::getRole_id, withQuery.$(withQuery, SysRole::getId)))
+                    .join(SysUser.class, withQuery, on -> on.eq(SysUser::getRole_id, withQuery.$outerField(SysRole::getId)))
                     .orderBy(withQuery, SysRole::getId);
 
             Pager<SysUser> page = queryChain.paging(Pager.of(100));
