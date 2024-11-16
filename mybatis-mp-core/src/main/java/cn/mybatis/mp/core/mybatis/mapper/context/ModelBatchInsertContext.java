@@ -95,7 +95,7 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
         }
 
         int fieldSize = saveFieldInfoSet.size();
-
+        boolean containId = false;
         for (Object t : insertDatas) {
             List<Object> values = new ArrayList<>();
             for (int i = 0; i < fieldSize; i++) {
@@ -130,6 +130,10 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
                     }
                 }
 
+                if (modelFieldInfo.getTableFieldInfo().isTableId()) {
+                    containId = true;
+                }
+
                 TableField tableField = modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation();
                 if (Objects.isNull(value)) {
                     values.add(NULL.NULL);
@@ -140,6 +144,13 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
             }
             insert.values(values);
         }
+
+        if (dbType == DbType.SQL_SERVER && insert.getInsertValues().getValues().size() > 0) {
+            if (!containId && Objects.nonNull(tableId) && tableId.value() == IdAutoType.AUTO) {
+                insert.getInsertFields().setOutput("OUTPUT INSERTED." + modelInfo.getTableInfo().getIdFieldInfo().getColumnName());
+            }
+        }
+
         return insert;
     }
 
@@ -181,5 +192,10 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
             }
         }
         return null;
+    }
+
+    @Override
+    public String getIdColumnName() {
+        return this.modelInfo.getTableInfo().getIdFieldInfo().getColumnName();
     }
 }

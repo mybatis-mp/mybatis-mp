@@ -162,6 +162,10 @@ public class DefaultValueTestCase extends BaseTest {
                 mapper.saveBatch(list);
             } else {
                 mapper.saveBatch(list);
+                System.out.println(list);
+                for (int i = 0; i < list.size(); i++) {
+                    assertEquals(list.get(i).getId(), i + 1);
+                }
             }
 
             if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {

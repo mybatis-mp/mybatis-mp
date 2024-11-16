@@ -95,6 +95,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
 
         int fieldSize = saveFieldInfoSet.size();
 
+        boolean containId = false;
         for (Object t : array) {
             List<Object> values = new ArrayList<>();
             for (int i = 0; i < fieldSize; i++) {
@@ -128,6 +129,10 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
                     }
                 }
 
+                if (tableFieldInfo.isTableId()) {
+                    containId = true;
+                }
+
                 TableField tableField = tableFieldInfo.getTableFieldAnnotation();
                 if (Objects.isNull(value)) {
                     values.add(NULL.NULL);
@@ -138,9 +143,15 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
             }
             insert.values(values);
         }
+
+        if (dbType == DbType.SQL_SERVER && insert.getInsertValues().getValues().size() > 0) {
+            if (!containId && Objects.nonNull(tableId) && tableId.value() == IdAutoType.AUTO) {
+                insert.getInsertFields().setOutput("OUTPUT INSERTED." + tableInfo.getIdFieldInfo().getColumnName());
+            }
+        }
+
         return insert;
     }
-
 
     @Override
     public void init(DbType dbType) {
@@ -179,5 +190,10 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
             }
         }
         return null;
+    }
+
+    @Override
+    public String getIdColumnName() {
+        return this.tableInfo.getIdFieldInfo().getColumnName();
     }
 }

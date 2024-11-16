@@ -1,6 +1,8 @@
 package cn.mybatis.mp.core.mybatis.executor.keygen;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdInsertContext;
 import cn.mybatis.mp.core.mybatis.mapper.context.SetIdMethod;
+import db.sql.api.DbType;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
@@ -28,14 +30,27 @@ public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
             if (setIdMethod.idHasValue()) {
                 return;
             }
-
+            final Configuration configuration = ms.getConfiguration();
+            if (setIdMethod.getInsertSize() > 1) {
+                SQLCmdInsertContext insertContext = (SQLCmdInsertContext) parameter;
+                if (insertContext.getDbType() == DbType.SQL_SERVER && insertContext.sql(insertContext.getDbType()).contains("OUTPUT INSERTED")) {
+                    try (ResultSet rs = stmt.getResultSet()) {
+                        if (rs != null) {
+                            this.assignSQLServerKeys(configuration, rs, setIdMethod);
+                            return;
+                        }
+                    } catch (Exception e) {
+                        throw new ExecutorException("Error getting generated key or setting result to parameter object. Cause: " + e, e);
+                    }
+                }
+            }
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 final ResultSetMetaData rsmd = rs.getMetaData();
-                final Configuration configuration = ms.getConfiguration();
+
                 if (rsmd.getColumnCount() < keyProperties.length) {
                     // Error?
                 } else {
-                    this.assignKeys(configuration, rs, rsmd, setIdMethod);
+                    this.assignKeys(configuration, rs, setIdMethod);
                 }
             } catch (Exception e) {
                 throw new ExecutorException("Error getting generated key or setting result to parameter object. Cause: " + e, e);
@@ -45,13 +60,16 @@ public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
         super.processAfter(executor, ms, stmt, parameter);
     }
 
-
-    private void assignKeys(Configuration configuration, ResultSet rs, ResultSetMetaData rsmd, SetIdMethod setIdMethod) throws SQLException {
-
+    private void assignSQLServerKeys(Configuration configuration, ResultSet rs, SetIdMethod setIdMethod) throws SQLException {
         int insertSize = setIdMethod.getInsertSize();
-        if (setIdMethod.idHasValue()) {
-            return;
+        for (int i = 0; i < insertSize; i++) {
+            rs.next();
+            setIdMethod.setId(setIdMethod.getIdTypeHandler(configuration).getResult(rs, setIdMethod.getIdColumnName()), i);
         }
+    }
+
+    private void assignKeys(Configuration configuration, ResultSet rs, SetIdMethod setIdMethod) throws SQLException {
+        int insertSize = setIdMethod.getInsertSize();
         for (int i = 0; i < insertSize; i++) {
             rs.next();
             setIdMethod.setId(setIdMethod.getIdTypeHandler(configuration).getResult(rs, 1), i);

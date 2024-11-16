@@ -38,4 +38,11 @@ public interface SetIdMethod {
      * @return TypeHandler实例
      */
     TypeHandler<?> getIdTypeHandler(Configuration configuration);
+
+    /**
+     * 获取ID的列名
+     *
+     * @return
+     */
+    String getIdColumnName();
 }

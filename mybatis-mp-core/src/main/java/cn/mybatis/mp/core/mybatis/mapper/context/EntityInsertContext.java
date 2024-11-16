@@ -155,4 +155,9 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
         }
         return null;
     }
+
+    @Override
+    public String getIdColumnName() {
+        return this.tableInfo.getIdFieldInfo().getColumnName();
+    }
 }

@@ -16,9 +16,12 @@ import java.util.List;
 
 public class InsertFields implements IInsertFields<TableField> {
 
+    //SQL SERVER 专用
+    private String output;
+
     protected List<TableField> tableFields;
 
-    public InsertFields filed(TableField field) {
+    public InsertFields field(TableField field) {
         if (tableFields == null) {
             this.tableFields = new ArrayList<>(10);
         }
@@ -26,7 +29,7 @@ public class InsertFields implements IInsertFields<TableField> {
         return this;
     }
 
-    public InsertFields filed(TableField... fields) {
+    public InsertFields field(TableField... fields) {
         if (tableFields == null) {
             this.tableFields = new ArrayList<>(10);
         }
@@ -34,7 +37,7 @@ public class InsertFields implements IInsertFields<TableField> {
         return this;
     }
 
-    public InsertFields filed(List<TableField> fields) {
+    public InsertFields field(List<TableField> fields) {
         if (tableFields == null) {
             this.tableFields = new ArrayList<>(10);
         }
@@ -72,11 +75,21 @@ public class InsertFields implements IInsertFields<TableField> {
             isFirst = false;
         }
         sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BLANK);
+
+        if (context.getDbType() == DbType.SQL_SERVER) {
+            if (this.output != null) {
+                sqlBuilder.append(SqlConst.BLANK).append(this.output).append(SqlConst.BLANK);
+            }
+        }
         return sqlBuilder;
     }
 
     @Override
     public boolean contain(Cmd cmd) {
         return CmdUtils.contain(cmd, this.tableFields);
+    }
+
+    public void setOutput(String output) {
+        this.output = output;
     }
 }

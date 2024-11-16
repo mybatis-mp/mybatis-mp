@@ -155,4 +155,9 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
         }
         return null;
     }
+
+    @Override
+    public String getIdColumnName() {
+        return this.modelInfo.getTableInfo().getIdFieldInfo().getColumnName();
+    }
 }

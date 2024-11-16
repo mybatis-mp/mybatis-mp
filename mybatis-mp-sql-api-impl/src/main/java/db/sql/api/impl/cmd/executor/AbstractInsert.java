@@ -90,7 +90,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
             this.insertFields = new InsertFields();
             this.append(this.insertFields);
         }
-        this.insertFields.filed(fields);
+        this.insertFields.field(fields);
         return this.insertFields;
     }
 
@@ -100,7 +100,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
             this.insertFields = new InsertFields();
             this.append(this.insertFields);
         }
-        this.insertFields.filed(fields);
+        this.insertFields.field(fields);
         return this.insertFields;
     }
 
