@@ -166,6 +166,11 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
     }
 
     @Override
+    public Object getInsertObject(int index) {
+        return this.insertDatas[index];
+    }
+
+    @Override
     public TypeHandler<?> getIdTypeHandler(Configuration configuration) {
         if (Objects.nonNull(this.tableInfo.getIdFieldInfo())) {
             TypeHandler typeHandler = this.tableInfo.getIdFieldInfo().getTypeHandler();

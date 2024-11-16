@@ -168,6 +168,11 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
     }
 
     @Override
+    public Object getInsertObject(int index) {
+        return this.insertDatas[index];
+    }
+
+    @Override
     public TypeHandler<?> getIdTypeHandler(Configuration configuration) {
         if (Objects.nonNull(this.modelInfo.getIdFieldInfo())) {
             TypeHandler typeHandler = this.modelInfo.getIdFieldInfo().getTableFieldInfo().getTypeHandler();

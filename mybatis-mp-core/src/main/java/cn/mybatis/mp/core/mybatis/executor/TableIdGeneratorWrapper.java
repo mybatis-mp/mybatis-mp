@@ -5,6 +5,7 @@ import cn.mybatis.mp.core.db.reflect.TableIds;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.mybatis.executor.keygen.MybatisJdbc3KeyGenerator;
+import cn.mybatis.mp.core.mybatis.executor.keygen.MybatisSelectKeyGenerator;
 import cn.mybatis.mp.core.mybatis.provider.SQLCmdSqlSource;
 import cn.mybatis.mp.core.util.GenericUtil;
 import cn.mybatis.mp.core.util.StringPool;
@@ -49,7 +50,7 @@ public class TableIdGeneratorWrapper {
                 || (ms.getParameterMap().getType() != EntityInsertContext.class && ms.getParameterMap().getType() != ModelInsertContext.class)) {
             return;
         }
-        String selectKeyId = ms.getId() + SelectKeyGenerator.SELECT_KEY_SUFFIX;
+        String selectKeyId = ms.getId() + MybatisSelectKeyGenerator.SELECT_KEY_SUFFIX;
         Class entityClass = getEntityClass(ms);
         if (Objects.isNull(entityClass)) {
             //可能是动态的 所以无法获取entityClass
@@ -115,7 +116,7 @@ public class TableIdGeneratorWrapper {
                         .keyGenerator(NoKeyGenerator.INSTANCE)
                         .useCache(false)
                         .build();
-                keyGenerator = new SelectKeyGenerator(selectKeyMappedStatement, true);
+                keyGenerator = new MybatisSelectKeyGenerator(selectKeyMappedStatement, true);
                 break;
             }
             default: {

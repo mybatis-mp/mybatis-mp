@@ -26,6 +26,13 @@ public interface SetIdMethod {
     int getInsertSize();
 
     /**
+     * 获取插入的实例
+     *
+     * @return
+     */
+    Object getInsertObject(int index);
+
+    /**
      * 获取ID的TypeHandler
      *
      * @return TypeHandler实例

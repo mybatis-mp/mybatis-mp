@@ -82,7 +82,6 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
                         isNeedInsert = true;
                         IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
                         Object id = identifierGenerator.nextId(modelInfo.getType());
-
                         if (IdUtil.setId(model, modelFieldInfo, id)) {
                             value = id;
                         }
@@ -139,6 +138,11 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
     @Override
     public int getInsertSize() {
         return 1;
+    }
+
+    @Override
+    public Object getInsertObject(int index) {
+        return this.model;
     }
 
     @Override

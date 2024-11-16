@@ -17,6 +17,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -104,6 +106,29 @@ public class IdentifierGenerateTest extends BaseTest {
             System.out.println(idTest);
             assertEquals(1L, (long) idTest.getId());
 
+            assertNotNull(idTestMapper.getById(idTest.getId()));
+        }
+    }
+
+    @Test
+    public void batchInsertWithSelectIdTest() {
+        if (TestDataSource.DB_TYPE != DbType.ORACLE && TestDataSource.DB_TYPE != DbType.PGSQL) {
+            return;
+        }
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            IdTestMapper idTestMapper = session.getMapper(IdTestMapper.class);
+            IdTest idTest = new IdTest();
+            idTest.setCreateTime(LocalDateTime.now());
+
+            IdTest idTest2 = new IdTest();
+            idTest2.setCreateTime(LocalDateTime.now());
+
+            List<IdTest> idTestList = Arrays.asList(idTest, idTest2);
+            idTestMapper.save(idTestList);
+            System.out.println(idTestList);
+
+            assertEquals(1L, (long) idTest.getId());
+            assertEquals(2L, (long) idTest2.getId());
             assertNotNull(idTestMapper.getById(idTest.getId()));
         }
     }
