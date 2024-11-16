@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class TestDataSource {
 
-    public static final DbType DB_TYPE = DbType.KING_BASE;
+    public static final DbType DB_TYPE = DbType.H2;
 
     public static final String TIME_ZONE = "Asia/Shanghai";
 
