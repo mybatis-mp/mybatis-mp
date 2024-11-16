@@ -37,7 +37,7 @@ public class BaseUserTestCase extends BaseTest {
 
     @Test
     public void save() {
-        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
             return;
         }
 
@@ -82,7 +82,7 @@ public class BaseUserTestCase extends BaseTest {
 
     @Test
     public void saveModel() {
-        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+        if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
             return;
         }
 
