@@ -19,28 +19,33 @@ import db.sql.api.DbType;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.TypeHandler;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert> {
+public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert> implements SetIdMethod {
 
-    private final Collection<T> list;
+    private final T[] insertDatas;
 
     private final Set<String> saveFieldSet;
 
     private final TableInfo tableInfo;
 
+    private final boolean idHasValue;
 
     public EntityBatchInsertContext(TableInfo tableInfo, Collection<T> list, Set<String> saveFieldSet) {
         this.tableInfo = tableInfo;
-        this.list = list;
+        this.insertDatas = list.toArray((T[]) new Object[0]);
         this.saveFieldSet = saveFieldSet;
+        this.entityType = tableInfo.getType();
+        this.idHasValue = IdUtil.isIdExists(this.insertDatas[0], tableInfo.getIdFieldInfo());
     }
 
-    private static Insert createCmd(TableInfo tableInfo, Collection<?> list, Set<String> saveFieldSet, DbType dbType) {
+    private static Insert createCmd(TableInfo tableInfo, Object[] array, Set<String> saveFieldSet, DbType dbType) {
         Insert insert = new Insert();
-        Class<?> entityType = list.stream().findFirst().get().getClass();
+        Class<?> entityType = tableInfo.getType();
         insert.$().cacheTableInfo(tableInfo);
         Table table = insert.$().table(tableInfo.getSchemaAndTableName());
         insert.insert(table);
@@ -90,12 +95,12 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
 
         int fieldSize = saveFieldInfoSet.size();
 
-        for (Object t : list) {
+        for (Object t : array) {
             List<Object> values = new ArrayList<>();
             for (int i = 0; i < fieldSize; i++) {
                 TableFieldInfo tableFieldInfo = saveFieldInfoSet.get(i);
                 Object value = tableFieldInfo.getValue(t);
-                boolean hasValue = (!tableFieldInfo.isTableId() && Objects.nonNull(value)) || (tableFieldInfo.isTableId() && IdUtil.isIdExists(value));
+                boolean hasValue = (!tableFieldInfo.isTableId() && Objects.nonNull(value)) || (tableFieldInfo.isTableId() && IdUtil.isIdValueExists(value));
                 if (!hasValue) {
                     if (tableFieldInfo.isTableId()) {
                         if (tableId.value() == IdAutoType.GENERATOR) {
@@ -141,7 +146,33 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
     public void init(DbType dbType) {
         super.init(dbType);
         if (Objects.isNull(this.execution)) {
-            this.execution = createCmd(this.tableInfo, this.list, this.saveFieldSet, dbType);
+            this.execution = createCmd(this.tableInfo, this.insertDatas, this.saveFieldSet, dbType);
         }
+    }
+
+    @Override
+    public void setId(Object id, int index) {
+        IdUtil.setId(this.insertDatas[index], this.tableInfo.getSingleIdFieldInfo(true), id);
+    }
+
+    @Override
+    public boolean idHasValue() {
+        return idHasValue;
+    }
+
+    @Override
+    public int getInsertSize() {
+        return this.insertDatas.length;
+    }
+
+    @Override
+    public TypeHandler<?> getIdTypeHandler(Configuration configuration) {
+        if (Objects.nonNull(this.tableInfo.getIdFieldInfo())) {
+            TypeHandler typeHandler = this.tableInfo.getIdFieldInfo().getTypeHandler();
+            if (Objects.isNull(typeHandler)) {
+                return configuration.getTypeHandlerRegistry().getTypeHandler(this.tableInfo.getIdFieldInfo().getFieldInfo().getTypeClass());
+            }
+        }
+        return null;
     }
 }

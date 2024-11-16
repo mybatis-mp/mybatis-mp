@@ -4,13 +4,13 @@ import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.db.reflect.TableIds;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
+import cn.mybatis.mp.core.mybatis.executor.keygen.MybatisJdbc3KeyGenerator;
 import cn.mybatis.mp.core.mybatis.provider.SQLCmdSqlSource;
 import cn.mybatis.mp.core.util.GenericUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.db.annotations.Table;
 import cn.mybatis.mp.db.annotations.TableId;
 import org.apache.ibatis.builder.StaticSqlSource;
-import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
@@ -94,7 +94,7 @@ public class TableIdGeneratorWrapper {
         switch (tableId.value()) {
             //数据库默认自增
             case AUTO: {
-                keyGenerator = Jdbc3KeyGenerator.INSTANCE;
+                keyGenerator = MybatisJdbc3KeyGenerator.INSTANCE;
                 break;
             }
             //自己输入

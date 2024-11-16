@@ -143,4 +143,8 @@ public class ModelInfo {
         }
         return this.idFieldInfo;
     }
+
+    public ModelFieldInfo getIdFieldInfo() {
+        return idFieldInfo;
+    }
 }

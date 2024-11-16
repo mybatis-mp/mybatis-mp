@@ -12,6 +12,29 @@ import java.util.Objects;
 
 public final class IdUtil {
 
+    public static boolean isIdExists(Object obj, TableFieldInfo idFieldInfo) {
+        if (idFieldInfo == null) {
+            return false;
+        }
+        Object sourceId;
+        try {
+            sourceId = idFieldInfo.getReadFieldInvoker().invoke(obj, null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return isIdValueExists(sourceId);
+    }
+
+    public static boolean isIdExists(Object obj, ModelFieldInfo idFieldInfo) {
+        Object sourceId;
+        try {
+            sourceId = idFieldInfo.getReadFieldInvoker().invoke(obj, null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return isIdValueExists(sourceId);
+    }
+
     private static boolean isIdExists(Object obj, GetFieldInvoker getFieldInvoker) {
         //如果设置了id 则不在设置
         Object sourceId;
@@ -20,10 +43,10 @@ public final class IdUtil {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        return isIdExists(sourceId);
+        return isIdValueExists(sourceId);
     }
 
-    public static boolean isIdExists(Object id) {
+    public static boolean isIdValueExists(Object id) {
         if (Objects.nonNull(id)) {
             if (id instanceof String) {
                 return !StringPool.EMPTY.equals(((String) id).trim());

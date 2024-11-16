@@ -20,6 +20,8 @@ import db.sql.api.DbType;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.TypeHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,12 +38,15 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
 
     private final Set<String> forceSaveFields;
 
+    private final boolean idHasValue;
+
     public EntityInsertContext(TableInfo tableInfo, T entity, boolean allFieldForce, Set<String> forceSaveFields) {
         this.entity = entity;
         this.allFieldForce = allFieldForce;
         this.entityType = entity.getClass();
         this.tableInfo = tableInfo;
         this.forceSaveFields = forceSaveFields;
+        this.idHasValue = IdUtil.isIdExists(entity, tableInfo.getIdFieldInfo());
     }
 
     @Override
@@ -71,7 +76,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
             boolean isNeedInsert = false;
             Object value = tableFieldInfo.getValue(entity);
             if (tableFieldInfo.isTableId()) {
-                if (!IdUtil.isIdExists(value)) {
+                if (!IdUtil.isIdValueExists(value)) {
                     TableId tableId = TableIds.get(entity.getClass(), dbType);
                     if (tableId.value() == IdAutoType.GENERATOR) {
                         isNeedInsert = true;
@@ -121,7 +126,28 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
     }
 
     @Override
-    public void setId(Object id) {
+    public void setId(Object id, int index) {
         IdUtil.setId(this.entity, this.tableInfo.getSingleIdFieldInfo(true), id);
+    }
+
+    @Override
+    public boolean idHasValue() {
+        return idHasValue;
+    }
+
+    @Override
+    public int getInsertSize() {
+        return 1;
+    }
+
+    @Override
+    public TypeHandler<?> getIdTypeHandler(Configuration configuration) {
+        if (Objects.nonNull(this.tableInfo.getIdFieldInfo())) {
+            TypeHandler typeHandler = this.tableInfo.getIdFieldInfo().getTypeHandler();
+            if (Objects.isNull(typeHandler)) {
+                return configuration.getTypeHandlerRegistry().getTypeHandler(this.tableInfo.getIdFieldInfo().getFieldInfo().getTypeClass());
+            }
+        }
+        return null;
     }
 }

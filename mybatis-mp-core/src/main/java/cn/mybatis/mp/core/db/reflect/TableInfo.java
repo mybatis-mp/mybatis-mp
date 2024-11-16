@@ -262,4 +262,8 @@ public class TableInfo {
         }
         return this.idFieldInfo;
     }
+
+    public TableFieldInfo getIdFieldInfo() {
+        return idFieldInfo;
+    }
 }

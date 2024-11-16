@@ -106,6 +106,10 @@ public class DefaultValueTestCase extends BaseTest {
                 mapper.saveBatch(list, DefaultValueTest::getId, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
             } else {
                 mapper.saveBatch(list, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
+                System.out.println(list);
+                for (int i = 0; i < list.size(); i++) {
+                    assertEquals(list.get(i).getId(), i + 1);
+                }
             }
 
             if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
