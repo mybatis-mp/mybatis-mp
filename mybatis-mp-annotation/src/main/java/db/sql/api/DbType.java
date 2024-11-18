@@ -52,6 +52,10 @@ public enum DbType {
         return keywords;
     }
 
+    public boolean addKeyword(String keyword) {
+        return keywords.add(keyword);
+    }
+
     public String wrap(String name) {
         if (getKeywords().contains(name)) {
             if (getKeywordWrap().isToUpperCase()) {
