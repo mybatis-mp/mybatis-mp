@@ -8,6 +8,7 @@ import db.sql.api.impl.cmd.condition.*;
 import db.sql.api.impl.cmd.dbFun.mysql.MysqlFunctions;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 public interface FunctionInterface extends Cmd {
@@ -799,12 +800,32 @@ public interface FunctionInterface extends Cmd {
     }
 
     /**
+     * 条件判断（IN包含判断）
+     *
+     * @param values 匹配值
+     * @return Ne
+     */
+    default In in(Collection<? extends Serializable>... values) {
+        return Methods.in(this, values);
+    }
+
+    /**
      * 条件判断（NOT IN不包含判断）
      * @param values 匹配值
      * @return Ne
      */
     default NotIn notIn(Serializable... values) {
         return Methods.notIn(this, (Object[]) values);
+    }
+
+    /**
+     * 条件判断（NOT IN不包含判断）
+     *
+     * @param values 匹配值
+     * @return Ne
+     */
+    default NotIn notIn(Collection<? extends Serializable>... values) {
+        return Methods.notIn(this, values);
     }
 
     /**
