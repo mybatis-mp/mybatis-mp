@@ -399,6 +399,10 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
+        Object v = this.checkAndGetValidValue(value);
+        if (Objects.isNull(v)) {
+            return null;
+        }
         return Methods.eq(createTableField(column, columnStorey), createTableField(value, valueStorey));
     }
 
@@ -419,6 +423,10 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
+        Object v = this.checkAndGetValidValue(value);
+        if (Objects.isNull(v)) {
+            return null;
+        }
         return Methods.gt(createTableField(column, columnStorey), createTableField(value, valueStorey));
     }
 
@@ -437,6 +445,10 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     @Override
     public <T, T2> ICondition gte(boolean when, Getter<T> column, int columnStorey, Getter<T2> value, int valueStorey) {
         if (!when) {
+            return null;
+        }
+        Object v = this.checkAndGetValidValue(value);
+        if (Objects.isNull(v)) {
             return null;
         }
         return Methods.gte(createTableField(column, columnStorey), createTableField(value, valueStorey));
@@ -461,6 +473,10 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
+        Object v = this.checkAndGetValidValue(value);
+        if (Objects.isNull(v)) {
+            return null;
+        }
         return Methods.lt(createTableField(column, columnStorey), createTableField(value, valueStorey));
     }
 
@@ -479,6 +495,10 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     @Override
     public <T, T2> ICondition lte(boolean when, Getter<T> column, int columnStorey, Getter<T2> value, int valueStorey) {
         if (!when) {
+            return null;
+        }
+        Object v = this.checkAndGetValidValue(value);
+        if (Objects.isNull(v)) {
             return null;
         }
         return Methods.lte(createTableField(column, columnStorey), createTableField(value, valueStorey));
@@ -500,6 +520,10 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     @Override
     public <T, T2> ICondition ne(boolean when, Getter<T> column, int columnStorey, Getter<T2> value, int valueStorey) {
         if (!when) {
+            return null;
+        }
+        Object v = this.checkAndGetValidValue(value);
+        if (Objects.isNull(v)) {
             return null;
         }
         return Methods.ne(createTableField(column, columnStorey), createTableField(value, valueStorey));

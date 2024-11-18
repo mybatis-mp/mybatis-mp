@@ -391,7 +391,7 @@ public class QueryTest extends BaseTest {
                     .select(SysUser.class)
                     .from(SysUser.class)
                     .orderBy(SysUser::getId)
-                    .optimizeOptions(optimizeOptions -> optimizeOptions.disableAll())
+                    .optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false).optimizeOrderBy(false))
                     .paging(Pager.of(2));
 
             assertEquals(pager.getTotal(), Integer.valueOf(3), "paging Total");

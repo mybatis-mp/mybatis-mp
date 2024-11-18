@@ -405,6 +405,32 @@ public class ConditionTest extends BaseTest {
         }
     }
 
+
+    @Test
+    public void ignoreNullTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
+            List<Integer> list = QueryChain.of(sysUserMapper)
+                    .forSearch()
+                    .select(SysUser::getId)
+                    .from(SysUser.class)
+                    .in(SysUser::getId, 1, 2, null)
+                    .eq(SysUser::getId, null)
+                    .gt(SysUser::getId, null)
+                    .gte(SysUser::getId, null)
+                    .lt(SysUser::getId, null)
+                    .lte(SysUser::getId, null)
+                    .ne(SysUser::getId, null)
+                    .returnType(Integer.class)
+                    .list();
+
+
+            assertEquals(Integer.valueOf(1), list.get(0), "between");
+            assertEquals(Integer.valueOf(2), list.get(1), "between");
+        }
+    }
+
     @Test
     public void notIgnoreNullTest() {
         assertThrows(ConditionValueNullException.class, () -> {
