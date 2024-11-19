@@ -1192,7 +1192,7 @@ public final class Methods {
 
     /**
      * eq等于 判断
-     *@param column 列
+     * @param column 列
      * @return Eq
      */
     public static Eq eq(Cmd column, Object value) {
@@ -1203,7 +1203,7 @@ public final class Methods {
 
     /**
      * ne不等于 判断
-     *@param column 列
+     * @param column 列
      * @return Ne
      */
     public static Ne ne(Cmd column, Object value) {
@@ -1214,7 +1214,7 @@ public final class Methods {
 
     /**
      * 不为空 判断
-     *@param column 列
+     * @param column 列
      * @return NotEmpty
      */
     public static NotEmpty notEmpty(Cmd column) {
@@ -1224,7 +1224,7 @@ public final class Methods {
 
     /**
      * 为空 判断
-     *@param column 列
+     * @param column 列
      * @return Empty
      */
     public static Empty empty(Cmd column) {
@@ -1271,7 +1271,7 @@ public final class Methods {
     /**
      * gt小于等于 判断
      * @param column 列
-     *@param value 比较对象
+     * @param value 比较对象
      * @return Lte
      */
     public static Lte lte(Cmd column, Object value) {

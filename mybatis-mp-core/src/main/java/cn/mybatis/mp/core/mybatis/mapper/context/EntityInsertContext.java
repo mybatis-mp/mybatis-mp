@@ -36,16 +36,16 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
 
     private final boolean allFieldForce;
 
-    private final Set<String> forceSaveFields;
+    private final Set<String> forceFields;
 
     private final boolean idHasValue;
 
-    public EntityInsertContext(TableInfo tableInfo, T entity, boolean allFieldForce, Set<String> forceSaveFields) {
+    public EntityInsertContext(TableInfo tableInfo, T entity, boolean allFieldForce, Set<String> forceFields) {
         this.entity = entity;
         this.allFieldForce = allFieldForce;
         this.entityType = entity.getClass();
         this.tableInfo = tableInfo;
-        this.forceSaveFields = forceSaveFields;
+        this.forceFields = forceFields;
         this.idHasValue = IdUtil.isIdExists(entity, tableInfo.getIdFieldInfo());
     }
 
@@ -105,7 +105,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
                 value = TypeConvertUtil.convert(Integer.valueOf(1), tableFieldInfo.getField().getType());
                 //乐观锁回写
                 TableInfoUtil.setValue(tableFieldInfo, entity, value);
-            } else if (allFieldForce || (Objects.nonNull(this.forceSaveFields) && this.forceSaveFields.contains(tableFieldInfo.getField().getName()))) {
+            } else if (allFieldForce || (Objects.nonNull(this.forceFields) && this.forceFields.contains(tableFieldInfo.getField().getName()))) {
                 isNeedInsert = true;
             }
 

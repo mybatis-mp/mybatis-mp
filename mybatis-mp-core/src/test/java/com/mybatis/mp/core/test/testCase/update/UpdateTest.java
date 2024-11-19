@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -48,6 +49,97 @@ public class UpdateTest extends BaseTest {
         }
     }
 
+    @Test
+    public void forceUpdateTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.update(sysUser, SysUser::getUserName);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+    @Test
+    public void forceUpdateTest3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.saveOrUpdate(sysUser, true);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+    @Test
+    public void forceUpdateTest4() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.saveOrUpdate(sysUser, SysUser::getUserName);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+    @Test
+    public void forceUpdateListTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.update(Collections.singletonList(sysUser), true);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+    @Test
+    public void forceUpdateListTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.update(Collections.singletonList(sysUser), SysUser::getUserName);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+    @Test
+    public void forceUpdateListTest3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.saveOrUpdate(Collections.singletonList(sysUser), true);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+    @Test
+    public void forceUpdateListTest4() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.saveOrUpdate(Collections.singletonList(sysUser), SysUser::getUserName);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
 
     @Test
     public void nullUpdateTest() {
@@ -59,11 +151,9 @@ public class UpdateTest extends BaseTest {
                     .execute();
 
             assertEquals(cnt, 1);
-
             SysUser sysUser = sysUserMapper.getById(1);
             assertEquals(sysUser.getUserName(), null);
         }
-
     }
 
     @Test

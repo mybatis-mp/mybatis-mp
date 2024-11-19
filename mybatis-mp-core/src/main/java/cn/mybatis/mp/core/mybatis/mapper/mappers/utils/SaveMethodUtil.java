@@ -19,34 +19,18 @@ import java.util.Set;
 
 public final class SaveMethodUtil {
 
-    public static <T> int save(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce) {
-        return basicMapper.$saveEntity(new EntityInsertContext(tableInfo, entity, allFieldForce, null));
+    public static <T> int save(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Getter<T>[] forceFields) {
+        return basicMapper.$saveEntity(new EntityInsertContext(tableInfo, entity, allFieldForce, LambdaUtil.getFieldNames(forceFields)));
     }
 
-    public static <T> int save(BasicMapper basicMapper, TableInfo tableInfo, T entity, Getter<T>[] forceSaveFields) {
-        return basicMapper.$saveEntity(new EntityInsertContext(tableInfo, entity, false, LambdaUtil.getFieldNames(forceSaveFields)));
-    }
-
-    public static <E> int save(BasicMapper basicMapper, TableInfo tableInfo, Collection<E> list, boolean allFieldForce) {
-        if (Objects.isNull(list) || list.isEmpty()) {
-            return 0;
-        }
-
-        int cnt = 0;
-        for (E entity : list) {
-            cnt += save(basicMapper, tableInfo, entity, allFieldForce);
-        }
-        return cnt;
-    }
-
-    public static <T> int save(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, Getter<T>[] forceSaveFields) {
+    public static <T> int save(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, boolean allFieldForce, Getter<T>[] forceFields) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
 
         int cnt = 0;
         for (T entity : list) {
-            cnt += save(basicMapper, tableInfo, entity, forceSaveFields);
+            cnt += save(basicMapper, tableInfo, entity, allFieldForce, forceFields);
         }
         return cnt;
     }
@@ -81,10 +65,10 @@ public final class SaveMethodUtil {
         return basicMapper.$save(new EntityBatchInsertContext(tableInfo, list, saveFieldSet));
     }
 
-    public static <E> int saveBatch(BasicMapper basicMapper, TableInfo tableInfo, Collection<E> list, Getter<E>... saveFields) {
-        if (Objects.isNull(saveFields) || saveFields.length < 1) {
-            throw new RuntimeException("saveFields can't be null or empty");
+    public static <E> int saveBatch(BasicMapper basicMapper, TableInfo tableInfo, Collection<E> list, Getter<E>... forceFields) {
+        if (Objects.isNull(forceFields) || forceFields.length < 1) {
+            throw new RuntimeException("forceFields can't be null or empty");
         }
-        return basicMapper.$save(new EntityBatchInsertContext(tableInfo, list, LambdaUtil.getFieldNames(saveFields)));
+        return basicMapper.$save(new EntityBatchInsertContext(tableInfo, list, LambdaUtil.getFieldNames(forceFields)));
     }
 }

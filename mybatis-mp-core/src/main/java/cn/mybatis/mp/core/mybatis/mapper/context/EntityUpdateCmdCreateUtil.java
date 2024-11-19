@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class EntityUpdateCmdCreateUtil {
 
-    private static Update warp(Update update, TableInfo tableInfo, Object t, Set<String> forceUpdateFields, boolean allFieldForce) {
+    private static Update warp(Update update, TableInfo tableInfo, Object t, Set<String> forceFields, boolean allFieldForce) {
 
         MybatisCmdFactory $ = update.$();
 
@@ -71,7 +71,7 @@ public class EntityUpdateCmdCreateUtil {
                 TableInfoUtil.setValue(tableFieldInfo, t, value);
             }
 
-            boolean isForceUpdate = Objects.nonNull(forceUpdateFields) && forceUpdateFields.contains(tableFieldInfo.getField().getName());
+            boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(tableFieldInfo.getField().getName());
             if (!isForceUpdate && !tableFieldInfo.getTableFieldAnnotation().update()) {
                 continue;
             }
@@ -98,14 +98,14 @@ public class EntityUpdateCmdCreateUtil {
         return update;
     }
 
-    public static Update create(TableInfo tableInfo, Object entity, boolean allFieldForce, Set<String> forceUpdateFields) {
-        return warp(new Update(), tableInfo, entity, forceUpdateFields, allFieldForce);
+    public static Update create(TableInfo tableInfo, Object entity, boolean allFieldForce, Set<String> forceFields) {
+        return warp(new Update(), tableInfo, entity, forceFields, allFieldForce);
     }
 
-    public static Update create(TableInfo tableInfo, Object entity, Where where, boolean allFieldForce, Set<String> forceUpdateFields) {
+    public static Update create(TableInfo tableInfo, Object entity, Where where, boolean allFieldForce, Set<String> forceFields) {
         if (Objects.isNull(where) || !where.hasContent()) {
             throw new RuntimeException("update has no where condition content ");
         }
-        return warp(new Update(where), tableInfo, entity, forceUpdateFields, allFieldForce);
+        return warp(new Update(where), tableInfo, entity, forceFields, allFieldForce);
     }
 }

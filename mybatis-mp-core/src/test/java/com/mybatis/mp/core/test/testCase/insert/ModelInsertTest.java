@@ -49,7 +49,7 @@ public class ModelInsertTest extends BaseTest {
             sysUserModel.setUserName(null);
             sysUserMapper.save(sysUserModel, false);
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertEquals(sysUser.getUserName(), "123456");
         }
     }
 
@@ -81,7 +81,7 @@ public class ModelInsertTest extends BaseTest {
             sysUserModel.setUserName(null);
             sysUserMapper.saveModel(Collections.singletonList(sysUserModel), false);
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertEquals(sysUser.getUserName(), "123456");
         }
     }
 

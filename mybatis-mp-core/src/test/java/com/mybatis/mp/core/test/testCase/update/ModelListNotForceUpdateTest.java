@@ -12,110 +12,89 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ModelUpdateTest extends BaseTest {
+public class ModelListNotForceUpdateTest extends BaseTest {
 
     @Test
-    public void forceUpdateTest() {
+    public void notForceInsertTest1() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserModel sysUserModel = QueryChain.of(sysUserMapper).returnType(SysUserModel.class)
                     .eq(SysUser::getId, 1).get();
             sysUserModel.setUserName(null);
-            sysUserMapper.update(sysUserModel, true);
-            SysUser sysUser = sysUserMapper.getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            sysUserMapper.updateModel(Collections.singletonList(sysUserModel), false);
+            SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
+            assertEquals(sysUser.getUserName(), "admin");
+            assertEquals(sysUser.getRole_id(), 0);
         }
     }
 
     @Test
-    public void forceUpdateTest2() {
+    public void notForceInsertTest2() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserModel sysUserModel = QueryChain.of(sysUserMapper).returnType(SysUserModel.class)
                     .eq(SysUser::getId, 1).get();
             sysUserModel.setUserName(null);
-            sysUserMapper.update(sysUserModel, SysUserModel::getUserName);
-            SysUser sysUser = sysUserMapper.getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            sysUserMapper.updateModel(Collections.singletonList(sysUserModel));
+            SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
+            assertEquals(sysUser.getUserName(), "admin");
+            assertEquals(sysUser.getRole_id(), 0);
         }
     }
 
     @Test
-    public void forceUpdateTest3() {
+    public void notForceInsertTest3() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserModel sysUserModel = QueryChain.of(sysUserMapper).returnType(SysUserModel.class)
                     .eq(SysUser::getId, 1).get();
             sysUserModel.setUserName(null);
-            sysUserMapper.saveOrUpdate(sysUserModel, true);
-            SysUser sysUser = sysUserMapper.getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            sysUserMapper.updateModel(Collections.singletonList(sysUserModel), SysUserModel::getRole_id);
+            SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
+            assertEquals(sysUser.getUserName(), "admin");
+            assertEquals(sysUser.getRole_id(), 0);
         }
     }
 
     @Test
-    public void forceUpdateTest4() {
+    public void notForceInsertTest4() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserModel sysUserModel = QueryChain.of(sysUserMapper).returnType(SysUserModel.class)
                     .eq(SysUser::getId, 1).get();
             sysUserModel.setUserName(null);
-            sysUserMapper.saveOrUpdate(sysUserModel, SysUserModel::getUserName);
-            SysUser sysUser = sysUserMapper.getById(1);
-            assertEquals(sysUser.getUserName(), null);
-        }
-    }
-
-
-    @Test
-    public void forceUpdateListTest() {
-        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
-            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            SysUserModel sysUserModel = QueryChain.of(sysUserMapper).returnType(SysUserModel.class)
-                    .eq(SysUser::getId, 1).get();
-            sysUserModel.setUserName(null);
-            sysUserMapper.updateModel(Collections.singletonList(sysUserModel), true);
-            SysUser sysUser = sysUserMapper.getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            sysUserMapper.saveOrUpdateModel(Collections.singletonList(sysUserModel), false);
+            SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
+            assertEquals(sysUser.getUserName(), "admin");
+            assertEquals(sysUser.getRole_id(), 0);
         }
     }
 
     @Test
-    public void forceUpdateListTest2() {
+    public void notForceInsertTest5() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserModel sysUserModel = QueryChain.of(sysUserMapper).returnType(SysUserModel.class)
                     .eq(SysUser::getId, 1).get();
             sysUserModel.setUserName(null);
-            sysUserMapper.updateModel(Collections.singletonList(sysUserModel), SysUserModel::getUserName);
-            SysUser sysUser = sysUserMapper.getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            sysUserMapper.saveOrUpdateModel(Collections.singletonList(sysUserModel));
+            SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
+            assertEquals(sysUser.getUserName(), "admin");
+            assertEquals(sysUser.getRole_id(), 0);
         }
     }
 
     @Test
-    public void forceUpdateListTest3() {
+    public void notForceInsertTest6() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserModel sysUserModel = QueryChain.of(sysUserMapper).returnType(SysUserModel.class)
                     .eq(SysUser::getId, 1).get();
             sysUserModel.setUserName(null);
-            sysUserMapper.saveOrUpdateModel(Collections.singletonList(sysUserModel), true);
-            SysUser sysUser = sysUserMapper.getById(1);
-            assertEquals(sysUser.getUserName(), null);
-        }
-    }
-
-    @Test
-    public void forceUpdateListTest4() {
-        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
-            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            SysUserModel sysUserModel = QueryChain.of(sysUserMapper).returnType(SysUserModel.class)
-                    .eq(SysUser::getId, 1).get();
-            sysUserModel.setUserName(null);
-            sysUserMapper.saveOrUpdateModel(Collections.singletonList(sysUserModel), SysUserModel::getUserName);
-            SysUser sysUser = sysUserMapper.getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            sysUserMapper.saveOrUpdateModel(Collections.singletonList(sysUserModel), SysUserModel::getId);
+            SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
+            assertEquals(sysUser.getUserName(), "admin");
+            assertEquals(sysUser.getRole_id(), 0);
         }
     }
 }

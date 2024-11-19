@@ -37,7 +37,7 @@ public interface ProviderMapper {
 
     /**
      * @param insertContext 上下文
-     * @return 插入的条数
+     * @return 影响条数
      * @see MybatisSQLProvider#save(SQLCmdInsertContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
      */
     @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
@@ -46,7 +46,7 @@ public interface ProviderMapper {
 
     /**
      * @param insertContext 上下文
-     * @return 返回插入的条数
+     * @return 影响条数
      * @see MybatisSQLProvider#save(SQLCmdInsertContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
      */
     @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)
@@ -55,7 +55,7 @@ public interface ProviderMapper {
 
     /**
      * @param insertContext 上下文
-     * @return 插入的条数
+     * @return 影响条数
      * @see MybatisSQLProvider#save(SQLCmdInsertContext, ProviderContext, DbType) (SQLCmdInsertContext, ProviderContext)
      */
     @InsertProvider(type = MybatisSQLProvider.class, method = MybatisSQLProvider.SAVE_NAME)

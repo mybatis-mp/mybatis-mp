@@ -13,20 +13,20 @@ public class EntityUpdateWithWhereContext<T> extends SQLCmdUpdateContext {
         this(tableInfo, t, where, null);
     }
 
-    public EntityUpdateWithWhereContext(TableInfo tableInfo, T t, Where where, Set<String> forceUpdateFields) {
-        this(tableInfo, t, where, false, forceUpdateFields);
+    public EntityUpdateWithWhereContext(TableInfo tableInfo, T t, Where where, Set<String> forceFields) {
+        this(tableInfo, t, where, false, forceFields);
     }
 
     public EntityUpdateWithWhereContext(TableInfo tableInfo, T t, Where where, boolean allFieldForce) {
         this(tableInfo, t, where, allFieldForce, null);
     }
 
-    public EntityUpdateWithWhereContext(TableInfo tableInfo, T t, Where where, boolean allFieldForce, Set<String> forceUpdateFields) {
-        super(createCmd(tableInfo, t, where, allFieldForce, forceUpdateFields));
+    public EntityUpdateWithWhereContext(TableInfo tableInfo, T t, Where where, boolean allFieldForce, Set<String> forceFields) {
+        super(createCmd(tableInfo, t, where, allFieldForce, forceFields));
     }
 
 
-    private static Update createCmd(TableInfo tableInfo, Object t, Where where, boolean allFieldForce, Set<String> forceUpdateFields) {
-        return EntityUpdateCmdCreateUtil.create(tableInfo, t, where, allFieldForce, forceUpdateFields);
+    private static Update createCmd(TableInfo tableInfo, Object t, Where where, boolean allFieldForce, Set<String> forceFields) {
+        return EntityUpdateCmdCreateUtil.create(tableInfo, t, where, allFieldForce, forceFields);
     }
 }

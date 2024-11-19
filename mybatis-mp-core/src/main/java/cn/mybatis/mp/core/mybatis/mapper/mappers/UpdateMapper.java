@@ -23,8 +23,9 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * 实体类修改
      *
      * @param entity 实体类对象
+     * @param allFieldForce 所有字段都强制保存
      * @return 影响条数
-     * @allFieldForce 所有字段都强制保存
+     *
      */
     default int update(T entity, boolean allFieldForce) {
         return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, allFieldForce, (Getter<T>[]) null);
@@ -34,11 +35,11 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * 实体类修改
      *
      * @param entity
-     * @param forceUpdateFields 强制更新指定，解决需要修改为null的需求
-     * @return 返回修改条数
+     * @param forceFields 强制更新指定，解决需要修改为null的需求
+     * @return 影响条数
      */
-    default int update(T entity, Getter<T>... forceUpdateFields) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, false, forceUpdateFields);
+    default int update(T entity, Getter<T>... forceFields) {
+        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, false, forceFields);
     }
 
     /**
@@ -55,8 +56,9 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * 多个修改，非批量行为
      *
      * @param list 实体类对象List
+     * @param allFieldForce 所有字段都强制保存
      * @return 影响条数
-     * @allFieldForce 所有字段都强制保存
+     *
      */
     default int update(Collection<T> list, boolean allFieldForce) {
         return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), list, allFieldForce, (Getter<T>[]) null);
@@ -66,11 +68,11 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * 多个修改，非批量行为
      *
      * @param list              实体类对象List
-     * @param forceUpdateFields 强制更新指定，解决需要修改为null的需求
-     * @return 修改条数
+     * @param forceFields 强制更新指定，解决需要修改为null的需求
+     * @return 影响条数
      */
-    default int update(Collection<T> list, Getter<T>... forceUpdateFields) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), list, false, forceUpdateFields);
+    default int update(Collection<T> list, Getter<T>... forceFields) {
+        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), list, false, forceFields);
     }
 
 
@@ -79,7 +81,7 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      *
      * @param entity   实体类
      * @param consumer where
-     * @return
+     * @return 影响条数
      */
     default int update(T entity, Consumer<Where> consumer) {
         return this.update(entity, false, consumer);
@@ -91,7 +93,7 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * @param entity        实体类对象
      * @param allFieldForce 所有字段都强制保存
      * @param consumer      where
-     * @return
+     * @return 影响条数
      */
     default int update(T entity, boolean allFieldForce, Consumer<Where> consumer) {
         return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, allFieldForce, consumer);
@@ -102,10 +104,10 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      *
      * @param entity            实体类对象
      * @param consumer          where
-     * @param forceUpdateFields 强制更新指定，解决需要修改为null的需求
-     * @return
+     * @param forceFields 强制更新指定，解决需要修改为null的需求
+     * @return 影响条数
      */
-    default int update(T entity, Consumer<Where> consumer, Getter<T>... forceUpdateFields) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, consumer, forceUpdateFields);
+    default int update(T entity, Consumer<Where> consumer, Getter<T>... forceFields) {
+        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, consumer, forceFields);
     }
 }

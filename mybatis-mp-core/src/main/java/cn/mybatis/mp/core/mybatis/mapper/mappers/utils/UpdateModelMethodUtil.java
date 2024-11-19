@@ -16,36 +16,35 @@ import java.util.function.Consumer;
 
 public final class UpdateModelMethodUtil {
 
-    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, boolean allFieldForce, Getter<MODEL>[] forceUpdateFields) {
-        return update(basicMapper, model, allFieldForce, LambdaUtil.getFieldNames(forceUpdateFields));
+    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, boolean allFieldForce, Set<String> forceFields) {
+        return basicMapper.$update(new ModelUpdateContext<>(model, allFieldForce, forceFields));
     }
 
-    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, boolean allFieldForce, Set<String> forceUpdateFields) {
-        return basicMapper.$update(new ModelUpdateContext(model, allFieldForce, forceUpdateFields));
+    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, boolean allFieldForce, Getter<MODEL>[] forceFields) {
+        return update(basicMapper, model, allFieldForce, LambdaUtil.getFieldNames(forceFields));
     }
 
-    public static <MODEL extends Model> int update(BasicMapper basicMapper, Collection<MODEL> list, boolean allFieldForce, Getter<MODEL>[] forceUpdateFields) {
+    public static <MODEL extends Model> int update(BasicMapper basicMapper, Collection<MODEL> list, boolean allFieldForce, Getter<MODEL>[] forceFields) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        Set<String> forceFields = LambdaUtil.getFieldNames(forceUpdateFields);
+        Set<String> forceFieldNames = LambdaUtil.getFieldNames(forceFields);
         int cnt = 0;
         for (MODEL model : list) {
-            cnt += update(basicMapper, model, allFieldForce, forceFields);
+            cnt += update(basicMapper, model, allFieldForce, forceFieldNames);
         }
         return cnt;
     }
 
-    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, boolean allFieldForce, Consumer<Where> consumer) {
-        return update(basicMapper, model, WhereUtil.create(consumer), allFieldForce, null);
+    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, Consumer<Where> consumer, boolean allFieldForce, Getter<MODEL>[] forceFields) {
+        return update(basicMapper, model, WhereUtil.create(consumer), allFieldForce, LambdaUtil.getFieldNames(forceFields));
     }
 
-    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, Consumer<Where> consumer, Getter<MODEL>[] forceUpdateFields) {
-        return update(basicMapper, model, WhereUtil.create(consumer), false, LambdaUtil.getFieldNames(forceUpdateFields));
+    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, Where where, boolean allFieldForce, Getter<MODEL>[] forceFields) {
+        return update(basicMapper, model, where, allFieldForce, LambdaUtil.getFieldNames(forceFields));
     }
 
-
-    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, Where where, boolean allFieldForce, Set<String> forceUpdateFields) {
-        return basicMapper.$update(new ModelUpdateWithWhereContext<>(model, where, allFieldForce, forceUpdateFields));
+    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, Where where, boolean allFieldForce, Set<String> forceFields) {
+        return basicMapper.$update(new ModelUpdateWithWhereContext<>(model, where, allFieldForce, forceFields));
     }
 }

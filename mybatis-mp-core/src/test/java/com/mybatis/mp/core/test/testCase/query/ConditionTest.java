@@ -21,6 +21,46 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ConditionTest extends BaseTest {
 
+
+    @Test
+    public void nullPass() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Integer id = QueryChain.of(sysUserMapper)
+                    .forSearch()
+                    .select(SysUser::getId)
+                    .from(SysUser.class)
+                    .eq(SysUser::getId, 1, Objects::nonNull)
+                    .eq(SysUser::getId, null)
+                    .empty(SysUser::getUserName)
+                    .returnType(Integer.class)
+                    .get();
+
+            assertNull(id, "eq");
+        }
+    }
+
+    @Test
+    public void nullNotPass() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            try {
+
+                QueryChain.of(sysUserMapper)
+                        .select(SysUser::getId)
+                        .from(SysUser.class)
+                        .eq(SysUser::getId, 1, Objects::nonNull)
+                        .eq(SysUser::getId, null)
+                        .empty(SysUser::getUserName)
+                        .returnType(Integer.class)
+                        .get();
+                assertTrue(false);
+            } catch (ConditionValueNullException e) {
+                assertTrue(true);
+            }
+        }
+    }
+
     @Test
     public void empty() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

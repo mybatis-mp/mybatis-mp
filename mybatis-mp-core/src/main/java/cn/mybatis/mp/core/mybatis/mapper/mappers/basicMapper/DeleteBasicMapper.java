@@ -13,7 +13,7 @@ public interface DeleteBasicMapper extends BaseBasicMapper {
      * 根据实体类删除
      *
      * @param entity 实体类实例
-     * @return 影响的数量
+     * @return 影响条数
      */
     default <T> int delete(T entity) {
         return DeleteMethodUtil.delete(getBasicMapper(), Tables.get(entity.getClass()), entity);
@@ -23,7 +23,7 @@ public interface DeleteBasicMapper extends BaseBasicMapper {
      * 多个删除
      *
      * @param list 实体类实例list
-     * @return 修改条数
+     * @return 影响条数
      */
     default <T> int delete(Collection<T> list) {
         if (list == null || list.isEmpty()) {
@@ -39,7 +39,7 @@ public interface DeleteBasicMapper extends BaseBasicMapper {
      *
      * @param entityType 实体类
      * @param id         ID
-     * @return 影响的数量
+     * @return 影响条数
      */
     default <T, ID extends Serializable> int deleteById(Class<T> entityType, ID id) {
         return DeleteMethodUtil.deleteById(getBasicMapper(), Tables.get(entityType), id);
@@ -50,7 +50,7 @@ public interface DeleteBasicMapper extends BaseBasicMapper {
      *
      * @param entityType 实体类
      * @param ids        多个ID
-     * @return 影响的数量
+     * @return 影响条数
      */
     default <T, ID extends Serializable> int deleteByIds(Class<T> entityType, ID... ids) {
         return DeleteMethodUtil.deleteByIds(getBasicMapper(), Tables.get(entityType), ids);
@@ -72,7 +72,7 @@ public interface DeleteBasicMapper extends BaseBasicMapper {
      *
      * @param entityType 实体类
      * @param consumer
-     * @return
+     * @return 影响条数
      */
     default <T> int delete(Class<T> entityType, Consumer<Where> consumer) {
         return DeleteMethodUtil.delete(getBasicMapper(), Tables.get(entityType), consumer);
@@ -83,7 +83,7 @@ public interface DeleteBasicMapper extends BaseBasicMapper {
      *
      * @param entityType 实体类
      * @param where
-     * @return
+     * @return 影响条数
      */
     default <T> int delete(Class<T> entityType, Where where) {
         return DeleteMethodUtil.delete(getBasicMapper(), Tables.get(entityType), where);
@@ -93,7 +93,7 @@ public interface DeleteBasicMapper extends BaseBasicMapper {
      * 删除所有数据
      *
      * @param entityType 实体类
-     * @return
+     * @return 影响条数
      */
     default <T> int deleteAll(Class<T> entityType) {
         return DeleteMethodUtil.deleteAll(getBasicMapper(), Tables.get(entityType));

@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS t_sys_user;
 CREATE TABLE t_sys_user
 (
     id INTEGER PRIMARY KEY IDENTITY(1,1),
-    user_name VARCHAR(100),
+    user_name VARCHAR(100) DEFAULT '123456',
     password VARCHAR(100),
     role_id INTEGER,
     create_time DATETIME NOT NULL DEFAULT  GETDATE()

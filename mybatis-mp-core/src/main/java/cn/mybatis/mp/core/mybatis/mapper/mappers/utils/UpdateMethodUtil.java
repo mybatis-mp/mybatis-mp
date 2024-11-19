@@ -16,36 +16,36 @@ import java.util.function.Consumer;
 
 public final class UpdateMethodUtil {
 
-    public static <E> int update(BasicMapper basicMapper, TableInfo tableInfo, E entity, boolean allFieldForce, Getter<E>[] forceUpdateFields) {
-        return update(basicMapper, tableInfo, entity, allFieldForce, LambdaUtil.getFieldNames(forceUpdateFields));
+    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Set<String> forceFields) {
+        return basicMapper.$update(new EntityUpdateContext(tableInfo, entity, allFieldForce, forceFields));
     }
 
-    public static <E> int update(BasicMapper basicMapper, TableInfo tableInfo, E entity, boolean allFieldForce, Set<String> forceUpdateFields) {
-        return basicMapper.$update(new EntityUpdateContext(tableInfo, entity, allFieldForce, forceUpdateFields));
+    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Getter<T>[] forceFields) {
+        return update(basicMapper, tableInfo, entity, allFieldForce, LambdaUtil.getFieldNames(forceFields));
     }
 
-    public static <E> int update(BasicMapper basicMapper, TableInfo tableInfo, E entity, Where where, boolean allFieldForce, Set<String> forceUpdateFields) {
-        return basicMapper.$update(new EntityUpdateWithWhereContext<>(tableInfo, entity, where, allFieldForce, forceUpdateFields));
+    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, Where where, boolean allFieldForce, Set<String> forceFields) {
+        return basicMapper.$update(new EntityUpdateWithWhereContext<>(tableInfo, entity, where, allFieldForce, forceFields));
     }
 
-    public static <E> int update(BasicMapper basicMapper, TableInfo tableInfo, Collection<E> list, boolean allFieldForce, Getter<E>[] forceUpdateFields) {
+    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, boolean allFieldForce, Getter<T>[] forceFields) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        Set<String> forceFields = LambdaUtil.getFieldNames(forceUpdateFields);
+        Set<String> forceFieldNames = LambdaUtil.getFieldNames(forceFields);
         int cnt = 0;
-        for (E entity : list) {
-            cnt += update(basicMapper, tableInfo, entity, allFieldForce, forceFields);
+        for (T entity : list) {
+            cnt += update(basicMapper, tableInfo, entity, allFieldForce, forceFieldNames);
         }
         return cnt;
     }
 
-    public static <E> int update(BasicMapper basicMapper, TableInfo tableInfo, E entity, boolean allFieldForce, Consumer<Where> consumer) {
+    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Consumer<Where> consumer) {
         return update(basicMapper, tableInfo, entity, WhereUtil.create(tableInfo, consumer), allFieldForce, null);
     }
 
-    public static <E> int update(BasicMapper basicMapper, TableInfo tableInfo, E entity, Consumer<Where> consumer, Getter<E>[] forceUpdateFields) {
-        return update(basicMapper, tableInfo, entity, WhereUtil.create(tableInfo, consumer), false, LambdaUtil.getFieldNames(forceUpdateFields));
+    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, Consumer<Where> consumer, Getter<T>[] forceFields) {
+        return update(basicMapper, tableInfo, entity, WhereUtil.create(tableInfo, consumer), false, LambdaUtil.getFieldNames(forceFields));
     }
 
 }

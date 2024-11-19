@@ -24,7 +24,7 @@ import java.util.Set;
 public class ModelUpdateCmdCreateUtil {
 
 
-    private static Update warp(Update update, ModelInfo modelInfo, Model t, Set<String> forceUpdateFields, boolean allFieldForce) {
+    private static Update warp(Update update, ModelInfo modelInfo, Model t, Set<String> forceFields, boolean allFieldForce) {
         MybatisCmdFactory $ = update.$();
         Table table = $.table(modelInfo.getEntityType());
         update.update(table);
@@ -70,7 +70,7 @@ public class ModelUpdateCmdCreateUtil {
                 ModelInfoUtil.setValue(modelFieldInfo, t, value);
             }
 
-            if (allFieldForce || (Objects.nonNull(forceUpdateFields) && forceUpdateFields.contains(modelFieldInfo.getField().getName()))) {
+            if (allFieldForce || (Objects.nonNull(forceFields) && forceFields.contains(modelFieldInfo.getField().getName()))) {
                 if (Objects.isNull(value)) {
                     update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), NULL.NULL);
                     continue;
@@ -93,18 +93,18 @@ public class ModelUpdateCmdCreateUtil {
     }
 
 
-    public static Update create(Model model, Set<String> forceUpdateFields, boolean allFieldForce) {
+    public static Update create(Model model, Set<String> forceFields, boolean allFieldForce) {
         Where where = WhereUtil.create();
         ModelInfo modelInfo = Models.get(model.getClass());
         WhereUtil.appendIdWhereWithModel(where, modelInfo, model);
-        return warp(new Update(where), modelInfo, model, forceUpdateFields, allFieldForce);
+        return warp(new Update(where), modelInfo, model, forceFields, allFieldForce);
     }
 
-    public static Update create(Model model, Where where, Set<String> forceUpdateFields, boolean allFieldForce) {
+    public static Update create(Model model, Where where, Set<String> forceFields, boolean allFieldForce) {
         if (Objects.isNull(where) || !where.hasContent()) {
             throw new RuntimeException("update has no where condition content ");
         }
         ModelInfo modelInfo = Models.get(model.getClass());
-        return warp(new Update(where), modelInfo, model, forceUpdateFields, allFieldForce);
+        return warp(new Update(where), modelInfo, model, forceFields, allFieldForce);
     }
 }

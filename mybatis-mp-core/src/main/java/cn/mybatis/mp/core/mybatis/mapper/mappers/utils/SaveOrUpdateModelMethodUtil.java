@@ -14,7 +14,7 @@ import java.util.Objects;
 
 public class SaveOrUpdateModelMethodUtil {
 
-    public static <M extends Model> int saveOrUpdate(BasicMapper basicMapper, ModelInfo modelInfo, M model, boolean allFieldForce) {
+    public static <M extends Model> int saveOrUpdate(BasicMapper basicMapper, ModelInfo modelInfo, M model, boolean allFieldForce, Getter<M>[] forceFields) {
         if (modelInfo.getIdFieldInfos().isEmpty()) {
             throw new RuntimeException(modelInfo.getType().getName() + " has no id");
         }
@@ -26,7 +26,7 @@ public class SaveOrUpdateModelMethodUtil {
         }
 
         if (Objects.isNull(id)) {
-            return SaveModelMethodUtil.save(basicMapper, model, allFieldForce);
+            return SaveModelMethodUtil.save(basicMapper, model, allFieldForce, forceFields);
         }
 
         Query<?> query = Query.create();
@@ -37,13 +37,13 @@ public class SaveOrUpdateModelMethodUtil {
         WhereUtil.appendIdWhereWithModel(query.$where(), modelInfo, model);
         boolean exists = basicMapper.exists(query);
         if (exists) {
-            return UpdateModelMethodUtil.update(basicMapper, model, allFieldForce, (Getter<M>[]) null);
+            return UpdateModelMethodUtil.update(basicMapper, model, allFieldForce, forceFields);
         } else {
-            return SaveModelMethodUtil.save(basicMapper, model, allFieldForce);
+            return SaveModelMethodUtil.save(basicMapper, model, allFieldForce, forceFields);
         }
     }
 
-    public static <M extends Model> int saveOrUpdate(BasicMapper basicMapper, Collection<M> list, boolean allFieldForce) {
+    public static <M extends Model> int saveOrUpdate(BasicMapper basicMapper, Collection<M> list, boolean allFieldForce, Getter<M>[] forceFields) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
@@ -51,7 +51,7 @@ public class SaveOrUpdateModelMethodUtil {
         ModelInfo modelInfo = Models.get(first.getClass());
         int cnt = 0;
         for (M model : list) {
-            cnt += saveOrUpdate(basicMapper, modelInfo, model, allFieldForce);
+            cnt += saveOrUpdate(basicMapper, modelInfo, model, allFieldForce, forceFields);
         }
         return cnt;
     }

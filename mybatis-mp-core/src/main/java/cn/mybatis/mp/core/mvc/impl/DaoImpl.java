@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public abstract class DaoImpl<T, K> implements Dao<T, K> {
+public class DaoImpl<T, K> implements Dao<T, K> {
 
     protected MybatisMapper<T> mapper;
     protected volatile Class<K> idType;
@@ -96,6 +96,16 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     @Override
+    public int save(T entity, Getter<T>... forceFields) {
+        return getMapper().save(entity, forceFields);
+    }
+
+    @Override
+    public int save(T entity, boolean allFieldForce) {
+        return getMapper().save(entity, allFieldForce);
+    }
+
+    @Override
     public int saveOrUpdate(T entity) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
@@ -104,21 +114,130 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     @Override
+    public int saveOrUpdate(T entity, boolean allFieldForce) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().saveOrUpdate(entity, allFieldForce);
+    }
+
+    @Override
+    public int saveOrUpdate(T entity, Getter<T>... forceFields) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().saveOrUpdate(entity, forceFields);
+    }
+
+    @Override
+    public int saveOrUpdate(Collection<T> list) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().saveOrUpdate(list);
+    }
+
+    @Override
+    public int saveOrUpdate(Collection<T> list, boolean allFieldForce) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().saveOrUpdate(list, allFieldForce);
+    }
+
+    @Override
+    public int saveOrUpdate(Collection<T> list, Getter<T>... forceFields) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().saveOrUpdate(list, forceFields);
+    }
+
+    @Override
     public int save(Collection<T> list) {
         return getMapper().save(list);
     }
 
     @Override
-    public int save(Model<T> model) {
+    public int save(Collection<T> list, boolean allFieldForce) {
+        return getMapper().save(list, allFieldForce);
+    }
+
+    @Override
+    public int save(Collection<T> list, Getter<T>... forceFields) {
+        return getMapper().save(list, forceFields);
+    }
+
+    @Override
+    public <M extends Model<T>> int save(M model) {
         return getMapper().save(model);
     }
 
     @Override
-    public int saveOrUpdate(Model<T> model) {
+    public <M extends Model<T>> int save(M model, Getter<M>... forceFields) {
+        return getMapper().save(model, forceFields);
+    }
+
+    @Override
+    public <M extends Model<T>> int save(M model, boolean allFieldForce) {
+        return getMapper().save(model, allFieldForce);
+    }
+
+    @Override
+    public <M extends Model<T>> int saveModel(Collection<M> list) {
+        return getMapper().saveModel(list);
+    }
+
+    @Override
+    public <M extends Model<T>> int saveModel(Collection<M> list, boolean allFieldForce) {
+        return getMapper().saveModel(list, allFieldForce);
+    }
+
+    @Override
+    public <M extends Model<T>> int saveModel(Collection<M> list, Getter<M>... forceFields) {
+        return getMapper().saveModel(list, forceFields);
+    }
+
+    @Override
+    public <M extends Model<T>> int saveOrUpdate(M model) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
         return getMapper().saveOrUpdate(model);
+    }
+
+    @Override
+    public <M extends Model<T>> int saveOrUpdate(M model, boolean allFieldForce) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().saveOrUpdate(model, allFieldForce);
+    }
+
+    @Override
+    public <M extends Model<T>> int saveOrUpdate(M model, Getter<M>... forceFields) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().saveOrUpdate(model, forceFields);
+    }
+
+    @Override
+    public <M extends Model<T>> int saveOrUpdateModel(Collection<M> list) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().saveOrUpdateModel(list);
+    }
+
+    @Override
+    public <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, boolean allFieldForce) {
+        return getMapper().saveOrUpdateModel(list, allFieldForce);
+    }
+
+    @Override
+    public <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, Getter<M>... forceFields) {
+        return getMapper().saveOrUpdateModel(list, forceFields);
     }
 
     @Override
@@ -130,6 +249,14 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     @Override
+    public int update(T entity, boolean allFieldForce) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().update(entity, allFieldForce);
+    }
+
+    @Override
     public int update(Collection<T> list) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
@@ -138,15 +265,31 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     @Override
-    public int update(T entity, Getter<T>... forceUpdateFields) {
+    public int update(Collection<T> list, boolean allFieldForce) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
-        return getMapper().update(entity, forceUpdateFields);
+        return getMapper().update(list, allFieldForce);
     }
 
     @Override
-    public int update(Model<T> model) {
+    public int update(Collection<T> list, Getter<T>... forceFields) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().update(list, forceFields);
+    }
+
+    @Override
+    public int update(T entity, Getter<T>... forceFields) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().update(entity, forceFields);
+    }
+
+    @Override
+    public <M extends Model<T>> int update(M model) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
@@ -154,11 +297,37 @@ public abstract class DaoImpl<T, K> implements Dao<T, K> {
     }
 
     @Override
-    public int update(Model<T> model, Getter<Model<T>>... forceUpdateFields) {
+    public <M extends Model<T>> int update(M model, Getter<M>... forceFields) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
-        return getMapper().update(model, forceUpdateFields);
+        return getMapper().update(model, forceFields);
+    }
+
+    @Override
+    public <M extends Model<T>> int update(M model, boolean allFieldForce) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().update(model, allFieldForce);
+    }
+
+    @Override
+    public <M extends Model<T>> int updateModel(Collection<M> list) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        return getMapper().updateModel(list);
+    }
+
+    @Override
+    public <M extends Model<T>> int updateModel(Collection<M> list, Getter<M>... forceFields) {
+        return getMapper().updateModel(list, forceFields);
+    }
+
+    @Override
+    public <M extends Model<T>> int updateModel(Collection<M> list, boolean allFieldForce) {
+        return getMapper().updateModel(list, allFieldForce);
     }
 
     @Override

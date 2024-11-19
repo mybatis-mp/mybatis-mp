@@ -12,7 +12,7 @@ public interface DeleteMapper<T> extends BaseMapper<T> {
      * 根据实体类删除
      *
      * @param entity 实体类实例
-     * @return 影响的数量
+     * @return 影响条数
      */
     default int delete(T entity) {
         return DeleteMethodUtil.delete(getBasicMapper(), getTableInfo(), entity);
@@ -22,7 +22,7 @@ public interface DeleteMapper<T> extends BaseMapper<T> {
      * 多个删除
      *
      * @param list 实体类实例list
-     * @return 修改条数
+     * @return 影响条数
      */
     default int delete(Collection<T> list) {
         return DeleteMethodUtil.delete(getBasicMapper(), getTableInfo(), list);
@@ -33,7 +33,7 @@ public interface DeleteMapper<T> extends BaseMapper<T> {
      * 根据id删除
      *
      * @param id ID
-     * @return 影响的数量
+     * @return 影响条数
      */
     default <ID extends Serializable> int deleteById(ID id) {
         return DeleteMethodUtil.deleteById(getBasicMapper(), getTableInfo(), id);
@@ -43,7 +43,7 @@ public interface DeleteMapper<T> extends BaseMapper<T> {
      * 批量删除多个
      *
      * @param ids 多个ID
-     * @return 影响的数量
+     * @return 影响条数
      */
     default <ID extends Serializable> int deleteByIds(ID... ids) {
         return DeleteMethodUtil.deleteByIds(getBasicMapper(), getTableInfo(), ids);
@@ -63,7 +63,7 @@ public interface DeleteMapper<T> extends BaseMapper<T> {
      * 动态条件删除
      *
      * @param consumer
-     * @return
+     * @return 影响条数
      */
     default int delete(Consumer<Where> consumer) {
         return DeleteMethodUtil.delete(getBasicMapper(), getTableInfo(), consumer);
@@ -73,7 +73,7 @@ public interface DeleteMapper<T> extends BaseMapper<T> {
      * 动态条件删除
      *
      * @param where
-     * @return
+     * @return 影响条数
      */
     default int delete(Where where) {
         return DeleteMethodUtil.delete(getBasicMapper(), getTableInfo(), where);
@@ -82,7 +82,7 @@ public interface DeleteMapper<T> extends BaseMapper<T> {
     /**
      * 删除所有数据
      *
-     * @return
+     * @return 影响条数
      */
     default int deleteAll() {
         return DeleteMethodUtil.deleteAll(getBasicMapper(), getTableInfo());

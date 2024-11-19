@@ -24,22 +24,23 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
      * 实体类修改
      *
      * @param model 实体类对象
+     *  @param allFieldForce 所有字段都强制保存
      * @return 影响条数
-     * @allFieldForce 所有字段都强制保存
+     *
      */
     default <M extends Model<T>> int update(M model, boolean allFieldForce) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, allFieldForce, (Getter<M>[]) null);
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, allFieldForce, (Getter[]) null);
     }
 
     /**
      * 实体类修改
      *
      * @param model
-     * @param forceUpdateFields 强制更新指定，解决需要修改为null的需求
-     * @return 返回修改条数
+     * @param forceFields 强制更新指定，解决需要修改为null的需求
+     * @return 影响条数
      */
-    default <M extends Model<T>> int update(M model, Getter<M>... forceUpdateFields) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, false, forceUpdateFields);
+    default <M extends Model<T>> int update(M model, Getter<M>... forceFields) {
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, false, forceFields);
     }
 
     /**
@@ -56,8 +57,9 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
      * 多个修改，非批量行为
      *
      * @param list 实体类对象List
+     * @param allFieldForce 所有字段都强制保存
      * @return 影响条数
-     * @allFieldForce 所有字段都强制保存
+     *
      */
     default <M extends Model<T>> int updateModel(Collection<M> list, boolean allFieldForce) {
         return UpdateModelMethodUtil.update(getBasicMapper(), list, allFieldForce, null);
@@ -67,11 +69,11 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
      * 多个修改，非批量行为
      *
      * @param list              实体类对象List
-     * @param forceUpdateFields 强制更新指定，解决需要修改为null的需求
-     * @return 修改条数
+     * @param forceFields 强制更新指定，解决需要修改为null的需求
+     * @return 影响条数
      */
-    default <M extends Model<T>> int updateModel(Collection<M> list, Getter<M>... forceUpdateFields) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), list, false, forceUpdateFields);
+    default <M extends Model<T>> int updateModel(Collection<M> list, Getter<M>... forceFields) {
+        return UpdateModelMethodUtil.update(getBasicMapper(), list, false, forceFields);
     }
 
 
@@ -80,7 +82,7 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
      *
      * @param model    实体类
      * @param consumer where
-     * @return
+     * @return 影响条数
      */
     default <M extends Model<T>> int update(M model, Consumer<Where> consumer) {
         return this.update(model, false, consumer);
@@ -92,10 +94,10 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
      * @param model         实体类对象
      * @param allFieldForce 所有字段都强制保存
      * @param consumer      where
-     * @return
+     * @return 影响条数
      */
     default <M extends Model<T>> int update(M model, boolean allFieldForce, Consumer<Where> consumer) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, allFieldForce, consumer);
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, consumer, allFieldForce, null);
     }
 
     /**
@@ -103,10 +105,10 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
      *
      * @param model             实体类对象
      * @param consumer          where
-     * @param forceUpdateFields 强制更新指定，解决需要修改为null的需求
-     * @return
+     * @param forceFields 强制更新指定，解决需要修改为null的需求
+     * @return 影响条数
      */
-    default <M extends Model<T>> int update(M model, Consumer<Where> consumer, Getter<M>... forceUpdateFields) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, consumer, forceUpdateFields);
+    default <M extends Model<T>> int update(M model, Consumer<Where> consumer, Getter<M>... forceFields) {
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, consumer, false, forceFields);
     }
 }

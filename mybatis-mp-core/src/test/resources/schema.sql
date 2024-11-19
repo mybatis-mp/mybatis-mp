@@ -3,7 +3,7 @@ drop table if exists t_sys_user;
 CREATE TABLE IF NOT EXISTS t_sys_user
 (
     id INTEGER PRIMARY KEY auto_increment,
-    user_name VARCHAR(100),
+    user_name VARCHAR(100) default '123456',
     password VARCHAR(100),
     role_id INTEGER,
     create_time DATETIME NOT NULL DEFAULT NOW()

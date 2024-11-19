@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class SaveOrUpdateMethodUtil {
 
-    public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce) {
+    public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Getter<T>... forceFields) {
         Class<?> entityType = entity.getClass();
         if (tableInfo.getIdFieldInfos().isEmpty()) {
             throw new RuntimeException(entityType.getName() + " has no id");
@@ -25,7 +25,7 @@ public class SaveOrUpdateMethodUtil {
         }
 
         if (Objects.isNull(id)) {
-            return SaveMethodUtil.save(basicMapper, tableInfo, entity, allFieldForce);
+            return SaveMethodUtil.save(basicMapper, tableInfo, entity, allFieldForce, forceFields);
         }
 
         Query<T> query = Query.create();
@@ -36,19 +36,19 @@ public class SaveOrUpdateMethodUtil {
         WhereUtil.appendIdWhereWithEntity(query.$where(), tableInfo, entity);
         boolean exists = basicMapper.exists(query);
         if (exists) {
-            return UpdateMethodUtil.update(basicMapper, tableInfo, entity, allFieldForce, (Getter<T>[]) null);
+            return UpdateMethodUtil.update(basicMapper, tableInfo, entity, allFieldForce, forceFields);
         } else {
-            return SaveMethodUtil.save(basicMapper, tableInfo, entity, allFieldForce);
+            return SaveMethodUtil.save(basicMapper, tableInfo, entity, allFieldForce, forceFields);
         }
     }
 
-    public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, boolean allFieldForce) {
+    public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, boolean allFieldForce, Getter<T>... forceFields) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
         int cnt = 0;
         for (T entity : list) {
-            cnt += saveOrUpdate(basicMapper, tableInfo, entity, allFieldForce);
+            cnt += saveOrUpdate(basicMapper, tableInfo, entity, allFieldForce, forceFields);
         }
         return cnt;
     }

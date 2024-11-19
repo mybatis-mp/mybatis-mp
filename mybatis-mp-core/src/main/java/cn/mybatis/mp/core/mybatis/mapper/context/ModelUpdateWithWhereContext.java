@@ -9,11 +9,11 @@ import java.util.Set;
 
 public class ModelUpdateWithWhereContext<T extends Model> extends SQLCmdUpdateContext {
 
-    public ModelUpdateWithWhereContext(T t, Where where, boolean allFieldForce, Set<String> forceUpdateFields) {
-        super(createCmd(t, where, allFieldForce, forceUpdateFields));
+    public ModelUpdateWithWhereContext(T t, Where where, boolean allFieldForce, Set<String> forceFields) {
+        super(createCmd(t, where, allFieldForce, forceFields));
     }
 
-    private static Update createCmd(Model t, Where where, boolean allFieldForce, Set<String> forceUpdateFields) {
-        return ModelUpdateCmdCreateUtil.create(t, where, forceUpdateFields, allFieldForce);
+    private static Update createCmd(Model t, Where where, boolean allFieldForce, Set<String> forceFields) {
+        return ModelUpdateCmdCreateUtil.create(t, where, forceFields, allFieldForce);
     }
 }

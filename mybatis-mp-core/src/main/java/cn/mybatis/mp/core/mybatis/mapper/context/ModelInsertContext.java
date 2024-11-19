@@ -38,16 +38,16 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
 
     private final boolean allFieldForce;
 
-    private final Set<String> forceSaveFields;
+    private final Set<String> forceFields;
 
     private final boolean idHasValue;
 
-    public ModelInsertContext(T model, boolean allFieldForce, Set<String> forceSaveFields) {
+    public ModelInsertContext(T model, boolean allFieldForce, Set<String> forceFields) {
         this.model = model;
         this.allFieldForce = allFieldForce;
         this.modelInfo = Models.get(model.getClass());
         this.entityType = modelInfo.getEntityType();
-        this.forceSaveFields = forceSaveFields;
+        this.forceFields = forceFields;
         this.idHasValue = IdUtil.isIdExists(model, modelInfo.getIdFieldInfo());
     }
 
@@ -105,7 +105,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
                 value = TypeConvertUtil.convert(Integer.valueOf(1), modelFieldInfo.getField().getType());
                 //乐观锁回写
                 ModelInfoUtil.setValue(modelFieldInfo, model, value);
-            } else if (allFieldForce || (Objects.nonNull(this.forceSaveFields) && this.forceSaveFields.contains(modelFieldInfo.getField().getName()))) {
+            } else if (allFieldForce || (Objects.nonNull(this.forceFields) && this.forceFields.contains(modelFieldInfo.getField().getName()))) {
                 isNeedInsert = true;
             }
 
