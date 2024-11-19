@@ -24,7 +24,7 @@ public interface UpdateBasicMapper extends BaseBasicMapper {
      * 实体类修改
      *
      * @param entity 实体类对象
-     * @param allFieldForce 所有字段都强制保存
+     * @param allFieldForce 是否所有字段都修改，如果是null值，则变成NULL
      * @return 影响条数
      *
      */
@@ -57,7 +57,7 @@ public interface UpdateBasicMapper extends BaseBasicMapper {
      * 多个修改，非批量行为
      *
      * @param list 实体类对象List
-     * @param allFieldForce 所有字段都强制保存
+     * @param allFieldForce 是否所有字段都修改，如果是null值，则变成NULL
      * @return 影响条数
      *
      */
@@ -100,12 +100,12 @@ public interface UpdateBasicMapper extends BaseBasicMapper {
      * 动态条件修改
      *
      * @param entity        实体类对象
-     * @param allFieldForce 所有字段都强制保存
+     * @param allFieldForce 是否所有字段都修改，如果是null值，则变成NULL
      * @param consumer      where
      * @return 影响条数
      */
     default <T> int update(T entity, boolean allFieldForce, Consumer<Where> consumer) {
-        return UpdateMethodUtil.update(getBasicMapper(), Tables.get(entity.getClass()), entity, allFieldForce, consumer);
+        return UpdateMethodUtil.update(getBasicMapper(), Tables.get(entity.getClass()), entity, allFieldForce, null, consumer);
     }
 
     /**
@@ -117,6 +117,41 @@ public interface UpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int update(T entity, Consumer<Where> consumer, Getter<T>... forceFields) {
-        return UpdateMethodUtil.update(getBasicMapper(), Tables.get(entity.getClass()), entity, consumer, forceFields);
+        return UpdateMethodUtil.update(getBasicMapper(), Tables.get(entity.getClass()), entity, false, forceFields, consumer);
+    }
+
+    /**
+     * 指定where 修改
+     *
+     * @param entity 实体类对象
+     * @param where  where
+     * @return 影响条数
+     */
+    default <T> int update(T entity, Where where) {
+        return UpdateMethodUtil.update(getBasicMapper(), Tables.get(entity.getClass()), entity, false, null, where);
+    }
+
+    /**
+     * 指定where 修改
+     *
+     * @param entity        实体类对象
+     * @param where         where
+     * @param allFieldForce 是否所有字段都修改，如果是null值，则变成NULL
+     * @return 影响条数
+     */
+    default <T> int update(T entity, boolean allFieldForce, Where where) {
+        return UpdateMethodUtil.update(getBasicMapper(), Tables.get(entity.getClass()), entity, allFieldForce, null, where);
+    }
+
+    /**
+     * 指定where 修改
+     *
+     * @param entity      实体类对象
+     * @param where       where
+     * @param forceFields 强制更新指定，解决需要修改为null的需求
+     * @return 影响条数
+     */
+    default <T> int update(T entity, Where where, Getter<T>... forceFields) {
+        return UpdateMethodUtil.update(getBasicMapper(), Tables.get(entity.getClass()), entity, false, forceFields, where);
     }
 }

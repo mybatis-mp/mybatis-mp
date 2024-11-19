@@ -97,7 +97,7 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default <M extends Model<T>> int update(M model, boolean allFieldForce, Consumer<Where> consumer) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, consumer, allFieldForce, null);
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, allFieldForce, null, consumer);
     }
 
     /**
@@ -109,6 +109,41 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default <M extends Model<T>> int update(M model, Consumer<Where> consumer, Getter<M>... forceFields) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, consumer, false, forceFields);
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, false, forceFields, consumer);
+    }
+
+    /**
+     * 指定where条件修改
+     *
+     * @param model 实体类
+     * @param where where
+     * @return 影响条数
+     */
+    default <M extends Model<T>> int update(M model, Where where) {
+        return this.update(model, false, where);
+    }
+
+    /**
+     * 指定where条件修改
+     *
+     * @param model         实体类对象
+     * @param allFieldForce 所有字段都强制保存
+     * @param where         where
+     * @return 影响条数
+     */
+    default <M extends Model<T>> int update(M model, boolean allFieldForce, Where where) {
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, allFieldForce, (Getter<M>[]) null, where);
+    }
+
+    /**
+     * 指定where条件修改
+     *
+     * @param model       实体类对象
+     * @param where       where
+     * @param forceFields 强制更新指定，解决需要修改为null的需求
+     * @return 影响条数
+     */
+    default <M extends Model<T>> int update(M model, Where where, Getter<M>... forceFields) {
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, false, forceFields, where);
     }
 }

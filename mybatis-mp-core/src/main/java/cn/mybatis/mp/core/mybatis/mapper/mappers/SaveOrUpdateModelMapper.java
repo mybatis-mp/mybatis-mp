@@ -27,7 +27,7 @@ public interface SaveOrUpdateModelMapper<T> extends BaseMapper<T> {
      * 先查是否存在，再进行新增或修改
      *
      * @param model
-     * @param allFieldForce 所有字段都强制保存
+     * @param allFieldForce 所有字段都强制保存或修改,null值将会以NULL的形式插入
      * @param <M>
      * @return 影响条数
      */
@@ -64,7 +64,7 @@ public interface SaveOrUpdateModelMapper<T> extends BaseMapper<T> {
      * 先查是否存在，再进行新增或修改
      *
      * @param list          实体类Model 对象List
-     * @param allFieldForce 是否所有字段强制
+     * @param allFieldForce 所有字段都强制保存或修改,null值将会以NULL的形式插入
      * @return 影响条数
      */
     default <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, boolean allFieldForce) {

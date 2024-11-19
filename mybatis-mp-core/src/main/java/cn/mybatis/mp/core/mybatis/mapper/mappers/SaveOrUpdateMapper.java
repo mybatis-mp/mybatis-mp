@@ -24,7 +24,7 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * 先查是否存在，再进行新增或修改
      *
      * @param entity
-     * @param allFieldForce 所有字段都强制保存
+     * @param allFieldForce 所有字段都强制保存或修改,null值将会以NULL的形式插入
      * @return 影响条数
      */
     default int saveOrUpdate(T entity, boolean allFieldForce) {
@@ -59,7 +59,7 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * 先查是否存在，再进行新增或修改
      *
      * @param list          实体类对象List
-     * @param allFieldForce 所有字段都强制保存
+     * @param allFieldForce 所有字段都强制保存或修改,null值将会以NULL的形式插入
      * @return 影响条数
      */
     default int saveOrUpdate(Collection<T> list, boolean allFieldForce) {

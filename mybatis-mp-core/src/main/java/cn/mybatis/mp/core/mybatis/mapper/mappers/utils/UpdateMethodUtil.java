@@ -40,12 +40,12 @@ public final class UpdateMethodUtil {
         return cnt;
     }
 
-    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Consumer<Where> consumer) {
-        return update(basicMapper, tableInfo, entity, WhereUtil.create(tableInfo, consumer), allFieldForce, null);
+    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Getter<T>[] forceFields, Where where) {
+        return update(basicMapper, tableInfo, entity, where, allFieldForce, LambdaUtil.getFieldNames(forceFields));
     }
 
-    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, Consumer<Where> consumer, Getter<T>[] forceFields) {
-        return update(basicMapper, tableInfo, entity, WhereUtil.create(tableInfo, consumer), false, LambdaUtil.getFieldNames(forceFields));
+    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Getter<T>[] forceFields, Consumer<Where> consumer) {
+        return update(basicMapper, tableInfo, entity, allFieldForce, forceFields, WhereUtil.create(consumer));
     }
 
 }

@@ -13,7 +13,7 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
     /**
      * 实体类修改
      *
-     * @param model 实体类对象
+     * @param model 实体类Model对象
      * @return 影响条数
      */
     default <T, M extends Model<T>> int update(M model) {
@@ -23,7 +23,7 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
     /**
      * 实体类修改
      *
-     * @param model 实体类对象
+     * @param model 实体类Model对象
      *  @param allFieldForce 所有字段都强制保存
      * @return 影响条数
      *
@@ -91,24 +91,59 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
     /**
      * 动态条件修改
      *
-     * @param model         实体类对象
+     * @param model         实体类Model对象
      * @param allFieldForce 所有字段都强制保存
      * @param consumer      where
      * @return 影响条数
      */
     default <T, M extends Model<T>> int update(M model, boolean allFieldForce, Consumer<Where> consumer) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, consumer, allFieldForce, null);
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, allFieldForce, null, consumer);
     }
 
     /**
      * 动态where 修改
      *
-     * @param model             实体类对象
+     * @param model             实体类Model对象
      * @param consumer          where
      * @param forceFields 强制更新指定，解决需要修改为null的需求
      * @return 影响条数
      */
     default <T, M extends Model<T>> int update(M model, Consumer<Where> consumer, Getter<M>... forceFields) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, consumer, false, forceFields);
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, false, forceFields, consumer);
+    }
+
+    /**
+     * 指定where 修改
+     *
+     * @param model 实体类Model对象
+     * @param where where
+     * @return 影响条数
+     */
+    default <T, M extends Model<T>> int update(M model, Where where) {
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, false, (Getter<M>[]) null, where);
+    }
+
+    /**
+     * 指定where 修改
+     *
+     * @param model         实体类Model对象
+     * @param where         where
+     * @param allFieldForce 是否所有字段都修改，如果是null值，则变成NULL
+     * @return 影响条数
+     */
+    default <T, M extends Model<T>> int update(M model, boolean allFieldForce, Where where) {
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, allFieldForce, (Getter<M>[]) null, where);
+    }
+
+    /**
+     * 指定where 修改
+     *
+     * @param model       实体类Model对象
+     * @param where       where
+     * @param forceFields 强制更新指定，解决需要修改为null的需求
+     * @return 影响条数
+     */
+    default <T, M extends Model<T>> int update(M model, Where where, Getter<M>... forceFields) {
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, false, forceFields, where);
     }
 }

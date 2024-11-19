@@ -258,10 +258,10 @@ public interface Dao<T, K> {
      * 实体类保存或修改
      *
      * @param entity   实体类对象
-     * @param allField 是否所有字段都保存或修改，如果是null值，则变成NULL
+     * @param allFieldForce 是否所有字段都保存或修改，如果是null值，则变成NULL
      * @return 影响条数
      */
-    int saveOrUpdate(T entity, boolean allField);
+    int saveOrUpdate(T entity, boolean allFieldForce);
 
     /**
      * 实体类保存或修改
@@ -284,10 +284,10 @@ public interface Dao<T, K> {
      * 实体类保存或修改
      *
      * @param list     实体类对象List
-     * @param allField 是否所有字段都保存或修改，如果是null值，则变成NULL
+     * @param allFieldForce 是否所有字段都保存或修改，如果是null值，则变成NULL
      * @return 影响条数
      */
-    int saveOrUpdate(Collection<T> list, boolean allField);
+    int saveOrUpdate(Collection<T> list, boolean allFieldForce);
 
     /**
      * 实体类保存或修改
@@ -310,10 +310,10 @@ public interface Dao<T, K> {
      * 实体类Model保存或修改
      *
      * @param model    实体类Model对象
-     * @param allField 是否所有字段都保存或修改，如果是null值，则变成NULL
+     * @param allFieldForce 是否所有字段都保存或修改，如果是null值，则变成NULL
      * @return 影响条数
      */
-    <M extends Model<T>> int saveOrUpdate(M model, boolean allField);
+    <M extends Model<T>> int saveOrUpdate(M model, boolean allFieldForce);
 
     /**
      * 实体类Model保存或修改
@@ -336,10 +336,10 @@ public interface Dao<T, K> {
      * 实体类Model保存或修改
      *
      * @param list     实体类Model对象List
-     * @param allField 是否所有字段都保存或修改，如果是null值，则变成NULL
+     * @param allFieldForce 是否所有字段都保存或修改，如果是null值，则变成NULL
      * @return 影响条数
      */
-    <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, boolean allField);
+    <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, boolean allFieldForce);
 
     /**
      * 实体类Model保存或修改
