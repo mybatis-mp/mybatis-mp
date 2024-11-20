@@ -33,6 +33,7 @@ public class ConditionTest extends BaseTest {
                     .eq(SysUser::getId, 1, Objects::nonNull)
                     .eq(SysUser::getId, null)
                     .empty(SysUser::getUserName)
+                    .andNested(false,conditionChain -> conditionChain.eq(SysUser::getUserName,"11"))
                     .returnType(Integer.class)
                     .get();
 
