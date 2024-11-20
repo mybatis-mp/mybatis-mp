@@ -21,4 +21,12 @@ public @interface Table {
      */
     String schema() default "";
 
+    /**
+     * 列名规则
+     *
+     * @return ColumnNameRule
+     * @see ColumnNameRule
+     */
+    ColumnNameRule columnNameRule() default ColumnNameRule.IGNORE;
+
 }

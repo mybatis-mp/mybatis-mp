@@ -142,13 +142,25 @@ public final class TableInfoUtil {
      * @param field
      * @return
      */
-    public static String getFieldColumnName(Field field) {
+    public static String getFieldColumnName(Table table, Field field) {
         TableField tableFieldAnnotation = getTableFieldAnnotation(field);
         String columnName = tableFieldAnnotation.value();
         if (StringPool.EMPTY.equals(columnName)) {
             columnName = field.getName();
-            if (MybatisMpConfig.isColumnUnderline()) {
-                columnName = NamingUtil.camelToUnderline(columnName);
+            switch (table.columnNameRule()) {
+                case IGNORE: {
+                    if (MybatisMpConfig.isColumnUnderline()) {
+                        columnName = NamingUtil.camelToUnderline(columnName);
+                    }
+                    break;
+                }
+                case UNDERLINE: {
+                    columnName = NamingUtil.camelToUnderline(columnName);
+                    break;
+                }
+                case USE_FIELD_NAME: {
+                    break;
+                }
             }
         }
         return columnName;

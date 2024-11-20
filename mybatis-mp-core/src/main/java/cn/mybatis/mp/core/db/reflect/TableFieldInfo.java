@@ -62,7 +62,7 @@ public class TableFieldInfo {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
         this.tableFieldAnnotation = TableInfoUtil.getTableFieldAnnotation(field);
-        this.columnName = TableInfoUtil.getFieldColumnName(field);
+        this.columnName = TableInfoUtil.getFieldColumnName((Table) clazz.getAnnotation(Table.class), field);
         this.readFieldInvoker = new GetFieldInvoker(field);
         this.tableId = field.isAnnotationPresent(TableId.class) || field.isAnnotationPresent(TableId.List.class);
         this.version = field.isAnnotationPresent(Version.class);
