@@ -58,11 +58,11 @@ public class TableFieldInfo {
 
     private final TypeHandler<?> typeHandler;
 
-    public TableFieldInfo(Class clazz, Field field) {
+    public TableFieldInfo(Class clazz, Table tableAnnotation, Field field) {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
         this.tableFieldAnnotation = TableInfoUtil.getTableFieldAnnotation(field);
-        this.columnName = TableInfoUtil.getFieldColumnName((Table) clazz.getAnnotation(Table.class), field);
+        this.columnName = TableInfoUtil.getFieldColumnName(tableAnnotation, field);
         this.readFieldInvoker = new GetFieldInvoker(field);
         this.tableId = field.isAnnotationPresent(TableId.class) || field.isAnnotationPresent(TableId.List.class);
         this.version = field.isAnnotationPresent(Version.class);

@@ -105,7 +105,7 @@ public class TableInfo {
 
 
         for (Field field : fieldList) {
-            TableFieldInfo tableFieldInfo = new TableFieldInfo(entity, field);
+            TableFieldInfo tableFieldInfo = new TableFieldInfo(entity, table, field);
             tableFieldInfos.add(tableFieldInfo);
             tableFieldInfoMap.put(field.getName(), tableFieldInfo);
 
