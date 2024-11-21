@@ -14,6 +14,8 @@
 
 package cn.mybatis.mp.db.annotations;
 
+import cn.mybatis.mp.db.ColumnNameRule;
+
 import java.lang.annotation.*;
 
 @Documented

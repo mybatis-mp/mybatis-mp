@@ -12,7 +12,7 @@
  *
  */
 
-package cn.mybatis.mp.db.annotations;
+package cn.mybatis.mp.db;
 
 public enum ColumnNameRule {
 
