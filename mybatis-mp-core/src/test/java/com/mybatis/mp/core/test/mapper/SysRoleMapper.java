@@ -16,11 +16,15 @@ package com.mybatis.mp.core.test.mapper;
 
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
+import cn.mybatis.mp.core.util.Constant;
 import cn.mybatis.mp.db.annotations.Paging;
 import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.vo.JsonTypeTestVo;
+import db.sql.api.impl.cmd.struct.Where;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 public interface SysRoleMapper extends MybatisMapper<SysRole> {
     @Paging(optimize = false)
@@ -40,5 +44,7 @@ public interface SysRoleMapper extends MybatisMapper<SysRole> {
     JsonTypeTestVo jsonTypeTest1(@Param("sql") String sql);
 
     JsonTypeTestVo jsonTypeTest2(@Param("sql") String sql);
+
+    List<SysRole> selectCustomSql(@Param(Constant.WHERE) Where where);
 
 }

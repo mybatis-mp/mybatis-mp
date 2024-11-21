@@ -15,10 +15,13 @@
 package com.mybatis.mp.core.test.testCase;
 
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
+import cn.mybatis.mp.core.sql.util.WhereUtil;
 import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.mapper.SysRoleMapper;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -83,4 +86,15 @@ public class XmlPagingTestCase extends BaseTest {
         }
     }
 
+    @Test
+    public void selectCustomSql() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            List<SysRole> list = sysRoleMapper.selectCustomSql(WhereUtil.create().in(SysRole::getId, 1, 2));
+            assertEquals(2, list.size());
+            assertEquals(2, list.get(1).getId());
+            assertNotNull(list.get(0).getCreateTime());
+            System.out.println(list);
+        }
+    }
 }

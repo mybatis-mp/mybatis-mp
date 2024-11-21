@@ -14,8 +14,14 @@
 
 package cn.mybatis.mp.core.sql.executor;
 
+import cn.mybatis.mp.core.mybatis.DbTypeHolder;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
+import db.sql.api.SQLMode;
+import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.ConditionFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Where extends db.sql.api.impl.cmd.struct.Where {
 
@@ -25,5 +31,31 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
 
     public static Where create() {
         return new Where();
+    }
+
+    private String sqlScript;
+
+    private List<Object> scriptParam;
+
+    public List<Object> getScriptParam() {
+        return scriptParam;
+    }
+
+    public String getSqlScript() {
+        if (sqlScript != null) {
+            return sqlScript;
+        }
+        scriptParam = new ArrayList<>();
+
+        SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(DbTypeHolder.getDbType(), SQLMode.PREPARED) {
+            @Override
+            public String addParam(Object value) {
+                scriptParam.add(value);
+                return "#{WHERE.scriptParam[" + (scriptParam.size() - 1) + "]}";
+            }
+        };
+        sqlScript = this.sql(null, null, sqlBuilderContext, new StringBuilder()).toString();
+        sqlScript = sqlScript.replaceFirst("WHERE", "");
+        return sqlScript;
     }
 }
