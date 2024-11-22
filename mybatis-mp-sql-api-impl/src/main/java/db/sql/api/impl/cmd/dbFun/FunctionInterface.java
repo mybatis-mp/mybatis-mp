@@ -874,4 +874,15 @@ public interface FunctionInterface extends Cmd {
     default Instr instr(String str) {
         return Methods.instr(this, str);
     }
+
+    /**
+     * 排序值，如果包含在 values 里 则返回 在values的顺序值 从1开始；如果不在values里 则 返回 自身的值
+     * 可以稍微替代 mysql field 函数
+     *
+     * @param values 指定值
+     * @return sort
+     */
+    default Case sort(Serializable... values) {
+        return Methods.sort(this, values);
+    }
 }

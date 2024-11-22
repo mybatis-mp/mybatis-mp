@@ -1575,6 +1575,26 @@ public final class Methods {
         return new Instr(column, str);
     }
 
+
+    /**
+     * 排序值，如果包含在 values 里 则返回 在values的顺序值 从1开始；如果不在values里 则 返回 column的值
+     * 可以稍微替代 mysql field 函数
+     *
+     * @param column 列
+     * @param values 指定值
+     * @return sort
+     */
+    public static Case sort(Cmd column, Serializable... values) {
+        Objects.requireNonNull(column);
+        Objects.requireNonNull(values);
+        Case cs = case_();
+        for (int i = 0; i < values.length; i++) {
+            cs.when(eq(column, values[i]), i + 1);
+        }
+        cs.else_(column);
+        return cs;
+    }
+
     /**
      * 获得 mysql的函数聚合类
      *
