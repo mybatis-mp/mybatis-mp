@@ -62,7 +62,7 @@ public class DefaultValueTestCase extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
             DefaultValueTest defaultValueTest = new DefaultValueTest();
-            defaultValueTest.setValue3(TestEnum.X1);
+            //defaultValueTest.setValue3(TestEnum.X1);
             DbType.H2.getKeywords().add("value3");
             mapper.save(defaultValueTest);
             assertNotNull(defaultValueTest.getCreateTime());

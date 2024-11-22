@@ -14,6 +14,8 @@
 
 package cn.mybatis.mp.core.util;
 
+import cn.mybatis.mp.core.mybatis.typeHandler.EnumSupport;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -42,6 +44,23 @@ public final class TypeConvertUtil {
         }
         if (value instanceof String && value.equals("")) {
             return null;
+        }
+
+        if (targetType.isEnum()) {
+            if (EnumSupport.class.isAssignableFrom(targetType)) {
+                for (EnumSupport e : (EnumSupport[]) targetType.getEnumConstants()) {
+                    if (e.getCode().toString().equals(value.toString())) {
+                        return (T) e;
+                    }
+                }
+            } else {
+                for (Enum<?> e : (Enum<?>[]) targetType.getEnumConstants()) {
+                    if (e.name().equals(value.toString())) {
+                        return (T) e;
+                    }
+                }
+            }
+            throw new RuntimeException("Can't find default value:" + value + " from enum: " + targetType);
         }
 
         Object newValue;

@@ -44,5 +44,6 @@ public class DefaultValueTest {
     @TableField(defaultValue = "{NOW}")
     private LocalDateTime createTime;
 
+    @TableField(defaultValue = "a1")
     private TestEnum value3;
 }
