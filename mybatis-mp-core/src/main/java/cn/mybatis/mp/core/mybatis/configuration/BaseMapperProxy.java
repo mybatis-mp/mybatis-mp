@@ -24,11 +24,13 @@ import cn.mybatis.mp.core.util.DbTypeUtil;
 import cn.mybatis.mp.db.annotations.Paging;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.executor.DbSelectorCall;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.reflection.ParamNameResolver;
 import org.apache.ibatis.session.SqlSession;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -76,18 +78,8 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-
         if (method.isDefault()) {
             return super.invoke(proxy, method, args);
-        }
-
-        if (Objects.nonNull(args)) {
-            for (Object arg : args) {
-                if (arg != null && arg instanceof Where) {
-                    Where where = (Where) arg;
-                    where.setDbType(getDbType());
-                }
-            }
         }
 
         boolean isSetBasicMapperToThreadLocal = false;
@@ -105,6 +97,25 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             } else if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
                 return this.getDbType();
             }
+
+
+            if (Objects.nonNull(args)) {
+                for (int i = 0; i < args.length; i++) {
+                    Object arg = args[i];
+                    if (arg != null && arg instanceof Where) {
+                        Parameter[] parameters = method.getParameters();
+                        Param param = parameters[i].getAnnotation(Param.class);
+                        Where where = (Where) arg;
+                        if (param != null) {
+                            where.setMybatisParamName(param.value());
+                        } else {
+                            where.setMybatisParamName("param" + (i + 1));
+                        }
+                        where.setDbType(getDbType());
+                    }
+                }
+            }
+
             return super.invoke(proxy, method, args);
         } finally {
             if (isSetBasicMapperToThreadLocal) {

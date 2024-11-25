@@ -97,4 +97,16 @@ public class XmlPagingTestCase extends BaseTest {
             System.out.println(list);
         }
     }
+
+    @Test
+    public void selectCustomSql2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+            List<SysRole> list = sysRoleMapper.selectCustomSql2(WhereUtil.create().in(SysRole::getId, 1, 2));
+            assertEquals(2, list.size());
+            assertEquals(2, list.get(1).getId());
+            assertNotNull(list.get(0).getCreateTime());
+            System.out.println(list);
+        }
+    }
 }

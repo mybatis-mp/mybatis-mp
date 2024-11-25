@@ -37,6 +37,8 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
 
     private String sqlScript;
 
+    private String mybatisParamNamespace;
+
     private List<Object> scriptParam;
 
     public DbType getDbType() {
@@ -45,6 +47,12 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
 
     public void setDbType(DbType dbType) {
         this.dbType = dbType;
+    }
+
+    public void setMybatisParamName(String mybatisParamName) {
+        if (mybatisParamName != null || !mybatisParamName.isEmpty()) {
+            this.mybatisParamNamespace = mybatisParamName + ".";
+        }
     }
 
     public List<Object> getScriptParam() {
@@ -61,7 +69,7 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
             @Override
             public String addParam(Object value) {
                 scriptParam.add(value);
-                return "#{WHERE.scriptParam[" + (scriptParam.size() - 1) + "]}";
+                return "#{" + mybatisParamNamespace + "scriptParam[" + (scriptParam.size() - 1) + "]}";
             }
         };
         sqlScript = this.sql(null, null, sqlBuilderContext, new StringBuilder()).toString();

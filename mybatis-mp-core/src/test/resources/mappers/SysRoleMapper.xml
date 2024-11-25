@@ -61,4 +61,8 @@
     <select id="selectCustomSql">
         select * from sys_role t <where>${WHERE.sqlScript}</where>
     </select>
+
+    <select id="selectCustomSql2">
+        select * from sys_role t <where>${param1.sqlScript}</where>
+    </select>
 </mapper>

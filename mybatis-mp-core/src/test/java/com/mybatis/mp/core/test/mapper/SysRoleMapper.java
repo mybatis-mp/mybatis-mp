@@ -16,7 +16,6 @@ package com.mybatis.mp.core.test.mapper;
 
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
-import cn.mybatis.mp.core.util.Constant;
 import cn.mybatis.mp.db.annotations.Paging;
 import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.vo.JsonTypeTestVo;
@@ -45,6 +44,8 @@ public interface SysRoleMapper extends MybatisMapper<SysRole> {
 
     JsonTypeTestVo jsonTypeTest2(@Param("sql") String sql);
 
-    List<SysRole> selectCustomSql(@Param(Constant.WHERE) Where where);
+    List<SysRole> selectCustomSql(@Param("WHERE") Where where);
+
+    List<SysRole> selectCustomSql2(@Param("WHERE") Where where);
 
 }
