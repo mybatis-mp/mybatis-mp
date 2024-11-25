@@ -63,6 +63,7 @@
     </select>
 
     <select id="selectCustomSql2">
-        select * from sys_role t <where>${param1.sqlScript}</where>
+        select * from sys_role t
+        <where>${sqlScript}</where>
     </select>
 </mapper>

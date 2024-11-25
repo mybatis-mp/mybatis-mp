@@ -108,8 +108,6 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                         Where where = (Where) arg;
                         if (param != null) {
                             where.setMybatisParamName(param.value());
-                        } else {
-                            where.setMybatisParamName("param" + (i + 1));
                         }
                         where.setDbType(getDbType());
                     }

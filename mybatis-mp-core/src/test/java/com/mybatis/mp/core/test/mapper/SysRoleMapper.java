@@ -46,6 +46,6 @@ public interface SysRoleMapper extends MybatisMapper<SysRole> {
 
     List<SysRole> selectCustomSql(@Param("WHERE") Where where);
 
-    List<SysRole> selectCustomSql2(@Param("WHERE") Where where);
+    List<SysRole> selectCustomSql2(Where where);
 
 }

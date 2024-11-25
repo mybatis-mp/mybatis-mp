@@ -69,6 +69,9 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
             @Override
             public String addParam(Object value) {
                 scriptParam.add(value);
+                if (mybatisParamNamespace == null) {
+                    return "#{scriptParam[" + (scriptParam.size() - 1) + "]}";
+                }
                 return "#{" + mybatisParamNamespace + "scriptParam[" + (scriptParam.size() - 1) + "]}";
             }
         };
