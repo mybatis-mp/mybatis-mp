@@ -19,6 +19,7 @@ import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.MapKeySQLCmdQueryContext;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
+import cn.mybatis.mp.core.sql.executor.Where;
 import cn.mybatis.mp.core.util.DbTypeUtil;
 import cn.mybatis.mp.db.annotations.Paging;
 import db.sql.api.DbType;
@@ -75,9 +76,20 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+
         if (method.isDefault()) {
             return super.invoke(proxy, method, args);
         }
+
+        if (Objects.nonNull(args)) {
+            for (Object arg : args) {
+                if (arg != null && arg instanceof Where) {
+                    Where where = (Where) arg;
+                    where.setDbType(getDbType());
+                }
+            }
+        }
+
         boolean isSetBasicMapperToThreadLocal = false;
         try {
             isSetBasicMapperToThreadLocal = setBasicMapperToThreadLocal(proxy);

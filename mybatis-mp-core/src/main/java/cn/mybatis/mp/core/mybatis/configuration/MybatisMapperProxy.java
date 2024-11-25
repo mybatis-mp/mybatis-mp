@@ -16,8 +16,6 @@ package cn.mybatis.mp.core.mybatis.configuration;
 
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
-import cn.mybatis.mp.core.sql.executor.Where;
-import db.sql.api.DbType;
 import org.apache.ibatis.session.SqlSession;
 
 import java.lang.reflect.Method;
@@ -64,17 +62,6 @@ public class MybatisMapperProxy<T> extends BaseMapperProxy<T> {
                 return this.tableInfo;
             case GET_BASIC_MAPPER_METHOD_NAME:
                 return getBasicMapper();
-        }
-
-        DbType currentDbType = null;
-        for (Object arg : args) {
-            if (arg != null && arg instanceof Where) {
-                if (currentDbType == null) {
-                    currentDbType = this.getBasicMapper().getCurrentDbType();
-                }
-                Where where = (Where) arg;
-                where.setDbType(currentDbType);
-            }
         }
 
         return super.invoke(proxy, method, args);
