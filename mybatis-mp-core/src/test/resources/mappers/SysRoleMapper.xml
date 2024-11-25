@@ -59,10 +59,12 @@
     </select>
     
     <select id="selectCustomSql">
-        select * from sys_role t <where>${WHERE.sqlScript}</where>
+        select * from sys_role t
+        <where>${WHERE.whereScript}</where>
     </select>
 
     <select id="selectCustomSql2">
-        select * from sys_role t <where>${sqlScript}</where>
+        select * from sys_role t
+        <where>${whereScript}</where>
     </select>
 </mapper>

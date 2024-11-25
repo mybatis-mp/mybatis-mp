@@ -35,11 +35,11 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
 
     private DbType dbType;
 
-    private String sqlScript;
+    private String whereScript;
 
     private String mybatisParamNamespace;
 
-    private List<Object> scriptParam;
+    private List<Object> scriptParams;
 
     public DbType getDbType() {
         return dbType;
@@ -55,28 +55,28 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
         }
     }
 
-    public List<Object> getScriptParam() {
-        return scriptParam;
+    public List<Object> getScriptParams() {
+        return scriptParams;
     }
 
-    public String getSqlScript() {
-        if (sqlScript != null) {
-            return sqlScript;
+    public String getWhereScript() {
+        if (whereScript != null) {
+            return whereScript;
         }
-        scriptParam = new ArrayList<>();
+        scriptParams = new ArrayList<>();
 
         SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(this.dbType, SQLMode.PREPARED) {
             @Override
             public String addParam(Object value) {
-                scriptParam.add(value);
+                scriptParams.add(value);
                 if (mybatisParamNamespace == null) {
-                    return "#{scriptParam[" + (scriptParam.size() - 1) + "]}";
+                    return "#{scriptParams[" + (scriptParams.size() - 1) + "]}";
                 }
-                return "#{" + mybatisParamNamespace + "scriptParam[" + (scriptParam.size() - 1) + "]}";
+                return "#{" + mybatisParamNamespace + "scriptParams[" + (scriptParams.size() - 1) + "]}";
             }
         };
-        sqlScript = this.sql(null, null, sqlBuilderContext, new StringBuilder()).toString();
-        sqlScript = sqlScript.replaceFirst("WHERE", "");
-        return sqlScript;
+        whereScript = this.sql(null, null, sqlBuilderContext, new StringBuilder()).toString();
+        whereScript = whereScript.replaceFirst("WHERE", "");
+        return whereScript;
     }
 }
