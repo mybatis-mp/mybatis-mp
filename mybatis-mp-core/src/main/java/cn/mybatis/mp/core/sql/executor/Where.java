@@ -14,8 +14,8 @@
 
 package cn.mybatis.mp.core.sql.executor;
 
-import cn.mybatis.mp.core.mybatis.DbTypeHolder;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
+import db.sql.api.DbType;
 import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.ConditionFactory;
@@ -33,9 +33,19 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
         return new Where();
     }
 
+    private DbType dbType;
+
     private String sqlScript;
 
     private List<Object> scriptParam;
+
+    public DbType getDbType() {
+        return dbType;
+    }
+
+    public void setDbType(DbType dbType) {
+        this.dbType = dbType;
+    }
 
     public List<Object> getScriptParam() {
         return scriptParam;
@@ -47,7 +57,7 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
         }
         scriptParam = new ArrayList<>();
 
-        SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(DbTypeHolder.getDbType(), SQLMode.PREPARED) {
+        SqlBuilderContext sqlBuilderContext = new SqlBuilderContext(this.dbType, SQLMode.PREPARED) {
             @Override
             public String addParam(Object value) {
                 scriptParam.add(value);
