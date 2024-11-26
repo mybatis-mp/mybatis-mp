@@ -33,11 +33,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQuery<Q, MybatisCmdFactory> {
+public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQuery<Q, MybatisCmdFactory> {
 
     protected final OptimizeOptions optimizeOptions = new OptimizeOptions();
     protected Class returnType;
-    protected Consumer<E> onRowEvent;
+    protected Consumer<T> onRowEvent;
 
     public BaseQuery() {
         this(new MybatisCmdFactory());
@@ -99,12 +99,12 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
         return (BaseQuery<Q2, T2>) this.setReturnType(returnType).onRowEvent(consumer);
     }
 
-    public Q onRowEvent(Consumer<E> consumer) {
+    public Q onRowEvent(Consumer<T> consumer) {
         this.onRowEvent = consumer;
         return (Q) this;
     }
 
-    public Consumer<E> getOnRowEvent() {
+    public Consumer<T> getOnRowEvent() {
         return onRowEvent;
     }
 
