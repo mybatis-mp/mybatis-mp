@@ -90,13 +90,13 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
         return returnType;
     }
 
-    public <E2, Q2 extends BaseQuery<Q2, E2>> BaseQuery<Q2, E2> setReturnType(Class<E2> returnType) {
+    public <T2, Q2 extends BaseQuery<Q2, T2>> BaseQuery<Q2, T2> setReturnType(Class<T2> returnType) {
         this.returnType = returnType;
-        return (BaseQuery<Q2, E2>) this;
+        return (BaseQuery<Q2, T2>) this;
     }
 
-    public <E2, Q2 extends BaseQuery<Q2, E2>> BaseQuery<Q2, E2> setReturnType(Class<E2> returnType, Consumer<E2> consumer) {
-        return (BaseQuery<Q2, E2>) this.setReturnType(returnType).onRowEvent(consumer);
+    public <T2, Q2 extends BaseQuery<Q2, T2>> BaseQuery<Q2, T2> setReturnType(Class<T2> returnType, Consumer<T2> consumer) {
+        return (BaseQuery<Q2, T2>) this.setReturnType(returnType).onRowEvent(consumer);
     }
 
     public Q onRowEvent(Consumer<E> consumer) {

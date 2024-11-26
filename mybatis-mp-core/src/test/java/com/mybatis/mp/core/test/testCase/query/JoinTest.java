@@ -26,6 +26,7 @@ import db.sql.api.impl.cmd.dbFun.FunctionInterface;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -97,8 +98,10 @@ public class JoinTest extends BaseTest {
             List<Map<String, Object>> maps = QueryChain.of(sysUserMapper)
                     .select(SysUser.class)
                     .from(SysUser.class)
-                    .returnMap(Object.class)
+                    .returnMap()
                     .list();
+            System.out.println(maps.get(0).getClass());
+            assertEquals(HashMap.class, maps.get(0).getClass());
             assertEquals(3, maps.size());
         }
     }
