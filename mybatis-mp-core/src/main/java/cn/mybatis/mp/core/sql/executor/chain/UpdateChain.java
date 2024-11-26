@@ -82,7 +82,7 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
      * @param mapper 操作目标实体类的mapper
      * @return 自己
      */
-    public <T> UpdateChain withMapper(MybatisMapper<T> mapper) {
+    public UpdateChain withMapper(MybatisMapper<?> mapper) {
         this.checkAndSetMapper(mapper);
         return this;
     }

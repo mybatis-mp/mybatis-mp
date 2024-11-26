@@ -135,7 +135,7 @@ public class InsertChain extends BaseInsert<InsertChain> {
      * @param mapper 操作目标实体类的mapper
      * @return 自己
      */
-    public <T> InsertChain withMapper(MybatisMapper<T> mapper) {
+    public InsertChain withMapper(MybatisMapper<?> mapper) {
         this.checkAndSetMapper(mapper);
         return this;
     }

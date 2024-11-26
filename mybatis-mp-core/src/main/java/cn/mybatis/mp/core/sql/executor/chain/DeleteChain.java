@@ -84,7 +84,7 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
      * @param mapper 操作目标实体类的mapper
      * @return 自己
      */
-    public <T> DeleteChain withMapper(MybatisMapper<T> mapper) {
+    public DeleteChain withMapper(MybatisMapper<?> mapper) {
         this.checkAndSetMapper(mapper);
         return this;
     }
