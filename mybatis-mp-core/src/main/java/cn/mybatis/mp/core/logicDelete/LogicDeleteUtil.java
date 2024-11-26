@@ -1,3 +1,17 @@
+/*
+ *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License").
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 package cn.mybatis.mp.core.logicDelete;
 
 import cn.mybatis.mp.core.MybatisMpConfig;
@@ -31,8 +45,8 @@ public final class LogicDeleteUtil {
      * 在指定逻辑开关下执行
      *
      * @param state    开关状态
-     * @param supplier 函数
-     * @param <T>
+     * @param supplier 返回函数
+     * @param <T>      返回值
      * @return 函数执行后的返回值
      */
     public static <T> T execute(boolean state, Supplier<T> supplier) {
@@ -44,8 +58,8 @@ public final class LogicDeleteUtil {
     /**
      * 是否需要逻辑删除
      *
-     * @param tableInfo
-     * @return
+     * @param tableInfo 实体类tableInfo
+     * @return 是否需要逻辑删除
      */
     public static boolean isNeedLogicDelete(TableInfo tableInfo) {
         return MybatisMpConfig.isLogicDeleteSwitchOpen() && Objects.nonNull(tableInfo.getLogicDeleteFieldInfo());

@@ -1,7 +1,20 @@
+/*
+ *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License").
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 package com.mybatis.mp.core.test.testCase.update;
 
 import cn.mybatis.mp.core.sql.executor.SubQuery;
-import cn.mybatis.mp.core.sql.executor.Where;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import cn.mybatis.mp.core.sql.executor.chain.UpdateChain;
 import com.mybatis.mp.core.test.DO.SysRole;
@@ -13,6 +26,7 @@ import com.mybatis.mp.core.test.testCase.TestDataSource;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.impl.cmd.struct.Where;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
@@ -21,7 +35,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +56,99 @@ public class UpdateTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUser = sysUserMapper.getById(1);
             sysUser.setUserName(null);
-            sysUserMapper.update(sysUser, true);
+            int cnt = sysUserMapper.update(sysUser, true);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+    @Test
+    public void forceUpdateTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.update(sysUser, SysUser::getUserName);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+    @Test
+    public void forceUpdateTest3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.saveOrUpdate(sysUser, true);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+    @Test
+    public void forceUpdateTest4() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.saveOrUpdate(sysUser, SysUser::getUserName);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+    @Test
+    public void forceUpdateListTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.update(Collections.singletonList(sysUser), true);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+    @Test
+    public void forceUpdateListTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.update(Collections.singletonList(sysUser), SysUser::getUserName);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+    @Test
+    public void forceUpdateListTest3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.saveOrUpdate(Collections.singletonList(sysUser), true);
+            assertEquals(cnt, 1);
+            sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), null);
+        }
+    }
+
+    @Test
+    public void forceUpdateListTest4() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = sysUserMapper.getById(1);
+            sysUser.setUserName(null);
+            int cnt = sysUserMapper.saveOrUpdate(Collections.singletonList(sysUser), SysUser::getUserName);
+            assertEquals(cnt, 1);
             sysUser = sysUserMapper.getById(1);
             assertEquals(sysUser.getUserName(), null);
         }
@@ -57,11 +165,9 @@ public class UpdateTest extends BaseTest {
                     .execute();
 
             assertEquals(cnt, 1);
-
             SysUser sysUser = sysUserMapper.getById(1);
             assertEquals(sysUser.getUserName(), null);
         }
-
     }
 
     @Test
@@ -200,11 +306,11 @@ public class UpdateTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser old = sysUserMapper.getById(1);
-            UpdateChain.of(sysUserMapper)
+            int cnt = UpdateChain.of(sysUserMapper)
                     .set(SysUser::getRole_id, (Function<TableField, Cmd>) c -> c.plus(1))
                     .eq(SysUser::getId, 1)
                     .execute();
-
+            assertEquals(cnt, 1);
             SysUser sysUser = sysUserMapper.getById(1);
             assertEquals(old.getRole_id() + 1, sysUser.getRole_id());
         }
@@ -219,7 +325,9 @@ public class UpdateTest extends BaseTest {
             SysUser updateSysUser = new SysUser();
             updateSysUser.setId(1);
             updateSysUser.setUserName("adminxx");
-            sysUserMapper.update(updateSysUser);
+            int cnt = sysUserMapper.update(updateSysUser);
+            assertEquals(cnt, 1);
+
             SysUser eqSysUser = new SysUser();
             eqSysUser.setId(1);
             eqSysUser.setUserName("adminxx");
@@ -232,7 +340,7 @@ public class UpdateTest extends BaseTest {
             assertEquals(list.get(0), eqSysUser, "实体修改");
 
 
-            UpdateChain.of(sysUserMapper)
+            cnt = UpdateChain.of(sysUserMapper)
                     .connect(updateChain -> {
                         updateChain.set(SysUser::getRole_id, SubQuery.create()
                                 .select(SysRole::getId)
@@ -244,6 +352,7 @@ public class UpdateTest extends BaseTest {
                     })
                     .eq(SysUser::getId, 1)
                     .execute();
+            assertEquals(cnt, 1);
         }
     }
 
@@ -256,7 +365,9 @@ public class UpdateTest extends BaseTest {
             SysUser updateSysUser = new SysUser();
             updateSysUser.setId(1);
             updateSysUser.setUserName("adminxx");
-            sysUserMapper.update(updateSysUser, SysUser::getPassword);
+            int cnt = sysUserMapper.update(updateSysUser, SysUser::getPassword);
+            assertEquals(cnt, 1);
+
             SysUser eqSysUser = new SysUser();
             eqSysUser.setId(1);
             eqSysUser.setUserName("adminxx");
@@ -280,7 +391,8 @@ public class UpdateTest extends BaseTest {
             SysUserModel updateSysUser = new SysUserModel();
             updateSysUser.setId(1);
             updateSysUser.setUserName("adminxx");
-            sysUserMapper.update(updateSysUser);
+            int cnt = sysUserMapper.update(updateSysUser);
+            assertEquals(cnt, 1);
 
             SysUser eqSysUser = new SysUser();
             eqSysUser.setId(1);
@@ -305,7 +417,9 @@ public class UpdateTest extends BaseTest {
             SysUserModel updateSysUser = new SysUserModel();
             updateSysUser.setId(1);
             updateSysUser.setUserName("adminxx");
-            sysUserMapper.update(updateSysUser, SysUser::getPassword);
+            int cnt = sysUserMapper.update(updateSysUser, SysUserModel::getPassword);
+            assertEquals(cnt, 1);
+
             SysUser eqSysUser = new SysUser();
             eqSysUser.setId(1);
             eqSysUser.setUserName("adminxx");
@@ -327,7 +441,8 @@ public class UpdateTest extends BaseTest {
 
             SysUser updateSysUser = new SysUser();
             updateSysUser.setUserName("adminxx");
-            sysUserMapper.update(updateSysUser, where -> where.eq(SysUser::getId, 1));
+            int cnt = sysUserMapper.update(updateSysUser, where -> where.eq(SysUser::getId, 1));
+            assertEquals(cnt, 1);
 
             SysUser eqSysUser = new SysUser();
             eqSysUser.setId(1);
@@ -350,7 +465,8 @@ public class UpdateTest extends BaseTest {
 
             SysUser updateSysUser = new SysUser();
             updateSysUser.setUserName("adminxx");
-            sysUserMapper.update(updateSysUser, Where.create().eq(SysUser::getId, 1), SysUser::getPassword);
+            int cnt = sysUserMapper.update(updateSysUser, (Consumer<Where>) where -> where.eq(SysUser::getId, 1), SysUser::getPassword);
+            assertEquals(cnt, 1);
 
 
             SysUser eqSysUser = new SysUser();

@@ -1,3 +1,17 @@
+/*
+ *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License").
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 package com.mybatis.mp.core.test.testCase.insert;
 
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
@@ -17,6 +31,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -71,7 +87,7 @@ public class IdentifierGenerateTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             IdTestMapper idTestMapper = session.getMapper(IdTestMapper.class);
             IdTestModel idTest = new IdTestModel();
-            idTest.setXxid(1L);
+            idTest.setXxid(TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2 ? null : 1L);
             idTest.setCreateTime2(LocalDateTime.now());
             idTestMapper.saveOrUpdate(idTest);
             //System.out.println(idTest);
@@ -94,14 +110,11 @@ public class IdentifierGenerateTest extends BaseTest {
 
     @Test
     public void insertWithIdTest() {
-        if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2) {
-            //sql server 不支持自增ID插入
-            return;
-        }
+
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             IdTestMapper idTestMapper = session.getMapper(IdTestMapper.class);
             IdTest idTest = new IdTest();
-            idTest.setId(1L);
+            idTest.setId(TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2 ? null : 1L);
             idTest.setCreateTime(LocalDateTime.now());
             idTestMapper.save(idTest);
             System.out.println(idTest);
@@ -112,15 +125,35 @@ public class IdentifierGenerateTest extends BaseTest {
     }
 
     @Test
-    public void insertWithId2Test() {
-        if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2) {
-            //sql server 不支持自增ID插入
+    public void batchInsertWithSelectIdTest() {
+        if (TestDataSource.DB_TYPE != DbType.ORACLE && TestDataSource.DB_TYPE != DbType.PGSQL) {
             return;
         }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            IdTestMapper idTestMapper = session.getMapper(IdTestMapper.class);
+            IdTest idTest = new IdTest();
+            idTest.setCreateTime(LocalDateTime.now());
+
+            IdTest idTest2 = new IdTest();
+            idTest2.setCreateTime(LocalDateTime.now());
+
+            List<IdTest> idTestList = Arrays.asList(idTest, idTest2);
+            idTestMapper.save(idTestList);
+            System.out.println(idTestList);
+
+            assertEquals(1L, (long) idTest.getId());
+            assertEquals(2L, (long) idTest2.getId());
+            assertNotNull(idTestMapper.getById(idTest.getId()));
+        }
+    }
+
+    @Test
+    public void insertWithId2Test() {
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             IdTest2Mapper idTestMapper = session.getMapper(IdTest2Mapper.class);
             IdTest2 idTest = new IdTest2();
-            idTest.setId(1L);
+            idTest.setId(TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2 ? null : 1L);
             idTest.setCreateTime(LocalDateTime.now());
             idTestMapper.save(idTest);
             System.out.println(idTest);

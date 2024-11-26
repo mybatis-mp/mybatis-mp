@@ -1,37 +1,48 @@
 /*
- *  Copyright (c) 2022-2023, Mybatis-Flex (fuhai999@gmail.com).
- *  <p>
- *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License").
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *  <p>
- *  http://www.apache.org/licenses/LICENSE-2.0
- *  <p>
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ *
  */
 package db.sql.api.impl.tookit;
 
 
+import db.sql.api.Getter;
 import db.sql.api.GetterFun;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class LambdaUtil {
 
     private static final Map<GetterFun, LambdaFieldInfo> LAMBDA_GETTER_FIELD_MAP = new ConcurrentHashMap<>(65535);
-
     private static final Map<String, Class<?>> CLASS_MAP = new ConcurrentHashMap();
-
 
     private LambdaUtil() {
 
+    }
+
+    public static <T> Set<String> getFieldNames(Getter<T>[] fieldGetters) {
+        Set<String> fieldsSet = null;
+        if (Objects.nonNull(fieldGetters) && fieldGetters.length > 0) {
+            fieldsSet = new HashSet<>(fieldGetters.length);
+            for (Getter<?> column : fieldGetters) {
+                fieldsSet.add(LambdaUtil.getName(column));
+            }
+        }
+        return fieldsSet;
     }
 
     public static <T, R> String getName(GetterFun<T, R> getter) {
@@ -49,7 +60,7 @@ public final class LambdaUtil {
         return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), getter.getClass().getClassLoader()));
     }
 
-    private static <T, R> SerializedLambda getSerializedLambda(GetterFun<T, R> getter) {
+    public static <T, R> SerializedLambda getSerializedLambda(GetterFun<T, R> getter) {
         try {
             Method method = getter.getClass().getDeclaredMethod("writeReplace");
             method.setAccessible(Boolean.TRUE);
@@ -103,5 +114,4 @@ public final class LambdaUtil {
             return name;
         }
     }
-
 }

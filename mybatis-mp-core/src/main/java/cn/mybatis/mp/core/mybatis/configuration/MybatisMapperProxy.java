@@ -1,3 +1,17 @@
+/*
+ *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License").
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 package cn.mybatis.mp.core.mybatis.configuration;
 
 import cn.mybatis.mp.core.db.reflect.TableInfo;
@@ -15,16 +29,13 @@ public class MybatisMapperProxy<T> extends BaseMapperProxy<T> {
     public final static String TABLE_INFO_METHOD_NAME = "getTableInfo";
     public final static String GET_BASIC_MAPPER_METHOD_NAME = "getBasicMapper";
 
-    private final SqlSession sqlSession;
-
     private final Class<T> mapperInterface;
     private final Class<?> entityType;
     private final TableInfo tableInfo;
-    private volatile BasicMapper basicMapper;
+    private BasicMapper basicMapper;
 
     public MybatisMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map methodCache, Class<?> entityType, TableInfo tableInfo) {
         super(sqlSession, mapperInterface, methodCache);
-        this.sqlSession = sqlSession;
         this.mapperInterface = mapperInterface;
         this.entityType = entityType;
         this.tableInfo = tableInfo;
@@ -42,20 +53,17 @@ public class MybatisMapperProxy<T> extends BaseMapperProxy<T> {
         if (method.isDefault()) {
             return super.invoke(proxy, method, args);
         }
-        try {
-            SqlSessionThreadLocalUtil.set(sqlSession);
-            if (method.getName().equals(ENTITY_TYPE_METHOD_NAME)) {
+        switch (method.getName()) {
+            case ENTITY_TYPE_METHOD_NAME:
                 return this.entityType;
-            } else if (method.getName().equals(MAPPER_TYPE_METHOD_NAME)) {
+            case MAPPER_TYPE_METHOD_NAME:
                 return this.mapperInterface;
-            } else if (method.getName().equals(TABLE_INFO_METHOD_NAME)) {
+            case TABLE_INFO_METHOD_NAME:
                 return this.tableInfo;
-            } else if (method.getName().equals(GET_BASIC_MAPPER_METHOD_NAME)) {
+            case GET_BASIC_MAPPER_METHOD_NAME:
                 return getBasicMapper();
-            }
-            return super.invoke(proxy, method, args);
-        } finally {
-            SqlSessionThreadLocalUtil.clear();
         }
+
+        return super.invoke(proxy, method, args);
     }
 }

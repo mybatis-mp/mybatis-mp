@@ -1,3 +1,17 @@
+/*
+ *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License").
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 package com.mybatis.mp.core.test.testCase.query;
 
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
@@ -27,6 +41,8 @@ public class PutValueTest extends BaseTest {
             list.stream().forEach(System.out::println);
             assertEquals(list.get(0).getEnumName(), PutValueEnum.ENUM1.getName());
             assertEquals(list.get(1).getEnumName(), PutValueEnum.ENUM2.getName());
+            assertEquals(list.get(0).getEnumName2(), PutValueEnum.ENUM1.getName());
+            assertEquals(list.get(1).getEnumName2(), PutValueEnum.ENUM2.getName());
         }
     }
 
@@ -41,6 +57,8 @@ public class PutValueTest extends BaseTest {
             System.out.println(vo);
             assertNull(vo.getEnumName());
             assertEquals(vo.getDefaultEnumName(), "NULL");
+            assertNull(vo.getEnumName2());
+            assertEquals(vo.getDefaultEnumName2(), "NULL");
         }
     }
 
@@ -55,6 +73,8 @@ public class PutValueTest extends BaseTest {
             list.stream().forEach(System.out::println);
             assertEquals(list.get(0).getEnumName(), PutValueEnum.ENUM1.getName());
             assertEquals(list.get(1).getEnumName(), PutValueEnum.ENUM2.getName());
+            assertEquals(list.get(0).getEnumName2(), PutValueEnum.ENUM1.getName());
+            assertEquals(list.get(1).getEnumName2(), PutValueEnum.ENUM2.getName());
         }
     }
 
@@ -69,6 +89,8 @@ public class PutValueTest extends BaseTest {
             System.out.println(vo);
             assertNull(vo.getEnumName());
             assertEquals(vo.getDefaultEnumName(), "NULL");
+            assertNull(vo.getEnumName2());
+            assertEquals(vo.getDefaultEnumName2(), "NULL");
         }
     }
 }

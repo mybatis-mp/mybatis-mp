@@ -1,3 +1,17 @@
+/*
+ *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License").
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 package cn.mybatis.mp.core.db.reflect;
 
 import cn.mybatis.mp.core.NotTableClassException;
@@ -9,6 +23,7 @@ import db.sql.api.impl.tookit.Objects;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ModelInfo {
@@ -34,6 +49,11 @@ public class ModelInfo {
     private final List<ModelFieldInfo> modelFieldInfos;
 
     /**
+     * 字段信息 key为属性字段名 value为字段信息
+     */
+    private final Map<String, ModelFieldInfo> modelFieldInfoMap;
+
+    /**
      * 字段个数
      */
     private final int fieldSize;
@@ -47,6 +67,11 @@ public class ModelInfo {
      * 乐观锁字段
      */
     private final ModelFieldInfo versionFieldInfo;
+
+    /**
+     * 逻辑删除字段
+     */
+    private final ModelFieldInfo logicDeleteFieldInfo;
 
     /**
      * 多租户ID
@@ -68,10 +93,13 @@ public class ModelInfo {
 
         List<ModelFieldInfo> modelFieldInfos = FieldUtil.getResultMappingFields(model).stream().map(field -> new ModelFieldInfo(entity, model, field)).collect(Collectors.toList());
 
+        this.modelFieldInfoMap = modelFieldInfos.stream().collect(Collectors.toMap((item) -> item.getField().getName(), account -> account));
+
         this.idFieldInfos = modelFieldInfos.stream().filter(item -> item.getTableFieldInfo().isTableId()).collect(Collectors.toList());
         this.idFieldInfo = this.idFieldInfos.size() == 1 ? this.idFieldInfos.get(0) : null;
         this.versionFieldInfo = modelFieldInfos.stream().filter(item -> item.getTableFieldInfo().isVersion()).findFirst().orElse(null);
         this.tenantIdFieldInfo = modelFieldInfos.stream().filter(item -> item.getTableFieldInfo().isTenantId()).findFirst().orElse(null);
+        this.logicDeleteFieldInfo = modelFieldInfos.stream().filter(item -> item.getTableFieldInfo().isLogicDelete()).findFirst().orElse(null);
 
         this.modelFieldInfos = Collections.unmodifiableList(modelFieldInfos);
         this.fieldSize = this.modelFieldInfos.size();
@@ -93,6 +121,10 @@ public class ModelInfo {
         return versionFieldInfo;
     }
 
+    public ModelFieldInfo getLogicDeleteFieldInfo() {
+        return logicDeleteFieldInfo;
+    }
+
     public ModelFieldInfo getTenantIdFieldInfo() {
         return tenantIdFieldInfo;
     }
@@ -105,6 +137,16 @@ public class ModelInfo {
         return idFieldInfos;
     }
 
+    /**
+     * 根据字段名获取字段信息
+     *
+     * @param property
+     * @return
+     */
+    public final ModelFieldInfo getFieldInfo(String property) {
+        return modelFieldInfoMap.get(property);
+    }
+
     public int getFieldSize() {
         return fieldSize;
     }
@@ -114,5 +156,9 @@ public class ModelInfo {
             throw new RuntimeException("Model:" + this.type + " has multi ID or non-single ID.");
         }
         return this.idFieldInfo;
+    }
+
+    public ModelFieldInfo getIdFieldInfo() {
+        return idFieldInfo;
     }
 }

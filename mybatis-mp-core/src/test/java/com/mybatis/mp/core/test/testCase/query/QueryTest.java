@@ -1,9 +1,24 @@
+/*
+ *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License").
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 package com.mybatis.mp.core.test.testCase.query;
 
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.sql.executor.SubQuery;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
+import cn.mybatis.mp.core.sql.util.WhereUtil;
 import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
@@ -19,6 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +45,65 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class QueryTest extends BaseTest {
+
+    @Test
+    public void listByIds() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = sysUserMapper.listByIds(1, 2);
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 2);
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 2);
+        }
+    }
+
+    @Test
+    public void listByIds2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = sysUserMapper.listByIds(Arrays.asList(1, 2));
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 2);
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 2);
+        }
+    }
+
+    @Test
+    public void listWithLimit() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = sysUserMapper.list(2, where -> where.in(SysUser::getId, 1, 2, 3));
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 2);
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 2);
+        }
+    }
+
+    @Test
+    public void listWithLimit2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = sysUserMapper.list(2, WhereUtil.create().in(SysUser::getId, 1, 2, 3));
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 2);
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 2);
+        }
+    }
+
+    @Test
+    public void listAll() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = sysUserMapper.listAll();
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 3);
+        }
+    }
+
     @Test
     public void onDBTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
@@ -250,12 +325,12 @@ public class QueryTest extends BaseTest {
     public void count1Test() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            final LongAdder adder=new LongAdder();
+            final LongAdder adder = new LongAdder();
             Integer count = QueryChain.of(sysUserMapper)
                     .selectCount1()
                     .from(SysUser.class)
-                    .returnType(Integer.class,(cnt)->{
-                        System.out.println(">>>"+cnt);
+                    .returnType(Integer.class, (cnt) -> {
+                        System.out.println(">>>" + cnt);
                         adder.add(cnt);
                     })
                     .count();
@@ -330,7 +405,7 @@ public class QueryTest extends BaseTest {
                     .select(SysUser.class)
                     .from(SysUser.class)
                     .orderBy(SysUser::getId)
-                    .optimizeOptions(optimizeOptions -> optimizeOptions.disableAll())
+                    .optimizeOptions(optimizeOptions -> optimizeOptions.optimizeJoin(false).optimizeOrderBy(false))
                     .paging(Pager.of(2));
 
             assertEquals(pager.getTotal(), Integer.valueOf(3), "paging Total");

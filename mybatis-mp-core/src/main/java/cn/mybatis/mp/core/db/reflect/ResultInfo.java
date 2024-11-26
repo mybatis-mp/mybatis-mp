@@ -1,3 +1,17 @@
+/*
+ *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License").
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 package cn.mybatis.mp.core.db.reflect;
 
 import cn.mybatis.mp.core.NotTableClassException;
@@ -11,6 +25,7 @@ import org.apache.ibatis.type.TypeHandler;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 public class ResultInfo {
@@ -48,7 +63,7 @@ public class ResultInfo {
     /**
      * 类上的PutValues注解
      */
-    private final List<CreatedEvent> createdEventList;
+    private final Map<Class, List<CreatedEventInfo>> createdEventInfos;
 
     public ResultInfo(Class<?> clazz) {
 
@@ -59,7 +74,7 @@ public class ResultInfo {
         this.resultFieldInfos = Collections.unmodifiableList(parseResult.resultFieldInfos);
         this.tablePrefixes = Collections.unmodifiableMap(parseResult.tablePrefixes);
         this.nestedResultInfos = Collections.unmodifiableList(parseResult.nestedResultInfos);
-        this.createdEventList = Collections.unmodifiableList(parseResult.createdEventList);
+        this.createdEventInfos = Collections.unmodifiableMap(parseResult.createdEventInfos.stream().collect(Collectors.groupingBy(CreatedEventInfo::getClazz)));
     }
 
     private static ParseResult parse(Class<?> clazz) {
@@ -72,7 +87,7 @@ public class ResultInfo {
 
     private static void parseResultEntity(ParseResult parseResult, Class<?> clazz, ResultEntity resultEntity) {
         if (clazz.isAnnotationPresent(CreatedEvent.class)) {
-            parseResult.createdEventList.add(clazz.getAnnotation(CreatedEvent.class));
+            parseResult.createdEventInfos.add(new CreatedEventInfo(clazz, clazz.getAnnotation(CreatedEvent.class)));
         }
         TableInfo resultEntityTableInfo = resultEntity.value().isAnnotationPresent(Table.class) ? Tables.get(resultEntity.value()) : null;
 
@@ -130,7 +145,7 @@ public class ResultInfo {
             TableFieldInfo tableFieldInfo;
             String tableFieldName;
             Class<?> entity;
-            Integer storey;
+            int storey;
 
             if (field.isAnnotationPresent(ResultEntityField.class)) {
                 ResultEntityField resultEntityField = field.getAnnotation(ResultEntityField.class);
@@ -204,7 +219,7 @@ public class ResultInfo {
         boolean fieldTypeIsEntity = targetType.isAnnotationPresent(Table.class);
         if (!fieldTypeIsEntity) {
             if (targetType.isAnnotationPresent(CreatedEvent.class)) {
-                parseResult.createdEventList.add((CreatedEvent) targetType.getAnnotation(CreatedEvent.class));
+                parseResult.createdEventInfos.add(new CreatedEventInfo(targetType, (CreatedEvent) targetType.getAnnotation(CreatedEvent.class)));
             }
         }
 
@@ -352,7 +367,7 @@ public class ResultInfo {
                     if (targetSelectColumnBuilder.length() == 0) {
                         throw buildException(clazz, field, annotationName, annotationPropertyName, "format error");
                     } else {
-                        targetSelectColumnBuilder.append(value.substring(startIndex, value.length() - 1));
+                        targetSelectColumnBuilder.append(value, startIndex, value.length() - 1);
                         return targetSelectColumnBuilder.toString();
                     }
                 }
@@ -365,7 +380,7 @@ public class ResultInfo {
                 if (Objects.isNull(targetSelectTargetFieldInfo)) {
                     throw buildException(clazz, field, annotationName, annotationPropertyName, property + " is not a entity field");
                 }
-                targetSelectColumnBuilder.append(value.substring(startIndex, start)).append(targetSelectTargetFieldInfo.getColumnName());
+                targetSelectColumnBuilder.append(value, startIndex, start).append(targetSelectTargetFieldInfo.getColumnName());
                 startIndex = end + 1;
             }
         }
@@ -454,11 +469,16 @@ public class ResultInfo {
         Field targetMatchField = null;
         if (returnType.isAnnotationPresent(ResultEntity.class)) {
             ResultInfo resultInfo = ResultInfos.get(returnType);
-            Optional<Field> eqFieldOptional = resultInfo.getResultFieldInfos().stream()
-                    .filter(item -> item instanceof ResultTableFieldInfo)
-                    .filter(item -> ((ResultTableFieldInfo) item).getTableFieldInfo().getField() == fetchTargetFieldInfo.getField())
-                    .map(item -> item.getField())
-                    .findFirst();
+            Optional<Field> eqFieldOptional = Optional.empty();
+            for (ResultFieldInfo item : resultInfo.getResultFieldInfos()) {
+                if (item instanceof ResultTableFieldInfo) {
+                    if (((ResultTableFieldInfo) item).getTableFieldInfo().getField() == fetchTargetFieldInfo.getField()) {
+                        Field itemField = item.getField();
+                        eqFieldOptional = Optional.of(itemField);
+                        break;
+                    }
+                }
+            }
             if (eqFieldOptional.isPresent()) {
                 targetMatchField = eqFieldOptional.get();
             }
@@ -471,7 +491,7 @@ public class ResultInfo {
 
         if (!returnType.isAnnotationPresent(Table.class)) {
             if (returnType.isAnnotationPresent(CreatedEvent.class)) {
-                parseResult.createdEventList.add((CreatedEvent) returnType.getAnnotation(CreatedEvent.class));
+                parseResult.createdEventInfos.add(new CreatedEventInfo(returnType, (CreatedEvent) returnType.getAnnotation(CreatedEvent.class)));
             }
         }
 
@@ -496,6 +516,7 @@ public class ResultInfo {
 
         String[] properties = putValue.property().split(",");
         String[] valuesColumn = new String[properties.length];
+        Class<?>[] valueTypes = new Class[properties.length];
         TypeHandler<?>[] valuesTypeHandler = new TypeHandler[properties.length];
         for (int i = 0; i < properties.length; i++) {
             TableInfo fetchTableInfo = Tables.get(putValue.source());
@@ -513,9 +534,10 @@ public class ResultInfo {
 
             valuesColumn[i] = tablePrefix + fetchFieldInfo.getColumnName();
             valuesTypeHandler[i] = fetchFieldInfo.getTypeHandler();
+            valueTypes[i] = fetchFieldInfo.getFieldInfo().getTypeClass();
         }
 
-        parseResult.putValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutValueInfo(clazz, field, putValue, valuesColumn, valuesTypeHandler, putValue.factory()));
+        parseResult.putValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutValueInfo(clazz, field, putValue, valueTypes, valuesColumn, valuesTypeHandler));
         return tableCount;
     }
 
@@ -555,7 +577,7 @@ public class ResultInfo {
         TypeHandler<?> valueTypeHandler = fetchFieldInfo.getTypeHandler();
 
 
-        parseResult.putEnumValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutEnumValueInfo(field, valueColumn, valueTypeHandler, putEnumValue));
+        parseResult.putEnumValueInfoMap.computeIfAbsent(clazz, key -> new ArrayList<>()).add(new PutEnumValueInfo(field, putEnumValue, fetchFieldInfo.getFieldInfo().getTypeClass(), valueColumn, valueTypeHandler));
         return tableCount;
     }
 
@@ -638,6 +660,6 @@ public class ResultInfo {
 
         public final Map<Class, List<PutEnumValueInfo>> putEnumValueInfoMap = new HashMap<>();
 
-        public final List<CreatedEvent> createdEventList = new ArrayList<>();
+        public final List<CreatedEventInfo> createdEventInfos = new ArrayList<>();
     }
 }

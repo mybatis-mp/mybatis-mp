@@ -1,3 +1,17 @@
+/*
+ *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License").
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 package com.mybatis.mp.core.test.testCase.insert;
 
 import cn.mybatis.mp.core.sql.executor.Query;
@@ -48,9 +62,10 @@ public class DefaultValueTestCase extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
             DefaultValueTest defaultValueTest = new DefaultValueTest();
-            defaultValueTest.setValue3(TestEnum.X1);
+            //defaultValueTest.setValue3(TestEnum.X1);
             DbType.H2.getKeywords().add("value3");
             mapper.save(defaultValueTest);
+            assertNotNull(defaultValueTest.getCreateTime());
 
             System.out.println(defaultValueTest);
             assertNotNull(defaultValueTest.getId());
@@ -105,6 +120,10 @@ public class DefaultValueTestCase extends BaseTest {
                 mapper.saveBatch(list, DefaultValueTest::getId, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
             } else {
                 mapper.saveBatch(list, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
+                System.out.println(list);
+                for (int i = 0; i < list.size(); i++) {
+                    assertEquals(list.get(i).getId(), i + 1);
+                }
             }
 
             if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
@@ -157,6 +176,10 @@ public class DefaultValueTestCase extends BaseTest {
                 mapper.saveBatch(list);
             } else {
                 mapper.saveBatch(list);
+                System.out.println(list);
+                for (int i = 0; i < list.size(); i++) {
+                    assertEquals(list.get(i).getId(), i + 1);
+                }
             }
 
             if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {

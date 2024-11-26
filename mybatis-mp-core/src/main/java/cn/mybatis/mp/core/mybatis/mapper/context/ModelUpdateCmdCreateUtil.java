@@ -1,3 +1,17 @@
+/*
+ *  Copyright (c) 2024-2024, Ai东 (abc-127@live.cn).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License").
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
 import cn.mybatis.mp.core.MybatisMpConfig;
@@ -10,6 +24,7 @@ import cn.mybatis.mp.core.sql.util.WhereUtil;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.ModelInfoUtil;
 import cn.mybatis.mp.core.util.StringPool;
+import cn.mybatis.mp.core.util.TypeConvertUtil;
 import cn.mybatis.mp.db.Model;
 import cn.mybatis.mp.db.annotations.TableField;
 import db.sql.api.impl.cmd.Methods;
@@ -23,7 +38,7 @@ import java.util.Set;
 public class ModelUpdateCmdCreateUtil {
 
 
-    private static Update warp(Update update, ModelInfo modelInfo, Model t, Set<String> forceUpdateFields, boolean allFieldForce) {
+    private static Update warp(Update update, ModelInfo modelInfo, Model t, Set<String> forceFields, boolean allFieldForce) {
         MybatisCmdFactory $ = update.$();
         Table table = $.table(modelInfo.getEntityType());
         update.update(table);
@@ -51,12 +66,14 @@ public class ModelUpdateCmdCreateUtil {
                     //乐观锁字段无值 不增加乐观锁条件
                     continue;
                 }
-                Integer version = (Integer) value + 1;
+                //乐观锁+1
+                Object version = TypeConvertUtil.convert(Long.valueOf(value.toString()) + 1, modelFieldInfo.getField().getType());
                 //乐观锁设置
-                update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.value(version));
-
+                update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(version));
                 //乐观锁条件
                 update.$where().extConditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(value));
+                //乐观锁回写
+                ModelInfoUtil.setValue(modelFieldInfo, t, version);
                 continue;
             }
 
@@ -67,7 +84,7 @@ public class ModelUpdateCmdCreateUtil {
                 ModelInfoUtil.setValue(modelFieldInfo, t, value);
             }
 
-            if (allFieldForce || (Objects.nonNull(forceUpdateFields) && forceUpdateFields.contains(modelFieldInfo.getField().getName()))) {
+            if (allFieldForce || (Objects.nonNull(forceFields) && forceFields.contains(modelFieldInfo.getField().getName()))) {
                 if (Objects.isNull(value)) {
                     update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), NULL.NULL);
                     continue;
@@ -90,18 +107,18 @@ public class ModelUpdateCmdCreateUtil {
     }
 
 
-    public static Update create(Model model, Set<String> forceUpdateFields, boolean allFieldForce) {
+    public static Update create(Model model, Set<String> forceFields, boolean allFieldForce) {
         Where where = WhereUtil.create();
         ModelInfo modelInfo = Models.get(model.getClass());
         WhereUtil.appendIdWhereWithModel(where, modelInfo, model);
-        return warp(new Update(where), modelInfo, model, forceUpdateFields, allFieldForce);
+        return warp(new Update(where), modelInfo, model, forceFields, allFieldForce);
     }
 
-    public static Update create(Model model, Where where, Set<String> forceUpdateFields, boolean allFieldForce) {
+    public static Update create(Model model, Where where, Set<String> forceFields, boolean allFieldForce) {
         if (Objects.isNull(where) || !where.hasContent()) {
             throw new RuntimeException("update has no where condition content ");
         }
         ModelInfo modelInfo = Models.get(model.getClass());
-        return warp(new Update(where), modelInfo, model, forceUpdateFields, allFieldForce);
+        return warp(new Update(where), modelInfo, model, forceFields, allFieldForce);
     }
 }
