@@ -14,6 +14,7 @@
 
 package cn.mybatis.mp.core.sql.executor.chain;
 
+import cn.mybatis.mp.core.mybatis.mapper.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
@@ -33,9 +34,11 @@ import java.util.function.Consumer;
  */
 public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
 
-    protected MybatisMapper<T> mapper;
+    protected BaseMapper mapper;
 
     protected boolean autoSelect = true;
+
+    protected Class<?> entityType;
 
     protected QueryChain() {
 
@@ -50,9 +53,20 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
         this.mapper = mapper;
     }
 
+    public QueryChain(BaseMapper mapper, Class<T> entityType) {
+        this.mapper = mapper;
+        this.entityType = entityType;
+    }
+
+    public QueryChain(BaseMapper mapper, Class<T> entityType, Where where) {
+        super(where);
+        this.mapper = mapper;
+        this.entityType = entityType;
+    }
+
     /**
      * 非特殊情况 请使用of静态方法
-     * 使用此方法后 后续执行查询需调用一次withMapper(mybatisMapper)方法
+     * 使用此方法后 后续执行查询需调用一次withMapper(Mapper)方法
      *
      * @param <T>
      * @return 自己
@@ -67,6 +81,27 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
 
     public static <T> QueryChain<T> of(MybatisMapper<T> mapper, Where where) {
         return new QueryChain<>(mapper, where);
+    }
+
+    public static <T> QueryChain<T> of(BaseMapper mapper, Class<T> entityType) {
+        return new QueryChain<>(mapper, entityType);
+    }
+
+    public static <T> QueryChain<T> of(BaseMapper mapper, Class<T> entityType, Where where) {
+        return new QueryChain<>(mapper, entityType, where);
+    }
+
+    protected Class<?> getEntityType() {
+        if (entityType != null) {
+            return entityType;
+        }
+        if (mapper instanceof MybatisMapper) {
+            this.entityType = ((MybatisMapper) mapper).getEntityType();
+        } else {
+            throw new RuntimeException("you need specify entityType");
+        }
+
+        return entityType;
     }
 
     public QueryChain<T> disableAutoSelect() {
@@ -100,19 +135,19 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
                     hasSetSelect = SelectClassUtil.select(this, this.returnType);
                 }
                 if (!hasSetSelect) {
-                    this.select(mapper.getEntityType());
+                    this.select(getEntityType());
                 }
             }
         }
         if (Objects.isNull(this.from)) {
-            this.from(mapper.getEntityType());
+            this.from(getEntityType());
         }
         if (Objects.isNull(this.returnType)) {
-            this.returnType(mapper.getEntityType());
+            this.returnType(getEntityType());
         }
     }
 
-    private void checkAndSetMapper(MybatisMapper mapper) {
+    private void checkAndSetMapper(BaseMapper mapper) {
         if (Objects.isNull(this.mapper)) {
             this.mapper = mapper;
             return;
@@ -131,6 +166,18 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
      */
     public QueryChain<T> withMapper(MybatisMapper<?> mapper) {
         this.checkAndSetMapper(mapper);
+        return this;
+    }
+
+    /**
+     * 用create静态方法的 Chain 需要调用一次此方法 用于设置 mapper
+     *
+     * @param mapper 操作目标实体类的mapper
+     * @return 自己
+     */
+    public QueryChain<T> withMapper(BaseMapper mapper, Class<?> entityType) {
+        this.checkAndSetMapper(mapper);
+        this.entityType = entityType;
         return this;
     }
 

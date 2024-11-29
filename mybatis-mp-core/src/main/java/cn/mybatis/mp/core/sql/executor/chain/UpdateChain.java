@@ -14,6 +14,7 @@
 
 package cn.mybatis.mp.core.sql.executor.chain;
 
+import cn.mybatis.mp.core.mybatis.mapper.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.sql.executor.BaseUpdate;
 import db.sql.api.impl.cmd.struct.Where;
@@ -25,7 +26,9 @@ import java.util.Objects;
  */
 public class UpdateChain extends BaseUpdate<UpdateChain> {
 
-    protected MybatisMapper<?> mapper;
+    protected BaseMapper mapper;
+
+    protected Class<?> entityType;
 
     protected UpdateChain() {
 
@@ -40,6 +43,17 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
         this.mapper = mapper;
     }
 
+    public UpdateChain(BaseMapper mapper, Class<?> entityType) {
+        this.mapper = mapper;
+        this.entityType = entityType;
+    }
+
+    public UpdateChain(BaseMapper mapper, Class<?> entityType, Where where) {
+        super(where);
+        this.mapper = mapper;
+        this.entityType = entityType;
+    }
+
     public static UpdateChain of(MybatisMapper<?> mapper) {
         return new UpdateChain(mapper);
     }
@@ -48,9 +62,16 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
         return new UpdateChain(mapper, where);
     }
 
+    public static UpdateChain of(BaseMapper mapper, Class<?> entityType) {
+        return new UpdateChain(mapper, entityType);
+    }
+
+    public static UpdateChain of(BaseMapper mapper, Class<?> entityType, Where where) {
+        return new UpdateChain(mapper, entityType, where);
+    }
     /**
      * 非特殊情况 请使用of静态方法
-     * 使用此方法后 后续执行查询需调用一次withMapper(mybatisMapper)方法
+     * 使用此方法后 后续执行查询需调用一次withMapper(Mapper)方法
      *
      * @return 自己
      */
@@ -58,14 +79,27 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
         return new UpdateChain();
     }
 
+    protected Class<?> getEntityType() {
+        if (entityType != null) {
+            return entityType;
+        }
+        if (mapper instanceof MybatisMapper) {
+            this.entityType = ((MybatisMapper) mapper).getEntityType();
+        } else {
+            throw new RuntimeException("you need specify entityType");
+        }
+
+        return entityType;
+    }
+
     private void setDefault() {
         if (Objects.isNull(this.getUpdateTable())) {
             //自动设置实体类
-            this.update(mapper.getEntityType());
+            this.update(getEntityType());
         }
     }
 
-    private void checkAndSetMapper(MybatisMapper mapper) {
+    private void checkAndSetMapper(BaseMapper mapper) {
         if (Objects.isNull(this.mapper)) {
             this.mapper = mapper;
             return;
@@ -84,6 +118,18 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
      */
     public UpdateChain withMapper(MybatisMapper<?> mapper) {
         this.checkAndSetMapper(mapper);
+        return this;
+    }
+
+    /**
+     * 用create静态方法的 Chain 需要调用一次此方法 用于设置 mapper
+     *
+     * @param mapper 一般都是BasicMapper
+     * @return 自己
+     */
+    public UpdateChain withMapper(BaseMapper mapper, Class<?> entityType) {
+        this.checkAndSetMapper(mapper);
+        this.entityType = entityType;
         return this;
     }
 

@@ -14,6 +14,7 @@
 
 package cn.mybatis.mp.core.sql.executor.chain;
 
+import cn.mybatis.mp.core.mybatis.mapper.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.Query;
@@ -32,7 +33,9 @@ public class InsertChain extends BaseInsert<InsertChain> {
 
     private final Map<Getter<?>, Object> insertSelectFields = new HashMap<>();
 
-    protected MybatisMapper<?> mapper;
+    protected BaseMapper mapper;
+
+    protected Class<?> entityType;
 
     protected InsertChain() {
 
@@ -42,18 +45,40 @@ public class InsertChain extends BaseInsert<InsertChain> {
         this.mapper = mapper;
     }
 
+    public InsertChain(BaseMapper mapper, Class<?> entityType) {
+        this.mapper = mapper;
+        this.entityType = entityType;
+    }
+
     public static InsertChain of(MybatisMapper<?> mapper) {
         return new InsertChain(mapper);
     }
 
+    public static InsertChain of(BaseMapper mapper, Class<?> entityType) {
+        return new InsertChain(mapper, entityType);
+    }
+
     /**
      * 非特殊情况 请使用of静态方法
-     * 使用此方法后 后续执行查询需调用一次withMapper(mybatisMapper)方法
+     * 使用此方法后 后续执行查询需调用一次withMapper(Mapper)方法
      *
      * @return 自己
      */
     public static InsertChain create() {
         return new InsertChain();
+    }
+
+    protected Class<?> getEntityType() {
+        if (entityType != null) {
+            return entityType;
+        }
+        if (mapper instanceof MybatisMapper) {
+            this.entityType = ((MybatisMapper) mapper).getEntityType();
+        } else {
+            throw new RuntimeException("you need specify entityType");
+        }
+
+        return entityType;
     }
 
     public <T> InsertChain insertSelect(Getter<T> field, Cmd select) {
@@ -114,11 +139,11 @@ public class InsertChain extends BaseInsert<InsertChain> {
     private void setDefault() {
         if (this.getInsertTable() == null) {
             //自动设置实体类
-            this.insert(mapper.getEntityType());
+            this.insert(getEntityType());
         }
     }
 
-    private void checkAndSetMapper(MybatisMapper mapper) {
+    private void checkAndSetMapper(BaseMapper mapper) {
         if (Objects.isNull(this.mapper)) {
             this.mapper = mapper;
             return;
@@ -137,6 +162,18 @@ public class InsertChain extends BaseInsert<InsertChain> {
      */
     public InsertChain withMapper(MybatisMapper<?> mapper) {
         this.checkAndSetMapper(mapper);
+        return this;
+    }
+
+    /**
+     * 用create静态方法的 Chain 需要调用一次此方法 用于设置 mapper
+     *
+     * @param mapper 一般都是BasicMapper
+     * @return 自己
+     */
+    public InsertChain withMapper(BaseMapper mapper, Class<?> entityType) {
+        this.checkAndSetMapper(mapper);
+        this.entityType = entityType;
         return this;
     }
 
