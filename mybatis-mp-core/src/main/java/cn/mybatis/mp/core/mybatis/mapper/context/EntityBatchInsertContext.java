@@ -59,26 +59,24 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
 
     private static Insert createCmd(TableInfo tableInfo, Object[] array, Set<String> saveFieldSet, DbType dbType) {
         Insert insert = new Insert();
-        Class<?> entityType = tableInfo.getType();
         insert.$().cacheTableInfo(tableInfo);
         Table table = insert.$().table(tableInfo.getSchemaAndTableName());
         insert.insert(table);
 
-
         List<TableFieldInfo> saveFieldInfoSet = saveFieldSet.stream().map(tableInfo::getFieldInfo).collect(Collectors.toList());
-
-        TableId tableId = null;
 
         //拼上主键
         if (!tableInfo.getIdFieldInfos().isEmpty()) {
-            tableId = TableIds.get(entityType, dbType);
-            if (tableId.value() == IdAutoType.GENERATOR) {
-                tableInfo.getIdFieldInfos().forEach(item -> {
-                    if (!saveFieldInfoSet.contains(item)) {
-                        saveFieldInfoSet.add(item);
-                    }
-                });
-            }
+            tableInfo.getIdFieldInfos().forEach(idFieldInfo -> {
+                TableId tableId = TableInfoUtil.getTableIdAnnotation(idFieldInfo.getField(), dbType);
+                if (tableId.value() == IdAutoType.GENERATOR) {
+                    tableInfo.getIdFieldInfos().forEach(item -> {
+                        if (!saveFieldInfoSet.contains(item)) {
+                            saveFieldInfoSet.add(item);
+                        }
+                    });
+                }
+            });
         }
 
         //拼上租户ID
@@ -118,6 +116,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
                 boolean hasValue = (!tableFieldInfo.isTableId() && Objects.nonNull(value)) || (tableFieldInfo.isTableId() && IdUtil.isIdValueExists(value));
                 if (!hasValue) {
                     if (tableFieldInfo.isTableId()) {
+                        TableId tableId = TableInfoUtil.getTableIdAnnotation(tableFieldInfo.getField(), dbType);
                         if (tableId.value() == IdAutoType.GENERATOR) {
                             IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
                             Object id = identifierGenerator.nextId(tableInfo.getType());
@@ -159,6 +158,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
         }
 
         if (dbType == DbType.SQL_SERVER && insert.getInsertValues().getValues().size() > 0) {
+            TableId tableId = TableIds.get(tableInfo.getType(), dbType);
             if (!containId && Objects.nonNull(tableId) && tableId.value() == IdAutoType.AUTO) {
                 insert.getInsertFields().setOutput("OUTPUT INSERTED." + tableInfo.getIdFieldInfo().getColumnName());
             }

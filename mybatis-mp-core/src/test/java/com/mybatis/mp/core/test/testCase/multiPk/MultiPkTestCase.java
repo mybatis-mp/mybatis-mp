@@ -21,6 +21,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,6 +32,19 @@ public class MultiPkTestCase extends BaseTest {
         return mapper.get(where -> {
             where.eq(MultiPk::getId1, id1).eq(MultiPk::getId2, id2);
         });
+    }
+
+    @Test
+    public void saveBatchTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
+
+            MultiPk entity = new MultiPk();
+            entity.setId1(1);
+            entity.setId2(2);
+            entity.setName("12");
+            mapper.saveBatch(Collections.singletonList(entity));
+        }
     }
 
     @Test

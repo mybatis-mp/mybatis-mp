@@ -125,6 +125,9 @@ public class MybatisConfiguration extends Configuration {
         if (BasicMapper.class.isAssignableFrom(type) && type != BasicMapper.class) {
             this.addBasicMapper(type);
             return;
+        } else if (MybatisMapper.class == type) {
+            super.addMapper(type);
+            return;
         } else if (MybatisMapper.class.isAssignableFrom(type)) {
             List<Class<?>> list = GenericUtil.getGenericInterfaceClass(type);
             Optional<Class<?>> entityOptional = list.stream().filter(item -> item.isAnnotationPresent(Table.class)).findFirst();
