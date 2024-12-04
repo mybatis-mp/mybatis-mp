@@ -22,7 +22,6 @@ import com.mybatis.mp.core.test.mapper.*;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.impl.tookit.SQLPrinter;
-import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.TransactionFactory;
@@ -84,7 +83,7 @@ public class BaseTest {
             configuration.getTypeHandlerRegistry().register(LocalDateTime.class, LocalDateTimeTypeHandler.class);
         }
 
-        configuration.setLogImpl(StdOutImpl.class);
+        //configuration.setLogImpl(StdOutImpl.class);
         configuration.setMapUnderscoreToCamelCase(false);
 
         // 4 手动增加 Mapper 接口

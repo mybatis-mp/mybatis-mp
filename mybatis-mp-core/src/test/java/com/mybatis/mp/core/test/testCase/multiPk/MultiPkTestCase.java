@@ -48,6 +48,20 @@ public class MultiPkTestCase extends BaseTest {
     }
 
     @Test
+    public void saveOrUpdateTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
+
+            MultiPk entity = new MultiPk();
+            entity.setId1(1);
+            entity.setId2(2);
+            entity.setName("12");
+            mapper.saveOrUpdate(Collections.singletonList(entity));
+            mapper.saveOrUpdate(Collections.singletonList(entity));
+        }
+    }
+
+    @Test
     public void oneTest() {
 
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

@@ -14,6 +14,8 @@
 
 package com.mybatis.mp.core.test.testCase.insert;
 
+import cn.mybatis.mp.core.mybatis.MybatisBatchUtil;
+import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.sql.executor.chain.InsertChain;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
@@ -29,6 +31,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -77,7 +80,7 @@ public class DefaultValueTestCase extends BaseTest {
             System.out.println(defaultValueTest);
             assertEquals(TestEnum.X1, defaultValueTest.getValue3());
 
-            QueryChain.of(mapper)
+            QueryChain.of(mapper).forSearch(true)
                     .in(DefaultValueTest::getValue1, Arrays.asList(TestEnum.X1, TestEnum.X2)).list();
         }
     }
@@ -308,62 +311,71 @@ public class DefaultValueTestCase extends BaseTest {
         }
     }
 
-//    @Test
-//    public void testBatch() {
-//        int length = 20000;
-//        List<DefaultValueTest> list = new ArrayList<>(length);
-//        for (int i = 0; i < length; i++) {
-//            list.add(new DefaultValueTest());
-//        }
-//
-//        long startTime = 0;
-//        startTime = System.currentTimeMillis();
-//        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
-//            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
-//            for (DefaultValueTest item : list) {
-//                mapper.save(item);
-//            }
-//        }
-//        System.out.println("普通：" + (System.currentTimeMillis() - startTime));
-//
-//
-//        startTime = System.currentTimeMillis();
-//        int xx = MybatisBatchUtil.batchSave(this.sqlSessionFactory, DefaultValueTestMapper.class, list);
-//        //System.out.println(xx);
-//        System.out.println("批量：" + (System.currentTimeMillis() - startTime));
-//
-//
-//        startTime = System.currentTimeMillis();
-//        List<DefaultValueTest> saveBatchList = new ArrayList<>(100);
-//        int saveTotalCnt = MybatisBatchUtil.batch(this.sqlSessionFactory, (session) -> {
-//            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
-//            int saveCnt = 0;
-//            int j=0;
-//            for (int i = 0; i < length; i++) {
-//                saveBatchList.add(list.get(i));
-//                if (i != 0 && i % 100 == 0) {
-//                    j++;
-//                    mapper.saveBatch(saveBatchList, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
-//                    saveBatchList.clear();
-//                }
-//                if (i != 0 && j == 5) {
-//                    j=0;
-//                    saveCnt += MybatisBatchUtil.getEffectCnt(session.flushStatements());
-//                }
-//            }
-//            if (!saveBatchList.isEmpty()) {
-//                mapper.saveBatch(saveBatchList, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
-//                saveBatchList.clear();
-//                saveCnt += MybatisBatchUtil.getEffectCnt(session.flushStatements());
-//            }
-//            assertEquals(length, saveCnt);
-//            assertEquals(length, QueryChain.of(mapper).count());
-//            return saveCnt;
-//
-//        });
-//        //System.out.println(saveTotalCnt);
-//
-//        System.out.println("批量+原生批量：" + (System.currentTimeMillis() - startTime));
-//
-//    }
+    @Test
+    public void testBatch() {
+        int length = 20000;
+        List<DefaultValueTest> list = new ArrayList<>(length);
+        for (int i = 0; i < length; i++) {
+            list.add(new DefaultValueTest());
+        }
+
+        long startTime = 0;
+        startTime = System.currentTimeMillis();
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
+            for (DefaultValueTest item : list) {
+                mapper.save(item);
+            }
+        }
+
+        long speedTime1 = System.currentTimeMillis() - startTime;
+
+        startTime = System.currentTimeMillis();
+        int xx2 = MybatisBatchUtil.batchSave(this.sqlSessionFactory, DefaultValueTestMapper.class, list);
+        long speedTime2 = System.currentTimeMillis() - startTime;
+        assertEquals(xx2, length);
+
+        startTime = System.currentTimeMillis();
+        List<DefaultValueTest> saveBatchList = new ArrayList<>(100);
+        int xx3 = MybatisBatchUtil.batch(this.sqlSessionFactory, (session) -> {
+            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
+            int saveCnt = 0;
+            int j = 0;
+            for (int i = 0; i < length; i++) {
+                saveBatchList.add(list.get(i));
+                if (i != 0 && i % 100 == 0) {
+                    j++;
+                    mapper.saveBatch(saveBatchList, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
+                    saveBatchList.clear();
+                }
+                if (i != 0 && j == 5) {
+                    j = 0;
+                    saveCnt += MybatisBatchUtil.getEffectCnt(session.flushStatements());
+                }
+            }
+            if (!saveBatchList.isEmpty()) {
+                mapper.saveBatch(saveBatchList, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
+                saveBatchList.clear();
+                saveCnt += MybatisBatchUtil.getEffectCnt(session.flushStatements());
+            }
+            assertEquals(length, saveCnt);
+            assertEquals(length, QueryChain.of(mapper).count());
+            return saveCnt;
+
+        });
+        assertEquals(xx3, length);
+        long speedTime3 = System.currentTimeMillis() - startTime;
+
+        startTime = System.currentTimeMillis();
+        int xx4 = MybatisBatchUtil.batchMulti(sqlSessionFactory, BasicMapper.class, list, 100, (session, mapper, subList) -> {
+            mapper.saveBatch(subList);
+        });
+        assertEquals(xx4, length);
+        long speedTime4 = System.currentTimeMillis() - startTime;
+
+        System.out.println("普通for save：" + (speedTime1));
+        System.out.println("MybatisBatchUtil批量：" + (speedTime2));
+        System.out.println("MybatisBatchUtil批量+mapper.saveBatch原生批量：" + (speedTime3));
+        System.out.println("MybatisBatchUtil批量 batchMulti：" + (speedTime4));
+    }
 }
