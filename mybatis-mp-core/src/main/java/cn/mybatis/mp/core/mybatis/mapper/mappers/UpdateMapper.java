@@ -36,10 +36,9 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
     /**
      * 实体类修改
      *
-     * @param entity 实体类对象
+     * @param entity        实体类对象
      * @param allFieldForce 是否所有字段都修改，如果是null值，则变成NULL
      * @return 影响条数
-     *
      */
     default int update(T entity, boolean allFieldForce) {
         return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, allFieldForce, (Getter<T>[]) null);
@@ -69,10 +68,9 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
     /**
      * 多个修改，非批量行为
      *
-     * @param list 实体类对象List
+     * @param list          实体类对象List
      * @param allFieldForce 是否所有字段都修改，如果是null值，则变成NULL
      * @return 影响条数
-     *
      */
     default int update(Collection<T> list, boolean allFieldForce) {
         return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), list, allFieldForce, (Getter<T>[]) null);
@@ -81,7 +79,7 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
     /**
      * 多个修改，非批量行为
      *
-     * @param list              实体类对象List
+     * @param list        实体类对象List
      * @param forceFields 强制更新指定，解决需要修改为null的需求
      * @return 影响条数
      */
@@ -116,8 +114,8 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
     /**
      * 动态where 修改
      *
-     * @param entity            实体类对象
-     * @param consumer          where
+     * @param entity      实体类对象
+     * @param consumer    where
      * @param forceFields 强制更新指定，解决需要修改为null的需求
      * @return 影响条数
      */

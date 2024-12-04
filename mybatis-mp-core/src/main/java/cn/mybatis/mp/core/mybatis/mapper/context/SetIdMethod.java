@@ -21,13 +21,14 @@ public interface SetIdMethod {
     /**
      * 设置插入ID
      *
-     * @param id ID的值
+     * @param id    ID的值
      * @param index 第几个
      */
     void setId(Object id, int index);
 
     /**
      * ID是否有值
+     *
      * @return 是否有值
      */
     boolean idHasValue();

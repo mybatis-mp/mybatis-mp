@@ -56,6 +56,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行求最小操作
+     *
      * @return Min
      */
     default Min min() {
@@ -64,6 +65,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行avg求平均值操作
+     *
      * @return Avg
      */
     default Avg avg() {
@@ -72,6 +74,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行abs求绝对值操作
+     *
      * @return Abs
      */
     default Abs abs() {
@@ -80,6 +83,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行n次幂操作
+     *
      * @return Pow
      */
     default Pow pow(int n) {
@@ -88,6 +92,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行统计个数操作
+     *
      * @return Count
      */
     default Count count() {
@@ -96,6 +101,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行统计个数并是否去重操作
+     *
      * @param distinct 是否去重，true会加上DISTINCT
      * @return Count
      */
@@ -105,6 +111,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行四舍五入操作
+     *
      * @return Round
      */
     default Round round() {
@@ -113,6 +120,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行四舍五入操作
+     *
      * @param precision 保留小数的位数
      * @return Round
      */
@@ -122,6 +130,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行向上取整操作
+     *
      * @return Ceil
      */
     default Ceil ceil() {
@@ -130,6 +139,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行向下取整操作
+     *
      * @return Floor
      */
     default Floor floor() {
@@ -156,8 +166,9 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行保留小数位数操作
-     * @precision 保留小数位数
+     *
      * @return Truncate
+     * @precision 保留小数位数
      */
     default Truncate truncate(int precision) {
         return Methods.truncate(this, precision);
@@ -165,6 +176,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己求平方根操作
+     *
      * @return Sqrt
      */
     default Sqrt sqrt() {
@@ -192,6 +204,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 以自己为弧度，转换为度数操作
+     *
      * @return Degrees
      */
     default Degrees degrees() {
@@ -200,6 +213,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 以自己为度数，转换为弧度操作
+     *
      * @return Radians
      */
     default Radians radians() {
@@ -208,6 +222,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 以自己为角度，求正弦值操作
+     *
      * @return Sin
      */
     default Sin sin() {
@@ -216,6 +231,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 以自己为角度，求反正弦值操作
+     *
      * @return Asin
      */
     default Asin asin() {
@@ -224,6 +240,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 以自己为角度，求余弦值操作
+     *
      * @return Cos
      */
     default Cos cos() {
@@ -232,6 +249,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 以自己为角度，求反余弦值操作
+     *
      * @return Cos
      */
     default Acos acos() {
@@ -241,6 +259,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 以自己为角度，求正切值操作
+     *
      * @return Tan
      */
     default Tan tan() {
@@ -249,6 +268,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 以自己为角度，求反正切值操作
+     *
      * @return Atan
      */
     default Atan atan() {
@@ -257,6 +277,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 以自己为角度，求余切值操作
+     *
      * @return Cot
      */
     default Cot cot() {
@@ -265,6 +286,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 求自己的char长度操作
+     *
      * @return CharLength
      */
     default CharLength charLength() {
@@ -273,6 +295,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 求自己的长度操作
+     *
      * @return Length
      */
     default Length length() {
@@ -281,6 +304,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 从左边开始截取length个长度操作
+     *
      * @return Left
      */
     default Left left(int length) {
@@ -289,6 +313,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 从右边开始截取length个长度操作
+     *
      * @return Right
      */
     default Right right(int length) {
@@ -318,6 +343,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 将自己转成大写操作
+     *
      * @return Upper
      */
     default Upper upper() {
@@ -327,6 +353,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 将自己转成小写操作
+     *
      * @return Lower
      */
     default Lower lower() {
@@ -335,8 +362,9 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 左边填充内容操作
+     *
      * @param length 填充后的长度
-     * @param pad 填充内容
+     * @param pad    填充内容
      * @return Lpad
      */
     default Lpad lpad(int length, String pad) {
@@ -345,8 +373,9 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 右边填充内容操作
+     *
      * @param length 填充后的长度
-     * @param pad 填充内容
+     * @param pad    填充内容
      * @return Rpad
      */
     default Rpad rpad(int length, String pad) {
@@ -355,6 +384,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行去空格操作
+     *
      * @return Trim
      */
     default Trim trim() {
@@ -363,6 +393,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行去左边空格操作
+     *
      * @return Ltrim
      */
     default Ltrim ltrim() {
@@ -371,6 +402,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行去右边空格操作
+     *
      * @return Ltrim
      */
     default Rtrim rtrim() {
@@ -379,6 +411,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 将自己和s 进行比较，<s返回-1，等于s返回0，大于s返回1
+     *
      * @param s 需要比较的值
      * @return Strcmp
      */
@@ -388,6 +421,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 将自己重复n次操作
+     *
      * @param n 次数
      * @return Repeat
      */
@@ -397,9 +431,10 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行字符串替换操作
+     *
+     * @return Repeat
      * @target 匹配字符
      * @replacement 用于替换的字符
-     * @return Repeat
      */
     default Replace replace(String target, String replacement) {
         return Methods.replace(this, target, replacement);
@@ -407,6 +442,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 将自己内容反转操作
+     *
      * @return Reverse
      */
     default Reverse reverse() {
@@ -415,6 +451,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 取自己的年份部分操作
+     *
      * @return Year
      */
     default Year year() {
@@ -423,6 +460,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 取自己的月份部分操作
+     *
      * @return Month
      */
     default Month month() {
@@ -431,6 +469,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 取自己的月份部分操作
+     *
      * @return Day
      */
     default Day day() {
@@ -439,6 +478,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 将自己转成date，格式为YYYY-MM-DD
+     *
      * @return DateFormat
      */
     default DateFormat date() {
@@ -447,6 +487,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 将自己转成date格式化
+     *
      * @param pattern 格式
      * @return DateFormat
      */
@@ -456,6 +497,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 将自己转成date格式化
+     *
      * @param pattern 格式，例如 DatePattern.YYYY_MM_DD
      * @return DateFormat
      */
@@ -465,6 +507,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 获取自己属于星期几
+     *
      * @return
      */
     default Weekday weekday() {
@@ -473,6 +516,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 取自己的小时部分操作
+     *
      * @return Day
      */
     default Hour hour() {
@@ -501,6 +545,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行天数增加
+     *
      * @param n 增加的数量
      * @return DateAdd
      */
@@ -510,7 +555,8 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行天数增加
-     * @param n 增加的数量
+     *
+     * @param n        增加的数量
      * @param timeUnit n的单位
      * @return DateAdd
      */
@@ -520,6 +566,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行天数减少
+     *
      * @param n 减少的数量
      * @return DateAdd
      */
@@ -529,7 +576,8 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 对自己进行天数减少
-     * @param n 减少的数量
+     *
+     * @param n        减少的数量
      * @param timeUnit n的单位
      * @return DateAdd
      */
@@ -539,6 +587,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 以自己为IP，转换成网络字节序操作
+     *
      * @return InetAton
      */
     default InetAton inetAton() {
@@ -547,6 +596,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 以自己为网络字节序，转换成IP操作
+     *
      * @return InetNtoa
      */
     default InetNtoa inetNtoa() {
@@ -555,6 +605,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 乘法操作
+     *
      * @param value 被乘数
      * @return Multiply
      */
@@ -564,6 +615,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 乘法操作
+     *
      * @param value 乘数
      * @return Multiply
      */
@@ -573,6 +625,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 除法操作
+     *
      * @param value 除数
      * @return Multiply
      */
@@ -582,6 +635,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 除法操作
+     *
      * @param value 除数
      * @return Multiply
      */
@@ -591,6 +645,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 减法操作
+     *
      * @param value 减数
      * @return Multiply
      */
@@ -600,6 +655,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 减法操作
+     *
      * @param value 减数
      * @return Multiply
      */
@@ -609,6 +665,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 加法操作
+     *
      * @param value 加数
      * @return Plus
      */
@@ -618,6 +675,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 加法操作
+     *
      * @param value 加数
      * @return Plus
      */
@@ -627,6 +685,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 将自己和 values 进行字符串拼接操作
+     *
      * @param values
      * @return Concat
      */
@@ -636,6 +695,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 将自己和 values 进行字符串拼接操作
+     *
      * @param values 字符串
      * @return Concat
      */
@@ -645,7 +705,8 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 将自己和 values 进行字符串拼接操作
-     * @param split 分隔符
+     *
+     * @param split  分隔符
      * @param values 字符串
      * @return ConcatWs
      */
@@ -655,7 +716,8 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 将自己和 values 进行字符串拼接操作
-     * @param split 分隔符
+     *
+     * @param split  分隔符
      * @param values 字符串
      * @return ConcatWs
      */
@@ -665,6 +727,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * ifNull选择操作，自己为NULL时 以value返回，否则返回自己
+     *
      * @param value 自己是NULL的else值
      * @return IfNull
      */
@@ -674,6 +737,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（相等判断）
+     *
      * @param value 比较值；可以是普通值，也可以是CMD
      * @return Eq
      */
@@ -683,6 +747,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（大于判断）
+     *
      * @param value 比较值；可以是普通值，也可以是CMD
      * @return Gt
      */
@@ -692,6 +757,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（大于等于判断）
+     *
      * @param value 比较值；可以是普通值，也可以是CMD
      * @return Gte
      */
@@ -701,6 +767,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（小于判断）
+     *
      * @param value 比较值；可以是普通值，也可以是CMD
      * @return Lt
      */
@@ -710,6 +777,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（小于等于判断）
+     *
      * @param value 比较值；可以是普通值，也可以是CMD
      * @return Lt
      */
@@ -719,6 +787,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（不相等判断）
+     *
      * @param value 比较值；可以是普通值，也可以是CMD
      * @return Ne
      */
@@ -728,6 +797,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（BETWEEN区间）
+     *
      * @param value1 开始区间值
      * @param value2 结束区间值
      * @return Between
@@ -738,6 +808,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（NOT BETWEEN区间）
+     *
      * @param value1 开始区间值
      * @param value2 结束区间值
      * @return Between
@@ -748,6 +819,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（LIKE模糊匹配）
+     *
      * @param value 匹配值
      * @return Like
      */
@@ -757,7 +829,8 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（LIKE模糊匹配）
-     * @param mode 匹配方式；例如LikeMode.LEFT
+     *
+     * @param mode  匹配方式；例如LikeMode.LEFT
      * @param value 匹配值
      * @return Like
      */
@@ -767,7 +840,8 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（LIKE模糊匹配）
-     * @param mode 匹配方式；例如LikeMode.LEFT
+     *
+     * @param mode  匹配方式；例如LikeMode.LEFT
      * @param value 匹配值
      * @return Like
      */
@@ -777,6 +851,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（NOT LIKE模糊匹配）
+     *
      * @param value 匹配值
      * @return Like
      */
@@ -786,7 +861,8 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（NOT LIKE模糊匹配）
-     * @param mode 匹配方式；例如LikeMode.LEFT
+     *
+     * @param mode  匹配方式；例如LikeMode.LEFT
      * @param value 匹配值
      * @return Like
      */
@@ -796,7 +872,8 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（NOT LIKE模糊匹配）
-     * @param mode 匹配方式；例如LikeMode.LEFT
+     *
+     * @param mode  匹配方式；例如LikeMode.LEFT
      * @param value 匹配值
      * @return Like
      */
@@ -806,6 +883,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（IN包含判断）
+     *
      * @param values 匹配值
      * @return Ne
      */
@@ -825,6 +903,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（NOT IN不包含判断）
+     *
      * @param values 匹配值
      * @return Ne
      */
@@ -844,6 +923,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（是否NULL值判断）
+     *
      * @return IsNull
      */
     default IsNull isNull() {
@@ -852,6 +932,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（是否空值判断）
+     *
      * @return Empty
      */
     default Empty empty() {
@@ -860,6 +941,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（是否非空值判断）
+     *
      * @return NotEmpty
      */
     default NotEmpty notEmpty() {
@@ -868,6 +950,7 @@ public interface FunctionInterface extends Cmd {
 
     /**
      * 条件判断（查找自己种str字符串中出现的起始位置）
+     *
      * @param str 搜索的字符
      * @return Instr
      */

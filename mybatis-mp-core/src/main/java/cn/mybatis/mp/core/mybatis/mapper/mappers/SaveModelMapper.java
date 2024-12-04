@@ -46,7 +46,7 @@ public interface SaveModelMapper<T> extends BaseMapper<T> {
     /**
      * 实体类新增
      *
-     * @param model      实体类Model实例
+     * @param model       实体类Model实例
      * @param forceFields 指定那些列强制插入，null值将会以NULL的形式插入
      * @return 影响条数
      */

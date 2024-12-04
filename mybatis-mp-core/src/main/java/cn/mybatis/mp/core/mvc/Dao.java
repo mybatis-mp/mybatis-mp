@@ -271,7 +271,7 @@ public interface Dao<T, K> {
     /**
      * 实体类保存或修改
      *
-     * @param entity   实体类对象
+     * @param entity        实体类对象
      * @param allFieldForce 是否所有字段都保存或修改，如果是null值，则变成NULL
      * @return 影响条数
      */
@@ -297,7 +297,7 @@ public interface Dao<T, K> {
     /**
      * 实体类保存或修改
      *
-     * @param list     实体类对象List
+     * @param list          实体类对象List
      * @param allFieldForce 是否所有字段都保存或修改，如果是null值，则变成NULL
      * @return 影响条数
      */
@@ -323,7 +323,7 @@ public interface Dao<T, K> {
     /**
      * 实体类Model保存或修改
      *
-     * @param model    实体类Model对象
+     * @param model         实体类Model对象
      * @param allFieldForce 是否所有字段都保存或修改，如果是null值，则变成NULL
      * @return 影响条数
      */
@@ -349,7 +349,7 @@ public interface Dao<T, K> {
     /**
      * 实体类Model保存或修改
      *
-     * @param list     实体类Model对象List
+     * @param list          实体类Model对象List
      * @param allFieldForce 是否所有字段都保存或修改，如果是null值，则变成NULL
      * @return 影响条数
      */
@@ -398,6 +398,7 @@ public interface Dao<T, K> {
 
     /**
      * 根据ID删除
+     *
      * @param ids ID 集合
      * @return 删除的数量
      */
@@ -405,6 +406,7 @@ public interface Dao<T, K> {
 
     /**
      * 实体类结果转成Map<ID,T>
+     *
      * @param ids 多个ID
      * @return Map结果
      */
@@ -412,6 +414,7 @@ public interface Dao<T, K> {
 
     /**
      * 实体类结果转成Map<ID,T>
+     *
      * @param ids ID 集合
      * @return Map结果
      */

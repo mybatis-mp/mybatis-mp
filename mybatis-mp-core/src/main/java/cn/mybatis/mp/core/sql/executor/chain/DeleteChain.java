@@ -70,6 +70,16 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
         return new DeleteChain(mapper, entityType, where);
     }
 
+    /**
+     * 非特殊情况 请使用of静态方法
+     * 使用此方法后 后续执行查询需调用一次withMapper(mybatisMapper)方法
+     *
+     * @return 自己
+     */
+    public static DeleteChain create() {
+        return new DeleteChain();
+    }
+
     protected Class<?> getEntityType() {
         if (entityType != null) {
             return entityType;
@@ -81,16 +91,6 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
         }
 
         return entityType;
-    }
-
-    /**
-     * 非特殊情况 请使用of静态方法
-     * 使用此方法后 后续执行查询需调用一次withMapper(mybatisMapper)方法
-     *
-     * @return 自己
-     */
-    public static DeleteChain create() {
-        return new DeleteChain();
     }
 
     private void setDefault() {
@@ -134,6 +134,7 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
         this.entityType = entityType;
         return this;
     }
+
     /**
      * 执行
      *

@@ -69,6 +69,7 @@ public class UpdateChain extends BaseUpdate<UpdateChain> {
     public static UpdateChain of(BaseMapper mapper, Class<?> entityType, Where where) {
         return new UpdateChain(mapper, entityType, where);
     }
+
     /**
      * 非特殊情况 请使用of静态方法
      * 使用此方法后 后续执行查询需调用一次withMapper(Mapper)方法
