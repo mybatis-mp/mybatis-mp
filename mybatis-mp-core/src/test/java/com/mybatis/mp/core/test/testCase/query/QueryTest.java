@@ -207,6 +207,27 @@ public class QueryTest extends BaseTest {
     }
 
     @Test
+    public void existsWithWhere() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            boolean exists = sysUserMapper.exists(where -> {
+                where.eq(SysUser::getId, 2);
+            });
+            assertEquals(exists, true);
+        }
+    }
+
+    @Test
+    public void cursorWithWhere() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            sysUserMapper.cursor(where -> {
+                where.eq(SysUser::getId, 2);
+            }).forEach(item -> assertEquals(item.getId(), 2));
+        }
+    }
+
+    @Test
     public void innerJoinTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
