@@ -26,9 +26,11 @@ import db.sql.api.DbType;
 import db.sql.api.impl.cmd.executor.SelectorCall;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.session.SqlSession;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapper, CountBasicMapper, ListBasicMapper, CursorBasicMapper,
         PagingBasicMapper, MapWithKeyBasicMapper, SaveBasicMapper, SaveOrUpdateBasicMapper, SaveModelBasicMapper, SaveOrUpdateModelBasicMapper,
@@ -56,6 +58,13 @@ public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapp
     default BasicMapper getBasicMapper() {
         return this;
     }
+
+    /**
+     * 获取SqlSession 执行底层的 方法
+     *
+     * @return
+     */
+    <R> R withSqlSession(Function<SqlSession, R> function);
 
     @Override
     default <T> T get(BaseQuery<? extends BaseQuery, T> query) {

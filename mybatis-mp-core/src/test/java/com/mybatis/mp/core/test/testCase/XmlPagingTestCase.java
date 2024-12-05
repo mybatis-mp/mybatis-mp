@@ -21,6 +21,7 @@ import com.mybatis.mp.core.test.mapper.SysRoleMapper;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -106,6 +107,23 @@ public class XmlPagingTestCase extends BaseTest {
             assertEquals(2, list.size());
             assertEquals(2, list.get(1).getId());
             assertNotNull(list.get(0).getCreateTime());
+            System.out.println(list);
+        }
+    }
+
+    @Test
+    public void selectCustomSql3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
+
+            List<SysRole> list = sysRoleMapper.getBasicMapper().withSqlSession(sqlSession -> {
+                return sqlSession.selectList(SysRoleMapper.class.getName() + ".xmlPaging", new HashMap() {{
+                    put("id", 1);
+                    put("id2", 2);
+                }});
+            });
+
+            assertEquals(2, list.size());
             System.out.println(list);
         }
     }

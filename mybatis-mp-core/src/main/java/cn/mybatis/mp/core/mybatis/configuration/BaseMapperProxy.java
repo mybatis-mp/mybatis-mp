@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class BaseMapperProxy<T> extends MapperProxy<T> {
@@ -45,6 +46,8 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     public final static String DB_ADAPT_METHOD_NAME = "dbAdapt";
 
     public final static String CURRENT_DB_TYPE_METHOD_NAME = "getCurrentDbType";
+
+    public final static String WITH_SQLSESSION_METHOD_NAME = "withSqlSession";
 
     protected final SqlSession sqlSession;
 
@@ -96,6 +99,9 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 return paging(method, args);
             } else if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
                 return this.getDbType();
+            } else if (method.getName().equals(WITH_SQLSESSION_METHOD_NAME)) {
+                Function<SqlSession,?> function = (Function<SqlSession,?>)args[0];
+                return function.apply(this.sqlSession);
             }
 
 
