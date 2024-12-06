@@ -58,29 +58,6 @@ public class TableIdGeneratorWrapper {
         }
     }
 
-/*
-    public static void addEntityKeyGenerator(MappedStatement ms) {
-        if (ms.getSqlCommandType() != SqlCommandType.INSERT || !(ms.getSqlSource() instanceof ProviderSqlSource)
-                || (ms.getParameterMap().getType() != EntityInsertContext.class && ms.getParameterMap().getType() != ModelInsertContext.class)) {
-            return;
-        }
-        String selectKeyId = ms.getId() + MybatisSelectKeyGenerator.SELECT_KEY_SUFFIX;
-        Class entityClass = getEntityClass(ms);
-        if (Objects.isNull(entityClass)) {
-            //可能是动态的 所以无法获取entityClass
-            return;
-        }
-        try {
-            TableInfo tableInfo = Tables.get(entityClass);
-            if (tableInfo.getIdFieldInfos().size() == 1) {
-                addEntityKeyGenerator(ms, selectKeyId, tableInfo);
-            }
-        } catch (NotTableClassException e) {
-            //忽略
-        }
-    }
-*/
-
     public static void addEntityKeyGenerator(MappedStatement ms, Class entityClass) {
         String selectKeyId = ms.getId() + SelectKeyGenerator.SELECT_KEY_SUFFIX;
         if (ms.getConfiguration().hasKeyGenerator(selectKeyId)) {
