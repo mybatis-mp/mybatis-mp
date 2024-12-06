@@ -82,7 +82,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
     }
 
     private void wrapperParams(Method method,Object[] args){
-        if (Objects.nonNull(args) || args.length == 0) {
+        if (Objects.isNull(args) || args.length == 0) {
             return;
         }
         for (int i = 0; i < args.length; i++) {

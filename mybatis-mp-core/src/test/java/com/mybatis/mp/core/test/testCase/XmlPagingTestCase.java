@@ -126,7 +126,18 @@ public class XmlPagingTestCase extends BaseTest {
             assertNotNull(list.get(0).getCreateTime());
             System.out.println(list);
 
-            list = sysRoleMapper.getBasicMapper().withSqlSession(".basicXmlPaging", new HashMap() {{
+            list = sysRoleMapper.getBasicMapper().withSqlSession(".SysRole:basicXmlPaging", new HashMap() {{
+                put("id", 1);
+                put("id2", 2);
+            }}, (statement, params, sqlSession) -> {
+                return sqlSession.selectList(statement, params);
+            });
+            assertEquals(2, list.size());
+            assertNotNull(list.get(0).getCreateTime());
+            System.out.println(list);
+
+
+            list = sysRoleMapper.getBasicMapper().withSqlSession(".SysRole:basicXmlPaging2", new HashMap() {{
                 put("id", 1);
                 put("id2", 2);
             }}, (statement, params, sqlSession) -> {
