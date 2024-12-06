@@ -65,7 +65,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     private DbType getDbType() {
         if (Objects.isNull(dbType)) {
-            dbType = DbTypeUtil.getDbType(sqlSession.getConfiguration());
+            dbType = DbTypeUtil.getDbType(sqlSession.getConfiguration(), DbType.MYSQL);
         }
         return dbType;
     }

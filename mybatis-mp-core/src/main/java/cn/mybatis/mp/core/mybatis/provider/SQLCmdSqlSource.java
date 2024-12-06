@@ -70,7 +70,7 @@ public class SQLCmdSqlSource implements SqlSource {
 
     public DbType getDbType() {
         if (Objects.isNull(dbType)) {
-            this.dbType = DbTypeUtil.getDbType(configuration);
+            this.dbType = DbTypeUtil.getDbType(configuration, DbType.MYSQL);
         }
         return dbType;
     }

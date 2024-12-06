@@ -12,11 +12,10 @@
  *
  */
 
-package cn.mybatis.mp.core;
+package cn.mybatis.mp.core.exception;
 
-public class NotTableClassException extends RuntimeException {
-
-    public NotTableClassException(Class clazz) {
-        super(clazz.getName() + " is not a entity");
+public class DbTypeParseException extends RuntimeException {
+    public DbTypeParseException(String message) {
+        super(message);
     }
 }

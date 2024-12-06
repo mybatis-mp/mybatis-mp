@@ -14,7 +14,9 @@
 
 package cn.mybatis.mp.core.util;
 
+import cn.mybatis.mp.core.exception.DbTypeParseException;
 import db.sql.api.DbType;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.Configuration;
 
 import javax.sql.DataSource;
@@ -22,23 +24,37 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.Objects;
 
+@Slf4j
 public final class DbTypeUtil {
+
     public static DbType getDbType(Configuration configuration) {
-        return getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
+        return getDbType(configuration, null);
+    }
+
+    public static DbType getDbType(DataSource dataSource) {
+        return getDbType(dataSource, null);
     }
 
     public static DbType getDbType(String databaseId, DataSource dataSource) {
         if (Objects.isNull(databaseId) || databaseId.isEmpty()) {
-            return DbTypeUtil.getDbType(dataSource);
+            return DbTypeUtil.getDbType(dataSource, null);
         }
         return DbType.getByName(databaseId);
     }
 
-    public static DbType getDbType(DataSource dataSource) {
-        return getDbType(getJdbcUrl(dataSource));
+    public static DbType getDbType(Configuration configuration, DbType defaultDbType) {
+        try {
+            return getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
+        } catch (DbTypeParseException e) {
+            return defaultDbType;
+        }
     }
 
-    public static DbType getDbType(String jdbcUrl) {
+    public static DbType getDbType(DataSource dataSource, DbType defaultDbType) {
+        return getDbType(getJdbcUrl(dataSource), defaultDbType);
+    }
+
+    public static DbType getDbType(String jdbcUrl, DbType defaultDbType) {
         jdbcUrl = jdbcUrl.toLowerCase();
         if (jdbcUrl.contains(":mysql:") || jdbcUrl.contains(":cobar:")) {
             return DbType.MYSQL;
@@ -60,9 +76,11 @@ public final class DbTypeUtil {
             return DbType.KING_BASE;
         } else if (jdbcUrl.contains(":clickhouse:")) {
             return DbType.CLICK_HOUSE;
-        } else {
-            throw new RuntimeException("Unrecognized database type:" + jdbcUrl);
         }
+        if (defaultDbType == null) {
+            throw new DbTypeParseException("Unrecognized database type:" + jdbcUrl);
+        }
+        return defaultDbType;
     }
 
     public static String getJdbcUrl(DataSource dataSource) {
@@ -91,6 +109,10 @@ public final class DbTypeUtil {
     }
 
     public static DbType getDbType(Connection connection) {
-        return getDbType(getJdbcUrl(connection));
+        return getDbType(connection, null);
+    }
+
+    public static DbType getDbType(Connection connection, DbType defaultDbType) {
+        return getDbType(getJdbcUrl(connection), defaultDbType);
     }
 }
