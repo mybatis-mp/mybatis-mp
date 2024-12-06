@@ -19,8 +19,6 @@ import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 
 public class DaoImpl<T, ID> extends BaseDaoImpl<MybatisMapper<T>, T, ID> {
 
-    protected MybatisMapper<T> mapper;
-
     public DaoImpl() {
 
     }
