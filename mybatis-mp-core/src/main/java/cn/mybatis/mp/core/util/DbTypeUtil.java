@@ -16,7 +16,6 @@ package cn.mybatis.mp.core.util;
 
 import cn.mybatis.mp.core.exception.DbTypeParseException;
 import db.sql.api.DbType;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.Configuration;
 
 import javax.sql.DataSource;
@@ -24,7 +23,6 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.Objects;
 
-@Slf4j
 public final class DbTypeUtil {
 
     public static DbType getDbType(Configuration configuration) {
@@ -57,7 +55,7 @@ public final class DbTypeUtil {
     public static DbType getDbType(String jdbcUrl, DbType defaultDbType) {
         jdbcUrl = jdbcUrl.toLowerCase();
         if (jdbcUrl.contains(":mysql:") || jdbcUrl.contains(":cobar:")) {
-            return DbType.MYSQL;
+            //return DbType.MYSQL;
         } else if (jdbcUrl.contains(":mariadb:")) {
             return DbType.MARIA_DB;
         } else if (jdbcUrl.contains(":oracle:")) {
