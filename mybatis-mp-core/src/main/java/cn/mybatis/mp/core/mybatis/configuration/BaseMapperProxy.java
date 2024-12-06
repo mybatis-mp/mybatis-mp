@@ -135,10 +135,10 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
                 if (args.length == 2) {
                     BiFunction<String, SqlSession, ?> function = (BiFunction<String, SqlSession, ?>) args[1];
-                    return function.apply((String) statement, this.sqlSession);
+                    return function.apply(statement, this.sqlSession);
                 } else if (args.length == 3) {
-                    ThreeFunction<String, Object, SqlSession, ?> function = (ThreeFunction<String, Object, SqlSession, ?>) args[1];
-                    return function.apply((String) statement, args[1], this.sqlSession);
+                    ThreeFunction<String, Object, SqlSession, ?> function = (ThreeFunction<String, Object, SqlSession, ?>) args[2];
+                    return function.apply(statement, args[1], this.sqlSession);
                 } else {
                     throw new RuntimeException("NOT SUPPORTED");
                 }

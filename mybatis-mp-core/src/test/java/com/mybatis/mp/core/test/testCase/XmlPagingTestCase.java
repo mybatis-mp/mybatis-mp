@@ -112,7 +112,7 @@ public class XmlPagingTestCase extends BaseTest {
     }
 
     @Test
-    public void selectCustomSql3() {
+    public void withSqlSessionTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysRoleMapper sysRoleMapper = session.getMapper(SysRoleMapper.class);
 
@@ -122,9 +122,20 @@ public class XmlPagingTestCase extends BaseTest {
                     put("id2", 2);
                 }});
             });
-
             assertEquals(2, list.size());
+            assertNotNull(list.get(0).getCreateTime());
             System.out.println(list);
+
+            list = sysRoleMapper.getBasicMapper().withSqlSession(".basicXmlPaging", new HashMap() {{
+                put("id", 1);
+                put("id2", 2);
+            }}, (statement, params, sqlSession) -> {
+                return sqlSession.selectList(statement, params);
+            });
+            assertEquals(2, list.size());
+            assertNotNull(list.get(0).getCreateTime());
+            System.out.println(list);
+
         }
     }
 }

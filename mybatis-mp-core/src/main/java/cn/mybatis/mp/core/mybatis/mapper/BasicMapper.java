@@ -85,7 +85,7 @@ public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapp
      * @param function  提供statement,params,SqlSession，返回你需要返回的信息；这里params 可能会被框架修改例如 where 对象
      * @return R
      */
-    <R> R withSqlSession(String statement, Object params, ThreeFunction<String, Object, SqlSession, R> function);
+    <R,PARAMS> R withSqlSession(String statement, PARAMS params, ThreeFunction<String, PARAMS, SqlSession, R> function);
 
     @Override
     default <T> T get(BaseQuery<? extends BaseQuery, T> query) {
