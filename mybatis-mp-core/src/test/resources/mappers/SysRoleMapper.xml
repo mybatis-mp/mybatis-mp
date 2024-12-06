@@ -20,7 +20,7 @@
         <id column="id" property="id"/>
     </resultMap>
 
-    <select id="xmlPaging">
+    <select id="xmlPaging" resultType="com.mybatis.mp.core.test.DO.SysRole">
         select *
         from sys_role
         where id >= #{id}

@@ -14,6 +14,7 @@
 
 package cn.mybatis.mp.core.mybatis.configuration;
 
+import cn.mybatis.mp.core.function.ThreeFunction;
 import cn.mybatis.mp.core.mybatis.executor.BasicMapperThreadLocalUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -79,6 +81,26 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         return false;
     }
 
+    private void wrapperParams(Method method,Object[] args){
+        if (Objects.nonNull(args) || args.length == 0) {
+            return;
+        }
+        for (int i = 0; i < args.length; i++) {
+            Object arg = args[i];
+            if (arg != null && arg instanceof Where) {
+                Parameter[] parameters = method.getParameters();
+                Param param = parameters[i].getAnnotation(Param.class);
+                Where where = (Where) arg;
+                if (param != null) {
+                    where.setMybatisParamName(param.value());
+                } else if (args.length > 1) {
+                    where.setMybatisParamName("param" + (i + 1));
+                }
+                where.setDbType(getDbType());
+            }
+        }
+    }
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.isDefault()) {
@@ -100,28 +122,21 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
             } else if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
                 return this.getDbType();
             } else if (method.getName().equals(WITH_SQLSESSION_METHOD_NAME)) {
-                Function<SqlSession,?> function = (Function<SqlSession,?>)args[0];
-                return function.apply(this.sqlSession);
-            }
-
-
-            if (Objects.nonNull(args)) {
-                for (int i = 0; i < args.length; i++) {
-                    Object arg = args[i];
-                    if (arg != null && arg instanceof Where) {
-                        Parameter[] parameters = method.getParameters();
-                        Param param = parameters[i].getAnnotation(Param.class);
-                        Where where = (Where) arg;
-                        if (param != null) {
-                            where.setMybatisParamName(param.value());
-                        } else if (args.length > 1) {
-                            where.setMybatisParamName("param" + (i + 1));
-                        }
-                        where.setDbType(getDbType());
-                    }
+                this.wrapperParams(method, args);
+                if (args.length == 1) {
+                    Function<SqlSession, ?> function = (Function<SqlSession, ?>) args[0];
+                    return function.apply(this.sqlSession);
+                } else if (args.length == 2) {
+                    BiFunction<String, SqlSession, ?> function = (BiFunction<String, SqlSession, ?>) args[1];
+                    return function.apply((String) args[0], this.sqlSession);
+                } else if (args.length == 3) {
+                    ThreeFunction<String, Object, SqlSession, ?> function = (ThreeFunction<String, Object, SqlSession, ?>) args[1];
+                    return function.apply((String) args[0], args[1], this.sqlSession);
+                } else {
+                    throw new RuntimeException("NOT SUPPORTED");
                 }
             }
-
+            this.wrapperParams(method, args);
             return super.invoke(proxy, method, args);
         } finally {
             if (isSetBasicMapperToThreadLocal) {
