@@ -24,15 +24,23 @@ import java.util.Map;
  * Dao 接口
  *
  * @param <T>
- * @param <K>
+ * @param <ID>
  */
-public interface Dao<T, K> {
+public interface Dao<T, ID> {
+
     /**
      * 获取ID的类型
      *
      * @return
      */
-    Class<K> getIdType();
+    Class<ID> getIdType();
+
+    /**
+     * 获取ID的类型
+     *
+     * @return
+     */
+    Class<T> getEntityType();
 
     /**
      * 根据ID查询
@@ -40,7 +48,7 @@ public interface Dao<T, K> {
      * @param id ID
      * @return 单个实体
      */
-    T getById(K id);
+    T getById(ID id);
 
     /**
      * 根据ID查询
@@ -49,7 +57,7 @@ public interface Dao<T, K> {
      * @param selectFields 指定查询的列
      * @return 单个实体
      */
-    T getById(K id, Getter<T>... selectFields);
+    T getById(ID id, Getter<T>... selectFields);
 
     /**
      * 实体类保存
@@ -386,7 +394,7 @@ public interface Dao<T, K> {
      * @param id ID
      * @return 删除的数量
      */
-    int deleteById(K id);
+    int deleteById(ID id);
 
     /**
      * 根据ID删除
@@ -394,7 +402,7 @@ public interface Dao<T, K> {
      * @param ids 多个ID
      * @return 删除的数量
      */
-    int deleteByIds(K... ids);
+    int deleteByIds(ID... ids);
 
     /**
      * 根据ID删除
@@ -402,7 +410,7 @@ public interface Dao<T, K> {
      * @param ids ID 集合
      * @return 删除的数量
      */
-    int deleteByIds(Collection<K> ids);
+    int deleteByIds(Collection<ID> ids);
 
     /**
      * 实体类结果转成Map<ID,T>
@@ -410,7 +418,7 @@ public interface Dao<T, K> {
      * @param ids 多个ID
      * @return Map结果
      */
-    Map<K, T> map(K... ids);
+    Map<ID, T> map(ID... ids);
 
     /**
      * 实体类结果转成Map<ID,T>
@@ -418,5 +426,5 @@ public interface Dao<T, K> {
      * @param ids ID 集合
      * @return Map结果
      */
-    Map<K, T> map(Collection<K> ids);
+    Map<ID, T> map(Collection<ID> ids);
 }
