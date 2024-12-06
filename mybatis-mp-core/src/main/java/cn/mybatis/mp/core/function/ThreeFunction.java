@@ -20,10 +20,10 @@ import java.util.function.Function;
 @FunctionalInterface
 public interface ThreeFunction<T, U, U2, R> {
 
-    R apply(T t, U u,U2 u2);
+    R apply(T t, U u, U2 u2);
 
-    default <V> ThreeFunction<T, U,U2, V> andThen(Function<? super R, ? extends V> after) {
+    default <V> ThreeFunction<T, U, U2, V> andThen(Function<? super R, ? extends V> after) {
         Objects.requireNonNull(after);
-        return (T t, U u,U2 u2) -> after.apply(apply(t, u,u2));
+        return (T t, U u, U2 u2) -> after.apply(apply(t, u, u2));
     }
 }

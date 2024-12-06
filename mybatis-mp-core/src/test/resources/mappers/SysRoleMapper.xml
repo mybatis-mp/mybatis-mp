@@ -57,7 +57,7 @@
     <select id="jsonTypeTest2" resultMap="jsonTypeTestResultMap">
         ${sql}
     </select>
-    
+
     <select id="selectCustomSql">
         select * from sys_role t
         <where>${WHERE.whereScript}</where>

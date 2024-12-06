@@ -81,7 +81,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         return false;
     }
 
-    private void wrapperParams(Method method,Object[] args){
+    private void wrapperParams(Method method, Object[] args) {
         if (Objects.isNull(args) || args.length == 0) {
             return;
         }
@@ -128,9 +128,9 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                     return function.apply(this.sqlSession);
                 }
 
-                String statement=(String)args[0];
-                if(statement.startsWith(".")){
-                    statement=BasicMapper.class.getName()+statement;
+                String statement = (String) args[0];
+                if (statement.startsWith(".")) {
+                    statement = BasicMapper.class.getName() + statement;
                 }
 
                 if (args.length == 2) {
