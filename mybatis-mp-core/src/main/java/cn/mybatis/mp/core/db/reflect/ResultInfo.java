@@ -14,8 +14,8 @@
 
 package cn.mybatis.mp.core.db.reflect;
 
-import cn.mybatis.mp.core.NotTableClassException;
-import cn.mybatis.mp.core.NotTableFieldException;
+import cn.mybatis.mp.core.exception.NotTableClassException;
+import cn.mybatis.mp.core.exception.NotTableFieldException;
 import cn.mybatis.mp.core.util.FieldUtil;
 import cn.mybatis.mp.core.util.GenericUtil;
 import cn.mybatis.mp.core.util.StringPool;

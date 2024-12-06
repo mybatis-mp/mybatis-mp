@@ -16,10 +16,8 @@ package com.mybatis.mp.core.test.testCase.dao;
 
 import cn.mybatis.mp.core.sql.executor.chain.DeleteChain;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
-import cn.mybatis.mp.core.sql.util.WhereUtil;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
-import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.SqlSession;

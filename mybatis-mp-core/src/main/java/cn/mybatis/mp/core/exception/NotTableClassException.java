@@ -12,16 +12,11 @@
  *
  */
 
-package com.mybatis.mp.core.test.testCase.dao;
+package cn.mybatis.mp.core.exception;
 
-import cn.mybatis.mp.core.mvc.Dao;
-import com.mybatis.mp.core.test.DO.SysUser;
-import com.mybatis.mp.core.test.mapper.SysUserMapper;
-import com.mybatis.mp.core.test.testCase.BaseTest;
+public class NotTableClassException extends RuntimeException {
 
-public class BaseDaoTest extends BaseTest {
-
-    protected Dao<SysUser, Integer> getDao(SysUserMapper sysUserMapper) {
-        return new SysUserDao(sysUserMapper);
+    public NotTableClassException(Class clazz) {
+        super(clazz.getName() + " is not a entity");
     }
 }

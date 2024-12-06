@@ -17,7 +17,6 @@ package com.mybatis.mp.core.test.testCase.dao.save;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.model.SysUserModel;
-import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
 import com.mybatis.mp.core.test.testCase.dao.BaseDaoTest;
 import db.sql.api.DbType;

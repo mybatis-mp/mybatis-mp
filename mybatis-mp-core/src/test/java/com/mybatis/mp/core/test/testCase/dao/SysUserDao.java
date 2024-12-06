@@ -14,14 +14,13 @@
 
 package com.mybatis.mp.core.test.testCase.dao;
 
-import cn.mybatis.mp.core.mvc.Dao;
 import cn.mybatis.mp.core.mvc.impl.DaoImpl;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 
 
-public class SysUserDao extends DaoImpl<SysUser,Integer> {
+public class SysUserDao extends DaoImpl<SysUser, Integer> {
 
     public SysUserDao(SysUserMapper sysUserMapper) {
         this.setMapper(sysUserMapper);

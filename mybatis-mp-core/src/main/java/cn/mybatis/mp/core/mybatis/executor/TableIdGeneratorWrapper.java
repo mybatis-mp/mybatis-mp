@@ -14,10 +14,10 @@
 
 package cn.mybatis.mp.core.mybatis.executor;
 
-import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.db.reflect.TableIds;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
+import cn.mybatis.mp.core.exception.NotTableClassException;
 import cn.mybatis.mp.core.mybatis.executor.keygen.MybatisJdbc3KeyGenerator;
 import cn.mybatis.mp.core.mybatis.executor.keygen.MybatisSelectKeyGenerator;
 import cn.mybatis.mp.core.mybatis.provider.SQLCmdSqlSource;

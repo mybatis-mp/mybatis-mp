@@ -15,8 +15,8 @@
 package cn.mybatis.mp.core.mybatis.configuration;
 
 
-import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.db.reflect.FieldInfo;
+import cn.mybatis.mp.core.exception.NotTableClassException;
 import cn.mybatis.mp.core.mybatis.executor.*;
 import cn.mybatis.mp.core.mybatis.executor.resultset.MybatisDefaultResultSetHandler;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;

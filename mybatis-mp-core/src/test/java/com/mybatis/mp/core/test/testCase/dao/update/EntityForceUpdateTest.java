@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EntityForceUpdateTest extends BaseDaoTest {
-    
+
     @Test
     public void forceInsertTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

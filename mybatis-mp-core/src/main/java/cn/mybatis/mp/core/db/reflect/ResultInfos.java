@@ -14,7 +14,7 @@
 
 package cn.mybatis.mp.core.db.reflect;
 
-import cn.mybatis.mp.core.NotTableClassException;
+import cn.mybatis.mp.core.exception.NotTableClassException;
 import cn.mybatis.mp.db.annotations.ResultEntity;
 
 import java.util.Map;

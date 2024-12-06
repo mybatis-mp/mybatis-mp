@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UpdateTest extends BaseDaoTest {
 
-    
 
     @Test
     public void forceUpdateTest() {
@@ -322,9 +321,6 @@ public class UpdateTest extends BaseDaoTest {
             assertEquals(list.get(0), eqSysUser, "实体model强制修改");
         }
     }
-
-
-
 
 
     @Test

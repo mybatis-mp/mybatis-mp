@@ -38,7 +38,7 @@ public class MybatisDatabaseIdProvider extends VendorDatabaseIdProvider {
     @Override
     public String getDatabaseId(DataSource dataSource) {
         if (defaultConfig) {
-            return DbTypeUtil.getDbType(dataSource).name();
+            return DbTypeUtil.getDbType(dataSource, DbType.MYSQL).name();
         }
         return super.getDatabaseId(dataSource);
     }
