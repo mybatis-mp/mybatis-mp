@@ -46,7 +46,7 @@ public class PagingCountSqlSource implements SqlSource {
 
     public DbType getDbType() {
         if (Objects.isNull(dbType)) {
-            this.dbType = DbTypeUtil.getDbType(configuration, DbType.MYSQL);
+            this.dbType = DbTypeUtil.getDbType(configuration);
         }
         return dbType;
     }

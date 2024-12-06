@@ -26,36 +26,24 @@ import java.util.Objects;
 public final class DbTypeUtil {
 
     public static DbType getDbType(Configuration configuration) {
-        return getDbType(configuration, null);
-    }
-
-    public static DbType getDbType(DataSource dataSource) {
-        return getDbType(dataSource, null);
+        return getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
     }
 
     public static DbType getDbType(String databaseId, DataSource dataSource) {
         if (Objects.isNull(databaseId) || databaseId.isEmpty()) {
-            return DbTypeUtil.getDbType(dataSource, null);
+            return DbTypeUtil.getDbType(dataSource);
         }
         return DbType.getByName(databaseId);
     }
 
-    public static DbType getDbType(Configuration configuration, DbType defaultDbType) {
-        try {
-            return getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
-        } catch (DbTypeParseException e) {
-            return defaultDbType;
-        }
+    public static DbType getDbType(DataSource dataSource) {
+        return getDbType(getJdbcUrl(dataSource));
     }
 
-    public static DbType getDbType(DataSource dataSource, DbType defaultDbType) {
-        return getDbType(getJdbcUrl(dataSource), defaultDbType);
-    }
-
-    public static DbType getDbType(String jdbcUrl, DbType defaultDbType) {
+    public static DbType getDbType(String jdbcUrl) {
         jdbcUrl = jdbcUrl.toLowerCase();
         if (jdbcUrl.contains(":mysql:") || jdbcUrl.contains(":cobar:")) {
-            //return DbType.MYSQL;
+            return DbType.MYSQL;
         } else if (jdbcUrl.contains(":mariadb:")) {
             return DbType.MARIA_DB;
         } else if (jdbcUrl.contains(":oracle:")) {
@@ -74,11 +62,9 @@ public final class DbTypeUtil {
             return DbType.KING_BASE;
         } else if (jdbcUrl.contains(":clickhouse:")) {
             return DbType.CLICK_HOUSE;
-        }
-        if (defaultDbType == null) {
+        } else {
             throw new DbTypeParseException("Unrecognized database type:" + jdbcUrl);
         }
-        return defaultDbType;
     }
 
     public static String getJdbcUrl(DataSource dataSource) {
@@ -107,10 +93,6 @@ public final class DbTypeUtil {
     }
 
     public static DbType getDbType(Connection connection) {
-        return getDbType(connection, null);
-    }
-
-    public static DbType getDbType(Connection connection, DbType defaultDbType) {
-        return getDbType(getJdbcUrl(connection), defaultDbType);
+        return getDbType(getJdbcUrl(connection));
     }
 }
