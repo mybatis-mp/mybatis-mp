@@ -38,6 +38,9 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     protected final OptimizeOptions optimizeOptions = new OptimizeOptions();
     protected Class returnType;
     protected Consumer<T> onRowEvent;
+    protected Integer timeout;
+    protected Integer fetchSize;
+    protected Integer fetchDirection;
 
     public BaseQuery() {
         this(new MybatisCmdFactory());
@@ -106,6 +109,39 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
 
     public Consumer<T> getOnRowEvent() {
         return onRowEvent;
+    }
+
+    public Q timeout(Integer timeout) {
+        this.timeout = timeout;
+        return (Q) this;
+    }
+
+    public Q fetchSize(Integer fetchSize) {
+        this.fetchSize = fetchSize;
+        return (Q) this;
+    }
+
+    /**
+     * use like fetchDirection(ResultSet.TYPE_FORWARD_ONLY)
+     *
+     * @param direction direction value:all in ResultSet
+     * @return
+     */
+    public Q fetchDirection(Integer direction) {
+        this.fetchDirection = direction;
+        return (Q) this;
+    }
+
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    public Integer getFetchSize() {
+        return fetchSize;
+    }
+
+    public Integer getFetchDirection() {
+        return fetchDirection;
     }
 
     @Override
