@@ -33,6 +33,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -689,6 +690,16 @@ public class QueryTest extends BaseTest {
                     .limit(1)
                     .get();
 
+        }
+    }
+
+    @Test
+    public void queryConfigTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = QueryChain.of(sysUserMapper).timeout(1).fetchSize(1).fetchDirection(ResultSet.FETCH_REVERSE).list();
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 3);
         }
     }
 }

@@ -115,7 +115,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public T getById(ID id) {
-        return this.getById(id, (Getter<T>[])null);
+        return this.getById(id, (Getter<T>[]) null);
     }
 
     @Override

@@ -40,19 +40,19 @@ public class MybatisRoutingStatementHandler extends RoutingStatementHandler {
 
     @Override
     public Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException {
-        Statement statement= super.prepare(connection, transactionTimeout);
+        Statement statement = super.prepare(connection, transactionTimeout);
         if (this.parameter instanceof BaseSQLCmdContext) {
             BaseSQLCmdContext sqlCmdContext = (BaseSQLCmdContext) this.parameter;
-            if (sqlCmdContext.getExecution() instanceof BaseQuery){
+            if (sqlCmdContext.getExecution() instanceof BaseQuery) {
                 BaseQuery baseQuery = (BaseQuery) sqlCmdContext.getExecution();
-                if(Objects.nonNull(baseQuery.getTimeout())){
+                if (Objects.nonNull(baseQuery.getTimeout())) {
                     statement.setQueryTimeout(baseQuery.getTimeout());
                     StatementUtil.applyTransactionTimeout(statement, baseQuery.getTimeout(), transactionTimeout);
                 }
-                if(Objects.nonNull(baseQuery.getFetchSize())){
+                if (Objects.nonNull(baseQuery.getFetchSize())) {
                     statement.setFetchSize(baseQuery.getFetchSize());
                 }
-                if(Objects.nonNull(baseQuery.getFetchDirection())){
+                if (Objects.nonNull(baseQuery.getFetchDirection())) {
                     statement.setFetchDirection(baseQuery.getFetchDirection());
                 }
             }

@@ -248,7 +248,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         this.handleFetch();
     }
 
-    public Object loadFetchValue(Class<?> resultType, Object rowValue, ResultSet resultSet){
+    public Object loadFetchValue(Class<?> resultType, Object rowValue, ResultSet resultSet) {
         if (Objects.isNull(fetchInfosMap) || fetchInfosMap.isEmpty()) {
             return rowValue;
         }
