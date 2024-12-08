@@ -15,11 +15,11 @@
 package cn.mybatis.mp.core.util;
 
 import cn.mybatis.mp.core.MybatisMpConfig;
-import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.db.reflect.Default;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
+import cn.mybatis.mp.core.exception.NotTableClassException;
 import cn.mybatis.mp.db.annotations.Table;
 import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;

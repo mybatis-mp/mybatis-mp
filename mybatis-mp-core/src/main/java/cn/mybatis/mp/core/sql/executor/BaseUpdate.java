@@ -15,6 +15,7 @@
 package cn.mybatis.mp.core.sql.executor;
 
 import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
+import cn.mybatis.mp.core.mybatis.executor.statement.Timeoutable;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.util.ForeignKeyUtil;
 import cn.mybatis.mp.core.tenant.TenantUtil;
@@ -30,7 +31,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate<T, MybatisCmdFactory> {
+public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate<T, MybatisCmdFactory> implements Timeoutable<T> {
 
     public BaseUpdate() {
         super(new MybatisCmdFactory());
@@ -38,6 +39,19 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
 
     public BaseUpdate(Where where) {
         super(where);
+    }
+
+    protected Integer timeout;
+
+    @Override
+    public T timeout(Integer timeout) {
+        this.timeout = timeout;
+        return (T) this;
+    }
+
+    @Override
+    public Integer getTimeout() {
+        return timeout;
     }
 
     @Override

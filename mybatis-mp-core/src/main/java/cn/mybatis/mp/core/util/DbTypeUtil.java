@@ -14,6 +14,7 @@
 
 package cn.mybatis.mp.core.util;
 
+import cn.mybatis.mp.core.exception.DbTypeParseException;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.Configuration;
 
@@ -23,6 +24,7 @@ import java.sql.Connection;
 import java.util.Objects;
 
 public final class DbTypeUtil {
+
     public static DbType getDbType(Configuration configuration) {
         return getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
     }
@@ -61,7 +63,7 @@ public final class DbTypeUtil {
         } else if (jdbcUrl.contains(":clickhouse:")) {
             return DbType.CLICK_HOUSE;
         } else {
-            throw new RuntimeException("Unrecognized database type:" + jdbcUrl);
+            throw new DbTypeParseException("Unrecognized database type:" + jdbcUrl);
         }
     }
 

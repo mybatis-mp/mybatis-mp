@@ -100,7 +100,7 @@ public class ConditionTest extends BaseTest {
                     .from(SysUser.class)
                     .eq(SysUser::getId, 2)
                     .notEmpty(SysUser::getUserName)
-                    .andNested(false,conditionChain -> conditionChain.eq(SysUser::getUserName,"1112324"))
+                    .andNested(false, conditionChain -> conditionChain.eq(SysUser::getUserName, "1112324"))
                     .returnType(Integer.class)
                     .get();
 

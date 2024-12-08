@@ -21,6 +21,8 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -40,7 +42,7 @@ public final class MybatisBatchUtil {
      * @param <T>               数据的类型
      * @return 影响的条数
      */
-    public static <M extends MybatisMapper<T>, T> int batchSave(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, List<T> list) {
+    public static <M extends MybatisMapper<T>, T> int batchSave(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list) {
         return batchSave(sqlSessionFactory, mapperType, list, MybatisMpConfig.getDefaultBatchSize());
     }
 
@@ -55,7 +57,7 @@ public final class MybatisBatchUtil {
      * @param <T>               数据的类型
      * @return 影响的条数
      */
-    public static <M extends MybatisMapper<T>, T> int batchSave(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, List<T> list, int batchSize) {
+    public static <M extends MybatisMapper<T>, T> int batchSave(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list, int batchSize) {
         return batch(sqlSessionFactory, mapperType, list, batchSize, (session, mapper, data) -> mapper.save(data));
     }
 
@@ -70,7 +72,7 @@ public final class MybatisBatchUtil {
      * @param <T>               数据的类型
      * @return 影响的条数
      */
-    public static <M extends MybatisMapper<T>, T> int batchUpdate(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, List<T> list) {
+    public static <M extends MybatisMapper<T>, T> int batchUpdate(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list) {
         return batchUpdate(sqlSessionFactory, mapperType, list, MybatisMpConfig.getDefaultBatchSize());
     }
 
@@ -85,7 +87,7 @@ public final class MybatisBatchUtil {
      * @param <T>               数据的类型
      * @return 影响的条数
      */
-    public static <M extends MybatisMapper<T>, T> int batchUpdate(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, List<T> list, int batchSize) {
+    public static <M extends MybatisMapper<T>, T> int batchUpdate(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list, int batchSize) {
         return batch(sqlSessionFactory, mapperType, list, batchSize, ((session, mapper, data) -> mapper.update(data)));
     }
 
@@ -101,11 +103,11 @@ public final class MybatisBatchUtil {
      * @param <T>               数据的类型
      * @return 影响的条数
      */
-    public static <M extends MybatisMapper<T>, T> int batch(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, List<T> list, int batchSize, MybatisBatchBiConsumer<SqlSession, M, T> batchFunction) {
+    public static <M, T> int batch(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list, int batchSize, MybatisBatchBiConsumer<SqlSession, M, T> batchFunction) {
         if (list == null || list.isEmpty()) {
             return 0;
         }
-        try (SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
+        try (SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH, true)) {
             M mapper = session.getMapper(mapperType);
             int updateCnt = 0;
             int optTimes = 0;
@@ -124,6 +126,45 @@ public final class MybatisBatchUtil {
         }
     }
 
+    /**
+     * 批量操作,一次多组分隔后的数据
+     *
+     * @param sqlSessionFactory mybatis SqlSessionFactory 通过spring 注解注入获取
+     * @param mapperType        MybatisMapper 的 class
+     * @param list              数据列表
+     * @param batchSize         一次批量处理的条数
+     * @param batchFunction     操作方法
+     * @param <M>               MybatisMapper
+     * @param <T>               数据的类型
+     * @return 影响的条数
+     */
+    public static <M, T> int batchMulti(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list, int batchSize, MybatisBatchBiConsumer<SqlSession, M, List<T>> batchFunction) {
+        if (list == null || list.isEmpty()) {
+            return 0;
+        }
+        try (SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH, true)) {
+            M mapper = session.getMapper(mapperType);
+            int updateCnt = 0;
+            int optTimes = 0;
+            List<T> subList = new ArrayList<>();
+            for (T entity : list) {
+                optTimes++;
+                subList.add(entity);
+                if (optTimes == batchSize) {
+                    batchFunction.accept(session, mapper, subList);
+                    subList.clear();
+                    updateCnt += getEffectCnt(session.flushStatements());
+                    optTimes = 0;
+                }
+            }
+            if (optTimes != 0) {
+                batchFunction.accept(session, mapper, subList);
+                updateCnt += getEffectCnt(session.flushStatements());
+            }
+            return updateCnt;
+        }
+    }
+
 
     /**
      * 批量操作
@@ -133,7 +174,7 @@ public final class MybatisBatchUtil {
      * @return 影响的条数
      */
     public static int batch(SqlSessionFactory sqlSessionFactory, Function<SqlSession, Integer> batchFunction) {
-        try (SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
+        try (SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH, true)) {
             return batchFunction.apply(session);
         }
     }
@@ -154,7 +195,7 @@ public final class MybatisBatchUtil {
         return updateCnt;
     }
 
-    public interface MybatisBatchBiConsumer<S extends SqlSession, M extends MybatisMapper<T>, T> {
+    public interface MybatisBatchBiConsumer<S extends SqlSession, M, T> {
         void accept(S session, M mapper, T data);
 
         default MybatisBatchBiConsumer<S, M, T> andThen(MybatisBatchBiConsumer<? super S, ? super M, ? super T> after) {

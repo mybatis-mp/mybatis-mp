@@ -24,13 +24,11 @@ import java.time.LocalDateTime;
 
 @Data
 @Table("t_sys_user")
-public class SysUser {
+public class SysUser extends SysUserBase {
 
     @TableId
     @TableField("id")
     private Integer id;
-
-    private String userName;
 
     private String password;
 

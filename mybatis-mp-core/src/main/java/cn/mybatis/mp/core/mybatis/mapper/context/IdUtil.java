@@ -72,20 +72,12 @@ public final class IdUtil {
     }
 
     public static boolean setId(Object obj, TableFieldInfo idFieldInfo, Object id) {
-//        if (isIdExists(obj, idFieldInfo.getReadFieldInvoker())) {
-//            return false;
-//        }
-
         id = IdValueConverter.convert(id, idFieldInfo.getFieldInfo().getTypeClass());
         TableInfoUtil.setValue(idFieldInfo, obj, id);
         return true;
     }
 
     public static boolean setId(Object obj, ModelFieldInfo idFieldInfo, Object id) {
-//        if (isIdExists(obj, idFieldInfo.getReadFieldInvoker())) {
-//            return false;
-//        }
-
         if (idFieldInfo.getFieldInfo().getTypeClass() == String.class) {
             id = id instanceof String ? id : String.valueOf(id);
         }

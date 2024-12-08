@@ -25,6 +25,11 @@ import java.util.List;
 
 public final class Where extends db.sql.api.impl.cmd.struct.Where {
 
+    private DbType dbType;
+    private String whereScript;
+    private String mybatisParamNamespace;
+    private List<Object> scriptParams;
+
     public Where() {
         super(new ConditionFactory(new MybatisCmdFactory()));
     }
@@ -32,14 +37,6 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
     public static Where create() {
         return new Where();
     }
-
-    private DbType dbType;
-
-    private String whereScript;
-
-    private String mybatisParamNamespace;
-
-    private List<Object> scriptParams;
 
     public DbType getDbType() {
         return dbType;

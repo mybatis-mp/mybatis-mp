@@ -29,6 +29,6 @@ public final class ExistsMethodUtil {
     }
 
     public static boolean exists(BasicMapper basicMapper, TableInfo tableInfo, Where where) {
-        return basicMapper.exists(QueryUtil.buildNoOptimizationQuery(tableInfo, where, q -> q.select1()));
+        return basicMapper.exists(QueryUtil.buildNoOptimizationQuery(tableInfo, where, q -> q.from(tableInfo.getType()).select1()));
     }
 }

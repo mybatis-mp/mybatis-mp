@@ -79,6 +79,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
     // Cached Automappings
     private final Map<String, List<UnMappedColumnAutoMapping>> autoMappingsCache = new HashMap<>();
     private final Map<String, List<String>> constructorAutoMappingColumns = new HashMap<>();
+    private final Map<String, String> upperCaseColumnCache = new HashMap<>();
     private Object previousRowValue;
     // temporary marking flag that indicate using constructor mapping (use field to reduce memory usage)
     private boolean useConstructorMappings;
@@ -114,6 +115,10 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         return true;
     }
 
+    //
+    // HANDLE OUTPUT PARAMETER
+    //
+
     @Override
     public void handleOutputParameters(CallableStatement cs) throws SQLException {
         final Object parameterObject = parameterHandler.getParameterObject();
@@ -131,10 +136,6 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
             }
         }
     }
-
-    //
-    // HANDLE OUTPUT PARAMETER
-    //
 
     private void handleRefCursorOutputParameter(ResultSet rs, ParameterMapping parameterMapping, MetaObject metaParam)
             throws SQLException {
@@ -299,6 +300,10 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         return multipleResults.size() == 1 ? (List<Object>) multipleResults.get(0) : multipleResults;
     }
 
+    //
+    // HANDLE ROWS FOR SIMPLE RESULTMAP
+    //
+
     public void handleRowValues(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler<?> resultHandler,
                                 RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
         if (resultMap.hasNestedResultMaps()) {
@@ -309,10 +314,6 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
             handleRowValuesForSimpleResultMap(rsw, resultMap, resultHandler, rowBounds, parentMapping);
         }
     }
-
-    //
-    // HANDLE ROWS FOR SIMPLE RESULTMAP
-    //
 
     private void ensureNoRowBounds() {
         if (configuration.isSafeRowBoundsEnabled() && rowBounds != null
@@ -379,6 +380,10 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         }
     }
 
+    //
+    // GET VALUE FROM ROW FOR SIMPLE RESULT MAP
+    //
+
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
         final ResultLoaderMap lazyLoader = new ResultLoaderMap();
         Object rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix);
@@ -396,7 +401,7 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
     }
 
     //
-    // GET VALUE FROM ROW FOR SIMPLE RESULT MAP
+    // GET VALUE FROM ROW FOR NESTED RESULT MAP
     //
 
     protected Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, CacheKey combinedKey, String columnPrefix,
@@ -432,10 +437,6 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
         return rowValue;
     }
 
-    //
-    // GET VALUE FROM ROW FOR NESTED RESULT MAP
-    //
-
     private void putAncestor(Object resultObject, String resultMapId) {
         ancestorObjects.put(resultMapId, resultObject);
     }
@@ -450,8 +451,6 @@ public class DefaultResultSetHandler extends org.apache.ibatis.executor.resultse
             return AutoMappingBehavior.NONE != configuration.getAutoMappingBehavior();
         }
     }
-
-    private final Map<String, String> upperCaseColumnCache = new HashMap<>();
 
     private String getUpperCase(String column) {
         return upperCaseColumnCache.computeIfAbsent(column, k -> k.toUpperCase(Locale.ENGLISH));

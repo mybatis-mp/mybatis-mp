@@ -33,6 +33,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -203,6 +204,27 @@ public class QueryTest extends BaseTest {
             eqSysUser.setPassword("123456");
             eqSysUser.setCreate_time(LocalDateTime.parse("2023-10-11T15:16:17"));
             assertEquals(eqSysUser, sysUser, "getWithWhere检测");
+        }
+    }
+
+    @Test
+    public void existsWithWhere() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            boolean exists = sysUserMapper.exists(where -> {
+                where.eq(SysUser::getId, 2);
+            });
+            assertEquals(exists, true);
+        }
+    }
+
+    @Test
+    public void cursorWithWhere() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            sysUserMapper.cursor(where -> {
+                where.eq(SysUser::getId, 2);
+            }).forEach(item -> assertEquals(item.getId(), 2));
         }
     }
 
@@ -668,6 +690,16 @@ public class QueryTest extends BaseTest {
                     .limit(1)
                     .get();
 
+        }
+    }
+
+    @Test
+    public void queryConfigTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = QueryChain.of(sysUserMapper).timeout(1).fetchSize(1).fetchDirection(ResultSet.FETCH_REVERSE).list();
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 3);
         }
     }
 }

@@ -14,6 +14,7 @@
 
 package cn.mybatis.mp.core.sql.executor.chain;
 
+import cn.mybatis.mp.core.mybatis.mapper.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.sql.executor.BaseDelete;
 import db.sql.api.impl.cmd.struct.Where;
@@ -25,7 +26,9 @@ import java.util.Objects;
  */
 public class DeleteChain extends BaseDelete<DeleteChain> {
 
-    protected MybatisMapper<?> mapper;
+    protected BaseMapper mapper;
+
+    protected Class<?> entityType;
 
     protected DeleteChain() {
 
@@ -40,6 +43,17 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
         this.mapper = mapper;
     }
 
+    public DeleteChain(BaseMapper mapper, Class<?> entityType) {
+        this.mapper = mapper;
+        this.entityType = entityType;
+    }
+
+    public DeleteChain(BaseMapper mapper, Class<?> entityType, Where where) {
+        super(where);
+        this.mapper = mapper;
+        this.entityType = entityType;
+    }
+
     public static DeleteChain of(MybatisMapper<?> mapper) {
         return new DeleteChain(mapper);
     }
@@ -48,6 +62,13 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
         return new DeleteChain(mapper, where);
     }
 
+    public static DeleteChain of(BaseMapper mapper, Class<?> entityType) {
+        return new DeleteChain(mapper, entityType);
+    }
+
+    public static DeleteChain of(BaseMapper mapper, Class<?> entityType, Where where) {
+        return new DeleteChain(mapper, entityType, where);
+    }
 
     /**
      * 非特殊情况 请使用of静态方法
@@ -59,15 +80,28 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
         return new DeleteChain();
     }
 
+    protected Class<?> getEntityType() {
+        if (entityType != null) {
+            return entityType;
+        }
+        if (mapper instanceof MybatisMapper) {
+            this.entityType = ((MybatisMapper) mapper).getEntityType();
+        } else {
+            throw new RuntimeException("you need specify entityType");
+        }
+
+        return entityType;
+    }
+
     private void setDefault() {
         if (this.getDeleteTable() == null && this.getFrom() == null) {
             //自动设置实体类
-            this.delete(mapper.getEntityType());
-            this.from(mapper.getEntityType());
+            this.delete(getEntityType());
+            this.from(getEntityType());
         }
     }
 
-    private void checkAndSetMapper(MybatisMapper mapper) {
+    private void checkAndSetMapper(BaseMapper mapper) {
         if (Objects.isNull(this.mapper)) {
             this.mapper = mapper;
             return;
@@ -84,8 +118,20 @@ public class DeleteChain extends BaseDelete<DeleteChain> {
      * @param mapper 操作目标实体类的mapper
      * @return 自己
      */
-    public <T> DeleteChain withMapper(MybatisMapper<T> mapper) {
+    public DeleteChain withMapper(MybatisMapper<?> mapper) {
         this.checkAndSetMapper(mapper);
+        return this;
+    }
+
+    /**
+     * 用create静态方法的 Chain 需要调用一次此方法 用于设置 mapper
+     *
+     * @param mapper 一般都是BasicMapper
+     * @return 自己
+     */
+    public DeleteChain withMapper(BaseMapper mapper, Class<?> entityType) {
+        this.checkAndSetMapper(mapper);
+        this.entityType = entityType;
         return this;
     }
 

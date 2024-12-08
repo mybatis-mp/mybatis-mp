@@ -50,10 +50,19 @@ public interface IWhereMethod<SELF extends IWhereMethod,
      * @return
      */
     default SELF forSearch() {
-        this.ignoreNullValueInCondition(true);
-        this.ignoreEmptyInCondition(true);
-        this.trimStringInCondition(true);
-        return (SELF) this;
+        return this.forSearch(true);
     }
 
+    /**
+     * 为搜索（注意查询和搜索是不一样的）
+     *
+     * @param bool 开关
+     * @return
+     */
+    default SELF forSearch(boolean bool) {
+        this.ignoreNullValueInCondition(bool);
+        this.ignoreEmptyInCondition(bool);
+        this.trimStringInCondition(bool);
+        return (SELF) this;
+    }
 }

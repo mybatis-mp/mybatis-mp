@@ -15,10 +15,11 @@
 package cn.mybatis.mp.core.mybatis.configuration;
 
 
-import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.db.reflect.FieldInfo;
+import cn.mybatis.mp.core.exception.NotTableClassException;
 import cn.mybatis.mp.core.mybatis.executor.*;
 import cn.mybatis.mp.core.mybatis.executor.resultset.MybatisDefaultResultSetHandler;
+import cn.mybatis.mp.core.mybatis.executor.statement.MybatisRoutingStatementHandler;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapping.ResultMapUtils;
@@ -79,7 +80,8 @@ public class MybatisConfiguration extends Configuration {
     @Override
     public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
         mappedStatement = DynamicsMappedStatement.wrapMappedStatement(mappedStatement, parameterObject);
-        return super.newStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
+        StatementHandler statementHandler = new MybatisRoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
+        return (StatementHandler) this.interceptorChain.pluginAll(statementHandler);
     }
 
     @Override
@@ -124,6 +126,9 @@ public class MybatisConfiguration extends Configuration {
         }
         if (BasicMapper.class.isAssignableFrom(type) && type != BasicMapper.class) {
             this.addBasicMapper(type);
+            return;
+        } else if (MybatisMapper.class == type) {
+            super.addMapper(type);
             return;
         } else if (MybatisMapper.class.isAssignableFrom(type)) {
             List<Class<?>> list = GenericUtil.getGenericInterfaceClass(type);

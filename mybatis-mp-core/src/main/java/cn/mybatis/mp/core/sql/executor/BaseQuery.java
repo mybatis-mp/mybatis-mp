@@ -15,6 +15,8 @@
 package cn.mybatis.mp.core.sql.executor;
 
 import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
+import cn.mybatis.mp.core.mybatis.executor.statement.Fetchable;
+import cn.mybatis.mp.core.mybatis.executor.statement.Timeoutable;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.util.ForeignKeyUtil;
 import cn.mybatis.mp.core.sql.util.SelectClassUtil;
@@ -33,11 +35,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQuery<Q, MybatisCmdFactory> {
+public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQuery<Q, MybatisCmdFactory> implements Timeoutable<Q>, Fetchable<Q> {
 
     protected final OptimizeOptions optimizeOptions = new OptimizeOptions();
     protected Class returnType;
-    protected Consumer<E> onRowEvent;
+    protected Consumer<T> onRowEvent;
+    protected Integer timeout;
+    protected Integer fetchSize;
+    protected Integer fetchDirection;
 
     public BaseQuery() {
         this(new MybatisCmdFactory());
@@ -90,22 +95,61 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, E>, E> extends AbstractQu
         return returnType;
     }
 
-    public <E2, Q2 extends BaseQuery<Q2, E2>> BaseQuery<Q2, E2> setReturnType(Class<E2> returnType) {
+    public <T2, Q2 extends BaseQuery<Q2, T2>> BaseQuery<Q2, T2> setReturnType(Class<T2> returnType) {
         this.returnType = returnType;
-        return (BaseQuery<Q2, E2>) this;
+        return (BaseQuery<Q2, T2>) this;
     }
 
-    public <E2, Q2 extends BaseQuery<Q2, E2>> BaseQuery<Q2, E2> setReturnType(Class<E2> returnType, Consumer<E2> consumer) {
-        return (BaseQuery<Q2, E2>) this.setReturnType(returnType).onRowEvent(consumer);
+    public <T2, Q2 extends BaseQuery<Q2, T2>> BaseQuery<Q2, T2> setReturnType(Class<T2> returnType, Consumer<T2> consumer) {
+        return (BaseQuery<Q2, T2>) this.setReturnType(returnType).onRowEvent(consumer);
     }
 
-    public Q onRowEvent(Consumer<E> consumer) {
+    public Q onRowEvent(Consumer<T> consumer) {
         this.onRowEvent = consumer;
         return (Q) this;
     }
 
-    public Consumer<E> getOnRowEvent() {
+    public Consumer<T> getOnRowEvent() {
         return onRowEvent;
+    }
+
+    @Override
+    public Q timeout(Integer timeout) {
+        this.timeout = timeout;
+        return (Q) this;
+    }
+
+    @Override
+    public Q fetchSize(Integer fetchSize) {
+        this.fetchSize = fetchSize;
+        return (Q) this;
+    }
+
+    /**
+     * use like fetchDirection(ResultSet.TYPE_FORWARD_ONLY)
+     *
+     * @param direction direction value:all in ResultSet
+     * @return
+     */
+    @Override
+    public Q fetchDirection(Integer direction) {
+        this.fetchDirection = direction;
+        return (Q) this;
+    }
+
+    @Override
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    @Override
+    public Integer getFetchSize() {
+        return fetchSize;
+    }
+
+    @Override
+    public Integer getFetchDirection() {
+        return fetchDirection;
     }
 
     @Override

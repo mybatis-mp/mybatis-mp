@@ -24,7 +24,7 @@
     </description>
     <groupId>cn.mybatis-mp</groupId>
     <artifactId>mybatis-mp</artifactId>
-    <version>1.7.6</version>
+    <version>1.7.7</version>
     <packaging>pom</packaging>
     <modules>
         <module>mybatis-mp-annotation</module>
@@ -62,13 +62,13 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
-        <mybatis-mp.version>1.7.6</mybatis-mp.version>
-        <mybatis-mp-generator-core.version>1.0.3</mybatis-mp-generator-core.version>
-        <mybatis-mp-datasource-routing.version>1.0.1</mybatis-mp-datasource-routing.version>
-        <mybatis-mp-spring-boot-starter.version>1.7.6</mybatis-mp-spring-boot-starter.version>
+        <mybatis-mp.version>1.7.7</mybatis-mp.version>
+        <mybatis-mp-generator-core.version>1.0.5</mybatis-mp-generator-core.version>
+        <mybatis-mp-datasource-routing.version>1.0.2</mybatis-mp-datasource-routing.version>
+        <mybatis-mp-spring-boot-starter.version>1.7.7</mybatis-mp-spring-boot-starter.version>
 
         <!-- mybatis version -->
-        <mybatis.version>3.5.16</mybatis.version>
+        <mybatis.version>3.5.17</mybatis.version>
 
         <!-- jdbc version -->
         <mysql.version>9.1.0</mysql.version>
@@ -83,7 +83,7 @@
 
         <!-- log version -->
         <logback.version>1.2.13</logback.version>
-        <slf4j.version>1.7.36</slf4j.version>
+        <slf4j.version>2.0.16</slf4j.version>
 
         <!-- spring boot version -->
         <spring-boot.version>2.7.18</spring-boot.version>

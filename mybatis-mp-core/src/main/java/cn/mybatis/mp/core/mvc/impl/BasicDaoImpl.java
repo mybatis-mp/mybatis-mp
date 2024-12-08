@@ -12,11 +12,28 @@
  *
  */
 
-package cn.mybatis.mp.core;
+package cn.mybatis.mp.core.mvc.impl;
 
-public class NotTableClassException extends RuntimeException {
+import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 
-    public NotTableClassException(Class clazz) {
-        super(clazz.getName() + " is not a entity");
+/**
+ * 专门给不想写Mapper的人用
+ *
+ * @param <T>
+ * @param <ID>
+ */
+public class BasicDaoImpl<T, ID> extends BaseDaoImpl<BasicMapper, T, ID> {
+
+    public BasicDaoImpl() {
+
+    }
+
+    public BasicDaoImpl(BasicMapper mapper) {
+        this.setMapper(mapper);
+    }
+
+    @Override
+    protected BasicMapper getBasicMapper() {
+        return getMapper();
     }
 }

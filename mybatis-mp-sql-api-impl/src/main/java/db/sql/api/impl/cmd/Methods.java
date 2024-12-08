@@ -84,6 +84,7 @@ public final class Methods {
 
     /**
      * 将指定列名转成 Column
+     *
      * @param column 列名
      * @return Column
      */
@@ -121,7 +122,7 @@ public final class Methods {
      * plus加法
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return Plus
      */
     public static Plus plus(Cmd column, Number value) {
@@ -134,7 +135,7 @@ public final class Methods {
      * plus加法
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return Plus
      */
     public static Plus plus(Cmd column, Cmd value) {
@@ -147,7 +148,7 @@ public final class Methods {
      * subtract加法
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return Subtract
      */
     public static Subtract subtract(Cmd column, Number value) {
@@ -160,7 +161,7 @@ public final class Methods {
      * subtract减法
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return Subtract
      */
     public static Subtract subtract(Cmd column, Cmd value) {
@@ -173,7 +174,7 @@ public final class Methods {
      * multiply乘法
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return Multiply
      */
     public static Multiply multiply(Cmd column, Number value) {
@@ -186,7 +187,7 @@ public final class Methods {
      * divide除法
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return Divide
      */
     public static Divide divide(Cmd column, Cmd value) {
@@ -199,7 +200,7 @@ public final class Methods {
      * multiply乘法
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return Divide
      */
     public static Divide divide(Cmd column, Number value) {
@@ -212,7 +213,7 @@ public final class Methods {
      * multiply乘法
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return Multiply
      */
     public static Multiply multiply(Cmd column, Cmd value) {
@@ -253,7 +254,7 @@ public final class Methods {
     /**
      * count条数 函数
      *
-     * @param column 列
+     * @param column   列
      * @param distinct 是否去重
      * @return Count
      */
@@ -321,7 +322,7 @@ public final class Methods {
      * pow平方 函数
      *
      * @param column 列
-     * @param n 次数
+     * @param n      次数
      * @return Pow
      */
     public static Pow pow(Cmd column, int n) {
@@ -342,7 +343,7 @@ public final class Methods {
     /**
      * round四舍五入 函数
      *
-     * @param column 列
+     * @param column    列
      * @param precision 精度
      * @return
      */
@@ -426,7 +427,7 @@ public final class Methods {
     /**
      * 返回数值 column 保留到小数点后 precision 位的值 函数
      *
-     * @param column 列
+     * @param column    列
      * @param precision 精度
      * @return Truncate
      */
@@ -471,7 +472,7 @@ public final class Methods {
     /**
      * 以base为底，求number自然对数
      *
-     * @param base 底数
+     * @param base   底数
      * @param number 对数
      * @return Log
      */
@@ -649,7 +650,7 @@ public final class Methods {
      * 字符截取
      *
      * @param column 列
-     * @param start 开始位置
+     * @param start  开始位置
      * @return SubStr
      */
     public static SubStr subStr(Cmd column, int start) {
@@ -661,7 +662,7 @@ public final class Methods {
      * 字符截取
      *
      * @param column 列
-     * @param start 开始位置
+     * @param start  开始位置
      * @param length 长度
      * @return SubStr
      */
@@ -675,7 +676,7 @@ public final class Methods {
      *
      * @param column 列
      * @param length 填充后的长度
-     * @param pad 填充内容
+     * @param pad    填充内容
      * @return Lpad
      */
     public static Lpad lpad(Cmd column, int length, String pad) {
@@ -689,7 +690,7 @@ public final class Methods {
      *
      * @param column 列
      * @param length 填充后的长度
-     * @param pad 填充内容
+     * @param pad    填充内容
      * @return Rpad
      */
     public static Rpad rpad(Cmd column, int length, String pad) {
@@ -736,7 +737,7 @@ public final class Methods {
      * 返回 -1 0 1
      *
      * @param column 列
-     * @param str 比较对象
+     * @param str    比较对象
      * @return Strcmp
      */
     public static Strcmp strcmp(Cmd column, String str) {
@@ -749,7 +750,7 @@ public final class Methods {
      * 将字符串  重复 n 次
      *
      * @param column 列
-     * @param n 次数
+     * @param n      次数
      * @return Repeat
      */
     public static Repeat repeat(Cmd column, int n) {
@@ -760,7 +761,7 @@ public final class Methods {
     /**
      * 替换 函数
      *
-     * @param column 列
+     * @param column      列
      * @param target      匹配目标
      * @param replacement 替换值
      * @return Replace
@@ -788,7 +789,7 @@ public final class Methods {
      * column 需要符合逗号分割规范
      *
      * @param column 列
-     * @param match 匹配值
+     * @param match  匹配值
      * @return FindInSet
      */
     public static FindInSet mysqlFindInSet(Cmd column, String match) {
@@ -802,7 +803,7 @@ public final class Methods {
      * column 需要符合逗号分割规范
      *
      * @param column 列
-     * @param match 匹配值
+     * @param match  匹配值
      * @return FindInSet
      */
     public static FindInSet mysqlFindInSet(Cmd column, Number match) {
@@ -888,7 +889,7 @@ public final class Methods {
     /**
      * 格式化时间
      *
-     * @param column 列
+     * @param column  列
      * @param pattern 格式
      * @return DateFormat
      */
@@ -901,7 +902,7 @@ public final class Methods {
     /**
      * 格式化时间
      *
-     * @param column 列
+     * @param column  列
      * @param pattern 格式
      * @return DateFormat
      */
@@ -1051,7 +1052,7 @@ public final class Methods {
      * concatWs拼接 函数
      *
      * @param column 列
-     * @param split 分隔符
+     * @param split  分隔符
      * @param values 需要拼接的值
      * @return ConcatWs
      */
@@ -1069,7 +1070,7 @@ public final class Methods {
      * if(条件,值1,值2) 函数
      *
      * @param condition 条件
-     * @param value condition符合时的值
+     * @param value     condition符合时的值
      * @param thenValue condition不符合时的值
      * @return If
      */
@@ -1084,7 +1085,7 @@ public final class Methods {
      * if(条件,值1,值2) 函数
      *
      * @param condition 条件
-     * @param value condition符合时的值
+     * @param value     condition符合时的值
      * @param thenValue condition不符合时的值
      * @return If
      */
@@ -1099,7 +1100,7 @@ public final class Methods {
      * if(条件,值1,值2) 函数
      *
      * @param condition 条件
-     * @param value condition符合时的值
+     * @param value     condition符合时的值
      * @param thenValue condition不符合时的值
      * @return If
      */
@@ -1114,7 +1115,7 @@ public final class Methods {
      * IF(条件,值1,值2) 函数
      *
      * @param condition 条件
-     * @param value condition符合时的值
+     * @param value     condition符合时的值
      * @param thenValue condition不符合时的值
      * @return If
      */
@@ -1129,7 +1130,7 @@ public final class Methods {
      * IFNULL(条件,值1,值2) 函数
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return IfNull
      */
     public static IfNull ifNull(Cmd column, Cmd value) {
@@ -1142,7 +1143,7 @@ public final class Methods {
      * IFNULL(条件,值1,值2) 函数
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return IfNull
      */
     public static IfNull ifNull(Cmd column, Serializable value) {
@@ -1206,6 +1207,7 @@ public final class Methods {
 
     /**
      * eq等于 判断
+     *
      * @param column 列
      * @return Eq
      */
@@ -1217,6 +1219,7 @@ public final class Methods {
 
     /**
      * ne不等于 判断
+     *
      * @param column 列
      * @return Ne
      */
@@ -1228,6 +1231,7 @@ public final class Methods {
 
     /**
      * 不为空 判断
+     *
      * @param column 列
      * @return NotEmpty
      */
@@ -1238,6 +1242,7 @@ public final class Methods {
 
     /**
      * 为空 判断
+     *
      * @param column 列
      * @return Empty
      */
@@ -1248,8 +1253,9 @@ public final class Methods {
 
     /**
      * gt大于 判断
+     *
      * @param column 列
-     * @param value 比较对象
+     * @param value  比较对象
      * @return Gt
      */
     public static Gt gt(Cmd column, Object value) {
@@ -1260,8 +1266,9 @@ public final class Methods {
 
     /**
      * gte大于等于 判断
+     *
      * @param column 列
-     * @param value 比较对象
+     * @param value  比较对象
      * @return Gte
      */
     public static Gte gte(Cmd column, Object value) {
@@ -1272,8 +1279,9 @@ public final class Methods {
 
     /**
      * gt小于 判断
+     *
      * @param column 列
-     * @param value 比较对象
+     * @param value  比较对象
      * @return Lt
      */
     public static Lt lt(Cmd column, Object value) {
@@ -1284,8 +1292,9 @@ public final class Methods {
 
     /**
      * gt小于等于 判断
+     *
      * @param column 列
-     * @param value 比较对象
+     * @param value  比较对象
      * @return Lte
      */
     public static Lte lte(Cmd column, Object value) {
@@ -1296,6 +1305,7 @@ public final class Methods {
 
     /**
      * in 多个值
+     *
      * @param column 列
      * @param values 包含的指定值
      * @return In
@@ -1313,6 +1323,7 @@ public final class Methods {
 
     /**
      * in 多个值
+     *
      * @param column 列
      * @param values 包含的指定值
      * @return In
@@ -1325,8 +1336,9 @@ public final class Methods {
 
     /**
      * in 一个查询
-     *  @param column 列
-     * @param query 子查询
+     *
+     * @param column 列
+     * @param query  子查询
      * @return In
      */
     public static In in(Cmd column, IQuery query) {
@@ -1337,6 +1349,7 @@ public final class Methods {
 
     /**
      * not in 多个值
+     *
      * @param column 列
      * @return NotIn
      */
@@ -1353,6 +1366,7 @@ public final class Methods {
 
     /**
      * not in 多个值
+     *
      * @param column 列
      * @return NotIn
      */
@@ -1364,6 +1378,7 @@ public final class Methods {
 
     /**
      * not in 一个查询
+     *
      * @param column 列
      * @return NotIn
      */
@@ -1399,7 +1414,7 @@ public final class Methods {
      * between 区间判断
      *
      * @param column 列
-     * @param value 开始值
+     * @param value  开始值
      * @param value2 结束值
      * @return Between
      */
@@ -1414,7 +1429,7 @@ public final class Methods {
      * not between 区间判断
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @param value2
      * @return NotBetween
      */
@@ -1429,7 +1444,7 @@ public final class Methods {
      * like 判断
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return Like
      */
     public static Like like(Cmd column, Object value) {
@@ -1440,7 +1455,7 @@ public final class Methods {
      * like 判断
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return Like
      */
     public static Like like(LikeMode mode, Cmd column, Object value) {
@@ -1458,7 +1473,7 @@ public final class Methods {
      * notLike 判断
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return NotLike
      */
     public static NotLike notLike(Cmd column, Object value) {
@@ -1469,7 +1484,7 @@ public final class Methods {
      * not like 判断
      *
      * @param column 列
-     * @param value 值
+     * @param value  值
      * @return NotLike
      */
     public static NotLike notLike(LikeMode mode, Cmd column, Object value) {
@@ -1497,7 +1512,7 @@ public final class Methods {
     /**
      * mysql fromUnixTime 函数
      *
-     * @param column          列
+     * @param column       列
      * @param containValue 包含值
      * @return JsonContains
      */
@@ -1510,7 +1525,7 @@ public final class Methods {
     /**
      * mysql json 是否包含值
      *
-     * @param column          列
+     * @param column       列
      * @param containValue 包含值
      * @param path         指定路径
      * @return JsonContains
@@ -1525,8 +1540,8 @@ public final class Methods {
     /**
      * mysql json 是否包含路径
      *
-     * @param column   列
-     * @param paths 指定路径
+     * @param column 列
+     * @param paths  指定路径
      * @return JsonContainsPath
      */
     @SafeVarargs
@@ -1537,7 +1552,7 @@ public final class Methods {
     /**
      * mysql json 是否包含路径
      *
-     * @param column      列
+     * @param column   列
      * @param allMatch 是否全匹配上
      * @param paths    指定路径
      * @return JsonContainsPath
@@ -1551,8 +1566,9 @@ public final class Methods {
 
     /**
      * mysql json 值提取操作
+     *
      * @param column 列
-     * @param paths 指定路径
+     * @param paths  指定路径
      * @return JsonExtract
      */
     @SafeVarargs
@@ -1566,7 +1582,7 @@ public final class Methods {
      * 返回目标字符(串)在源字符串字符串中出现的起始位置
      *
      * @param column 列
-     * @param str 匹配的字符
+     * @param str    匹配的字符
      * @return Instr
      */
     public static Instr instr(Cmd column, String str) {

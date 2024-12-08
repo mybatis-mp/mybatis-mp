@@ -14,10 +14,10 @@
 
 package cn.mybatis.mp.core.mybatis.executor;
 
-import cn.mybatis.mp.core.NotTableClassException;
 import cn.mybatis.mp.core.db.reflect.TableIds;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.db.reflect.Tables;
+import cn.mybatis.mp.core.exception.NotTableClassException;
 import cn.mybatis.mp.core.mybatis.executor.keygen.MybatisJdbc3KeyGenerator;
 import cn.mybatis.mp.core.mybatis.executor.keygen.MybatisSelectKeyGenerator;
 import cn.mybatis.mp.core.mybatis.provider.SQLCmdSqlSource;
@@ -57,29 +57,6 @@ public class TableIdGeneratorWrapper {
             throw new RuntimeException(e);
         }
     }
-
-/*
-    public static void addEntityKeyGenerator(MappedStatement ms) {
-        if (ms.getSqlCommandType() != SqlCommandType.INSERT || !(ms.getSqlSource() instanceof ProviderSqlSource)
-                || (ms.getParameterMap().getType() != EntityInsertContext.class && ms.getParameterMap().getType() != ModelInsertContext.class)) {
-            return;
-        }
-        String selectKeyId = ms.getId() + MybatisSelectKeyGenerator.SELECT_KEY_SUFFIX;
-        Class entityClass = getEntityClass(ms);
-        if (Objects.isNull(entityClass)) {
-            //可能是动态的 所以无法获取entityClass
-            return;
-        }
-        try {
-            TableInfo tableInfo = Tables.get(entityClass);
-            if (tableInfo.getIdFieldInfos().size() == 1) {
-                addEntityKeyGenerator(ms, selectKeyId, tableInfo);
-            }
-        } catch (NotTableClassException e) {
-            //忽略
-        }
-    }
-*/
 
     public static void addEntityKeyGenerator(MappedStatement ms, Class entityClass) {
         String selectKeyId = ms.getId() + SelectKeyGenerator.SELECT_KEY_SUFFIX;

@@ -30,10 +30,9 @@ import java.util.List;
 
 public class InsertFields implements IInsertFields<TableField> {
 
+    protected List<TableField> tableFields;
     //SQL SERVER 专用
     private String output;
-
-    protected List<TableField> tableFields;
 
     public InsertFields field(TableField field) {
         if (tableFields == null) {

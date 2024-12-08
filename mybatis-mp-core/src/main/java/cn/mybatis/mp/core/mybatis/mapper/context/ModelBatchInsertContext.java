@@ -25,6 +25,7 @@ import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.ModelInfoUtil;
 import cn.mybatis.mp.core.util.StringPool;
+import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
 import cn.mybatis.mp.db.IdAutoType;
 import cn.mybatis.mp.db.Model;
@@ -65,21 +66,21 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
         Table table = insert.$().table(modelInfo.getTableInfo().getSchemaAndTableName());
         insert.insert(table);
 
-
         List<ModelFieldInfo> saveFieldInfoSet = saveFieldSet.stream().map(modelInfo::getFieldInfo).collect(Collectors.toList());
-
-        TableId tableId = null;
 
         //拼上主键
         if (!modelInfo.getIdFieldInfos().isEmpty()) {
-            tableId = TableIds.get(entityType, dbType);
-            if (tableId.value() == IdAutoType.GENERATOR) {
-                modelInfo.getIdFieldInfos().forEach(item -> {
-                    if (!saveFieldInfoSet.contains(item)) {
-                        saveFieldInfoSet.add(item);
-                    }
-                });
-            }
+            modelInfo.getIdFieldInfos().forEach(idFieldInfo -> {
+                TableId tableId = TableInfoUtil.getTableIdAnnotation(idFieldInfo.getTableFieldInfo().getField(), dbType);
+                if (tableId.value() == IdAutoType.GENERATOR) {
+                    modelInfo.getIdFieldInfos().forEach(item -> {
+                        if (!saveFieldInfoSet.contains(item)) {
+                            saveFieldInfoSet.add(item);
+                        }
+                    });
+                }
+            });
+
         }
 
         //拼上租户ID
@@ -119,14 +120,17 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
                         || (modelFieldInfo.getTableFieldInfo().isTableId() && IdUtil.isIdValueExists(value));
                 if (!hasValue) {
                     if (modelFieldInfo.getTableFieldInfo().isTableId()) {
-                        if (tableId.value() == IdAutoType.GENERATOR) {
-                            IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
-                            Object id = identifierGenerator.nextId(modelInfo.getTableInfo().getType());
-                            if (IdUtil.setId(t, modelFieldInfo, id)) {
-                                value = id;
+                        for (ModelFieldInfo idFieldInfo : modelInfo.getIdFieldInfos()) {
+                            TableId tableId = TableInfoUtil.getTableIdAnnotation(idFieldInfo.getTableFieldInfo().getField(), dbType);
+                            if (tableId.value() == IdAutoType.GENERATOR) {
+                                IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
+                                Object id = identifierGenerator.nextId(modelInfo.getTableInfo().getType());
+                                if (IdUtil.setId(t, modelFieldInfo, id)) {
+                                    value = id;
+                                }
+                            } else {
+                                throw new RuntimeException(modelFieldInfo.getField().getName() + " has no value");
                             }
-                        } else {
-                            throw new RuntimeException(modelFieldInfo.getField().getName() + " has no value");
                         }
                     } else if (modelFieldInfo.getTableFieldInfo().isTenantId()) {
                         value = TenantUtil.setTenantId(t);
@@ -160,6 +164,7 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
         }
 
         if (dbType == DbType.SQL_SERVER && insert.getInsertValues().getValues().size() > 0) {
+            TableId tableId = TableIds.get(entityType, dbType);
             if (!containId && Objects.nonNull(tableId) && tableId.value() == IdAutoType.AUTO) {
                 insert.getInsertFields().setOutput("OUTPUT INSERTED." + modelInfo.getTableInfo().getIdFieldInfo().getColumnName());
             }

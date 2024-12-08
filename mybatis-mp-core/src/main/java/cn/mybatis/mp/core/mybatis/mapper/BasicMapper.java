@@ -15,6 +15,7 @@
 package cn.mybatis.mp.core.mybatis.mapper;
 
 
+import cn.mybatis.mp.core.function.ThreeFunction;
 import cn.mybatis.mp.core.mybatis.mapper.context.*;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper.*;
 import cn.mybatis.mp.core.mybatis.provider.TablePrefixUtil;
@@ -24,12 +25,17 @@ import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.BaseUpdate;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.executor.SelectorCall;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.session.SqlSession;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
+@Mapper
 public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapper, CountBasicMapper, ListBasicMapper, CursorBasicMapper,
         PagingBasicMapper, MapWithKeyBasicMapper, SaveBasicMapper, SaveOrUpdateBasicMapper, SaveModelBasicMapper, SaveOrUpdateModelBasicMapper,
         UpdateBasicMapper, UpdateModelBasicMapper, DeleteBasicMapper {
@@ -56,6 +62,33 @@ public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapp
     default BasicMapper getBasicMapper() {
         return this;
     }
+
+    /**
+     * 获取SqlSession 执行底层的 方法
+     *
+     * @param function 提供SqlSession，返回
+     * @return R
+     */
+    <R> R withSqlSession(Function<SqlSession, R> function);
+
+    /**
+     * 获取SqlSession 执行底层的 方法
+     *
+     * @param statement mybatis的statement ID，假如是 .开头，会自动帮你拼上cn.mybatis.mp.core.mybatis.mapper.BasicMapper
+     * @param function  提供SqlSession，返回
+     * @return R
+     */
+    <R> R withSqlSession(String statement, BiFunction<String, SqlSession, R> function);
+
+    /**
+     * 获取SqlSession 执行底层的 方法
+     *
+     * @param statement mybatis的statement ID，假如是 .开头，会自动帮你拼上cn.mybatis.mp.core.mybatis.mapper.BasicMapper
+     * @param params    参数 可POJO 可Map 可其他
+     * @param function  提供statement,params,SqlSession，返回你需要返回的信息；这里params 可能会被框架修改例如 where 对象
+     * @return R
+     */
+    <R, PARAMS> R withSqlSession(String statement, PARAMS params, ThreeFunction<String, PARAMS, SqlSession, R> function);
 
     @Override
     default <T> T get(BaseQuery<? extends BaseQuery, T> query) {

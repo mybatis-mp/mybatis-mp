@@ -12,7 +12,7 @@
  *
  */
 
-package cn.mybatis.mp.core;
+package cn.mybatis.mp.core.exception;
 
 public class NotTableFieldException extends RuntimeException {
 
