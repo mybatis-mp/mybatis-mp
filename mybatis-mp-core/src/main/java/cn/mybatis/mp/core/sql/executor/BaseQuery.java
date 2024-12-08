@@ -15,6 +15,8 @@
 package cn.mybatis.mp.core.sql.executor;
 
 import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
+import cn.mybatis.mp.core.mybatis.executor.statement.Fetchable;
+import cn.mybatis.mp.core.mybatis.executor.statement.Timeoutable;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.util.ForeignKeyUtil;
 import cn.mybatis.mp.core.sql.util.SelectClassUtil;
@@ -33,7 +35,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQuery<Q, MybatisCmdFactory> {
+public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQuery<Q, MybatisCmdFactory> implements Timeoutable<Q>, Fetchable<Q> {
 
     protected final OptimizeOptions optimizeOptions = new OptimizeOptions();
     protected Class returnType;
@@ -111,11 +113,13 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
         return onRowEvent;
     }
 
+    @Override
     public Q timeout(Integer timeout) {
         this.timeout = timeout;
         return (Q) this;
     }
 
+    @Override
     public Q fetchSize(Integer fetchSize) {
         this.fetchSize = fetchSize;
         return (Q) this;
@@ -127,19 +131,23 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
      * @param direction direction value:all in ResultSet
      * @return
      */
+    @Override
     public Q fetchDirection(Integer direction) {
         this.fetchDirection = direction;
         return (Q) this;
     }
 
+    @Override
     public Integer getTimeout() {
         return timeout;
     }
 
+    @Override
     public Integer getFetchSize() {
         return fetchSize;
     }
 
+    @Override
     public Integer getFetchDirection() {
         return fetchDirection;
     }

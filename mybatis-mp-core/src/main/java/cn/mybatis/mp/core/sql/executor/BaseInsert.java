@@ -14,15 +14,29 @@
 
 package cn.mybatis.mp.core.sql.executor;
 
+import cn.mybatis.mp.core.mybatis.executor.statement.Timeoutable;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.AbstractInsert;
 
-public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert<T, MybatisCmdFactory> {
+public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert<T, MybatisCmdFactory> implements Timeoutable<T> {
 
     public BaseInsert() {
         super(new MybatisCmdFactory());
+    }
+
+    protected Integer timeout;
+
+    @Override
+    public T timeout(Integer timeout) {
+        this.timeout = timeout;
+        return (T) this;
+    }
+
+    @Override
+    public Integer getTimeout() {
+        return timeout;
     }
 
     @Override

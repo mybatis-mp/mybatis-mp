@@ -15,7 +15,6 @@
 package cn.mybatis.mp.core.mybatis.executor.statement;
 
 import cn.mybatis.mp.core.mybatis.mapper.context.BaseSQLCmdContext;
-import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import db.sql.api.impl.tookit.Objects;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
@@ -43,17 +42,22 @@ public class MybatisRoutingStatementHandler extends RoutingStatementHandler {
         Statement statement = super.prepare(connection, transactionTimeout);
         if (this.parameter instanceof BaseSQLCmdContext) {
             BaseSQLCmdContext sqlCmdContext = (BaseSQLCmdContext) this.parameter;
-            if (sqlCmdContext.getExecution() instanceof BaseQuery) {
-                BaseQuery baseQuery = (BaseQuery) sqlCmdContext.getExecution();
-                if (Objects.nonNull(baseQuery.getTimeout())) {
-                    statement.setQueryTimeout(baseQuery.getTimeout());
-                    StatementUtil.applyTransactionTimeout(statement, baseQuery.getTimeout(), transactionTimeout);
+            if (sqlCmdContext.getExecution() instanceof Timeoutable) {
+                Timeoutable timeoutable = (Timeoutable) sqlCmdContext.getExecution();
+                if (Objects.nonNull(timeoutable.getTimeout())) {
+                    statement.setQueryTimeout(timeoutable.getTimeout());
+                    StatementUtil.applyTransactionTimeout(statement, timeoutable.getTimeout(), transactionTimeout);
                 }
-                if (Objects.nonNull(baseQuery.getFetchSize())) {
-                    statement.setFetchSize(baseQuery.getFetchSize());
+
+            }
+
+            if (sqlCmdContext.getExecution() instanceof Fetchable) {
+                Fetchable fetchable = (Fetchable) sqlCmdContext.getExecution();
+                if (Objects.nonNull(fetchable.getFetchSize())) {
+                    statement.setFetchSize(fetchable.getFetchSize());
                 }
-                if (Objects.nonNull(baseQuery.getFetchDirection())) {
-                    statement.setFetchDirection(baseQuery.getFetchDirection());
+                if (Objects.nonNull(fetchable.getFetchDirection())) {
+                    statement.setFetchDirection(fetchable.getFetchDirection());
                 }
             }
         }
