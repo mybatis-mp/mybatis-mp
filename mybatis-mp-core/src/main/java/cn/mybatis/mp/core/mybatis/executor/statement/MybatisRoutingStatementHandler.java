@@ -48,7 +48,6 @@ public class MybatisRoutingStatementHandler extends RoutingStatementHandler {
                     statement.setQueryTimeout(timeoutable.getTimeout());
                     StatementUtil.applyTransactionTimeout(statement, timeoutable.getTimeout(), transactionTimeout);
                 }
-
             }
 
             if (sqlCmdContext.getExecution() instanceof Fetchable) {
