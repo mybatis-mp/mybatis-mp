@@ -20,10 +20,11 @@ import cn.mybatis.mp.core.mybatis.executor.BasicMapperThreadLocalUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.MapKeySQLCmdQueryContext;
-import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.sql.executor.Where;
 import cn.mybatis.mp.core.util.DbTypeUtil;
 import cn.mybatis.mp.db.annotations.Paging;
+import cn.mybatis.mp.page.IPager;
+import cn.mybatis.mp.page.PagerField;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.executor.DbSelectorCall;
 import org.apache.ibatis.annotations.Param;
@@ -160,19 +161,19 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         return sqlSession.selectMap(statementId, queryContext, queryContext.getKey());
     }
 
-    private Pager paging(Method method, Object[] args) {
+    private IPager<?> paging(Method method, Object[] args) {
         ParamNameResolver paramNameResolver = new ParamNameResolver(this.sqlSession.getConfiguration(), method);
         Object params = paramNameResolver.getNamedParams(args);
         String statementId = mapperInterface.getName() + "." + method.getName();
-        Pager pager = (Pager) args[0];
+        IPager<?> pager = (IPager) args[0];
         Integer count = null;
-        if (pager.isExecuteCount()) {
+        if (pager.get(PagerField.IS_EXECUTE_COUNT)) {
             count = sqlSession.selectOne(statementId + "&count", params);
             count = Objects.isNull(count) ? 0 : count;
         }
 
         List list;
-        if (pager.isExecuteCount()) {
+        if (pager.get(PagerField.IS_EXECUTE_COUNT)) {
             if (Objects.nonNull(count) && count > 0) {
                 list = sqlSession.selectList(statementId + "&list", params);
             } else {
@@ -181,9 +182,8 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         } else {
             list = sqlSession.selectList(statementId + "&list", params);
         }
-
-        pager.setResults(list);
-        pager.setTotal(count);
+        pager.set(PagerField.RESULTS, list);
+        pager.set(PagerField.TOTAL, count);
         return pager;
     }
 }

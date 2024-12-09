@@ -12,22 +12,18 @@
  *
  */
 
-package cn.mybatis.mp.db;
+package cn.mybatis.mp.page;
 
-public enum ColumnNameRule {
-
-    /**
-     * 忽略
-     */
-    IGNORE,
+public class PageUtil {
 
     /**
-     * 下划线
+     * 获取分页 offset
+     *
+     * @param number 页码
+     * @param size   分页条数
+     * @return
      */
-    UNDERLINE,
-
-    /**
-     * 表示和字段名一样
-     */
-    USE_FIELD_NAME
+    public static final int getOffset(int number, int size) {
+        return (number - 1) * size;
+    }
 }

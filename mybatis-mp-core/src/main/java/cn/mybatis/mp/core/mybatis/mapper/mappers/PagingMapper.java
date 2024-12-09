@@ -14,8 +14,8 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.mappers;
 
-import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.PagingMethodUtil;
+import cn.mybatis.mp.page.IPager;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
 
@@ -30,7 +30,7 @@ public interface PagingMapper<T> extends BaseMapper<T> {
      * @param pager    分页参数
      * @return 分页结果
      */
-    default <P extends Pager<T>> P paging(P pager, Consumer<Where> consumer) {
+    default <P extends IPager<T>> P paging(P pager, Consumer<Where> consumer) {
         return this.paging(pager, consumer, (Getter<T>[]) null);
     }
 
@@ -42,7 +42,7 @@ public interface PagingMapper<T> extends BaseMapper<T> {
      * @param selectFields select指定列
      * @return
      */
-    default <P extends Pager<T>> P paging(P pager, Consumer<Where> consumer, Getter<T>... selectFields) {
+    default <P extends IPager<T>> P paging(P pager, Consumer<Where> consumer, Getter<T>... selectFields) {
         return PagingMethodUtil.paging(getBasicMapper(), getTableInfo(), pager, consumer, selectFields);
     }
 
@@ -53,11 +53,11 @@ public interface PagingMapper<T> extends BaseMapper<T> {
      * @param pager 分页参数
      * @return 分页结果
      */
-    default <P extends Pager<T>> P paging(P pager, Where where) {
+    default <P extends IPager<T>> P paging(P pager, Where where) {
         return this.paging(pager, where, (Getter<T>[]) null);
     }
 
-    default <P extends Pager<T>> P paging(P pager, Where where, Getter<T>... selectFields) {
+    default <P extends IPager<T>> P paging(P pager, Where where, Getter<T>... selectFields) {
         return PagingMethodUtil.paging(getBasicMapper(), getTableInfo(), pager, where, selectFields);
     }
 }

@@ -12,22 +12,23 @@
  *
  */
 
-package cn.mybatis.mp.db;
+package cn.mybatis.mp.page;
 
-public enum ColumnNameRule {
-
-    /**
-     * 忽略
-     */
-    IGNORE,
+public interface IPager<T> {
 
     /**
-     * 下划线
+     * 获得字段的值
+     *
+     * @param field 字段，具体看PageField
+     * @return 字段的值
      */
-    UNDERLINE,
+    <V> V get(PagerField<V> field);
 
     /**
-     * 表示和字段名一样
+     * 设置字段的值
+     *
+     * @param field 字段，具体看PageField
+     * @param value 值
      */
-    USE_FIELD_NAME
+    <V> void set(PagerField<V> field, V value);
 }

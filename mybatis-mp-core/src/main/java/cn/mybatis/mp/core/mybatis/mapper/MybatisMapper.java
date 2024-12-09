@@ -14,12 +14,12 @@
 
 package cn.mybatis.mp.core.mybatis.mapper;
 
-import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.*;
 import cn.mybatis.mp.core.sql.executor.BaseDelete;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.BaseUpdate;
+import cn.mybatis.mp.page.IPager;
 import db.sql.api.impl.cmd.executor.SelectorCall;
 import org.apache.ibatis.cursor.Cursor;
 
@@ -85,7 +85,7 @@ public interface MybatisMapper<T> extends BaseMapper, GetMapper<T>, ExistsMapper
     }
 
     @Override
-    default <T2, P extends Pager<T2>> P paging(BaseQuery<? extends BaseQuery, T2> query, P pager) {
+    default <T2, P extends IPager<T2>> P paging(BaseQuery<? extends BaseQuery, T2> query, P pager) {
         return getBasicMapper().paging(query, pager);
     }
 

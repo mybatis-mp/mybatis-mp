@@ -14,19 +14,23 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
+import cn.mybatis.mp.page.IPager;
+import cn.mybatis.mp.page.PageUtil;
+import cn.mybatis.mp.page.PagerField;
+
 import java.util.List;
 
-public class Pager<T> {
+public class Pager<T> implements IPager<T> {
 
-    private boolean executeCount = true;
+    private Boolean executeCount = true;
 
     private List<T> results;
 
     private Integer total;
 
-    private int number = 1;
+    private Integer number = 1;
 
-    private int size = 20;
+    private Integer size = 20;
 
     public Pager() {
 
@@ -50,7 +54,7 @@ public class Pager<T> {
     }
 
     public int getOffset() {
-        return (number - 1) * size;
+        return PageUtil.getOffset(this.number, this.size);
     }
 
     public boolean isExecuteCount() {
@@ -101,6 +105,52 @@ public class Pager<T> {
             return 0;
         }
         return this.total / this.size + (this.total % this.size == 0 ? 0 : 1);
+    }
+
+
+    @Override
+    public <V> void set(PagerField<V> field, V value) {
+        if (PagerField.IS_EXECUTE_COUNT == field) {
+            this.executeCount = (Boolean) value;
+            return;
+        }
+        if (PagerField.NUMBER == field) {
+            this.number = (Integer) value;
+            return;
+        }
+        if (PagerField.SIZE == field) {
+            this.size = (Integer) value;
+            return;
+        }
+        if (PagerField.TOTAL == field) {
+            this.total = (Integer) value;
+            return;
+        }
+        if (PagerField.RESULTS == field) {
+            this.results = (List<T>) value;
+            return;
+        }
+        throw new RuntimeException("not support field: " + field);
+    }
+
+    @Override
+    public <V> V get(PagerField<V> field) {
+        if (PagerField.IS_EXECUTE_COUNT == field) {
+            return (V) this.executeCount;
+        }
+        if (PagerField.NUMBER == field) {
+            return (V) this.number;
+        }
+        if (PagerField.SIZE == field) {
+            return (V) this.size;
+        }
+        if (PagerField.TOTAL == field) {
+            return (V) this.total;
+        }
+        if (PagerField.RESULTS == field) {
+            return (V) this.results;
+        }
+        throw new RuntimeException("not support field: " + field.getCode());
     }
 
     @Override
