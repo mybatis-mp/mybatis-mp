@@ -53,11 +53,11 @@ public class Pager<T> implements IPager<T> {
         return new Pager<>(number, size);
     }
 
-    public int getOffset() {
+    public Integer getOffset() {
         return PageUtil.getOffset(this.number, this.size);
     }
 
-    public boolean isExecuteCount() {
+    public Boolean isExecuteCount() {
         return executeCount;
     }
 
@@ -82,7 +82,7 @@ public class Pager<T> implements IPager<T> {
         this.total = total;
     }
 
-    public int getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
@@ -90,7 +90,7 @@ public class Pager<T> implements IPager<T> {
         this.number = number;
     }
 
-    public int getSize() {
+    public Integer getSize() {
         return size;
     }
 
@@ -110,47 +110,12 @@ public class Pager<T> implements IPager<T> {
 
     @Override
     public <V> void set(PagerField<V> field, V value) {
-        if (PagerField.IS_EXECUTE_COUNT == field) {
-            this.executeCount = (Boolean) value;
-            return;
-        }
-        if (PagerField.NUMBER == field) {
-            this.number = (Integer) value;
-            return;
-        }
-        if (PagerField.SIZE == field) {
-            this.size = (Integer) value;
-            return;
-        }
-        if (PagerField.TOTAL == field) {
-            this.total = (Integer) value;
-            return;
-        }
-        if (PagerField.RESULTS == field) {
-            this.results = (List<T>) value;
-            return;
-        }
-        throw new RuntimeException("not support field: " + field);
+        PagerGetSetHelper.set(this, field, value);
     }
 
     @Override
     public <V> V get(PagerField<V> field) {
-        if (PagerField.IS_EXECUTE_COUNT == field) {
-            return (V) this.executeCount;
-        }
-        if (PagerField.NUMBER == field) {
-            return (V) this.number;
-        }
-        if (PagerField.SIZE == field) {
-            return (V) this.size;
-        }
-        if (PagerField.TOTAL == field) {
-            return (V) this.total;
-        }
-        if (PagerField.RESULTS == field) {
-            return (V) this.results;
-        }
-        throw new RuntimeException("not support field: " + field.getCode());
+        return PagerGetSetHelper.get(this, field);
     }
 
     @Override
