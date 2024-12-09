@@ -16,6 +16,7 @@ package cn.mybatis.mp.core;
 
 
 import cn.mybatis.mp.core.logicDelete.LogicDeleteSwitch;
+import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.sql.MybatisMpQuerySQLBuilder;
 import cn.mybatis.mp.core.sql.QuerySQLBuilder;
 import cn.mybatis.mp.core.util.StringPool;
@@ -41,6 +42,7 @@ public final class MybatisMpConfig {
     private static final String SQL_BUILDER = "SQLBuilder";
     private static final String LOGIC_DELETE_SWITCH = "logicDeleteSwitch";
     private static final String DEFAULT_VALUE_MANAGER = "defaultValueManager";
+    private static final String SINGLE_MAPPER_CLASS = "singleMapperClass";
 
     private static final QuerySQLBuilder DEFAULT_SQL_BUILDER = new MybatisMpQuerySQLBuilder();
 
@@ -205,5 +207,23 @@ public final class MybatisMpConfig {
             throw new RuntimeException("key:  " + key + " not set");
         }
         return f.apply(clazz);
+    }
+
+    /**
+     * 获取单Mapper的class 用于BasicMapper.withSqlSession方法 statement 拼接
+     *
+     * @return 单Mapper的class
+     */
+    public static Class getSingleMapperClass() {
+        return (Class) CACHE.computeIfAbsent(SINGLE_MAPPER_CLASS, key -> BasicMapper.class);
+    }
+
+    /**
+     * 设置单Mapper的class 用于BasicMapper.withSqlSession方法 statement 拼接
+     *
+     * @param singleMapperClass
+     */
+    public static void setSingleMapperClass(Class singleMapperClass) {
+        CACHE.putIfAbsent(SINGLE_MAPPER_CLASS, singleMapperClass);
     }
 }

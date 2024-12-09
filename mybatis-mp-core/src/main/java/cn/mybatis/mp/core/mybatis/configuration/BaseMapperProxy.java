@@ -14,6 +14,7 @@
 
 package cn.mybatis.mp.core.mybatis.configuration;
 
+import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.function.ThreeFunction;
 import cn.mybatis.mp.core.mybatis.executor.BasicMapperThreadLocalUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
@@ -130,7 +131,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
                 String statement = (String) args[0];
                 if (statement.startsWith(".")) {
-                    statement = BasicMapper.class.getName() + statement;
+                    statement = MybatisMpConfig.getSingleMapperClass().getName() + statement;
                 }
 
                 if (args.length == 2) {
