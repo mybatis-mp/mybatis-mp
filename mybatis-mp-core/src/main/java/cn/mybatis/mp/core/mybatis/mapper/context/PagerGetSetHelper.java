@@ -20,11 +20,20 @@ import java.util.List;
 
 public final class PagerGetSetHelper {
 
-    public  static <V> void set(Pager pager,PagerField<V> field, V value) {
-        if (PagerField.SIZE == field) {
-            pager.setSize((Integer) value);
-            return;
+    public static <V> V get(Pager pager, PagerField<V> field) {
+        if (PagerField.IS_EXECUTE_COUNT == field) {
+            return (V) pager.isExecuteCount();
         }
+        if (PagerField.NUMBER == field) {
+            return (V) pager.getNumber();
+        }
+        if (PagerField.SIZE == field) {
+            return (V) pager.getSize();
+        }
+        throw new RuntimeException("not support field: " + field.getCode());
+    }
+
+    public  static <V> void set(Pager pager,PagerField<V> field, V value) {
         if (PagerField.TOTAL == field) {
             pager.setTotal ((Integer) value);
             return;
@@ -37,13 +46,4 @@ public final class PagerGetSetHelper {
     }
 
 
-    public static <V>  V get(Pager pager,PagerField<V> field) {
-        if (PagerField.TOTAL == field) {
-            return (V) pager.getTotal();
-        }
-        if (PagerField.RESULTS == field) {
-            return (V) pager.getResults();
-        }
-        throw new RuntimeException("not support field: " + field.getCode());
-    }
 }
