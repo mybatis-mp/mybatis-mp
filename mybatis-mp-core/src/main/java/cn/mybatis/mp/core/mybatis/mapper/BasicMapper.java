@@ -157,8 +157,9 @@ public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapp
             Integer count = this.$countFromQuery(new SQLCmdCountFromQueryContext(query));
             query.setReturnType(returnType);
 
-            pager.set(PagerField.TOTAL, Optional.of(count).orElse(0));
-            if (pager.get(PagerField.TOTAL) < 1) {
+            Integer total = Optional.of(count).orElse(0);
+            pager.set(PagerField.TOTAL, total);
+            if (total < 1) {
                 pager.set(PagerField.RESULTS, Collections.emptyList());
                 return pager;
             }

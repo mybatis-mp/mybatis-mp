@@ -18,7 +18,7 @@ public interface IPager<T> {
 
     /**
      * 获得字段的值
-     *
+     * 只需要 实现 PagerField.IS_EXECUTE_COUNT、PagerField.NUMBER、PagerField.SIZE 3个字段GET即可
      * @param field 字段，具体看PageField
      * @return 字段的值
      */
@@ -26,7 +26,7 @@ public interface IPager<T> {
 
     /**
      * 设置字段的值
-     *
+     * 只需要 实现 PagerField.TOTAL、PagerField.RESULTS 2个字段SET即可
      * @param field 字段，具体看PageField
      * @param value 值
      */

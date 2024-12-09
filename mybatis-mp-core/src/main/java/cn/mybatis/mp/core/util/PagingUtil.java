@@ -15,10 +15,12 @@
 package cn.mybatis.mp.core.util;
 
 import cn.mybatis.mp.core.mybatis.MappedStatementUtil;
-import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.mybatis.provider.PagingCountSqlSource;
 import cn.mybatis.mp.core.mybatis.provider.PagingListSqlSource;
 import cn.mybatis.mp.db.annotations.Paging;
+import cn.mybatis.mp.page.IPager;
+import cn.mybatis.mp.page.PageUtil;
+import cn.mybatis.mp.page.PagerField;
 import db.sql.api.DbType;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
@@ -59,11 +61,10 @@ public final class PagingUtil {
 
     private static void addPagingListMappedStatement(MappedStatement ms, Method mapperMethod) {
         String id = ms.getId() + "&list";
-
         Class returnType = ms.getResultMaps().get(0).getType();
 
         ResultMap resultMap;
-        if (Pager.class.isAssignableFrom(returnType)) {
+        if (IPager.class.isAssignableFrom(returnType)) {
             resultMap = new ResultMap.Builder(ms.getConfiguration(), id + "-inline", GenericUtil.getGenericParameterTypes(mapperMethod).get(0), Collections.emptyList()).build();
         } else {
             resultMap = ms.getResultMaps().get(0);
@@ -116,19 +117,22 @@ public final class PagingUtil {
     }
 
 
-    public static String getLimitedSQL(DbType dbType, Pager<?> pager, String sql) {
-        if (dbType == DbType.SQL_SERVER) {
-            return sql + " OFFSET " + pager.getOffset() + " ROWS FETCH NEXT " + pager.getSize() + " ROWS ONLY";
-        }
+    public static String getLimitedSQL(DbType dbType, IPager<?> pager, String sql) {
+        Integer number = pager.get(PagerField.NUMBER);
+        Integer size = pager.get(PagerField.SIZE);
+        int offset = PageUtil.getOffset(number, size);
 
+        if (dbType == DbType.SQL_SERVER) {
+            return sql + " OFFSET " + offset + " ROWS FETCH NEXT " + size + " ROWS ONLY";
+        }
 
         StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM (");
         sqlBuilder.append(sql).append(") T ");
         if (dbType == DbType.ORACLE) {
-            sqlBuilder.append(" OFFSET ").append(pager.getOffset()).append(" ROWS FETCH NEXT ").append(pager.getSize()).append(" ROWS ONLY");
+            sqlBuilder.append(" OFFSET ").append(offset).append(" ROWS FETCH NEXT ").append(size).append(" ROWS ONLY");
             return sqlBuilder.toString();
         }
-        sqlBuilder.append(" LIMIT ").append(pager.getSize()).append(" OFFSET ").append(pager.getOffset());
+        sqlBuilder.append(" LIMIT ").append(size).append(" OFFSET ").append(offset);
         return sqlBuilder.toString();
     }
 

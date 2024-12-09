@@ -21,14 +21,6 @@ import java.util.List;
 public final class PagerGetSetHelper {
 
     public  static <V> void set(Pager pager,PagerField<V> field, V value) {
-        if (PagerField.IS_EXECUTE_COUNT == field) {
-            pager.setExecuteCount ((Boolean) value);
-            return;
-        }
-        if (PagerField.NUMBER == field) {
-            pager.setNumber((Integer) value);
-            return;
-        }
         if (PagerField.SIZE == field) {
             pager.setSize((Integer) value);
             return;
@@ -46,15 +38,6 @@ public final class PagerGetSetHelper {
 
 
     public static <V>  V get(Pager pager,PagerField<V> field) {
-        if (PagerField.IS_EXECUTE_COUNT == field) {
-            return (V) pager.isExecuteCount();
-        }
-        if (PagerField.NUMBER == field) {
-            return (V) pager.getNumber();
-        }
-        if (PagerField.SIZE == field) {
-            return (V) pager.getSize();
-        }
         if (PagerField.TOTAL == field) {
             return (V) pager.getTotal();
         }
