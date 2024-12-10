@@ -44,8 +44,6 @@ public final class MybatisMpConfig {
     private static final String DEFAULT_VALUE_MANAGER = "defaultValueManager";
     private static final String SINGLE_MAPPER_CLASS = "singleMapperClass";
 
-    private static final SQLBuilder DEFAULT_SQL_BUILDER = new MybatisMpSQLBuilder();
-
     static {
         Map<String, Function<Class<?>, Object>> defaultValueMap = new ConcurrentHashMap<>();
         defaultValueMap.put("{BLANK}", (type) -> {
@@ -144,7 +142,7 @@ public final class MybatisMpConfig {
      * @return 返回QuerySQLBuilder
      */
     public static SQLBuilder getSQLBuilder() {
-        return (SQLBuilder) CACHE.computeIfAbsent(SQL_BUILDER, key -> DEFAULT_SQL_BUILDER);
+        return (SQLBuilder) CACHE.computeIfAbsent(SQL_BUILDER, key -> new MybatisMpSQLBuilder());
     }
 
     public static void setSQLBuilder(SQLBuilder sqlBuilder) {
