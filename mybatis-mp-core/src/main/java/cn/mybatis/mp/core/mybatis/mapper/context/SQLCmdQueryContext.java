@@ -34,7 +34,7 @@ public class SQLCmdQueryContext extends BaseSQLCmdContext<BaseQuery> {
             return sql;
         }
         sqlBuilderContext = new MybatisSqlBuilderContext(dbType, SQLMode.PREPARED);
-        sql = MybatisMpConfig.getQuerySQLBuilder().buildQuerySQl(getExecution(), sqlBuilderContext, getExecution().getOptimizeOptions()).toString();
+        sql = MybatisMpConfig.getSQLBuilder().buildQuerySQl(getExecution(), sqlBuilderContext, getExecution().getOptimizeOptions()).toString();
         return sql;
     }
 

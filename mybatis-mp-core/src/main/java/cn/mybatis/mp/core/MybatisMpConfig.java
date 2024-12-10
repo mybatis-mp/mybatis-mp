@@ -17,8 +17,8 @@ package cn.mybatis.mp.core;
 
 import cn.mybatis.mp.core.logicDelete.LogicDeleteSwitch;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
-import cn.mybatis.mp.core.sql.MybatisMpQuerySQLBuilder;
-import cn.mybatis.mp.core.sql.QuerySQLBuilder;
+import cn.mybatis.mp.core.sql.MybatisMpSQLBuilder;
+import cn.mybatis.mp.core.sql.SQLBuilder;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
 
@@ -44,7 +44,7 @@ public final class MybatisMpConfig {
     private static final String DEFAULT_VALUE_MANAGER = "defaultValueManager";
     private static final String SINGLE_MAPPER_CLASS = "singleMapperClass";
 
-    private static final QuerySQLBuilder DEFAULT_SQL_BUILDER = new MybatisMpQuerySQLBuilder();
+    private static final SQLBuilder DEFAULT_SQL_BUILDER = new MybatisMpSQLBuilder();
 
     static {
         Map<String, Function<Class<?>, Object>> defaultValueMap = new ConcurrentHashMap<>();
@@ -143,12 +143,12 @@ public final class MybatisMpConfig {
      *
      * @return 返回QuerySQLBuilder
      */
-    public static QuerySQLBuilder getQuerySQLBuilder() {
-        return (QuerySQLBuilder) CACHE.computeIfAbsent(SQL_BUILDER, key -> DEFAULT_SQL_BUILDER);
+    public static SQLBuilder getSQLBuilder() {
+        return (SQLBuilder) CACHE.computeIfAbsent(SQL_BUILDER, key -> DEFAULT_SQL_BUILDER);
     }
 
-    public static void setQuerySQLBuilder(QuerySQLBuilder querySQLBuilder) {
-        CACHE.put(SQL_BUILDER, querySQLBuilder);
+    public static void setSQLBuilder(SQLBuilder sqlBuilder) {
+        CACHE.put(SQL_BUILDER, sqlBuilder);
     }
 
     /**

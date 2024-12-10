@@ -35,7 +35,7 @@ public class SQLCmdDeleteContext extends BaseSQLCmdContext<BaseDelete> {
             return sql;
         }
         sqlBuilderContext = new MybatisSqlBuilderContext(dbType, SQLMode.PREPARED);
-        sql = MybatisMpConfig.getQuerySQLBuilder().buildDeleteSQL(getExecution(), sqlBuilderContext).toString();
+        sql = MybatisMpConfig.getSQLBuilder().buildDeleteSQL(getExecution(), sqlBuilderContext).toString();
         return sql;
     }
 }

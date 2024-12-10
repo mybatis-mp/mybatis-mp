@@ -21,7 +21,7 @@ import cn.mybatis.mp.core.sql.executor.BaseUpdate;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.tookit.OptimizeOptions;
 
-public interface QuerySQLBuilder {
+public interface SQLBuilder {
 
     /**
      * 构建query sql

@@ -22,7 +22,7 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.tookit.OptimizeOptions;
 import db.sql.api.impl.tookit.SQLOptimizeUtils;
 
-public class MybatisMpQuerySQLBuilder implements QuerySQLBuilder {
+public class MybatisMpSQLBuilder implements SQLBuilder {
 
     /**
      * 构建query sql
