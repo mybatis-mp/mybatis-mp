@@ -118,8 +118,10 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 consumer.accept(dbSelector);
                 return dbSelector.dbExecute(this.getDbType());
             } else if (method.getName().equals(MAP_WITH_KEY_METHOD_NAME)) {
+                this.wrapperParams(method, args);
                 return mapWithKey(method, args);
             } else if (method.isAnnotationPresent(Paging.class)) {
+                this.wrapperParams(method, args);
                 return paging(method, args);
             } else if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
                 return this.getDbType();
@@ -166,21 +168,20 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
         Object params = paramNameResolver.getNamedParams(args);
         String statementId = mapperInterface.getName() + "." + method.getName();
         IPager<?> pager = (IPager) args[0];
-        Integer count = null;
+
+        Integer count;
+        List list;
         if (pager.get(PagerField.IS_EXECUTE_COUNT)) {
             count = sqlSession.selectOne(statementId + "&count", params);
             count = Objects.isNull(count) ? 0 : count;
-        }
-
-        List list;
-        if (pager.get(PagerField.IS_EXECUTE_COUNT)) {
-            if (Objects.nonNull(count) && count > 0) {
-                list = sqlSession.selectList(statementId + "&list", params);
-            } else {
+            if (count == 0) {
                 list = new ArrayList<>();
+            } else {
+                list = sqlSession.selectList(statementId + "&list", params);
             }
         } else {
             list = sqlSession.selectList(statementId + "&list", params);
+            count = list.size();
         }
         pager.set(PagerField.RESULTS, list);
         pager.set(PagerField.TOTAL, count);
