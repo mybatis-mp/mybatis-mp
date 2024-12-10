@@ -31,6 +31,8 @@ import java.util.function.Consumer;
 
 public abstract class BaseDelete<T extends BaseDelete<T>> extends AbstractDelete<T, MybatisCmdFactory> implements Timeoutable<T> {
 
+    protected Integer timeout;
+
     public BaseDelete() {
         super(new MybatisCmdFactory());
     }
@@ -38,8 +40,6 @@ public abstract class BaseDelete<T extends BaseDelete<T>> extends AbstractDelete
     public BaseDelete(Where where) {
         super(where);
     }
-
-    protected Integer timeout;
 
     @Override
     public T timeout(Integer timeout) {

@@ -30,11 +30,7 @@ public interface IOrderByDirection {
      * @return
      */
     static boolean isSupportNullsOrder(DbType dbType) {
-        if (dbType == DbType.MYSQL || dbType == DbType.MARIA_DB || dbType == DbType.SQL_SERVER) {
-            return false;
-        }
-
-        return true;
+        return dbType != DbType.MYSQL && dbType != DbType.MARIA_DB && dbType != DbType.SQL_SERVER;
     }
 
     /**

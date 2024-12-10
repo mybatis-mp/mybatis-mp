@@ -33,13 +33,13 @@ public final class PagerGetSetHelper {
         throw new RuntimeException("not support field: " + field.getCode());
     }
 
-    public  static <V> void set(Pager pager,PagerField<V> field, V value) {
+    public static <V> void set(Pager pager, PagerField<V> field, V value) {
         if (PagerField.TOTAL == field) {
-            pager.setTotal ((Integer) value);
+            pager.setTotal((Integer) value);
             return;
         }
         if (PagerField.RESULTS == field) {
-            pager.setResults((List)value);
+            pager.setResults((List) value);
             return;
         }
         throw new RuntimeException("not support field: " + field);

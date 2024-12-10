@@ -31,7 +31,6 @@ public class JsonExtract extends BasicFunction<JsonExtract> {
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
-        ;
         this.key.sql(module, this, context, sqlBuilder);
         for (String path : paths) {
             sqlBuilder.append(SqlConst.DELIMITER);

@@ -17,7 +17,6 @@ package db.sql.api.impl.cmd.basic;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
-import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.struct.IFrom;
 import db.sql.api.cmd.struct.IJoin;
 import db.sql.api.impl.cmd.executor.AbstractWithQuery;
@@ -25,7 +24,7 @@ import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
 
-public class WithQueryDataset extends AbstractDataset<WithQueryDataset,DatasetField> {
+public class WithQueryDataset extends AbstractDataset<WithQueryDataset, DatasetField> {
 
     private final AbstractWithQuery withQuery;
 
@@ -37,35 +36,37 @@ public class WithQueryDataset extends AbstractDataset<WithQueryDataset,DatasetFi
     }
 
     public <E> DatasetField $(Getter<E> getter) {
-        String columnName= this.withQuery.$().columnName(getter);
-        return new DatasetField(this,columnName);
+        String columnName = this.withQuery.$().columnName(getter);
+        return new DatasetField(this, columnName);
     }
 
-    /**
-     * 外部字段
-     * @param getter
-     * @return
-     * @param <E>
-     */
-    public <E> DatasetField $outerField(Getter<E> getter) {
-        return this.$outerField(getter,false);
-    }
     /**
      * 外部字段
      *
      * @param getter
-     * @param depth 是否深度引用，非深度引用只是 别名.getter的对应的列名；如果是深度的匹配（只能针对那些没有包装过的字段）
      * @param <E>
      * @return
      */
-    public <E> DatasetField $outerField(Getter<E> getter,boolean depth) {
+    public <E> DatasetField $outerField(Getter<E> getter) {
+        return this.$outerField(getter, false);
+    }
+
+    /**
+     * 外部字段
+     *
+     * @param getter
+     * @param depth  是否深度引用，非深度引用只是 别名.getter的对应的列名；如果是深度的匹配（只能针对那些没有包装过的字段）
+     * @param <E>
+     * @return
+     */
+    public <E> DatasetField $outerField(Getter<E> getter, boolean depth) {
         TableField tableField = this.withQuery.$(getter);
-        return this.withQuery.$outerField(this,this.withQuery,tableField);
+        return this.withQuery.$outerField(this, this.withQuery, tableField);
     }
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if(parent instanceof IFrom || parent instanceof IJoin){
+        if (parent instanceof IFrom || parent instanceof IJoin) {
             sqlBuilder.append(this.withQuery.getAlias()).append(SqlConst.BLANK).append(this.alias);
             return sqlBuilder;
         }

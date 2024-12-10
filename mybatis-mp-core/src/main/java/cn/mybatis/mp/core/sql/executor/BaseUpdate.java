@@ -33,6 +33,8 @@ import java.util.function.Consumer;
 
 public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate<T, MybatisCmdFactory> implements Timeoutable<T> {
 
+    protected Integer timeout;
+
     public BaseUpdate() {
         super(new MybatisCmdFactory());
     }
@@ -40,8 +42,6 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
     public BaseUpdate(Where where) {
         super(where);
     }
-
-    protected Integer timeout;
 
     @Override
     public T timeout(Integer timeout) {

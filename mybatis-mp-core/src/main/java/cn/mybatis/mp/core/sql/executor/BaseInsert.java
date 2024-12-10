@@ -22,11 +22,11 @@ import db.sql.api.impl.cmd.executor.AbstractInsert;
 
 public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert<T, MybatisCmdFactory> implements Timeoutable<T> {
 
+    protected Integer timeout;
+
     public BaseInsert() {
         super(new MybatisCmdFactory());
     }
-
-    protected Integer timeout;
 
     @Override
     public T timeout(Integer timeout) {

@@ -14,6 +14,7 @@
 
 package db.sql.api.impl.tookit;
 
+import java.util.Collections;
 import java.util.List;
 
 public final class Lists {
@@ -23,9 +24,7 @@ public final class Lists {
         if (ts == null || ts.length < 1) {
             return list;
         }
-        for (T t : ts) {
-            list.add(t);
-        }
+        Collections.addAll(list, ts);
         return list;
     }
 }
