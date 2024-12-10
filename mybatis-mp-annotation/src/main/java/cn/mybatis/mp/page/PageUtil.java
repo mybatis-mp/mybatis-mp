@@ -30,6 +30,7 @@ public class PageUtil {
     /**
      * 获取总页数
      *
+     * @param executeCount 是否count查询
      * @param size
      * @param total
      * @return
