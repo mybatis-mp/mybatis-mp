@@ -25,6 +25,7 @@ import com.mybatis.mp.core.test.testCase.BaseTest;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.Table;
+import db.sql.api.impl.cmd.basic.WithQueryDataset;
 import db.sql.api.impl.tookit.SQLPrinter;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -71,27 +72,28 @@ public class WithTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
             WithQuery withQuery = WithQuery.create("sub")
-                    .select(SysRole.class)
+                    .select(SysRole::getId, c -> c.as("xid"))
                     .from(SysRole.class)
                     .orderBy(SysRole::getId)
                     .limit(111)
                     .eq(SysRole::getId, 1);
 
-            Table aaa = withQuery.asTable("aaa");
-            Table bbb = withQuery.asTable("bbb");
+            WithQueryDataset aaa = withQuery.asTable("aaa");
+            WithQueryDataset bbb = withQuery.asTable("bbb");
 
             QueryChain<SysUser> queryChain = QueryChain.of(sysUserMapper);
             queryChain
                     .with(withQuery)
-                    .select(aaa, SysRole::getId, c -> c.as("xx"))
-                    .select(bbb, "id", c -> c.plus(1).as("xx2"))
+                    .select(aaa.$outerField(SysRole::getId, true))
+                    .select(bbb.$outerField(SysRole::getId, true).plus(1).as("xx2"))
                     .select(SysUser.class)
                     .from(SysUser.class)
                     .from(aaa, bbb)
-                    .eq(SysUser::getRole_id, aaa.$(SysUser::getId))
-                    .eq(SysUser::getRole_id, bbb.$(SysUser::getId))
-                    .orderBy(aaa, SysRole::getId)
-                    .orderBy(bbb, SysRole::getId);
+
+                    .eq(SysUser::getRole_id, aaa.$outerField(SysRole::getId, true))
+                    .eq(SysUser::getRole_id, bbb.$outerField(SysRole::getId, true))
+                    .orderBy(aaa.$outerField(SysRole::getId, true))
+                    .orderBy(bbb.$outerField(SysRole::getId, true));
 
             Pager<SysUser> page = queryChain.paging(Pager.of(100));
             System.out.println(SQLPrinter.sql(queryChain));

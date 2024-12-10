@@ -25,7 +25,6 @@ import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.basic.IOrderByDirection;
 import db.sql.api.impl.cmd.basic.DatasetField;
-import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.AbstractWithQuery;
 import db.sql.api.impl.cmd.struct.On;
 
@@ -60,11 +59,6 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
 
     public String getName() {
         return this.name;
-    }
-
-    @Override
-    public Table asTable(String alias) {
-        return new Table(this.getAlias(), alias);
     }
 
     @Override

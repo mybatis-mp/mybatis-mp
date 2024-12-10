@@ -93,11 +93,7 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
         return super.$(this, columnName);
     }
 
-    public <E> DatasetField $outerField(Getter<E> getter) {
-        return super.$(this, getter);
-    }
-
-    protected IDatasetField $refField(AbstractSubQuery root, AbstractSubQuery subQuery, TableField tableField) {
+    public DatasetField $outerField(IDataset root, AbstractSubQuery subQuery, TableField tableField) {
         Select select = subQuery.getSelect();
         for (Cmd cmd : select.getSelectField()) {
             if (cmd instanceof IDatasetField) {
@@ -105,16 +101,16 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
                 if (df.getName().equals(tableField.getName())) {
                     if (df.getTable() == tableField.getTable()) {
                         //同个对象
-                        return super.$(this, df.getAlias() == null || df.getAlias().isEmpty() ? df.getName() : df.getAlias());
+                        return new DatasetField(root, df.getAlias() == null || df.getAlias().isEmpty() ? df.getName() : df.getAlias());
                     } else if (df instanceof TableField && ((Table) df.getTable()).getName().equals(tableField.getTable().getName())) {
                         //同个表名 列名
-                        return super.$(this, df.getAlias() == null || df.getAlias().isEmpty() ? df.getName() : df.getAlias());
+                        return new DatasetField(root, df.getAlias() == null || df.getAlias().isEmpty() ? df.getName() : df.getAlias());
                     }
                 }
                 //如果是子查询字段，则从深度继续查找
                 if (df.getTable() instanceof AbstractSubQuery) {
                     AbstractSubQuery subQuery2 = (AbstractSubQuery) df.getTable();
-                    IDatasetField datasetField = this.$refField(root, subQuery2, tableField);
+                    DatasetField datasetField = this.$outerField(root, subQuery2, tableField);
                     if (Objects.nonNull(datasetField)) {
                         return datasetField;
                     }
@@ -125,15 +121,30 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
     }
 
     /**
-     * 引用字段 会自动深层查找；只能针对那些没有包装过的字段
+     * 外部字段
      *
      * @param getter
      * @param <E>
      * @return
      */
-    public <E> IDatasetField $refField(Getter<E> getter) {
+    public <E> DatasetField $outerField(Getter<E> getter) {
+        return this.$outerField(getter, false);
+    }
+
+    /**
+     * 外部字段
+     *
+     * @param getter
+     * @param depth 是否深度引用，非深度引用只是 别名.getter的对应的列名；如果是深度的匹配（只能针对那些没有包装过的字段）
+     * @param <E>
+     * @return
+     */
+    public <E> DatasetField $outerField(Getter<E> getter, boolean depth) {
+        if (!depth) {
+            return super.$(this, getter);
+        }
         TableField tableField = this.$(getter);
-        IDatasetField datasetField = this.$refField(this, this, tableField);
+        DatasetField datasetField = this.$outerField(this, this, tableField);
         if (Objects.nonNull(datasetField)) {
             return datasetField;
         }

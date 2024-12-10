@@ -22,6 +22,7 @@ import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.impl.cmd.basic.WithQueryDataset;
 import db.sql.api.impl.cmd.condition.Exists;
 import db.sql.api.impl.cmd.condition.In;
 import db.sql.api.impl.cmd.struct.*;
@@ -32,6 +33,7 @@ public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD
         implements IWithQuery<SELF,
         Table,
         TableField,
+        WithQueryDataset,
         DatasetField,
         Cmd,
         Object,
@@ -67,8 +69,8 @@ public abstract class AbstractWithQuery<SELF extends AbstractWithQuery<SELF, CMD
     }
 
     @Override
-    public Table asTable(String alias) {
-        return new Table(this.getAlias(), alias);
+    public WithQueryDataset asTable(String alias) {
+        return new WithQueryDataset(this, alias);
     }
 
     @Override
