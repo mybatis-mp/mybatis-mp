@@ -19,6 +19,7 @@ import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.JoinMode;
+import db.sql.api.cmd.UpdateStrategy;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
@@ -172,9 +173,17 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     }
 
     @Override
-    public <T> SELF set(Getter<T> field, Object value, boolean enableNull) {
-        if (enableNull && Objects.isNull(value)) {
-            return this.set(field, NULL.NULL);
+    public <T> SELF set(Getter<T> field, Object value, UpdateStrategy updateStrategy) {
+        if (Objects.isNull(value)) {
+            if (updateStrategy == UpdateStrategy.THROW_EXCEPTION) {
+                throw new NullPointerException();
+            } else if (updateStrategy == UpdateStrategy.NULL_TO_NULL) {
+                return this.set($.field(field), NULL.NULL);
+            } else if (updateStrategy == UpdateStrategy.NULL_IGNORE) {
+                return (SELF) this;
+            } else {
+                throw new RuntimeException("not support update strategy");
+            }
         }
         return this.set($.field(field), value);
     }
