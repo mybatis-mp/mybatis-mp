@@ -36,8 +36,7 @@ public class WithQueryDataset extends AbstractDataset<WithQueryDataset, DatasetF
     }
 
     public <E> DatasetField $(Getter<E> getter) {
-        String columnName = this.withQuery.$().columnName(getter);
-        return new DatasetField(this, columnName);
+        return this.$(this.withQuery.$().columnName(getter));
     }
 
     /**
@@ -60,6 +59,9 @@ public class WithQueryDataset extends AbstractDataset<WithQueryDataset, DatasetF
      * @return
      */
     public <E> DatasetField $outerField(Getter<E> getter, boolean depth) {
+        if (!depth) {
+            return this.$(getter);
+        }
         TableField tableField = this.withQuery.$(getter);
         return this.withQuery.$outerField(this, this.withQuery, tableField);
     }
