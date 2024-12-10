@@ -30,19 +30,11 @@ public class PageUtil {
     /**
      * 获取总页数
      *
-     * @param executeCount 是否count查询
      * @param size
      * @param total
      * @return
      */
-    public static int getTotalPage(boolean executeCount, Integer size, Integer total) {
-        if (!executeCount) {
-            if (total == null || total == 0) {
-                return 0;
-            }
-            return 1;
-        }
-
+    public static int getTotalPage(Integer size, Integer total) {
         if (size == null) {
             if (total == null || total == 0) {
                 return 0;
