@@ -21,11 +21,13 @@ import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
 import com.mybatis.mp.core.test.vo.SysUserRoleAutoSelectVo;
+import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.cmd.GetterFields;
 import db.sql.api.impl.cmd.basic.CmdTemplate;
 import db.sql.api.impl.cmd.basic.ConditionTemplate;
 import db.sql.api.impl.cmd.basic.FunTemplate;
+import db.sql.api.impl.cmd.dbFun.Function;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -50,6 +52,7 @@ public class CmdTemplateTestCase extends BaseTest {
         }
     }
 
+    public static final java.util.function.Function<Cmd,FunTemplate> COUNT_FUN= c -> FunTemplate.create("count({0})", c);
 
     @Test
     public void templateTest2() {
@@ -59,7 +62,7 @@ public class CmdTemplateTestCase extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             String str = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getRole_id, c -> FunTemplate.create("count({0})", c).as("xx").plus(1).concat(1, "2", 3).length())
+                    .select(SysUser::getRole_id, c -> COUNT_FUN.apply(c).as("xx").plus(1).concat(1, "2", 3).length())
                     .from(SysUser.class)
                     .and(GetterFields.of(SysUser::getId, SysUser::getId), cs -> ConditionTemplate.create("{0}+{1}={2}", cs[0], cs[1], 2).as("xx2"))
                     .returnType(String.class)
