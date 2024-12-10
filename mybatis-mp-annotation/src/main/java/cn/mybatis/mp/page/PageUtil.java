@@ -26,4 +26,24 @@ public class PageUtil {
     public static final int getOffset(int number, int size) {
         return (number - 1) * size;
     }
+
+    /**
+     * 获取总页数
+     * @param size
+     * @param total
+     * @return
+     */
+    public static int getTotalPage(Integer size, Integer total) {
+        if (size == null) {
+            if (total == null || total == 0) {
+                return 0;
+            }
+            return 1;
+        }
+
+        if (total == null || total < 0) {
+            return 0;
+        }
+        return total / size + (total % size == 0 ? 0 : 1);
+    }
 }

@@ -99,23 +99,17 @@ public class Pager<T> implements IPager<T> {
     }
 
     public Integer getTotalPage() {
-        if (total == null) {
-            total = 1;
-        } else if (total < 1) {
-            return 0;
-        }
-        return this.total / this.size + (this.total % this.size == 0 ? 0 : 1);
+        return PageUtil.getTotalPage(this.size, this.total);
     }
-
 
     @Override
     public <V> void set(PagerField<V> field, V value) {
-        PagerGetSetHelper.set(this, field, value);
+        PagerGetSetUtil.set(this, field, value);
     }
 
     @Override
     public <V> V get(PagerField<V> field) {
-        return PagerGetSetHelper.get(this, field);
+        return PagerGetSetUtil.get(this, field);
     }
 
     @Override

@@ -18,7 +18,7 @@ import cn.mybatis.mp.page.PagerField;
 
 import java.util.List;
 
-public final class PagerGetSetHelper {
+public final class PagerGetSetUtil {
 
     public static <V> V get(Pager pager, PagerField<V> field) {
         if (PagerField.IS_EXECUTE_COUNT == field) {
