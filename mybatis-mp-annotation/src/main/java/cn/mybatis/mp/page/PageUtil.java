@@ -34,7 +34,14 @@ public class PageUtil {
      * @param total
      * @return
      */
-    public static int getTotalPage(Integer size, Integer total) {
+    public static int getTotalPage(boolean executeCount, Integer size, Integer total) {
+        if (!executeCount) {
+            if (total == null || total == 0) {
+                return 0;
+            }
+            return 1;
+        }
+
         if (size == null) {
             if (total == null || total == 0) {
                 return 0;

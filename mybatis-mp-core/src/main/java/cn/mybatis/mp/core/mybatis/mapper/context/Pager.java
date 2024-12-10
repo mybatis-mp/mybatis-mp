@@ -99,7 +99,7 @@ public class Pager<T> implements IPager<T> {
     }
 
     public Integer getTotalPage() {
-        return PageUtil.getTotalPage(this.size, this.total);
+        return PageUtil.getTotalPage(this.executeCount, this.size, this.total);
     }
 
     @Override
