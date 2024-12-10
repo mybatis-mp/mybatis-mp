@@ -59,4 +59,12 @@ public final class PagerField<V> {
     public int getCode() {
         return code;
     }
+
+    @Override
+    public String toString() {
+        return "PagerField{" +
+                "type=" + type +
+                ", code=" + code +
+                '}';
+    }
 }

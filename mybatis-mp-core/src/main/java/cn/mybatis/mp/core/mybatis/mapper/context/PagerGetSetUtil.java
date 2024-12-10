@@ -30,7 +30,7 @@ public final class PagerGetSetUtil {
         if (PagerField.SIZE == field) {
             return (V) pager.getSize();
         }
-        throw new RuntimeException("not support field: " + field.getCode());
+        throw new RuntimeException("not support field: " + field);
     }
 
     public static <V> void set(Pager pager, PagerField<V> field, V value) {
