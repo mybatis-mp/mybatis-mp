@@ -27,6 +27,7 @@ import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.db.annotations.LogicDelete;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.impl.cmd.struct.On;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.io.Serializable;
@@ -230,6 +231,32 @@ public final class LogicDeleteUtil {
             where.extConditionChain().isNull(tableField);
         } else {
             where.extConditionChain().eq(tableField, logicBeforeValue);
+        }
+    }
+
+    /**
+     * 添加逻辑删除条件
+     *
+     * @param on         on
+     * @param cmdFactory 命令工厂
+     * @param entity     实体类
+     * @param storey     实体类表的存储层级
+     */
+    public static void addLogicDeleteCondition(On on, CmdFactory cmdFactory, Class entity, int storey) {
+        if (!MybatisMpConfig.isLogicDeleteSwitchOpen()) {
+            return;
+        }
+
+        TableInfo tableInfo = Tables.get(entity);
+        if (Objects.isNull(tableInfo.getLogicDeleteFieldInfo())) {
+            return;
+        }
+        Object logicBeforeValue = tableInfo.getLogicDeleteFieldInfo().getLogicDeleteInitValue();
+        TableField tableField = cmdFactory.field(entity, tableInfo.getLogicDeleteFieldInfo().getField().getName(), storey);
+        if (Objects.isNull(logicBeforeValue)) {
+            on.extConditionChain().isNull(tableField);
+        } else {
+            on.extConditionChain().eq(tableField, logicBeforeValue);
         }
     }
 }

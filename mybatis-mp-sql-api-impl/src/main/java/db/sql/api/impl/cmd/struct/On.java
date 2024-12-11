@@ -31,6 +31,8 @@ public class On implements IOn<On, Join, Table, TableField, Cmd, Object, Conditi
 
     private final ConditionChain conditionChain;
 
+    private ConditionChain extConditionChain;
+
     public On(ConditionFactory conditionFactory, Join join) {
         this.conditionFactory = conditionFactory;
         this.join = join;
@@ -47,13 +49,35 @@ public class On implements IOn<On, Join, Table, TableField, Cmd, Object, Conditi
         return conditionChain;
     }
 
+    public ConditionChain extConditionChain() {
+        if (this.extConditionChain == null) {
+            this.extConditionChain = new ConditionChain(conditionFactory);
+        }
+        return extConditionChain;
+    }
+
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(SqlConst.ON);
         if (!conditionChain.hasContent()) {
             throw new RuntimeException("ON has no on conditions");
         }
-        conditionChain().sql(module, this, context, sqlBuilder);
+        sqlBuilder.append(SqlConst.ON);
+
+        if (extConditionChain != null && extConditionChain.hasContent() && this.conditionChain != null && conditionChain.hasContent()) {
+            //2的 ConditionChain 都不为空 分别一括号包裹
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
+            this.extConditionChain.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+            sqlBuilder.append(SqlConst.AND);
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
+            this.conditionChain.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+
+        } else if (extConditionChain != null && extConditionChain.hasContent()) {
+            this.extConditionChain.sql(module, this, context, sqlBuilder);
+        } else {
+            this.conditionChain.sql(module, this, context, sqlBuilder);
+        }
         return sqlBuilder;
     }
 

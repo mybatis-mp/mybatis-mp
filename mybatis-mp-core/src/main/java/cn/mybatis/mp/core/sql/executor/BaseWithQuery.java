@@ -88,6 +88,10 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
         LogicDeleteUtil.addLogicDeleteCondition(this.$where(), $, entity, storey);
     }
 
+    protected void addOnLogicDeleteCondition(On on, Class entity, int storey) {
+        LogicDeleteUtil.addLogicDeleteCondition(on, $, entity, storey);
+    }
+
     @Override
     public void fromEntityIntercept(Class entity, int storey) {
         this.addTenantCondition(entity, storey);
@@ -97,12 +101,20 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
     @Override
     public Consumer<On> joinEntityIntercept(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<On> consumer) {
         this.addTenantCondition(secondTable, secondTableStorey);
-        this.addLogicDeleteCondition(secondTable, secondTableStorey);
         if (Objects.isNull(consumer)) {
             //自动加上外键连接条件
             consumer = ForeignKeyUtil.buildForeignKeyOnConsumer($, mainTable, mainTableStorey, secondTable, secondTableStorey);
         }
-        return consumer;
+
+        final Consumer<On> oldConsumer = consumer;
+        Consumer<On> newConsumer = on -> {
+            this.addOnLogicDeleteCondition(on, secondTable, secondTableStorey);
+            if (oldConsumer != null) {
+                oldConsumer.accept(on);
+            }
+        };
+
+        return newConsumer;
     }
 
     /**************以下为去除警告************/

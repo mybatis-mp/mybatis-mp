@@ -41,6 +41,8 @@ public class LogicDeleteTestCase extends BaseTest {
             logicDeleteTestMapper.deleteById(1);
             List<LogicDeleteTest> list = QueryChain.of(logicDeleteTestMapper).list();
             assertEquals(list.size(), 2);
+
+            QueryChain.of(logicDeleteTestMapper).join(LogicDeleteTest.class, 1, LogicDeleteTest.class, 2, on -> on.eq(LogicDeleteTest::getId, 1, LogicDeleteTest::getId, 2)).list();
         }
     }
 
