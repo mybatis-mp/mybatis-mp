@@ -127,7 +127,7 @@ public class TenantTestCase extends BaseTest {
             tenantTestMapper.save(tenantTest);
 
 
-            check("", "delete FROM tenant_test WHERE  (tenant_id = 1) AND  (id = '" + tenantTest.getId() + "')", DeleteChain.of(tenantTestMapper).delete(TenantTest.class).from(TenantTest.class).eq(TenantTest::getId, tenantTest.getId()));
+            check("", "delete FROM tenant_test WHERE  (id = '" + tenantTest.getId() + "') AND (tenant_id = 1)", DeleteChain.of(tenantTestMapper).delete(TenantTest.class).from(TenantTest.class).eq(TenantTest::getId, tenantTest.getId()));
             int count = QueryChain.of(tenantTestMapper).count();
             assertEquals(count, 1);
 
@@ -138,7 +138,7 @@ public class TenantTestCase extends BaseTest {
             count = QueryChain.of(tenantTestMapper).count();
             assertEquals(count, 0);
 
-            check("", "delete FROM tenant_test WHERE  (tenant_id = 2) AND  (id = '" + tenantTest.getId() + "')", DeleteChain.of(tenantTestMapper).delete(TenantTest.class).from(TenantTest.class).eq(TenantTest::getId, tenantTest.getId()));
+            check("", "delete FROM tenant_test WHERE (id = '" + tenantTest.getId() + "') AND (tenant_id = 2)", DeleteChain.of(tenantTestMapper).delete(TenantTest.class).from(TenantTest.class).eq(TenantTest::getId, tenantTest.getId()));
 
             TenantContext.registerTenantGetter(() -> {
                 return 1;
