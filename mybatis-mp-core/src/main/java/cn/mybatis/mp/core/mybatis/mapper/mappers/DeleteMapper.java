@@ -101,4 +101,13 @@ public interface DeleteMapper<T> extends BaseMapper<T> {
     default int deleteAll() {
         return DeleteMethodUtil.deleteAll(getBasicMapper(), getTableInfo());
     }
+
+    /**
+     * TRUNCATE TABLE
+     *
+     * @return 影响条数
+     */
+    default int truncate() {
+        return DeleteMethodUtil.truncate(getBasicMapper(), getTableInfo());
+    }
 }

@@ -14,7 +14,6 @@
 
 package com.mybatis.mp.core.test.testCase.query;
 
-import cn.mybatis.mp.core.mybatis.mapper.DbRunner;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
 import org.apache.ibatis.session.SqlSession;
@@ -48,6 +47,15 @@ public class DbRunner2Test extends BaseTest {
             SysUserMapper dbRunner = session.getMapper(SysUserMapper.class);
             int cnt = dbRunner.execute("update t_sys_user set user_name=? where id=?", "xxx", 1);
             assertEquals(cnt, 1);
+        }
+    }
+
+    @Test
+    public void truncateTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper dbRunner = session.getMapper(SysUserMapper.class);
+            int cnt = dbRunner.truncate();
+            assertEquals(cnt, 3);
         }
     }
 

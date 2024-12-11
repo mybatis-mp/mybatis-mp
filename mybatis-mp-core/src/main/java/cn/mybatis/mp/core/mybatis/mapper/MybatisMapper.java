@@ -104,4 +104,5 @@ public interface MybatisMapper<T> extends BaseMapper, GetMapper<T>, ExistsMapper
     default <K, T2> Map<K, T2> mapWithKey(String mapKey, BaseQuery<? extends BaseQuery, T2> query) {
         return getBasicMapper().mapWithKey(mapKey, query);
     }
+
 }

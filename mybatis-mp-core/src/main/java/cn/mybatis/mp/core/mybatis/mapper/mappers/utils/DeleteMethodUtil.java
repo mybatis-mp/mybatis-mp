@@ -90,4 +90,15 @@ public final class DeleteMethodUtil {
     public static int deleteAll(BasicMapper basicMapper, TableInfo tableInfo) {
         return delete(basicMapper, tableInfo, where -> where.eq(SQL1.INSTANCE, 1));
     }
+
+    /**
+     * TRUNCATE TABLE
+     *
+     * @param basicMapper
+     * @param tableInfo
+     * @return 影响数量
+     */
+    public static int truncate(BasicMapper basicMapper, TableInfo tableInfo) {
+        return basicMapper.execute("TRUNCATE TABLE " + tableInfo.getTableName());
+    }
 }
