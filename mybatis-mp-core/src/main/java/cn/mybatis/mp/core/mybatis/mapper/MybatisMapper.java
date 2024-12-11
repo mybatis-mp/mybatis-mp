@@ -45,7 +45,7 @@ public interface MybatisMapper<T> extends BaseMapper, GetMapper<T>, ExistsMapper
     <R> R dbAdapt(Consumer<SelectorCall<R>> consumer);
 
     /**
-     * 执行原生sql
+     * 执行原生非查询类sql
      *
      * @param sql    例如 update xx set name=? where id=?
      * @param params 例如 abc ,1
