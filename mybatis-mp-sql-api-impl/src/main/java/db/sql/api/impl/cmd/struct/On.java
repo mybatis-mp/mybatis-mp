@@ -66,11 +66,11 @@ public class On implements IOn<On, Join, Table, TableField, Cmd, Object, Conditi
         if (extConditionChain != null && extConditionChain.hasContent() && this.conditionChain != null && conditionChain.hasContent()) {
             //2的 ConditionChain 都不为空 分别一括号包裹
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
-            this.extConditionChain.sql(module, this, context, sqlBuilder);
+            this.conditionChain.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             sqlBuilder.append(SqlConst.AND);
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
-            this.conditionChain.sql(module, this, context, sqlBuilder);
+            this.extConditionChain.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
 
         } else if (extConditionChain != null && extConditionChain.hasContent()) {
