@@ -27,7 +27,6 @@ import db.sql.api.cmd.GetterFields;
 import db.sql.api.impl.cmd.basic.CmdTemplate;
 import db.sql.api.impl.cmd.basic.ConditionTemplate;
 import db.sql.api.impl.cmd.basic.FunTemplate;
-import db.sql.api.impl.cmd.dbFun.Function;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class CmdTemplateTestCase extends BaseTest {
+
+    public static final java.util.function.Function<Cmd, FunTemplate> COUNT_FUN = c -> FunTemplate.create("count({0})", c);
 
     @Test
     public void templateTest() {
@@ -51,8 +52,6 @@ public class CmdTemplateTestCase extends BaseTest {
             assertTrue(str.equals("2") || str.equals("2.0"));
         }
     }
-
-    public static final java.util.function.Function<Cmd,FunTemplate> COUNT_FUN= c -> FunTemplate.create("count({0})", c);
 
     @Test
     public void templateTest2() {
