@@ -189,6 +189,22 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     }
 
     @Override
+    public SELF set(TableField field, Object value, UpdateStrategy updateStrategy) {
+        if (Objects.isNull(value)) {
+            if (updateStrategy == UpdateStrategy.THROW_EXCEPTION) {
+                throw new NullPointerException();
+            } else if (updateStrategy == UpdateStrategy.NULL_TO_NULL) {
+                return this.set(field, NULL.NULL);
+            } else if (updateStrategy == UpdateStrategy.NULL_IGNORE) {
+                return (SELF) this;
+            } else {
+                throw new RuntimeException("not support update strategy");
+            }
+        }
+        return this.set(field, value);
+    }
+
+    @Override
     public <T> SELF set(Getter<T> field, Function<TableField, Cmd> f) {
         TableField tableField = $.field(field);
         return this.set(tableField, f.apply(tableField));

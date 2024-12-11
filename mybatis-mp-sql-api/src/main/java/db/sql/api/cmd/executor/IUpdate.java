@@ -81,6 +81,12 @@ public interface IUpdate<SELF extends IUpdate,
 
     <T> SELF set(Getter<T> field, V value, UpdateStrategy updateStrategy);
 
+    default SELF set(TABLE_FIELD field, V value, boolean nullToNull) {
+        return this.set(field, value, nullToNull ? UpdateStrategy.NULL_TO_NULL : UpdateStrategy.THROW_EXCEPTION);
+    }
+
+    SELF set(TABLE_FIELD filed, V value, UpdateStrategy updateStrategy);
+
     @Override
     default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD>... tables) {
         for (IDataset<DATASET, DATASET_FIELD> table : tables) {
