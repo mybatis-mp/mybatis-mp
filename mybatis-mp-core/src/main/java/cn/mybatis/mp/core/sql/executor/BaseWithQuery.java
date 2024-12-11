@@ -108,10 +108,10 @@ public abstract class BaseWithQuery<Q extends BaseWithQuery<Q>> extends Abstract
 
         final Consumer<On> oldConsumer = consumer;
         Consumer<On> newConsumer = on -> {
-            this.addOnLogicDeleteCondition(on, secondTable, secondTableStorey);
             if (oldConsumer != null) {
                 oldConsumer.accept(on);
             }
+            this.addOnLogicDeleteCondition(on, secondTable, secondTableStorey);
         };
 
         return newConsumer;

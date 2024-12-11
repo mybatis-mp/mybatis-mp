@@ -93,10 +93,10 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
 
         final Consumer<On> oldConsumer = consumer;
         Consumer<On> newConsumer = on -> {
-            this.addOnLogicDeleteCondition(on, secondTable, secondTableStorey);
             if (oldConsumer != null) {
                 oldConsumer.accept(on);
             }
+            this.addOnLogicDeleteCondition(on, secondTable, secondTableStorey);
         };
 
         return newConsumer;

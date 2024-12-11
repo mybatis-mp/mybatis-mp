@@ -103,10 +103,10 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
 
         final Consumer<On> oldConsumer = consumer;
         Consumer<On> newConsumer = on -> {
-            this.addOnLogicDeleteCondition(on, secondTable, secondTableStorey);
             if (oldConsumer != null) {
                 oldConsumer.accept(on);
             }
+            this.addOnLogicDeleteCondition(on, secondTable, secondTableStorey);
         };
 
         return newConsumer;
