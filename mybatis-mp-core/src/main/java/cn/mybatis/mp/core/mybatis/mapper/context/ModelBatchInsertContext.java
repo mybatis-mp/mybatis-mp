@@ -134,10 +134,22 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
                         }
                     } else if (modelFieldInfo.getTableFieldInfo().isTenantId()) {
                         value = TenantUtil.setTenantId(t);
+                    } else if (modelFieldInfo.getTableFieldInfo().isLogicDelete()) {
+                        //逻辑删除字段
+                        //设置删除初始值
+                        value = modelFieldInfo.getTableFieldInfo().getLogicDeleteInitValue();
+                        if (value != null) {
+                            //逻辑删除初始值回写
+                            ModelInfoUtil.setValue(modelFieldInfo, t, value);
+                        } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
+                            //设置默认值
+                            value = MybatisMpConfig.getDefaultValue(modelFieldInfo.getFieldInfo().getTypeClass(), modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue());
+                            //默认值回写
+                            ModelInfoUtil.setValue(modelFieldInfo, t, value);
+                        }
                     } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
                         //设置默认值
                         value = MybatisMpConfig.getDefaultValue(modelFieldInfo.getFieldInfo().getTypeClass(), modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue());
-
                         //默认值回写
                         ModelInfoUtil.setValue(modelFieldInfo, t, value);
                     } else if (modelFieldInfo.getTableFieldInfo().isVersion()) {

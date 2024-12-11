@@ -105,9 +105,23 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
                 }
             } else if (Objects.nonNull(value)) {
                 isNeedInsert = true;
+            } else if (modelFieldInfo.getTableFieldInfo().isLogicDelete()) {
+                //逻辑删除字段
+                //设置删除初始值
+                value = modelFieldInfo.getTableFieldInfo().getLogicDeleteInitValue();
+                if (value != null) {
+                    isNeedInsert = true;
+                    //逻辑删除初始值回写
+                    ModelInfoUtil.setValue(modelFieldInfo, model, value);
+                } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
+                    isNeedInsert = true;
+                    //设置默认值
+                    value = MybatisMpConfig.getDefaultValue(modelFieldInfo.getFieldInfo().getTypeClass(), modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue());
+                    //默认值回写
+                    ModelInfoUtil.setValue(modelFieldInfo, model, value);
+                }
             } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
                 isNeedInsert = true;
-
                 //设置默认值
                 value = MybatisMpConfig.getDefaultValue(modelFieldInfo.getFieldInfo().getTypeClass(), modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue());
                 //默认值回写

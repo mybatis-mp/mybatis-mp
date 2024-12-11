@@ -128,10 +128,23 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
                         }
                     } else if (tableFieldInfo.isTenantId()) {
                         value = TenantUtil.setTenantId(t);
+                    } else if (tableFieldInfo.isLogicDelete()) {
+                        //逻辑删除字段
+                        //设置删除初始值
+                        value = tableFieldInfo.getLogicDeleteInitValue();
+                        if (value != null) {
+                            //逻辑删除初始值回写
+                            TableInfoUtil.setValue(tableFieldInfo, t, value);
+                        } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
+                            //设置默认值
+                            value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getTypeClass(), tableFieldInfo.getTableFieldAnnotation().defaultValue());
+
+                            //默认值回写
+                            TableInfoUtil.setValue(tableFieldInfo, t, value);
+                        }
                     } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
                         //设置默认值
                         value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getTypeClass(), tableFieldInfo.getTableFieldAnnotation().defaultValue());
-
                         //默认值回写
                         TableInfoUtil.setValue(tableFieldInfo, t, value);
                     } else if (tableFieldInfo.isVersion()) {
