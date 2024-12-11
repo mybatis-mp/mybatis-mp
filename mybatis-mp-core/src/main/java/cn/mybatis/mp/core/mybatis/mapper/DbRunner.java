@@ -20,6 +20,13 @@ import org.apache.ibatis.annotations.UpdateProvider;
 
 public interface DbRunner {
 
+    /**
+     * 执行原生sql
+     *
+     * @param sql    例如 update xx set name=? where id=?
+     * @param params 例如 abc ,1
+     * @return 影响的数量
+     */
     default int execute(String sql, Object... params) {
         return this.$execute(new PreparedContext(sql, params));
     }

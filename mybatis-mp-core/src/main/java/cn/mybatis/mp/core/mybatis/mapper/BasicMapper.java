@@ -41,7 +41,7 @@ import java.util.function.Function;
 @Mapper
 public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapper, CountBasicMapper, ListBasicMapper, CursorBasicMapper,
         PagingBasicMapper, MapWithKeyBasicMapper, SaveBasicMapper, SaveOrUpdateBasicMapper, SaveModelBasicMapper, SaveOrUpdateModelBasicMapper,
-        UpdateBasicMapper, UpdateModelBasicMapper, DeleteBasicMapper {
+        UpdateBasicMapper, UpdateModelBasicMapper, DeleteBasicMapper, DbRunner {
 
     /**
      * 获取当前数据库的类型

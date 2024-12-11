@@ -44,6 +44,17 @@ public interface MybatisMapper<T> extends BaseMapper, GetMapper<T>, ExistsMapper
      */
     <R> R dbAdapt(Consumer<SelectorCall<R>> consumer);
 
+    /**
+     * 执行原生sql
+     *
+     * @param sql    例如 update xx set name=? where id=?
+     * @param params 例如 abc ,1
+     * @return 影响的数量
+     */
+    default int execute(String sql, Object... params) {
+        return getBasicMapper().execute(sql, params);
+    }
+
     @Override
     default <T2> T2 get(BaseQuery<? extends BaseQuery, T2> query) {
         return getBasicMapper().get(query);
