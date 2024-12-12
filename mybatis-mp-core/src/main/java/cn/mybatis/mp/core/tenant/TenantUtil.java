@@ -19,7 +19,6 @@ import cn.mybatis.mp.core.sql.executor.MpDatasetField;
 import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.impl.cmd.struct.ConditionChain;
-import db.sql.api.impl.cmd.struct.Where;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -108,30 +107,6 @@ public final class TenantUtil {
             return;
         }
         addTenantCondition(table, conditionChain, tableInfo.getTenantIdFieldInfo(), tenantId);
-    }
-
-    /**
-     * 添加租户条件
-     *
-     * @param table          MpTable
-     * @param where Where
-     * @param tenantTableField 租户ID字段
-     */
-    public static Serializable addTenantCondition(MpTable table, Where where, TableFieldInfo tenantTableField) {
-        Serializable tenantId = TenantUtil.getTenantId();
-        addTenantCondition(table, where.extConditionChain(), tenantTableField, tenantId);
-        return tenantId;
-    }
-
-    /**
-     * 添加租户条件
-     * @param table MpTable
-     * @param where  Where
-     * @param tenantTableField 租户ID 字段tableFieldInfo
-     * @param tenantId 租户ID
-     */
-    public static void addTenantCondition(MpTable table, Where where, TableFieldInfo tenantTableField, Object tenantId) {
-        addTenantCondition(table, where.extConditionChain(), tenantTableField, tenantId);
     }
 
     /**
