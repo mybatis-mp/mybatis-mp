@@ -178,6 +178,9 @@ public class TenantTestCase extends BaseTest {
 
             int cnt = tenantTestMapper.deleteById(tenantTest.getId());
             assertEquals(cnt, 1);
+
+            cnt = tenantTestMapper.delete(where->where.eq(TenantTest::getTenantId, 123).or().eq(TenantTest::getName, "abc"));
+            assertEquals(cnt, 0);
         }
     }
 }
