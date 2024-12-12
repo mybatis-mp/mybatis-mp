@@ -120,7 +120,7 @@ public final class LogicDeleteUtil {
         Class entityType = tableInfo.getType();
         TableField logicDeleteTableField = baseUpdate.$().field(entityType, tableInfo.getLogicDeleteFieldInfo().getField().getName(), 1);
         baseUpdate.set(logicDeleteTableField, getLogicAfterValue(tableInfo.getLogicDeleteFieldInfo()));
-        addLogicDeleteCondition((MpTable) baseUpdate.$().table(entityType), baseUpdate.$where().conditionChain());
+        addLogicDeleteCondition((MpTable) baseUpdate.$().table(entityType), baseUpdate.$where().extConditionChain());
 
         String deleteTimeFieldName = tableInfo.getLogicDeleteFieldInfo().getLogicDeleteAnnotation().deleteTimeField();
         if (!StringPool.EMPTY.equals(deleteTimeFieldName)) {

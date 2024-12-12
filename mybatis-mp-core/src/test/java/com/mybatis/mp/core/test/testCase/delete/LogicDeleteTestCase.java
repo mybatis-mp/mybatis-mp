@@ -73,7 +73,7 @@ public class LogicDeleteTestCase extends BaseTest {
     public void deleteWithWhereTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
-            logicDeleteTestMapper.delete(where -> where.eq(LogicDeleteTest::getId, 1));
+            logicDeleteTestMapper.delete(where -> where.eq(LogicDeleteTest::getId, 1).or().eq(LogicDeleteTest::getName,"abc"));
             List<LogicDeleteTest> list = QueryChain.of(logicDeleteTestMapper).list();
             assertEquals(list.size(), 2);
         }
