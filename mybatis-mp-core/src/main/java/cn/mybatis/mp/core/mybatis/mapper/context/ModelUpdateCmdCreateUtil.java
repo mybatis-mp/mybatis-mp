@@ -19,10 +19,8 @@ import cn.mybatis.mp.core.db.reflect.ModelFieldInfo;
 import cn.mybatis.mp.core.db.reflect.ModelInfo;
 import cn.mybatis.mp.core.db.reflect.Models;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
-import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.core.sql.executor.Update;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
-import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.ModelInfoUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
@@ -55,9 +53,7 @@ public class ModelUpdateCmdCreateUtil {
                 }
                 continue;
             } else if (modelFieldInfo.getTableFieldInfo().isTenantId()) {
-                if (Objects.nonNull(value)) {
-                    TenantUtil.addTenantCondition((MpTable) table, update.$where(), modelFieldInfo.getTableFieldInfo(), value);
-                }
+                //租户ID不修改
                 continue;
             } else if (modelFieldInfo.getTableFieldInfo().isVersion()) {
                 if (Objects.isNull(value)) {
@@ -108,7 +104,6 @@ public class ModelUpdateCmdCreateUtil {
     public static Update create(Model model, Set<String> forceFields, boolean allFieldForce) {
         Where where = WhereUtil.create();
         ModelInfo modelInfo = Models.get(model.getClass());
-        WhereUtil.appendIdWhereWithModel(where, modelInfo, model);
         return warp(new Update(where), modelInfo, model, forceFields, allFieldForce);
     }
 

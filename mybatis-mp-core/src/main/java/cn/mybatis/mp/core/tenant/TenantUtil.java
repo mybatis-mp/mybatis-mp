@@ -125,11 +125,10 @@ public final class TenantUtil {
 
     /**
      * 添加租户条件
-     *
-     * @param table            MpTable
-     * @param where            Where
+     * @param table MpTable
+     * @param where  Where
      * @param tenantTableField 租户ID 字段tableFieldInfo
-     * @param tenantId         租户ID
+     * @param tenantId 租户ID
      */
     public static void addTenantCondition(MpTable table, Where where, TableFieldInfo tenantTableField, Object tenantId) {
         addTenantCondition(table, where.extConditionChain(), tenantTableField, tenantId);
@@ -137,11 +136,10 @@ public final class TenantUtil {
 
     /**
      * 添加租户条件
-     *
-     * @param table            MpTable
-     * @param conditionChain   ConditionChain
+     * @param table MpTable
+     * @param conditionChain  ConditionChain
      * @param tenantTableField 租户ID 字段tableFieldInfo
-     * @param tenantId         租户ID
+     * @param tenantId 租户ID
      */
     public static void addTenantCondition(MpTable table, ConditionChain conditionChain, TableFieldInfo tenantTableField, Object tenantId) {
         if (Objects.isNull(tenantId)) {

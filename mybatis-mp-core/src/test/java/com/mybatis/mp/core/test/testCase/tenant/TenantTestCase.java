@@ -166,4 +166,18 @@ public class TenantTestCase extends BaseTest {
 
         }
     }
+
+    @Test
+    public void deleteEntity() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            TenantTestMapper tenantTestMapper = session.getMapper(TenantTestMapper.class);
+            TenantTest tenantTest = new TenantTest();
+            tenantTest.setName("我是1");
+            tenantTest.setCreateTime(LocalDateTime.now());
+            tenantTestMapper.save(tenantTest);
+
+            int cnt = tenantTestMapper.deleteById(tenantTest.getId());
+            assertEquals(cnt, 1);
+        }
+    }
 }
