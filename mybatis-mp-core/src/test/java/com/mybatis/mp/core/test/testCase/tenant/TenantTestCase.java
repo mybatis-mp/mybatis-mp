@@ -75,6 +75,10 @@ public class TenantTestCase extends BaseTest {
             assertEquals(1, updateCnt);
 
 
+            int deleteCnt = tenantTestMapper.delete(where -> where.eq(TenantTest::getTenantId, 1).or().eq(TenantTest::getName, "abc"));
+            assertEquals(1, deleteCnt);
+
+
             TenantContext.registerTenantGetter(() -> {
                 return 2;
             });

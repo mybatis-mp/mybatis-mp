@@ -123,6 +123,9 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
             this.updateTable = new UpdateTable(tables);
             this.append(this.updateTable);
         }
+        for (Table table : tables) {
+            this.getSQLListeners().stream().forEach(item -> item.onUpdate(this, table));
+        }
         return this.updateTable;
     }
 

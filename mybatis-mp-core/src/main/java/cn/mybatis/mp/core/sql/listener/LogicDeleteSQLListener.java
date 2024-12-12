@@ -19,6 +19,7 @@ import cn.mybatis.mp.core.sql.executor.BaseUpdate;
 import cn.mybatis.mp.core.sql.executor.MpTable;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.IDataset;
+import db.sql.api.cmd.executor.IDelete;
 import db.sql.api.cmd.executor.IExecutor;
 import db.sql.api.cmd.executor.IInsert;
 import db.sql.api.cmd.listener.SQLListener;
@@ -35,7 +36,7 @@ public class LogicDeleteSQLListener implements SQLListener {
         if (!(dataset instanceof MpTable) || !(source instanceof IExecutor)) {
             return;
         }
-        if (source instanceof IInsert) {
+        if (source instanceof IInsert || source instanceof IDelete) {
             return;
         }
         Where where;
@@ -63,11 +64,6 @@ public class LogicDeleteSQLListener implements SQLListener {
 
     @Override
     public void onFrom(Object source, IDataset<?, ?> dataset) {
-        this.addConditionToWhere(source, dataset);
-    }
-
-    @Override
-    public void onDelete(Object source, IDataset<?, ?> dataset) {
         this.addConditionToWhere(source, dataset);
     }
 

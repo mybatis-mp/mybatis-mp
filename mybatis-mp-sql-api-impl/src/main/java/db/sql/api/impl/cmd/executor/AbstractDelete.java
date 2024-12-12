@@ -107,6 +107,9 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
             this.deleteTable = new DeleteTable(tables);
         }
         this.append(this.deleteTable);
+        for (IDataset table : tables) {
+            this.getSQLListeners().stream().forEach(item -> item.onDelete(this, table));
+        }
         return this.deleteTable;
     }
 

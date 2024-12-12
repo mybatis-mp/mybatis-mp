@@ -21,18 +21,14 @@ import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.sql.executor.BaseUpdate;
 import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.core.sql.executor.Update;
-import cn.mybatis.mp.core.sql.util.WhereUtil;
-import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.db.annotations.LogicDelete;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 import db.sql.api.impl.cmd.struct.Where;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -120,71 +116,12 @@ public final class LogicDeleteUtil {
         Class entityType = tableInfo.getType();
         TableField logicDeleteTableField = baseUpdate.$().field(entityType, tableInfo.getLogicDeleteFieldInfo().getField().getName(), 1);
         baseUpdate.set(logicDeleteTableField, getLogicAfterValue(tableInfo.getLogicDeleteFieldInfo()));
-        addLogicDeleteCondition((MpTable) baseUpdate.$().table(entityType), baseUpdate.$where().extConditionChain());
 
         String deleteTimeFieldName = tableInfo.getLogicDeleteFieldInfo().getLogicDeleteAnnotation().deleteTimeField();
         if (!StringPool.EMPTY.equals(deleteTimeFieldName)) {
             TableField logicDeleteTimeTableField = baseUpdate.$().field(entityType, deleteTimeFieldName, 1);
             baseUpdate.set(logicDeleteTimeTableField, getLogicDeleteTimeValue(tableInfo));
         }
-    }
-
-    /**
-     * 构建公共的UpdateChain
-     *
-     * @param tableInfo
-     * @return
-     */
-    private static BaseUpdate<?> buildCommonUpdate(TableInfo tableInfo) {
-        return new Update()
-                .update(tableInfo.getType())
-                .connect(self -> LogicDeleteUtil.addLogicDeleteUpdateSets(self, tableInfo));
-    }
-
-    /**
-     * 根据ID 进行逻辑删除操作
-     * 实际为update操作
-     *
-     * @param mapper
-     * @param tableInfo
-     * @param id
-     * @return
-     */
-    public static int logicDelete(BasicMapper mapper, TableInfo tableInfo, Serializable id) {
-        BaseUpdate<?> update = buildCommonUpdate(tableInfo);
-        WhereUtil.appendIdWhere(update.$where(), tableInfo, id);
-        return mapper.update(update);
-    }
-
-    /**
-     * 根据多个ID 进行逻辑删除操作
-     * 实际为update操作
-     *
-     * @param mapper
-     * @param tableInfo
-     * @param ids
-     * @return
-     */
-    public static int logicDelete(BasicMapper mapper, TableInfo tableInfo, Serializable... ids) {
-        BaseUpdate<?> update = buildCommonUpdate(tableInfo);
-        WhereUtil.appendIdsWhere(update.$where(), tableInfo, ids);
-        return mapper.update(update);
-    }
-
-
-    /**
-     * 根据List<ID> 进行逻辑删除操作
-     * 实际为update操作
-     *
-     * @param mapper
-     * @param tableInfo
-     * @param ids
-     * @return
-     */
-    public static int logicDelete(BasicMapper mapper, TableInfo tableInfo, List<Serializable> ids) {
-        BaseUpdate<?> update = buildCommonUpdate(tableInfo);
-        WhereUtil.appendIdsWhere(update.getWhere(), tableInfo, ids);
-        return mapper.update(update);
     }
 
     /**
@@ -201,7 +138,6 @@ public final class LogicDeleteUtil {
         update.update(update.$().table(tableInfo.getType()))
                 .connect(self -> {
                     LogicDeleteUtil.addLogicDeleteUpdateSets(self, tableInfo);
-                    TenantUtil.addTenantCondition(where, update.$(), tableInfo, 1);
                 });
         return mapper.update(update);
     }

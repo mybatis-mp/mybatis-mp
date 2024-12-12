@@ -17,6 +17,7 @@ package com.mybatis.mp.core.test.testCase.delete;
 import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
+import cn.mybatis.mp.core.sql.executor.chain.UpdateChain;
 import com.mybatis.mp.core.test.DO.LogicDeleteTest;
 import com.mybatis.mp.core.test.mapper.LogicDeleteTestMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class LogicDeleteTestCase extends BaseTest {
 
@@ -37,7 +39,6 @@ public class LogicDeleteTestCase extends BaseTest {
     public void deleteIdTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
-            QueryChain.of(logicDeleteTestMapper).list();
             logicDeleteTestMapper.deleteById(1);
             List<LogicDeleteTest> list = QueryChain.of(logicDeleteTestMapper).list();
             assertEquals(list.size(), 2);
@@ -73,9 +74,65 @@ public class LogicDeleteTestCase extends BaseTest {
     public void deleteWithWhereTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
-            logicDeleteTestMapper.delete(where -> where.eq(LogicDeleteTest::getId, 1).or().eq(LogicDeleteTest::getName,"abc"));
+            int deleteCnt = logicDeleteTestMapper.delete(where -> where.eq(LogicDeleteTest::getId, 1).or().eq(LogicDeleteTest::getName, "abc"));
+            assertEquals(deleteCnt, 1);
+
             List<LogicDeleteTest> list = QueryChain.of(logicDeleteTestMapper).list();
             assertEquals(list.size(), 2);
+        }
+    }
+
+    @Test
+    public void updateWithWhereTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
+            int updateCnt = logicDeleteTestMapper.update(logicDeleteTestMapper.getById(1), where -> where.eq(LogicDeleteTest::getId, 1).or().eq(LogicDeleteTest::getName, "abc"));
+            assertEquals(updateCnt, 1);
+        }
+    }
+
+    @Test
+    public void updateWithWhereTest2() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
+            int updateCnt = logicDeleteTestMapper.update(logicDeleteTestMapper.getById(1));
+            assertEquals(updateCnt, 1);
+            LogicDeleteTest logicDeleteTest = logicDeleteTestMapper.getById(1);
+            logicDeleteTestMapper.delete(logicDeleteTest);
+            updateCnt = logicDeleteTestMapper.update(logicDeleteTest);
+            assertEquals(updateCnt, 0);
+        }
+    }
+
+    @Test
+    public void updateWithWhereTest3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
+            logicDeleteTestMapper.deleteById(1);
+            assertNull(logicDeleteTestMapper.getById(1));
+            int updateCnt = UpdateChain.of(logicDeleteTestMapper)
+                    .set(LogicDeleteTest::getName, "abc")
+                    .eq(LogicDeleteTest::getId, 1)
+                    .or()
+                    .eq(LogicDeleteTest::getName, "abc")
+                    .execute();
+            assertEquals(updateCnt, 0);
+        }
+    }
+
+    @Test
+    public void updateWithWhereTest4() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
+            logicDeleteTestMapper.delete(where -> where.eq(LogicDeleteTest::getId, 1));
+            assertNull(logicDeleteTestMapper.getById(1));
+            int updateCnt = UpdateChain.of(logicDeleteTestMapper)
+                    .set(LogicDeleteTest::getName, "abc")
+                    .eq(LogicDeleteTest::getId, 1)
+                    .or()
+                    .eq(LogicDeleteTest::getName, "abc")
+                    .execute();
+            assertEquals(updateCnt, 0);
         }
     }
 

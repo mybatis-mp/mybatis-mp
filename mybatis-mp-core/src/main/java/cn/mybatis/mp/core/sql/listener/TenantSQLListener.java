@@ -70,11 +70,6 @@ public class TenantSQLListener implements SQLListener {
     }
 
     @Override
-    public void onDelete(Object source, IDataset<?, ?> dataset) {
-        this.addConditionToWhere(source, dataset);
-    }
-
-    @Override
     public void onUpdate(Object source, IDataset<?, ?> dataset) {
         this.addConditionToWhere(source, dataset);
     }
