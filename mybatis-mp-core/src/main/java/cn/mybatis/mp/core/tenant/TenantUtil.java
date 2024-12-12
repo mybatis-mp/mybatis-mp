@@ -26,7 +26,6 @@ import java.util.Objects;
 public final class TenantUtil {
 
     public static Serializable getTenantId() {
-
         return TenantContext.getTenantId();
     }
 
@@ -71,7 +70,6 @@ public final class TenantUtil {
      * @param entity
      */
     public static Serializable setTenantId(TableInfo tableInfo, Object entity) {
-
         if (Objects.isNull(tableInfo.getTenantIdFieldInfo())) {
             return null;
         }
@@ -106,22 +104,9 @@ public final class TenantUtil {
         if (Objects.isNull(tableInfo.getTenantIdFieldInfo())) {
             return;
         }
-        addTenantCondition(table, conditionChain, tableInfo.getTenantIdFieldInfo(), tenantId);
-    }
-
-    /**
-     * 添加租户条件
-     * @param table MpTable
-     * @param conditionChain  ConditionChain
-     * @param tenantTableField 租户ID 字段tableFieldInfo
-     * @param tenantId 租户ID
-     */
-    public static void addTenantCondition(MpTable table, ConditionChain conditionChain, TableFieldInfo tenantTableField, Object tenantId) {
-        if (Objects.isNull(tenantId)) {
-            return;
-        }
-        conditionChain.eq(new MpDatasetField(table, tenantTableField.getColumnName(),
-                tenantTableField.getFieldInfo(), tenantTableField.getTypeHandler(),
-                tenantTableField.getTableFieldAnnotation().jdbcType()), tenantId);
+        TableFieldInfo tenantIdFieldInfo = tableInfo.getTenantIdFieldInfo();
+        conditionChain.eq(new MpDatasetField(table, tenantIdFieldInfo.getColumnName(),
+                tenantIdFieldInfo.getFieldInfo(), tenantIdFieldInfo.getTypeHandler(),
+                tenantIdFieldInfo.getTableFieldAnnotation().jdbcType()), tenantId);
     }
 }
