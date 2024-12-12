@@ -19,6 +19,7 @@ import cn.mybatis.mp.core.db.reflect.ModelFieldInfo;
 import cn.mybatis.mp.core.db.reflect.ModelInfo;
 import cn.mybatis.mp.core.db.reflect.Models;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
+import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.core.sql.executor.Update;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
 import cn.mybatis.mp.core.tenant.TenantUtil;
@@ -54,11 +55,8 @@ public class ModelUpdateCmdCreateUtil {
                 }
                 continue;
             } else if (modelFieldInfo.getTableFieldInfo().isTenantId()) {
-                //添加租户条件
-                Object tenantId = TenantUtil.addTenantCondition(update.$where(), update.$(), modelInfo.getEntityType(), modelFieldInfo.getTableFieldInfo(), 1);
-                if (Objects.nonNull(tenantId)) {
-                    //租户回写
-                    ModelInfoUtil.setValue(modelFieldInfo, t, tenantId);
+                if (Objects.nonNull(value)) {
+                    TenantUtil.addTenantCondition((MpTable) table, update.$where(), modelFieldInfo.getTableFieldInfo(), value);
                 }
                 continue;
             } else if (modelFieldInfo.getTableFieldInfo().isVersion()) {

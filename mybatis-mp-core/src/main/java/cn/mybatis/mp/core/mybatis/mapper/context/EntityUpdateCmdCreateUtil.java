@@ -18,6 +18,7 @@ import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
+import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.core.sql.executor.Update;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.StringPool;
@@ -55,11 +56,8 @@ public class EntityUpdateCmdCreateUtil {
                 }
                 continue;
             } else if (tableFieldInfo.isTenantId()) {
-                //添加租户条件
-                Object tenantId = TenantUtil.addTenantCondition(update.$where(), update.$(), t.getClass(), tableFieldInfo, 1);
-                if (Objects.nonNull(tenantId)) {
-                    //租户回写
-                    TableInfoUtil.setValue(tableFieldInfo, t, tenantId);
+                if (Objects.nonNull(value)) {
+                    TenantUtil.addTenantCondition((MpTable) table, update.$where(), tableFieldInfo, value);
                 }
                 continue;
             } else if (tableFieldInfo.isVersion()) {

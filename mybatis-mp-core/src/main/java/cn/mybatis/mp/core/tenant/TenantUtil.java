@@ -15,9 +15,9 @@
 package cn.mybatis.mp.core.tenant;
 
 import cn.mybatis.mp.core.db.reflect.*;
+import cn.mybatis.mp.core.sql.executor.MpDatasetField;
 import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.db.Model;
-import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 import db.sql.api.impl.cmd.struct.Where;
 
@@ -107,43 +107,48 @@ public final class TenantUtil {
         if (Objects.isNull(tableInfo.getTenantIdFieldInfo())) {
             return;
         }
-        conditionChain.eq(table.$(tableInfo.getTenantIdFieldInfo().getColumnName()), tenantId);
+        addTenantCondition(table, conditionChain, tableInfo.getTenantIdFieldInfo(), tenantId);
     }
 
     /**
      * 添加租户条件
      *
-     * @param where      where
-     * @param cmdFactory 命令工厂
-     * @param tableInfo  tableInfo
-     * @param storey     实体类表的存储层级
+     * @param table          MpTable
+     * @param where Where
+     * @param tenantTableField 租户ID字段
      */
-    public static void addTenantCondition(Where where, CmdFactory cmdFactory, TableInfo tableInfo, int storey) {
+    public static Serializable addTenantCondition(MpTable table, Where where, TableFieldInfo tenantTableField) {
         Serializable tenantId = TenantUtil.getTenantId();
-        if (Objects.isNull(tenantId)) {
-            return;
-        }
-
-        if (Objects.isNull(tableInfo.getTenantIdFieldInfo())) {
-            return;
-        }
-        where.extConditionChain().eq(cmdFactory.field(tableInfo.getType(), tableInfo.getTenantIdFieldInfo().getField().getName(), storey), tenantId);
-    }
-
-    /**
-     * 添加租户条件
-     *
-     * @param where      where
-     * @param cmdFactory 命令工厂
-     * @param entity     实体类
-     * @param storey     实体类表的存储层级
-     */
-    public static Serializable addTenantCondition(Where where, CmdFactory cmdFactory, Class entity, TableFieldInfo tenantTableField, int storey) {
-        Serializable tenantId = TenantUtil.getTenantId();
-        if (Objects.isNull(tenantId)) {
-            return null;
-        }
-        where.extConditionChain().eq(cmdFactory.field(entity, tenantTableField.getField().getName(), storey), tenantId);
+        addTenantCondition(table, where.extConditionChain(), tenantTableField, tenantId);
         return tenantId;
+    }
+
+    /**
+     * 添加租户条件
+     *
+     * @param table            MpTable
+     * @param where            Where
+     * @param tenantTableField 租户ID 字段tableFieldInfo
+     * @param tenantId         租户ID
+     */
+    public static void addTenantCondition(MpTable table, Where where, TableFieldInfo tenantTableField, Object tenantId) {
+        addTenantCondition(table, where.extConditionChain(), tenantTableField, tenantId);
+    }
+
+    /**
+     * 添加租户条件
+     *
+     * @param table            MpTable
+     * @param conditionChain   ConditionChain
+     * @param tenantTableField 租户ID 字段tableFieldInfo
+     * @param tenantId         租户ID
+     */
+    public static void addTenantCondition(MpTable table, ConditionChain conditionChain, TableFieldInfo tenantTableField, Object tenantId) {
+        if (Objects.isNull(tenantId)) {
+            return;
+        }
+        conditionChain.eq(new MpDatasetField(table, tenantTableField.getColumnName(),
+                tenantTableField.getFieldInfo(), tenantTableField.getTypeHandler(),
+                tenantTableField.getTableFieldAnnotation().jdbcType()), tenantId);
     }
 }
