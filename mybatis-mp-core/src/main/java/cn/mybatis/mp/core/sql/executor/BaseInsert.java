@@ -14,11 +14,15 @@
 
 package cn.mybatis.mp.core.sql.executor;
 
+import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.mybatis.executor.statement.Timeoutable;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import db.sql.api.Getter;
+import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.AbstractInsert;
+
+import java.util.List;
 
 public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert<T, MybatisCmdFactory> implements Timeoutable<T> {
 
@@ -43,6 +47,11 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
     @SafeVarargs
     public final <T2> T fields(Getter<T2>... fields) {
         return super.fields(fields);
+    }
+
+    @Override
+    public List<SQLListener> getSQLListeners() {
+        return MybatisMpConfig.getSQLListeners();
     }
 
     /**************以下为去除警告************/

@@ -128,12 +128,12 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
             this.append(from);
         }
         this.from.append(table);
+        this.getSQLListeners().stream().forEach(item -> item.onFrom(this, table));
         return from;
     }
 
     @Override
     public SELF from(Class entity, int storey, Consumer<Table> consumer) {
-        this.fromEntityIntercept(entity, storey);
         Table table = this.$.table(entity, storey);
         this.from(table);
         if (Objects.nonNull(consumer)) {
@@ -150,12 +150,12 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
             this.append(joins);
         }
         joins.add(join);
+        this.getSQLListeners().stream().forEach(item -> item.onJoin(this, mode, mainTable, secondTable, join.getOn()));
         return join;
     }
 
     @Override
     public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<On> consumer) {
-        consumer = this.joinEntityIntercept(mainTable, mainTableStorey, secondTable, secondTableStorey, consumer);
         return this.join(mode, this.$.table(mainTable, mainTableStorey), this.$.table(secondTable, secondTableStorey), consumer);
     }
 

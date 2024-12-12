@@ -63,16 +63,23 @@ public class TenantTestCase extends BaseTest {
             tenantTestMapper.save(tenantTest);
 
             tenantTest.setName("我是2");
-            tenantTestMapper.update(tenantTest);
+            int updateCnt=tenantTestMapper.update(tenantTest);
             System.out.println(tenantTest);
             assertEquals(1, (int) tenantTest.getTenantId());
+            assertEquals(1, updateCnt);
+
+
+            updateCnt=tenantTestMapper.update(tenantTest,where->where.eq(TenantTest::getTenantId, 1).or().eq(TenantTest::getName, "abc"));
+            System.out.println(tenantTest);
+            assertEquals(1, (int) tenantTest.getTenantId());
+            assertEquals(1, updateCnt);
 
 
             TenantContext.registerTenantGetter(() -> {
                 return 2;
             });
             tenantTest.setName("我是3");
-            int updateCnt = tenantTestMapper.update(tenantTest);
+            updateCnt = tenantTestMapper.update(tenantTest);
             assertEquals(updateCnt, 0);
         }
     }

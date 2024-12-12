@@ -14,22 +14,19 @@
 
 package cn.mybatis.mp.core.sql.executor;
 
-import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
+import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.mybatis.executor.statement.Timeoutable;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
-import cn.mybatis.mp.core.sql.util.ForeignKeyUtil;
-import cn.mybatis.mp.core.tenant.TenantUtil;
 import db.sql.api.Cmd;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
+import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.AbstractUpdate;
-import db.sql.api.impl.cmd.struct.On;
 import db.sql.api.impl.cmd.struct.Where;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate<T, MybatisCmdFactory> implements Timeoutable<T> {
 
@@ -60,42 +57,9 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
         cmdSorts.put(cn.mybatis.mp.core.sql.executor.Where.class, cmdSorts.get(Where.class));
     }
 
-
-    protected void addTenantCondition(Class entity, int storey) {
-        TenantUtil.addTenantCondition(this.$where(), $, entity, storey);
-    }
-
-    protected void addLogicDeleteCondition(Class entity, int storey) {
-        LogicDeleteUtil.addLogicDeleteCondition(this.$where(), $, entity, storey);
-    }
-
-    protected void addOnLogicDeleteCondition(On on, Class entity, int storey) {
-        LogicDeleteUtil.addLogicDeleteCondition(on, $, entity, storey);
-    }
-
     @Override
-    public void updateEntityIntercept(Class entity) {
-        this.addTenantCondition(entity, 1);
-        this.addLogicDeleteCondition(entity, 1);
-    }
-
-    @Override
-    public Consumer<On> joinEntityIntercept(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<On> consumer) {
-        this.addTenantCondition(secondTable, secondTableStorey);
-        if (Objects.isNull(consumer)) {
-            //自动加上外键连接条件
-            consumer = ForeignKeyUtil.buildForeignKeyOnConsumer($, mainTable, mainTableStorey, secondTable, secondTableStorey);
-        }
-
-        final Consumer<On> oldConsumer = consumer;
-        Consumer<On> newConsumer = on -> {
-            if (oldConsumer != null) {
-                oldConsumer.accept(on);
-            }
-            this.addOnLogicDeleteCondition(on, secondTable, secondTableStorey);
-        };
-
-        return newConsumer;
+    public List<SQLListener> getSQLListeners() {
+        return MybatisMpConfig.getSQLListeners();
     }
 
     /**************以下为去除警告************/

@@ -72,17 +72,4 @@ public interface IJoinMethod<SELF extends IJoinMethod, ON> {
     }
 
     <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF join(JoinMode mode, Class mainTable, int mainTableStorey, DATASET secondTable, Consumer<ON> consumer);
-
-    /**
-     * 实体类拦截
-     *
-     * @param mainTable
-     * @param mainTableStorey
-     * @param secondTable
-     * @param consumer
-     * @return
-     */
-    default Consumer<ON> joinEntityIntercept(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<ON> consumer) {
-        return consumer;
-    }
 }

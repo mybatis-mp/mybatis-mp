@@ -15,8 +15,10 @@
 package cn.mybatis.mp.core.tenant;
 
 import cn.mybatis.mp.core.db.reflect.*;
+import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.impl.cmd.CmdFactory;
+import db.sql.api.impl.cmd.struct.ConditionChain;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.io.Serializable;
@@ -93,21 +95,19 @@ public final class TenantUtil {
     /**
      * 添加租户条件
      *
-     * @param where      where
-     * @param cmdFactory 命令工厂
-     * @param entity     实体类
-     * @param storey     实体类表的存储层级
+     * @param table          MpTable
+     * @param conditionChain ConditionChain
      */
-    public static void addTenantCondition(Where where, CmdFactory cmdFactory, Class entity, int storey) {
+    public static void addTenantCondition(MpTable table, ConditionChain conditionChain) {
         Serializable tenantId = TenantUtil.getTenantId();
         if (Objects.isNull(tenantId)) {
             return;
         }
-        TableInfo tableInfo = Tables.get(entity);
+        TableInfo tableInfo = table.getTableInfo();
         if (Objects.isNull(tableInfo.getTenantIdFieldInfo())) {
             return;
         }
-        where.extConditionChain().eq(cmdFactory.field(entity, tableInfo.getTenantIdFieldInfo().getField().getName(), storey), tenantId);
+        conditionChain.eq(table.$(tableInfo.getTenantIdFieldInfo().getColumnName()), tenantId);
     }
 
     /**

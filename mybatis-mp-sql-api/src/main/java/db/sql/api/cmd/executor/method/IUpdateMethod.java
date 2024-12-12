@@ -39,13 +39,4 @@ public interface IUpdateMethod<SELF extends IUpdateMethod, TABLE, TABLE_FIELD, V
     }
 
     <T> SELF set(Getter<T> field, Function<TABLE_FIELD, Cmd> f);
-
-    /**
-     * 实体类修改拦截
-     *
-     * @param entity
-     */
-    default void updateEntityIntercept(Class entity) {
-
-    }
 }

@@ -45,14 +45,4 @@ public interface IFromMethod<SELF extends IFromMethod, TABLE extends ITable<TABL
     }
 
     SELF from(Class entity, int storey, Consumer<TABLE> consumer);
-
-    /**
-     * 实体类拦截
-     *
-     * @param entity
-     * @param storey
-     */
-    default void fromEntityIntercept(Class entity, int storey) {
-
-    }
 }

@@ -95,6 +95,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
             this.insertTable = new InsertTable(table);
             this.append(this.insertTable);
         }
+        this.getSQLListeners().stream().forEach(item -> item.onInsert(this, table));
         return this.insertTable;
     }
 

@@ -84,4 +84,5 @@ public interface IInsert<SELF extends IInsert,
     INSERT_FIELD getInsertFields();
 
     INSERT_VALUE getInsertValues();
+
 }

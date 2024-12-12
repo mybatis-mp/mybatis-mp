@@ -234,4 +234,6 @@ public interface IQuery<SELF extends IQuery
     }
 
     Map<String, Consumer<WHERE>> getFetchFilters();
+
+
 }

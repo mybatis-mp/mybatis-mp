@@ -128,7 +128,6 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
 
     @Override
     public SELF update(Class entity, Consumer<Table> consumer) {
-        this.updateEntityIntercept(entity);
         Table table = this.$.table(entity);
         this.update(table);
         return (SELF) this;
@@ -139,7 +138,6 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         Table[] tables = new Table[entities.length];
         for (int i = 0; i < entities.length; i++) {
             Class entity = entities[i];
-            this.updateEntityIntercept(entity);
             tables[i] = $.table(entity);
         }
         return this.update(tables);
@@ -218,12 +216,12 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
             this.append(joins);
         }
         joins.add(join);
+
         return join;
     }
 
     @Override
     public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<On> consumer) {
-        consumer = this.joinEntityIntercept(mainTable, mainTableStorey, secondTable, secondTableStorey, consumer);
         return this.join(mode, this.$.table(mainTable, mainTableStorey), this.$.table(secondTable, secondTableStorey), consumer);
     }
 
@@ -260,12 +258,12 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
             this.append(from);
         }
         this.from.append(table);
+        this.getSQLListeners().stream().forEach(item -> item.onFrom(this, table));
         return from;
     }
 
     @Override
     public SELF from(Class entity, int storey, Consumer<Table> consumer) {
-        this.fromEntityIntercept(entity, storey);
         Table table = this.$.table(entity, storey);
         this.from(table);
         if (Objects.nonNull(consumer)) {
@@ -281,6 +279,7 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         if (consumer != null) {
             consumer.accept(join.getOn());
         }
+        this.getSQLListeners().stream().forEach(item -> item.onJoin(this, mode, mainTable, secondTable, join.getOn()));
         return (SELF) this;
     }
 

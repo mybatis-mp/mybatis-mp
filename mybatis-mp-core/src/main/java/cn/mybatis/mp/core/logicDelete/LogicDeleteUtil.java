@@ -17,17 +17,16 @@ package cn.mybatis.mp.core.logicDelete;
 import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
-import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.sql.executor.BaseUpdate;
+import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.core.sql.executor.Update;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.db.annotations.LogicDelete;
-import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.basic.TableField;
-import db.sql.api.impl.cmd.struct.On;
+import db.sql.api.impl.cmd.struct.ConditionChain;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.io.Serializable;
@@ -121,7 +120,7 @@ public final class LogicDeleteUtil {
         Class entityType = tableInfo.getType();
         TableField logicDeleteTableField = baseUpdate.$().field(entityType, tableInfo.getLogicDeleteFieldInfo().getField().getName(), 1);
         baseUpdate.set(logicDeleteTableField, getLogicAfterValue(tableInfo.getLogicDeleteFieldInfo()));
-        addLogicDeleteCondition(baseUpdate.$where(), baseUpdate.$(), entityType, 1);
+        addLogicDeleteCondition((MpTable) baseUpdate.$().table(entityType), baseUpdate.$where().conditionChain());
 
         String deleteTimeFieldName = tableInfo.getLogicDeleteFieldInfo().getLogicDeleteAnnotation().deleteTimeField();
         if (!StringPool.EMPTY.equals(deleteTimeFieldName)) {
@@ -211,52 +210,24 @@ public final class LogicDeleteUtil {
     /**
      * 添加逻辑删除条件
      *
-     * @param where      Where
-     * @param cmdFactory 命令工厂
-     * @param entity     实体类
-     * @param storey     实体类表的存储层级
+     * @param table          MpTable
+     * @param conditionChain ConditionChain
      */
-    public static void addLogicDeleteCondition(Where where, CmdFactory cmdFactory, Class entity, int storey) {
+    public static void addLogicDeleteCondition(MpTable table, ConditionChain conditionChain) {
         if (!MybatisMpConfig.isLogicDeleteSwitchOpen()) {
             return;
         }
 
-        TableInfo tableInfo = Tables.get(entity);
+        TableInfo tableInfo = table.getTableInfo();
         if (Objects.isNull(tableInfo.getLogicDeleteFieldInfo())) {
             return;
         }
         Object logicBeforeValue = tableInfo.getLogicDeleteFieldInfo().getLogicDeleteInitValue();
-        TableField tableField = cmdFactory.field(entity, tableInfo.getLogicDeleteFieldInfo().getField().getName(), storey);
+        TableField tableField = table.$(tableInfo.getLogicDeleteFieldInfo().getColumnName());
         if (Objects.isNull(logicBeforeValue)) {
-            where.extConditionChain().isNull(tableField);
+            conditionChain.isNull(tableField);
         } else {
-            where.extConditionChain().eq(tableField, logicBeforeValue);
-        }
-    }
-
-    /**
-     * 添加逻辑删除条件
-     *
-     * @param on         on
-     * @param cmdFactory 命令工厂
-     * @param entity     实体类
-     * @param storey     实体类表的存储层级
-     */
-    public static void addLogicDeleteCondition(On on, CmdFactory cmdFactory, Class entity, int storey) {
-        if (!MybatisMpConfig.isLogicDeleteSwitchOpen()) {
-            return;
-        }
-
-        TableInfo tableInfo = Tables.get(entity);
-        if (Objects.isNull(tableInfo.getLogicDeleteFieldInfo())) {
-            return;
-        }
-        Object logicBeforeValue = tableInfo.getLogicDeleteFieldInfo().getLogicDeleteInitValue();
-        TableField tableField = cmdFactory.field(entity, tableInfo.getLogicDeleteFieldInfo().getField().getName(), storey);
-        if (Objects.isNull(logicBeforeValue)) {
-            on.extConditionChain().isNull(tableField);
-        } else {
-            on.extConditionChain().eq(tableField, logicBeforeValue);
+            conditionChain.eq(tableField, logicBeforeValue);
         }
     }
 }
