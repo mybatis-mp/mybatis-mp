@@ -28,6 +28,7 @@ import cn.mybatis.mp.core.sql.executor.chain.UpdateChain;
 import cn.mybatis.mp.core.util.GenericUtil;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
+import db.sql.api.impl.cmd.struct.Where;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -94,8 +95,20 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         return queryChain;
     }
 
+    protected QueryChain<T> queryChain(Where where) {
+        QueryChain<T> queryChain = QueryChain.of(getMapper(), getEntityType(), where);
+        queryChain.$().cacheTableInfo(getTableInfo());
+        return queryChain;
+    }
+
     protected UpdateChain updateChain() {
         UpdateChain updateChain = UpdateChain.of(getMapper(), getEntityType());
+        updateChain.$().cacheTableInfo(getTableInfo());
+        return updateChain;
+    }
+
+    protected UpdateChain updateChain(Where where) {
+        UpdateChain updateChain = UpdateChain.of(getMapper(), getEntityType(), where);
         updateChain.$().cacheTableInfo(getTableInfo());
         return updateChain;
     }
@@ -108,6 +121,12 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     protected DeleteChain deleteChain() {
         DeleteChain deleteChain = DeleteChain.of(getMapper(), getEntityType());
+        deleteChain.$().cacheTableInfo(getTableInfo());
+        return deleteChain;
+    }
+
+    protected DeleteChain deleteChain(Where where) {
+        DeleteChain deleteChain = DeleteChain.of(getMapper(), getEntityType(), where);
         deleteChain.$().cacheTableInfo(getTableInfo());
         return deleteChain;
     }
