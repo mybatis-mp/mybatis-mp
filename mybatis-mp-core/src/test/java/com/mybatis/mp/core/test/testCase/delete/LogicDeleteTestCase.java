@@ -150,17 +150,24 @@ public class LogicDeleteTestCase extends BaseTest {
             LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
             logicDeleteTestMapper.deleteById(1);
             int count = QueryChain.of(logicDeleteTestMapper)
-                    .join(JoinMode.LEFT, LogicDeleteTest.class, SysUser.class, on -> on.eq(LogicDeleteTest::getId, SysUser::getId))
-                    .eq(LogicDeleteTest::getId, 0)
-                    .count();
-            assertEquals(count, 0);
-
-            count = QueryChain.of(logicDeleteTestMapper)
                     .from(SysUser.class)
                     .join(JoinMode.LEFT, SysUser.class, LogicDeleteTest.class, on -> on.eq(LogicDeleteTest::getId, SysUser::getId))
                     .eq(SysUser::getId, 1)
                     .count();
             assertEquals(count, 1);
+        }
+    }
+
+    @Test
+    public void rightJoinTest4() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
+            logicDeleteTestMapper.deleteById(1);
+            int count = QueryChain.of(logicDeleteTestMapper)
+                    .from(SysUser.class)
+                    .join(JoinMode.RIGHT, SysUser.class, LogicDeleteTest.class, on -> on.eq(LogicDeleteTest::getId, SysUser::getId).eq(LogicDeleteTest::getId, 1))
+                    .count();
+            assertEquals(count, 3);
         }
     }
 
