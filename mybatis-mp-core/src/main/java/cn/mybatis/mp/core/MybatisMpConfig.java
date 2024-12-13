@@ -247,7 +247,7 @@ public final class MybatisMpConfig {
      *
      * @param type
      */
-    public static void removeSQLListener(Class<SQLListener> type) {
+    public static <T extends SQLListener> void removeSQLListener(Class<T> type) {
         Iterator<SQLListener> iterator = SQL_LISTENER.iterator();
         while (iterator.hasNext()) {
             if (type.isAssignableFrom(iterator.next().getClass())) {
