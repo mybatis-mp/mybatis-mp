@@ -19,8 +19,10 @@ import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import cn.mybatis.mp.core.sql.executor.chain.UpdateChain;
 import com.mybatis.mp.core.test.DO.LogicDeleteTest;
+import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.LogicDeleteTestMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
+import db.sql.api.cmd.JoinMode;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -138,6 +140,27 @@ public class LogicDeleteTestCase extends BaseTest {
                     .eq(LogicDeleteTest::getName, "abc")
                     .execute();
             assertEquals(updateCnt, 0);
+        }
+    }
+
+
+    @Test
+    public void leftJoinTest4() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
+            logicDeleteTestMapper.deleteById(1);
+            int count = QueryChain.of(logicDeleteTestMapper)
+                    .join(JoinMode.LEFT, LogicDeleteTest.class, SysUser.class, on -> on.eq(LogicDeleteTest::getId, SysUser::getId))
+                    .eq(LogicDeleteTest::getId, 0)
+                    .count();
+            assertEquals(count, 0);
+
+            count = QueryChain.of(logicDeleteTestMapper)
+                    .from(SysUser.class)
+                    .join(JoinMode.LEFT, SysUser.class, LogicDeleteTest.class, on -> on.eq(LogicDeleteTest::getId, SysUser::getId))
+                    .eq(SysUser::getId, 1)
+                    .count();
+            assertEquals(count, 1);
         }
     }
 
