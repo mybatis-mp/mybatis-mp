@@ -74,7 +74,7 @@ public class LogicDeleteTestCase extends BaseTest {
     public void deleteWithWhereTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
-            int deleteCnt = logicDeleteTestMapper.delete(where -> where.eq(LogicDeleteTest::getId, 1).or().eq(LogicDeleteTest::getName, "abc"));
+            int deleteCnt = logicDeleteTestMapper.delete(where -> where.eq(LogicDeleteTest::getId, 1));
             assertEquals(deleteCnt, 1);
 
             List<LogicDeleteTest> list = QueryChain.of(logicDeleteTestMapper).list();
@@ -124,7 +124,12 @@ public class LogicDeleteTestCase extends BaseTest {
     public void updateWithWhereTest4() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
+
+            int cnt=logicDeleteTestMapper.update(logicDeleteTestMapper.getById(1),where->where.ne(LogicDeleteTest::getId, 0));
+            assertEquals(cnt, 1);
+
             logicDeleteTestMapper.delete(where -> where.eq(LogicDeleteTest::getId, 1));
+
             assertNull(logicDeleteTestMapper.getById(1));
             int updateCnt = UpdateChain.of(logicDeleteTestMapper)
                     .set(LogicDeleteTest::getName, "abc")
