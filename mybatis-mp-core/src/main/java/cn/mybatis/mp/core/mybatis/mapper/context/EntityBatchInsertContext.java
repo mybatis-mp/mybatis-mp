@@ -14,7 +14,6 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
-import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableIds;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
@@ -23,6 +22,7 @@ import cn.mybatis.mp.core.incrementer.IdentifierGeneratorFactory;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.tenant.TenantUtil;
+import cn.mybatis.mp.core.util.DefaultValueUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
@@ -136,17 +136,12 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
                             //逻辑删除初始值回写
                             TableInfoUtil.setValue(tableFieldInfo, t, value);
                         } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
-                            //设置默认值
-                            value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getTypeClass(), tableFieldInfo.getTableFieldAnnotation().defaultValue());
-
-                            //默认值回写
-                            TableInfoUtil.setValue(tableFieldInfo, t, value);
+                            //读取回填 @TableField里的默认值
+                            value = DefaultValueUtil.getAndSetDefaultValue(t, tableFieldInfo);
                         }
                     } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
-                        //设置默认值
-                        value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getTypeClass(), tableFieldInfo.getTableFieldAnnotation().defaultValue());
-                        //默认值回写
-                        TableInfoUtil.setValue(tableFieldInfo, t, value);
+                        //读取回填 默认值
+                        value = DefaultValueUtil.getAndSetDefaultValue(t, tableFieldInfo);
                     } else if (tableFieldInfo.isVersion()) {
                         //乐观锁设置 默认值1
                         value = TypeConvertUtil.convert(Integer.valueOf(1), tableFieldInfo.getField().getType());

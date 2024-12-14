@@ -74,8 +74,20 @@ public @interface TableField {
      */
     String defaultValue() default "";
 
+    /***
+     * 默认值是否可以为空
+     * @return
+     */
+    boolean defaultValueNullable() default false;
+
     /**
      * 修改默认值 默认为NULL，“”表示NULL，如需表达 空字符，填 {BLANK}
      */
     String updateDefaultValue() default "";
+
+    /***
+     * 默认值是否可以为空
+     * @return
+     */
+    boolean updateDefaultValueNullable() default false;
 }

@@ -14,13 +14,13 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
-import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.ModelFieldInfo;
 import cn.mybatis.mp.core.db.reflect.ModelInfo;
 import cn.mybatis.mp.core.db.reflect.Models;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.Update;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
+import cn.mybatis.mp.core.util.DefaultValueUtil;
 import cn.mybatis.mp.core.util.ModelInfoUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
@@ -72,10 +72,8 @@ public class ModelUpdateCmdCreateUtil {
             }
 
             if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValue())) {
-                //设置默认值
-                value = MybatisMpConfig.getDefaultValue(modelFieldInfo.getFieldInfo().getTypeClass(), modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValue());
-                //默认值回写
-                ModelInfoUtil.setValue(modelFieldInfo, t, value);
+                //读取回填 修改默认值
+                value = DefaultValueUtil.getAndSetUpdateDefaultValue(t, modelFieldInfo);
             }
 
             if (allFieldForce || (Objects.nonNull(forceFields) && forceFields.contains(modelFieldInfo.getField().getName()))) {

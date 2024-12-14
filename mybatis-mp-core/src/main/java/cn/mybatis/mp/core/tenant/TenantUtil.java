@@ -34,21 +34,20 @@ public final class TenantUtil {
      *
      * @param model 实体类model
      */
-    public static void setTenantId(Model model) {
+    public static Serializable setTenantId(Model model) {
         ModelInfo modelInfo = Models.get(model.getClass());
         if (Objects.isNull(modelInfo.getTenantIdFieldInfo())) {
-            return;
+            return null;
         }
 
         Serializable tenantId = getTenantId();
         if (Objects.isNull(tenantId)) {
-            return;
+            return null;
         }
 
         try {
-            modelInfo.getTenantIdFieldInfo().getWriteFieldInvoker().invoke(model, new Object[]{
-                    tenantId
-            });
+            modelInfo.getTenantIdFieldInfo().getWriteFieldInvoker().invoke(model, new Object[]{tenantId});
+            return tenantId;
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }

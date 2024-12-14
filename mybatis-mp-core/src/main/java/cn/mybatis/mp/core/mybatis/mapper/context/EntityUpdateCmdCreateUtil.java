@@ -14,11 +14,11 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
-import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.Update;
+import cn.mybatis.mp.core.util.DefaultValueUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
@@ -73,10 +73,8 @@ public class EntityUpdateCmdCreateUtil {
             }
 
             if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
-                //设置默认值
-                value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getTypeClass(), tableFieldInfo.getTableFieldAnnotation().updateDefaultValue());
-                //默认值回写
-                TableInfoUtil.setValue(tableFieldInfo, t, value);
+                //读取回填 修改默认值
+                value = DefaultValueUtil.getAndSetUpdateDefaultValue(t, tableFieldInfo);
             }
 
             boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(tableFieldInfo.getField().getName());
