@@ -138,7 +138,7 @@ public final class MybatisBatchUtil {
      * @param <T>               数据的类型
      * @return 影响的条数
      */
-    public static <M, T> int batchMulti(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list, int batchSize, MybatisBatchBiConsumer<SqlSession, M, List<T>> batchFunction) {
+    public static <M, T> int batchMulti(SqlSessionFactory sqlSessionFactory, Class<M> mapperType, Collection<T> list, int batchSize, int subBatchSize, MybatisBatchBiConsumer<SqlSession, M, List<T>> batchFunction) {
         if (list == null || list.isEmpty()) {
             return 0;
         }
@@ -146,19 +146,29 @@ public final class MybatisBatchUtil {
             M mapper = session.getMapper(mapperType);
             int updateCnt = 0;
             int optTimes = 0;
+            int counter = 0;
             List<T> subList = new ArrayList<>();
             for (T entity : list) {
-                optTimes++;
                 subList.add(entity);
-                if (optTimes == batchSize) {
+                counter++;
+                if (counter == subBatchSize) {
                     batchFunction.accept(session, mapper, subList);
+                    counter = 0;
+                    optTimes++;
                     subList.clear();
+                }
+
+                if (optTimes == batchSize) {
                     updateCnt += getEffectCnt(session.flushStatements());
                     optTimes = 0;
                 }
             }
-            if (optTimes != 0) {
+            if (counter != 0) {
+                optTimes++;
                 batchFunction.accept(session, mapper, subList);
+            }
+
+            if (optTimes != 0) {
                 updateCnt += getEffectCnt(session.flushStatements());
             }
             return updateCnt;
