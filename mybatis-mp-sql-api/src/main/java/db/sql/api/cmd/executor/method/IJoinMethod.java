@@ -26,6 +26,14 @@ public interface IJoinMethod<SELF extends IJoinMethod, ON> {
         return this.join(JoinMode.INNER, mainTable, secondTable, consumer);
     }
 
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF leftJoin(DATASET mainTable, DATASET secondTable, Consumer<ON> consumer) {
+        return this.join(JoinMode.LEFT, mainTable, secondTable, consumer);
+    }
+
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF rightJoin(DATASET mainTable, DATASET secondTable, Consumer<ON> consumer) {
+        return this.join(JoinMode.RIGHT, mainTable, secondTable, consumer);
+    }
+
     <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> SELF join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<ON> consumer);
 
     default SELF join(JoinMode mode, Class mainTable, Class secondTable) {
@@ -36,8 +44,24 @@ public interface IJoinMethod<SELF extends IJoinMethod, ON> {
         return join(JoinMode.INNER, mainTable, secondTable);
     }
 
+    default SELF leftJoin(Class mainTable, Class secondTable) {
+        return join(JoinMode.LEFT, mainTable, secondTable);
+    }
+
+    default SELF rightJoin(Class mainTable, Class secondTable) {
+        return join(JoinMode.RIGHT, mainTable, secondTable);
+    }
+
     default SELF join(Class mainTable, Class secondTable, Consumer<ON> consumer) {
         return join(JoinMode.INNER, mainTable, secondTable, consumer);
+    }
+
+    default SELF leftJoin(Class mainTable, Class secondTable, Consumer<ON> consumer) {
+        return join(JoinMode.LEFT, mainTable, secondTable, consumer);
+    }
+
+    default SELF rightJoin(Class mainTable, Class secondTable, Consumer<ON> consumer) {
+        return join(JoinMode.RIGHT, mainTable, secondTable, consumer);
     }
 
     default SELF join(JoinMode mode, Class mainTable, Class secondTable, Consumer<ON> consumer) {
@@ -48,12 +72,28 @@ public interface IJoinMethod<SELF extends IJoinMethod, ON> {
         return join(JoinMode.INNER, mainTable, mainTableStorey, secondTable, secondTableStorey);
     }
 
+    default SELF leftJoin(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey) {
+        return join(JoinMode.LEFT, mainTable, mainTableStorey, secondTable, secondTableStorey);
+    }
+
+    default SELF rightJoin(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey) {
+        return join(JoinMode.RIGHT, mainTable, mainTableStorey, secondTable, secondTableStorey);
+    }
+
     default SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey) {
         return join(mode, mainTable, mainTableStorey, secondTable, secondTableStorey, null);
     }
 
     default SELF join(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<ON> consumer) {
         return join(JoinMode.INNER, mainTable, mainTableStorey, secondTable, secondTableStorey, consumer);
+    }
+
+    default SELF leftJoin(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<ON> consumer) {
+        return join(JoinMode.LEFT, mainTable, mainTableStorey, secondTable, secondTableStorey, consumer);
+    }
+
+    default SELF rightJoin(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<ON> consumer) {
+        return join(JoinMode.RIGHT, mainTable, mainTableStorey, secondTable, secondTableStorey, consumer);
     }
 
     SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<ON> consumer);
@@ -63,12 +103,28 @@ public interface IJoinMethod<SELF extends IJoinMethod, ON> {
         return join(JoinMode.INNER, mainTable, secondTable, consumer);
     }
 
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF leftJoin(Class mainTable, DATASET secondTable, Consumer<ON> consumer) {
+        return join(JoinMode.LEFT, mainTable, secondTable, consumer);
+    }
+
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF rightJoin(Class mainTable, DATASET secondTable, Consumer<ON> consumer) {
+        return join(JoinMode.RIGHT, mainTable, secondTable, consumer);
+    }
+
     default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF join(JoinMode mode, Class mainTable, DATASET secondTable, Consumer<ON> consumer) {
         return join(mode, mainTable, 1, secondTable, consumer);
     }
 
     default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF join(Class mainTable, int mainTableStorey, DATASET secondTable, Consumer<ON> consumer) {
         return join(JoinMode.INNER, mainTable, mainTableStorey, secondTable, consumer);
+    }
+
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF leftJoin(Class mainTable, int mainTableStorey, DATASET secondTable, Consumer<ON> consumer) {
+        return join(JoinMode.LEFT, mainTable, mainTableStorey, secondTable, consumer);
+    }
+
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF rightJoin(Class mainTable, int mainTableStorey, DATASET secondTable, Consumer<ON> consumer) {
+        return join(JoinMode.RIGHT, mainTable, mainTableStorey, secondTable, consumer);
     }
 
     <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF join(JoinMode mode, Class mainTable, int mainTableStorey, DATASET secondTable, Consumer<ON> consumer);
