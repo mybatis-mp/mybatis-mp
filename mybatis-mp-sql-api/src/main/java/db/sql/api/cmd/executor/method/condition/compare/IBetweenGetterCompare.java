@@ -16,6 +16,8 @@ package db.sql.api.cmd.executor.method.condition.compare;
 
 import db.sql.api.Getter;
 
+import java.util.function.Supplier;
+
 public interface IBetweenGetterCompare<RV, V> {
 
     default <T> RV between(Getter<T> column, V value, V value2) {
@@ -29,6 +31,9 @@ public interface IBetweenGetterCompare<RV, V> {
     default <T> RV between(Getter<T> column, int storey, V value, V value2) {
         return between(true, column, storey, value, value2);
     }
+
+    <T> RV between(boolean when, Getter<T> column, int storey, V value, V value2);
+
 
     default <T> RV between(Getter<T> column, V[] values) {
         return between(true, column, 1, values);
@@ -46,5 +51,18 @@ public interface IBetweenGetterCompare<RV, V> {
         return this.between(when, column, storey, values[0], values[1]);
     }
 
-    <T> RV between(boolean when, Getter<T> column, int storey, V value, V value2);
+    default <T> RV between(Getter<T> column, Supplier<V> value1Supplier, Supplier<V> value2Supplier) {
+        return between(column, 1, value1Supplier, value2Supplier);
+    }
+
+    default <T> RV between(Getter<T> column, int storey, Supplier<V> value1Supplier, Supplier<V> value2Supplier) {
+        return this.between(true, column, storey, value1Supplier, value2Supplier);
+    }
+
+    default <T> RV between(boolean when, Getter<T> column, int storey, Supplier<V> value1Supplier, Supplier<V> value2Supplier) {
+        if (!when) {
+            return (RV) this;
+        }
+        return this.between(true, column, storey, value1Supplier.get(), value2Supplier.get());
+    }
 }

@@ -16,6 +16,8 @@ package db.sql.api.cmd.executor.method.condition.compare;
 
 import db.sql.api.Getter;
 
+import java.util.function.Supplier;
+
 public interface INotBetweenGetterCompare<RV, V> {
 
     default <T> RV notBetween(Getter<T> column, V value, V value2) {
@@ -29,6 +31,8 @@ public interface INotBetweenGetterCompare<RV, V> {
     default <T> RV notBetween(Getter<T> column, int storey, V value, V value2) {
         return notBetween(true, column, storey, value, value2);
     }
+
+    <T> RV notBetween(boolean when, Getter<T> column, int storey, V value, V value2);
 
     default <T> RV notBetween(Getter<T> column, V[] values) {
         return notBetween(true, column, 1, values);
@@ -46,5 +50,18 @@ public interface INotBetweenGetterCompare<RV, V> {
         return this.notBetween(when, column, storey, values[0], values[1]);
     }
 
-    <T> RV notBetween(boolean when, Getter<T> column, int storey, V value, V value2);
+    default <T> RV notBetween(Getter<T> column, Supplier<V> value1Supplier, Supplier<V> value2Supplier) {
+        return notBetween(column, 1, value1Supplier, value2Supplier);
+    }
+
+    default <T> RV notBetween(Getter<T> column, int storey, Supplier<V> value1Supplier, Supplier<V> value2Supplier) {
+        return this.notBetween(true, column, storey, value1Supplier, value2Supplier);
+    }
+
+    default <T> RV notBetween(boolean when, Getter<T> column, int storey, Supplier<V> value1Supplier, Supplier<V> value2Supplier) {
+        if (!when) {
+            return (RV) this;
+        }
+        return this.notBetween(true, column, storey, value1Supplier.get(), value2Supplier.get());
+    }
 }
