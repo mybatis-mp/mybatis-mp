@@ -373,6 +373,7 @@ public class ConditionTest extends BaseTest {
                     .from(SysUser.class)
                     .between(SysUser::getId, 1, 2)
                     .between(SysUser::getId, null, Objects::nonNull)
+                    .between(SysUser::getId, () -> 1, () -> 2)
                     .returnType(Integer.class)
                     .list();
 
