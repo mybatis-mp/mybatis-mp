@@ -65,23 +65,14 @@ public class DefaultValueUtil {
         if (StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
             return null;
         }
-        Object value = MybatisMpConfig.getDefaultValue(defaultValueType, tableFieldInfo.getTableFieldAnnotation().defaultValue());
-        if (value == null && !tableFieldInfo.getTableFieldAnnotation().defaultValueNullable()) {
-            throw new RuntimeException("the default value is null");
-        }
-        return value;
+        return MybatisMpConfig.getDefaultValue(defaultValueType, tableFieldInfo.getTableFieldAnnotation().defaultValue());
     }
 
     private static Object getUpdateDefaultValue(TableFieldInfo tableFieldInfo, Class<?> defaultValueType) {
         if (StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
             return null;
         }
-        Object value = MybatisMpConfig.getDefaultValue(defaultValueType, tableFieldInfo.getTableFieldAnnotation().updateDefaultValue());
-        if (value == null && !tableFieldInfo.getTableFieldAnnotation().updateDefaultValueNullable()) {
-            throw new RuntimeException("the update default value is null");
-        }
-        return value;
+        return MybatisMpConfig.getDefaultValue(defaultValueType, tableFieldInfo.getTableFieldAnnotation().updateDefaultValue());
     }
-
 
 }
