@@ -63,13 +63,13 @@ public class TenantTestCase extends BaseTest {
             tenantTestMapper.save(tenantTest);
 
             tenantTest.setName("我是2");
-            int updateCnt=tenantTestMapper.update(tenantTest);
+            int updateCnt = tenantTestMapper.update(tenantTest);
             System.out.println(tenantTest);
             assertEquals(1, (int) tenantTest.getTenantId());
             assertEquals(1, updateCnt);
 
 
-            updateCnt=tenantTestMapper.update(tenantTest,where->where.eq(TenantTest::getTenantId, 1).or().eq(TenantTest::getName, "abc"));
+            updateCnt = tenantTestMapper.update(tenantTest, where -> where.eq(TenantTest::getTenantId, 1).or().eq(TenantTest::getName, "abc"));
             System.out.println(tenantTest);
             assertEquals(1, (int) tenantTest.getTenantId());
             assertEquals(1, updateCnt);
@@ -179,7 +179,7 @@ public class TenantTestCase extends BaseTest {
             int cnt = tenantTestMapper.deleteById(tenantTest.getId());
             assertEquals(cnt, 1);
 
-            cnt = tenantTestMapper.delete(where->where.eq(TenantTest::getTenantId, 123).or().eq(TenantTest::getName, "abc"));
+            cnt = tenantTestMapper.delete(where -> where.eq(TenantTest::getTenantId, 123).or().eq(TenantTest::getName, "abc"));
             assertEquals(cnt, 0);
         }
     }

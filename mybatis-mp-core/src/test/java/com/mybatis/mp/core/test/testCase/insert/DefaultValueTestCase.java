@@ -34,7 +34,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.LongAdder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -368,7 +367,7 @@ public class DefaultValueTestCase extends BaseTest {
         long speedTime3 = System.currentTimeMillis() - startTime;
 
         startTime = System.currentTimeMillis();
-        int xx4 = MybatisBatchUtil.batchMulti(sqlSessionFactory, BasicMapper.class, list, 10,100, (session, mapper, subList) -> {
+        int xx4 = MybatisBatchUtil.batchMulti(sqlSessionFactory, BasicMapper.class, list, 10, 100, (session, mapper, subList) -> {
             mapper.saveBatch(subList);
         });
         assertEquals(xx4, length);
@@ -385,7 +384,7 @@ public class DefaultValueTestCase extends BaseTest {
 
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
-            DefaultValueTest d=new DefaultValueTest();
+            DefaultValueTest d = new DefaultValueTest();
             d.setCreateTime(LocalDateTime.now());
             d.setValue1("1");
             d.setValue2(1);
@@ -397,7 +396,7 @@ public class DefaultValueTestCase extends BaseTest {
         int length = 1000;
         List<DefaultValueTest> list = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
-            DefaultValueTest d=new DefaultValueTest();
+            DefaultValueTest d = new DefaultValueTest();
             d.setCreateTime(LocalDateTime.now());
             d.setValue1("1");
             d.setValue2(1);
@@ -407,17 +406,16 @@ public class DefaultValueTestCase extends BaseTest {
         }
 
 
+        long start = System.currentTimeMillis();
 
-        long start=System.currentTimeMillis();
 
-
-        int count=MybatisBatchUtil.batch(sqlSessionFactory,DefaultValueTestMapper.class,list,1000,(session, mapper, data) -> {
+        int count = MybatisBatchUtil.batch(sqlSessionFactory, DefaultValueTestMapper.class, list, 1000, (session, mapper, data) -> {
             mapper.save(data);
         });
 
 //        int count=MybatisBatchUtil.batchMulti(sqlSessionFactory,DefaultValueTestMapper.class,list,10,100,(session, mapper, sublist) -> {
 //            mapper.saveBatch(sublist);
 //        });
-        System.out.println((System.currentTimeMillis() - start)+"毫秒："+count);
+        System.out.println((System.currentTimeMillis() - start) + "毫秒：" + count);
     }
 }
