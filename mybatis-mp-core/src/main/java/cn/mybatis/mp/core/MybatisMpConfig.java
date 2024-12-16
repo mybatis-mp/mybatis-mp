@@ -210,7 +210,7 @@ public final class MybatisMpConfig {
         Map<String, Function<Class<?>, T>> map = (Map<String, Function<Class<?>, T>>) CACHE.get(DEFAULT_VALUE_MANAGER);
         Function<Class<?>, T> f = map.get(key);
         if (f == null) {
-            throw new RuntimeException("key:  " + key + " not set");
+            throw new RuntimeException("default value key:  " + key + " not set");
         }
         return f.apply(clazz);
     }
