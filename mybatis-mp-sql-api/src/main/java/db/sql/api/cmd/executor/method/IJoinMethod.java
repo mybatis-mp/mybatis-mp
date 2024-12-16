@@ -26,6 +26,10 @@ public interface IJoinMethod<SELF extends IJoinMethod, ON> {
         return this.join(JoinMode.INNER, mainTable, secondTable, consumer);
     }
 
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF innerJoin(DATASET mainTable, DATASET secondTable, Consumer<ON> consumer) {
+        return this.join(JoinMode.INNER, mainTable, secondTable, consumer);
+    }
+
     default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF leftJoin(DATASET mainTable, DATASET secondTable, Consumer<ON> consumer) {
         return this.join(JoinMode.LEFT, mainTable, secondTable, consumer);
     }
@@ -44,6 +48,10 @@ public interface IJoinMethod<SELF extends IJoinMethod, ON> {
         return join(JoinMode.INNER, mainTable, secondTable);
     }
 
+    default SELF innerJoin(Class mainTable, Class secondTable) {
+        return join(JoinMode.INNER, mainTable, secondTable);
+    }
+
     default SELF leftJoin(Class mainTable, Class secondTable) {
         return join(JoinMode.LEFT, mainTable, secondTable);
     }
@@ -53,6 +61,10 @@ public interface IJoinMethod<SELF extends IJoinMethod, ON> {
     }
 
     default SELF join(Class mainTable, Class secondTable, Consumer<ON> consumer) {
+        return join(JoinMode.INNER, mainTable, secondTable, consumer);
+    }
+
+    default SELF innerJoin(Class mainTable, Class secondTable, Consumer<ON> consumer) {
         return join(JoinMode.INNER, mainTable, secondTable, consumer);
     }
 
@@ -72,6 +84,10 @@ public interface IJoinMethod<SELF extends IJoinMethod, ON> {
         return join(JoinMode.INNER, mainTable, mainTableStorey, secondTable, secondTableStorey);
     }
 
+    default SELF innerJoin(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey) {
+        return join(JoinMode.INNER, mainTable, mainTableStorey, secondTable, secondTableStorey);
+    }
+
     default SELF leftJoin(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey) {
         return join(JoinMode.LEFT, mainTable, mainTableStorey, secondTable, secondTableStorey);
     }
@@ -85,6 +101,10 @@ public interface IJoinMethod<SELF extends IJoinMethod, ON> {
     }
 
     default SELF join(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<ON> consumer) {
+        return join(JoinMode.INNER, mainTable, mainTableStorey, secondTable, secondTableStorey, consumer);
+    }
+
+    default SELF innerJoin(Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<ON> consumer) {
         return join(JoinMode.INNER, mainTable, mainTableStorey, secondTable, secondTableStorey, consumer);
     }
 
@@ -103,6 +123,10 @@ public interface IJoinMethod<SELF extends IJoinMethod, ON> {
         return join(JoinMode.INNER, mainTable, secondTable, consumer);
     }
 
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF innerJoin(Class mainTable, DATASET secondTable, Consumer<ON> consumer) {
+        return join(JoinMode.INNER, mainTable, secondTable, consumer);
+    }
+
     default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF leftJoin(Class mainTable, DATASET secondTable, Consumer<ON> consumer) {
         return join(JoinMode.LEFT, mainTable, secondTable, consumer);
     }
@@ -116,6 +140,10 @@ public interface IJoinMethod<SELF extends IJoinMethod, ON> {
     }
 
     default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF join(Class mainTable, int mainTableStorey, DATASET secondTable, Consumer<ON> consumer) {
+        return join(JoinMode.INNER, mainTable, mainTableStorey, secondTable, consumer);
+    }
+
+    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF innerJoin(Class mainTable, int mainTableStorey, DATASET secondTable, Consumer<ON> consumer) {
         return join(JoinMode.INNER, mainTable, mainTableStorey, secondTable, consumer);
     }
 

@@ -138,6 +138,10 @@ public interface IQuery<SELF extends IQuery
         return this.join(JoinMode.INNER, mainTable, secondTable, consumer);
     }
 
+    default SELF innerJoin(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
+        return this.join(JoinMode.INNER, mainTable, secondTable, consumer);
+    }
+
     default SELF leftJoin(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
         return this.join(JoinMode.LEFT, mainTable, secondTable, consumer);
     }
