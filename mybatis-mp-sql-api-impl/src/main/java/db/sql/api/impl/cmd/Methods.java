@@ -1418,7 +1418,7 @@ public final class Methods {
      * @param value2 结束值
      * @return Between
      */
-    public static Between between(Cmd column, Serializable value, Serializable value2) {
+    public static Between between(Cmd column, Object value, Object value2) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
         Objects.requireNonNull(value2);
@@ -1433,7 +1433,7 @@ public final class Methods {
      * @param value2
      * @return NotBetween
      */
-    public static NotBetween notBetween(Cmd column, Serializable value, Serializable value2) {
+    public static NotBetween notBetween(Cmd column, Object value, Object value2) {
         Objects.requireNonNull(column);
         Objects.requireNonNull(value);
         Objects.requireNonNull(value2);

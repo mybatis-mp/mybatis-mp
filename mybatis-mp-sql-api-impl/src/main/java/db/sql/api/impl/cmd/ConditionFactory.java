@@ -319,12 +319,12 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public ICondition between(Cmd column, Serializable value, Serializable value2) {
+    public ICondition between(Cmd column, Object value, Object value2) {
         if (!isKeyValid(column)) {
             return null;
         }
-        value = (Serializable) checkAndGetValidValue(value);
-        value2 = (Serializable) checkAndGetValidValue(value2);
+        value = checkAndGetValidValue(value);
+        value2 = checkAndGetValidValue(value2);
         if (Objects.isNull(value) || Objects.isNull(value2)) {
             if (Objects.isNull(value) && Objects.isNull(value2)) {
                 return null;
@@ -335,7 +335,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public <T> ICondition between(boolean when, Getter<T> column, int storey, Serializable value, Serializable value2) {
+    public <T> ICondition between(boolean when, Getter<T> column, int storey, Object value, Object value2) {
         value = (Serializable) checkAndGetValidValue(value);
         value2 = (Serializable) checkAndGetValidValue(value2);
         if (Objects.isNull(value) || Objects.isNull(value2)) {
@@ -348,12 +348,12 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public ICondition notBetween(Cmd column, Serializable value, Serializable value2) {
+    public ICondition notBetween(Cmd column, Object value, Object value2) {
         if (!isKeyValid(column)) {
             return null;
         }
-        value = (Serializable) checkAndGetValidValue(value);
-        value2 = (Serializable) checkAndGetValidValue(value2);
+        value = checkAndGetValidValue(value);
+        value2 = checkAndGetValidValue(value2);
         if (Objects.isNull(value) || Objects.isNull(value2)) {
             if (Objects.isNull(value) && Objects.isNull(value2)) {
                 return null;
@@ -364,7 +364,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
     }
 
     @Override
-    public <T> ICondition notBetween(boolean when, Getter<T> column, int storey, Serializable value, Serializable value2) {
+    public <T> ICondition notBetween(boolean when, Getter<T> column, int storey, Object value, Object value2) {
         if (!when) {
             return null;
         }

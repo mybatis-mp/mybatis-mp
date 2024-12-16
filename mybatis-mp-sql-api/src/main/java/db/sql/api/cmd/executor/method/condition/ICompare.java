@@ -17,8 +17,6 @@ package db.sql.api.cmd.executor.method.condition;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.executor.method.condition.compare.*;
 
-import java.io.Serializable;
-
 /**
  * 比较器
  *
@@ -43,10 +41,10 @@ public interface ICompare<RV, COLUMN, V> extends
         ILikeGetterPredicateCompare<RV>,
         INotLikeGetterCompare<RV>,
         INotLikeGetterPredicateCompare<RV>,
-        IBetweenGetterCompare<RV>,
-        IBetweenGetterPredicateCompare<RV>,
-        INotBetweenGetterCompare<RV>,
-        INotBetweenGetterPredicateCompare<RV>,
+        IBetweenGetterCompare<RV, V>,
+        IBetweenGetterPredicateCompare<RV, V>,
+        INotBetweenGetterCompare<RV, V>,
+        INotBetweenGetterPredicateCompare<RV, V>,
         IIsNullGetterCompare<RV>,
         IIsNotNullGetterCompare<RV>,
         IEmptyGetterCompare<RV>,
@@ -80,9 +78,9 @@ public interface ICompare<RV, COLUMN, V> extends
 
     RV notLike(LikeMode mode, COLUMN column, String value);
 
-    RV between(COLUMN column, Serializable value, Serializable value2);
+    RV between(COLUMN column, V value, V value2);
 
-    RV notBetween(COLUMN column, Serializable value, Serializable value2);
+    RV notBetween(COLUMN column, V value, V value2);
 
     RV isNull(COLUMN column);
 
