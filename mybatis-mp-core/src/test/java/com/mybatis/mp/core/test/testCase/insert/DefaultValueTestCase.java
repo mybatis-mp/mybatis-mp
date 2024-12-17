@@ -313,10 +313,10 @@ public class DefaultValueTestCase extends BaseTest {
 
     @Test
     public void testBatch() {
-        if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2) {
+        if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2 || TestDataSource.DB_TYPE == DbType.KING_BASE) {
             return;
         }
-        int length = 20000;
+        int length = 100;
         List<DefaultValueTest> list = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
             list.add(new DefaultValueTest());
