@@ -19,6 +19,7 @@ import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.sql.executor.Delete;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
+import db.sql.api.DbType;
 import db.sql.api.cmd.basic.SQL1;
 import db.sql.api.impl.cmd.struct.Where;
 
@@ -99,6 +100,10 @@ public final class DeleteMethodUtil {
      * @return 影响数量
      */
     public static int truncate(BasicMapper basicMapper, TableInfo tableInfo) {
-        return basicMapper.execute("TRUNCATE TABLE " + tableInfo.getTableName());
+        return basicMapper.dbAdapt(selectorCall -> selectorCall.when(DbType.DB2, () -> {
+            return basicMapper.execute("TRUNCATE TABLE " + tableInfo.getTableName() + " IMMEDIATE");
+        }).otherwise(() -> {
+            return basicMapper.execute("TRUNCATE TABLE " + tableInfo.getTableName());
+        }));
     }
 }

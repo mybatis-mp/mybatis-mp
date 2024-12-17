@@ -54,8 +54,8 @@ public class DbRunner2Test extends BaseTest {
     public void truncateTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper dbRunner = session.getMapper(SysUserMapper.class);
-            int cnt = dbRunner.truncate();
-            assertEquals(cnt, 3);
+            dbRunner.truncate();
+            assertEquals(dbRunner.getById(1), null);
         }
     }
 

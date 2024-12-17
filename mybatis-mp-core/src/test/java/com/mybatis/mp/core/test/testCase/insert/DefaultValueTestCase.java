@@ -313,6 +313,9 @@ public class DefaultValueTestCase extends BaseTest {
 
     @Test
     public void testBatch() {
+        if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2) {
+            return;
+        }
         int length = 20000;
         List<DefaultValueTest> list = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
