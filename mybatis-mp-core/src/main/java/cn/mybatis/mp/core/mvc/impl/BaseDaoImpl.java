@@ -392,6 +392,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @return 返回结果列表
      */
     protected <ID extends Serializable> Cursor<T> cursorByIds(ID... ids) {
+        this.checkIdType();
         return this.cursorByIds(ids, (Getter<T>[]) null);
     }
 
@@ -404,6 +405,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @return 返回结果列表
      */
     protected <ID extends Serializable> Cursor<T> cursorByIds(ID[] ids, Getter<T>... selectFields) {
+        this.checkIdType();
         return CursorMethodUtil.cursorByIds(getBasicMapper(), getTableInfo(), ids, selectFields);
     }
 
@@ -415,6 +417,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @return 返回结果列表
      */
     protected <ID extends Serializable> Cursor<T> cursorByIds(Collection<ID> ids) {
+        this.checkIdType();
         return this.cursorByIds(ids, (Getter<T>[]) null);
     }
 
@@ -427,6 +430,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @return 返回结果列表
      */
     protected <ID extends Serializable> Cursor<T> cursorByIds(Collection<ID> ids, Getter<T>... selectFields) {
+        this.checkIdType();
         return CursorMethodUtil.cursorByIds(getBasicMapper(), getTableInfo(), ids, selectFields);
     }
 
