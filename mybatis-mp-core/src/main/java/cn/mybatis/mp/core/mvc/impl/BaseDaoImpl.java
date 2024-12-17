@@ -378,6 +378,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     /**
      * 查所有
+     *
      * @return
      */
     protected List<T> listAll() {
@@ -478,6 +479,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     /**
      * 列表查询,返回类型，当前实体类
+     *
      * @return
      */
     protected Cursor<T> cursorAll() {

@@ -118,7 +118,7 @@ public class MybatisConfiguration extends Configuration {
     @Override
     public <T> void addMapper(Class<T> type) {
 
-        if(MybatisMpConfig.getSingleMapperClass() == BasicMapper.class){
+        if (MybatisMpConfig.getSingleMapperClass() == BasicMapper.class) {
             //添加基础 BasicMapper
             if (!this.hasMapper(BasicMapper.class)) {
                 this.addBasicMapper(BasicMapper.class);

@@ -134,7 +134,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
             // 看是否是强制字段
             if (!isNeedInsert && (allFieldForce || (Objects.nonNull(this.forceFields) && this.forceFields.contains(modelFieldInfo.getField().getName())))) {
                 isNeedInsert = true;
-                if(modelFieldInfo.getTableFieldInfo().isTableId() && value == null){
+                if (modelFieldInfo.getTableFieldInfo().isTableId() && value == null) {
                     isNeedInsert = false;
                 }
             }
