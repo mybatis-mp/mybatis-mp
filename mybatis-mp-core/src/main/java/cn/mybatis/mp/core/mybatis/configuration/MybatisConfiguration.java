@@ -15,6 +15,7 @@
 package cn.mybatis.mp.core.mybatis.configuration;
 
 
+import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.FieldInfo;
 import cn.mybatis.mp.core.exception.NotTableClassException;
 import cn.mybatis.mp.core.mybatis.executor.*;
@@ -116,19 +117,20 @@ public class MybatisConfiguration extends Configuration {
 
     @Override
     public <T> void addMapper(Class<T> type) {
-        //添加基础 BasicMapper
-        if (!this.hasMapper(BasicMapper.class)) {
-            this.addBasicMapper(BasicMapper.class);
-            resultMaps.clear();
-            if (type == BasicMapper.class) {
-                return;
+
+        if(MybatisMpConfig.getSingleMapperClass() == BasicMapper.class){
+            //添加基础 BasicMapper
+            if (!this.hasMapper(BasicMapper.class)) {
+                this.addBasicMapper(BasicMapper.class);
+                resultMaps.clear();
+                if (type == BasicMapper.class) {
+                    return;
+                }
             }
         }
+
         if (BasicMapper.class.isAssignableFrom(type) && type != BasicMapper.class) {
             this.addBasicMapper(type);
-            return;
-        } else if (MybatisMapper.class == type) {
-            super.addMapper(type);
             return;
         } else if (MybatisMapper.class.isAssignableFrom(type)) {
             List<Class<?>> list = GenericUtil.getGenericInterfaceClass(type);

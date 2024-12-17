@@ -220,7 +220,7 @@ public final class MybatisMpConfig {
      *
      * @return 单Mapper的class
      */
-    public static Class getSingleMapperClass() {
+    public static Class<? extends BasicMapper> getSingleMapperClass() {
         return (Class) CACHE.computeIfAbsent(SINGLE_MAPPER_CLASS, key -> BasicMapper.class);
     }
 
@@ -229,7 +229,7 @@ public final class MybatisMpConfig {
      *
      * @param singleMapperClass
      */
-    public static void setSingleMapperClass(Class singleMapperClass) {
+    public static void setSingleMapperClass(Class<? extends BasicMapper> singleMapperClass) {
         CACHE.putIfAbsent(SINGLE_MAPPER_CLASS, singleMapperClass);
     }
 

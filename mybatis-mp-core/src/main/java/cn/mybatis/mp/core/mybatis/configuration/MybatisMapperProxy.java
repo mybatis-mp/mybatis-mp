@@ -14,6 +14,7 @@
 
 package cn.mybatis.mp.core.mybatis.configuration;
 
+import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import org.apache.ibatis.session.SqlSession;
@@ -43,7 +44,7 @@ public class MybatisMapperProxy<T> extends BaseMapperProxy<T> {
 
     private BasicMapper getBasicMapper() {
         if (Objects.isNull(basicMapper)) {
-            basicMapper = sqlSession.getMapper(BasicMapper.class);
+            basicMapper = sqlSession.getMapper(MybatisMpConfig.getSingleMapperClass());
         }
         return basicMapper;
     }
