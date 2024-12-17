@@ -133,6 +133,9 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
             // 看是否是强制字段
             if (!isNeedInsert && (allFieldForce || (Objects.nonNull(this.forceFields) && this.forceFields.contains(tableFieldInfo.getField().getName())))) {
                 isNeedInsert = true;
+                if(tableFieldInfo.isTableId() && value == null){
+                    isNeedInsert = false;
+                }
             }
 
             if (isNeedInsert) {
