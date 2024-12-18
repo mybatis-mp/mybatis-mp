@@ -187,7 +187,7 @@ public final class SQLOptimizeUtils {
 
         Select select = (Select) classCmdMap.get(Select.class);
         if (forCount && !isUnionQuery && !select.isDistinct()) {
-            if (select.getSelectField().size() != 1 || !(select.getSelectField().get(0) instanceof Count)) {
+            if (classCmdMap.containsKey(GroupBy.class) || select.getSelectField().size() != 1 || !(select.getSelectField().get(0) instanceof Count)) {
                 Select newSelect;
                 if (dbType == DbType.ORACLE) {
                     if (classCmdMap.containsKey(GroupBy.class)) {
@@ -259,7 +259,7 @@ public final class SQLOptimizeUtils {
 
         if (!needWarp) {
             Select select = (Select) classCmdMap.get(Select.class);
-            if (select.getSelectField().size() != 1 || !(select.getSelectField().get(0) instanceof Count)) {
+            if (classCmdMap.containsKey(GroupBy.class) || select.getSelectField().size() != 1 || !(select.getSelectField().get(0) instanceof Count)) {
                 Select newSelect = new Select();
                 if (select.isDistinct()) {
                     newSelect.select(new Count(select));
