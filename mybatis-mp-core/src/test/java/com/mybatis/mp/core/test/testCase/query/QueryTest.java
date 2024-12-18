@@ -349,7 +349,7 @@ public class QueryTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             final LongAdder adder = new LongAdder();
             Integer count = QueryChain.of(sysUserMapper)
-                    .selectCount1()
+                    .selectCount1(c -> c.as(SysUser::getId))
                     .from(SysUser.class)
                     .returnType(Integer.class, (cnt) -> {
                         System.out.println(">>>" + cnt);

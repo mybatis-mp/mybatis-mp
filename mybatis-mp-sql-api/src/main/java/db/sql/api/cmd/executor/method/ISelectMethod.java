@@ -19,6 +19,8 @@ import db.sql.api.Getter;
 import db.sql.api.cmd.basic.*;
 import db.sql.api.cmd.executor.method.selectMethod.ISelectMethods;
 
+import java.util.function.Consumer;
+
 public interface ISelectMethod<SELF extends ISelectMethod,
         TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>,
         COLUMN extends Cmd>
@@ -48,6 +50,10 @@ public interface ISelectMethod<SELF extends ISelectMethod,
     SELF selectCount1();
 
     SELF selectCountAll();
+
+    SELF selectCount1(Consumer<ICount1<?>> consumer);
+
+    SELF selectCountAll(Consumer<ICountAll<?>> consumer);
 
     default SELF select(Class entity) {
         return this.select(entity, 1);

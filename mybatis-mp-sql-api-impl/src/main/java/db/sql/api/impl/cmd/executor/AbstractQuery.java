@@ -207,13 +207,29 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     @Override
     public SELF selectCount1() {
-        this.select(Count1.INSTANCE);
+        this.select(new Count1());
         return (SELF) this;
     }
 
     @Override
     public SELF selectCountAll() {
-        this.select(CountAll.INSTANCE);
+        this.select(new CountAll());
+        return (SELF) this;
+    }
+
+    @Override
+    public SELF selectCount1(Consumer<ICount1<?>> consumer) {
+        Count1 count = new Count1();
+        consumer.accept(count);
+        this.select(count);
+        return (SELF) this;
+    }
+
+    @Override
+    public SELF selectCountAll(Consumer<ICountAll<?>> consumer) {
+        CountAll count = new CountAll();
+        consumer.accept(count);
+        this.select(count);
         return (SELF) this;
     }
 

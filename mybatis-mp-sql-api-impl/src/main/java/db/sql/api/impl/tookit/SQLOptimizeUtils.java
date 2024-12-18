@@ -187,18 +187,20 @@ public final class SQLOptimizeUtils {
 
         Select select = (Select) classCmdMap.get(Select.class);
         if (forCount && !isUnionQuery && !select.isDistinct()) {
-            Select newSelect;
-            if (dbType == DbType.ORACLE) {
-                if (classCmdMap.containsKey(GroupBy.class)) {
-                    //ORACLE 有group时 无法支持 select 1
-                    newSelect = select;
+            if (select.getSelectField().size() != 1 || !(select.getSelectField().get(0) instanceof Count)) {
+                Select newSelect;
+                if (dbType == DbType.ORACLE) {
+                    if (classCmdMap.containsKey(GroupBy.class)) {
+                        //ORACLE 有group时 无法支持 select 1
+                        newSelect = select;
+                    } else {
+                        newSelect = new Select().select(SQL1.INSTANCE);
+                    }
                 } else {
                     newSelect = new Select().select(SQL1.INSTANCE);
                 }
-            } else {
-                newSelect = new Select().select(SQL1.INSTANCE);
+                classCmdMap.put(Select.class, newSelect);
             }
-            classCmdMap.put(Select.class, newSelect);
         }
     }
 
@@ -257,13 +259,15 @@ public final class SQLOptimizeUtils {
 
         if (!needWarp) {
             Select select = (Select) classCmdMap.get(Select.class);
-            Select newSelect = new Select();
-            if (select.isDistinct()) {
-                newSelect.select(new Count(select));
-            } else {
-                newSelect.select(CountAll.INSTANCE);
+            if (select.getSelectField().size() != 1 || !(select.getSelectField().get(0) instanceof Count)) {
+                Select newSelect = new Select();
+                if (select.isDistinct()) {
+                    newSelect.select(new Count(select));
+                } else {
+                    newSelect.select(new CountAll());
+                }
+                classCmdMap.put(Select.class, newSelect);
             }
-            classCmdMap.put(Select.class, newSelect);
         }
         cmdList = (List<Cmd>) classCmdMap.values().stream().sorted(query.comparator()).collect(Collectors.toList());
         if (needWarp) {

@@ -239,7 +239,7 @@ public final class Methods {
      * @return Count1
      */
     public static Count1 count1() {
-        return Count1.INSTANCE;
+        return new Count1();
     }
 
     /**
@@ -248,7 +248,7 @@ public final class Methods {
      * @return CountAll
      */
     public static CountAll countAll() {
-        return CountAll.INSTANCE;
+        return new CountAll();
     }
 
     /**
