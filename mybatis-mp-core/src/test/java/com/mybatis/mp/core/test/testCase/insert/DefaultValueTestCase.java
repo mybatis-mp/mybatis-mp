@@ -313,7 +313,7 @@ public class DefaultValueTestCase extends BaseTest {
 
     @Test
     public void testBatch() {
-        if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2 || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+        if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2) {
             return;
         }
         int length = 100;
@@ -420,5 +420,44 @@ public class DefaultValueTestCase extends BaseTest {
 //            mapper.saveBatch(sublist);
 //        });
         System.out.println((System.currentTimeMillis() - start) + "毫秒：" + count);
+    }
+
+    @Test
+    public void testSaveBatch() {
+        if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2) {
+            return;
+        }
+        int length = 100;
+        List<DefaultValueTest> list = new ArrayList<>(length);
+        for (int i = 0; i < length; i++) {
+            list.add(new DefaultValueTest());
+        }
+        List<DefaultValueTest> saveBatchList = new ArrayList<>(100);
+        MybatisBatchUtil.batch(this.sqlSessionFactory, (session) -> {
+            DefaultValueTestMapper mapper = session.getMapper(DefaultValueTestMapper.class);
+            int saveCnt = 0;
+            int j = 0;
+            for (int i = 0; i < length; i++) {
+                saveBatchList.add(list.get(i));
+                if (i != 0 && i % 100 == 0) {
+                    j++;
+                    mapper.saveBatch(saveBatchList, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
+                    saveBatchList.clear();
+                }
+                if (i != 0 && j == 5) {
+                    j = 0;
+                    saveCnt += MybatisBatchUtil.getEffectCnt(session.flushStatements());
+                }
+            }
+            if (!saveBatchList.isEmpty()) {
+                mapper.saveBatch(saveBatchList, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
+                saveBatchList.clear();
+                saveCnt += MybatisBatchUtil.getEffectCnt(session.flushStatements());
+            }
+            assertEquals(length, saveCnt);
+            assertEquals(length, QueryChain.of(mapper).count());
+            return saveCnt;
+
+        });
     }
 }

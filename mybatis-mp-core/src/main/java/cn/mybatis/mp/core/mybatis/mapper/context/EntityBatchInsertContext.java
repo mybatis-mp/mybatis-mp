@@ -69,12 +69,10 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
         if (!tableInfo.getIdFieldInfos().isEmpty()) {
             tableInfo.getIdFieldInfos().forEach(idFieldInfo -> {
                 TableId tableId = TableInfoUtil.getTableIdAnnotation(idFieldInfo.getField(), dbType);
-                if (tableId.value() == IdAutoType.GENERATOR) {
-                    tableInfo.getIdFieldInfos().forEach(item -> {
-                        if (!saveFieldInfoSet.contains(item)) {
-                            saveFieldInfoSet.add(item);
-                        }
-                    });
+                if (tableId.value() == IdAutoType.GENERATOR || tableId.value() == IdAutoType.SQL) {
+                    if (!saveFieldInfoSet.contains(idFieldInfo)) {
+                        saveFieldInfoSet.add(idFieldInfo);
+                    }
                 }
             });
         }

@@ -69,11 +69,9 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
             modelInfo.getIdFieldInfos().forEach(idFieldInfo -> {
                 TableId tableId = TableInfoUtil.getTableIdAnnotation(idFieldInfo.getTableFieldInfo().getField(), dbType);
                 if (tableId.value() == IdAutoType.GENERATOR) {
-                    modelInfo.getIdFieldInfos().forEach(item -> {
-                        if (!saveFieldInfoSet.contains(item)) {
-                            saveFieldInfoSet.add(item);
-                        }
-                    });
+                    if (!saveFieldInfoSet.contains(idFieldInfo)) {
+                        saveFieldInfoSet.add(idFieldInfo);
+                    }
                 }
             });
 
