@@ -19,6 +19,7 @@ import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.JoinMode;
+import db.sql.api.cmd.UpdateStrategy;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
@@ -122,12 +123,14 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
             this.updateTable = new UpdateTable(tables);
             this.append(this.updateTable);
         }
+        for (Table table : tables) {
+            this.getSQLListeners().stream().forEach(item -> item.onUpdate(this, table));
+        }
         return this.updateTable;
     }
 
     @Override
     public SELF update(Class entity, Consumer<Table> consumer) {
-        this.updateEntityIntercept(entity);
         Table table = this.$.table(entity);
         this.update(table);
         return (SELF) this;
@@ -138,7 +141,6 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         Table[] tables = new Table[entities.length];
         for (int i = 0; i < entities.length; i++) {
             Class entity = entities[i];
-            this.updateEntityIntercept(entity);
             tables[i] = $.table(entity);
         }
         return this.update(tables);
@@ -172,11 +174,35 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
     }
 
     @Override
-    public <T> SELF set(Getter<T> field, Object value, boolean enableNull) {
-        if (enableNull && Objects.isNull(value)) {
-            return this.set(field, NULL.NULL);
+    public <T> SELF set(Getter<T> field, Object value, UpdateStrategy updateStrategy) {
+        if (Objects.isNull(value)) {
+            if (updateStrategy == UpdateStrategy.THROW_EXCEPTION) {
+                throw new NullPointerException();
+            } else if (updateStrategy == UpdateStrategy.NULL_TO_NULL) {
+                return this.set($.field(field), NULL.NULL);
+            } else if (updateStrategy == UpdateStrategy.NULL_IGNORE) {
+                return (SELF) this;
+            } else {
+                throw new RuntimeException("not support update strategy");
+            }
         }
         return this.set($.field(field), value);
+    }
+
+    @Override
+    public SELF set(TableField field, Object value, UpdateStrategy updateStrategy) {
+        if (Objects.isNull(value)) {
+            if (updateStrategy == UpdateStrategy.THROW_EXCEPTION) {
+                throw new NullPointerException();
+            } else if (updateStrategy == UpdateStrategy.NULL_TO_NULL) {
+                return this.set(field, NULL.NULL);
+            } else if (updateStrategy == UpdateStrategy.NULL_IGNORE) {
+                return (SELF) this;
+            } else {
+                throw new RuntimeException("not support update strategy");
+            }
+        }
+        return this.set(field, value);
     }
 
     @Override
@@ -193,12 +219,12 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
             this.append(joins);
         }
         joins.add(join);
+
         return join;
     }
 
     @Override
     public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<On> consumer) {
-        consumer = this.joinEntityIntercept(mainTable, mainTableStorey, secondTable, secondTableStorey, consumer);
         return this.join(mode, this.$.table(mainTable, mainTableStorey), this.$.table(secondTable, secondTableStorey), consumer);
     }
 
@@ -235,12 +261,12 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
             this.append(from);
         }
         this.from.append(table);
+        this.getSQLListeners().stream().forEach(item -> item.onFrom(this, table));
         return from;
     }
 
     @Override
     public SELF from(Class entity, int storey, Consumer<Table> consumer) {
-        this.fromEntityIntercept(entity, storey);
         Table table = this.$.table(entity, storey);
         this.from(table);
         if (Objects.nonNull(consumer)) {
@@ -256,6 +282,7 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
         if (consumer != null) {
             consumer.accept(join.getOn());
         }
+        this.getSQLListeners().stream().forEach(item -> item.onJoin(this, mode, mainTable, secondTable, join.getOn()));
         return (SELF) this;
     }
 

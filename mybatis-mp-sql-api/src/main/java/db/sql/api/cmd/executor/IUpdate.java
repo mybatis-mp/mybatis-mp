@@ -17,6 +17,7 @@ package db.sql.api.cmd.executor;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.JoinMode;
+import db.sql.api.cmd.UpdateStrategy;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.basic.ITable;
@@ -74,7 +75,17 @@ public interface IUpdate<SELF extends IUpdate,
         return this.set(field, value, false);
     }
 
-    <T> SELF set(Getter<T> field, V value, boolean enableNull);
+    default <T> SELF set(Getter<T> field, V value, boolean nullToNull) {
+        return this.set(field, value, nullToNull ? UpdateStrategy.NULL_TO_NULL : UpdateStrategy.THROW_EXCEPTION);
+    }
+
+    <T> SELF set(Getter<T> field, V value, UpdateStrategy updateStrategy);
+
+    default SELF set(TABLE_FIELD field, V value, boolean nullToNull) {
+        return this.set(field, value, nullToNull ? UpdateStrategy.NULL_TO_NULL : UpdateStrategy.THROW_EXCEPTION);
+    }
+
+    SELF set(TABLE_FIELD filed, V value, UpdateStrategy updateStrategy);
 
     @Override
     default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD>... tables) {

@@ -106,6 +106,7 @@ public class TableIdGeneratorWrapper {
                         .resultMaps(Collections.singletonList(selectKeyResultMap))
                         .keyGenerator(NoKeyGenerator.INSTANCE)
                         .useCache(false)
+                        .flushCacheRequired(true)
                         .build();
                 keyGenerator = new MybatisSelectKeyGenerator(selectKeyMappedStatement, true);
                 break;

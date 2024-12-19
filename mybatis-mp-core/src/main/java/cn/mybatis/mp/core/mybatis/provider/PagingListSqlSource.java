@@ -14,9 +14,9 @@
 
 package cn.mybatis.mp.core.mybatis.provider;
 
-import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.util.DbTypeUtil;
 import cn.mybatis.mp.core.util.PagingUtil;
+import cn.mybatis.mp.page.IPager;
 import db.sql.api.DbType;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlSource;
@@ -40,12 +40,12 @@ public class PagingListSqlSource implements SqlSource {
     public BoundSql getBoundSql(Object parameterObject) {
         BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
         String sql = boundSql.getSql();
-        Pager<?> pager;
-        if (parameterObject instanceof Pager) {
-            pager = (Pager<?>) parameterObject;
+        IPager<?> pager;
+        if (parameterObject instanceof IPager) {
+            pager = (IPager<?>) parameterObject;
         } else {
             Map<String, Object> params = (Map<String, Object>) parameterObject;
-            pager = (Pager<?>) params.get("arg0");
+            pager = (IPager<?>) params.get("arg0");
         }
         return new PagingBoundSql(this.configuration, PagingUtil.getLimitedSQL(getDbType(), pager, sql), boundSql);
     }

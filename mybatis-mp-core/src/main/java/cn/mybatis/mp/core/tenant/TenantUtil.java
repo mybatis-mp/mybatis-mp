@@ -15,9 +15,10 @@
 package cn.mybatis.mp.core.tenant;
 
 import cn.mybatis.mp.core.db.reflect.*;
+import cn.mybatis.mp.core.sql.executor.MpDatasetField;
+import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.db.Model;
-import db.sql.api.impl.cmd.CmdFactory;
-import db.sql.api.impl.cmd.struct.Where;
+import db.sql.api.impl.cmd.struct.ConditionChain;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -25,7 +26,6 @@ import java.util.Objects;
 public final class TenantUtil {
 
     public static Serializable getTenantId() {
-
         return TenantContext.getTenantId();
     }
 
@@ -34,21 +34,20 @@ public final class TenantUtil {
      *
      * @param model 实体类model
      */
-    public static void setTenantId(Model model) {
+    public static Serializable setTenantId(Model model) {
         ModelInfo modelInfo = Models.get(model.getClass());
         if (Objects.isNull(modelInfo.getTenantIdFieldInfo())) {
-            return;
+            return null;
         }
 
         Serializable tenantId = getTenantId();
         if (Objects.isNull(tenantId)) {
-            return;
+            return null;
         }
 
         try {
-            modelInfo.getTenantIdFieldInfo().getWriteFieldInvoker().invoke(model, new Object[]{
-                    tenantId
-            });
+            modelInfo.getTenantIdFieldInfo().getWriteFieldInvoker().invoke(model, new Object[]{tenantId});
+            return tenantId;
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -70,7 +69,6 @@ public final class TenantUtil {
      * @param entity
      */
     public static Serializable setTenantId(TableInfo tableInfo, Object entity) {
-
         if (Objects.isNull(tableInfo.getTenantIdFieldInfo())) {
             return null;
         }
@@ -93,57 +91,21 @@ public final class TenantUtil {
     /**
      * 添加租户条件
      *
-     * @param where      where
-     * @param cmdFactory 命令工厂
-     * @param entity     实体类
-     * @param storey     实体类表的存储层级
+     * @param table          MpTable
+     * @param conditionChain ConditionChain
      */
-    public static void addTenantCondition(Where where, CmdFactory cmdFactory, Class entity, int storey) {
+    public static void addTenantCondition(MpTable table, ConditionChain conditionChain) {
         Serializable tenantId = TenantUtil.getTenantId();
         if (Objects.isNull(tenantId)) {
             return;
         }
-        TableInfo tableInfo = Tables.get(entity);
+        TableInfo tableInfo = table.getTableInfo();
         if (Objects.isNull(tableInfo.getTenantIdFieldInfo())) {
             return;
         }
-        where.extConditionChain().eq(cmdFactory.field(entity, tableInfo.getTenantIdFieldInfo().getField().getName(), storey), tenantId);
-    }
-
-    /**
-     * 添加租户条件
-     *
-     * @param where      where
-     * @param cmdFactory 命令工厂
-     * @param tableInfo  tableInfo
-     * @param storey     实体类表的存储层级
-     */
-    public static void addTenantCondition(Where where, CmdFactory cmdFactory, TableInfo tableInfo, int storey) {
-        Serializable tenantId = TenantUtil.getTenantId();
-        if (Objects.isNull(tenantId)) {
-            return;
-        }
-
-        if (Objects.isNull(tableInfo.getTenantIdFieldInfo())) {
-            return;
-        }
-        where.extConditionChain().eq(cmdFactory.field(tableInfo.getType(), tableInfo.getTenantIdFieldInfo().getField().getName(), storey), tenantId);
-    }
-
-    /**
-     * 添加租户条件
-     *
-     * @param where      where
-     * @param cmdFactory 命令工厂
-     * @param entity     实体类
-     * @param storey     实体类表的存储层级
-     */
-    public static Serializable addTenantCondition(Where where, CmdFactory cmdFactory, Class entity, TableFieldInfo tenantTableField, int storey) {
-        Serializable tenantId = TenantUtil.getTenantId();
-        if (Objects.isNull(tenantId)) {
-            return null;
-        }
-        where.extConditionChain().eq(cmdFactory.field(entity, tenantTableField.getField().getName(), storey), tenantId);
-        return tenantId;
+        TableFieldInfo tenantIdFieldInfo = tableInfo.getTenantIdFieldInfo();
+        conditionChain.eq(new MpDatasetField(table, tenantIdFieldInfo.getColumnName(),
+                tenantIdFieldInfo.getFieldInfo(), tenantIdFieldInfo.getTypeHandler(),
+                tenantIdFieldInfo.getTableFieldAnnotation().jdbcType()), tenantId);
     }
 }

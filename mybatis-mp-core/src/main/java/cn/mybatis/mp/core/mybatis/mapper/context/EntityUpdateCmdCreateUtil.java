@@ -14,12 +14,11 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
-import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.Update;
-import cn.mybatis.mp.core.tenant.TenantUtil;
+import cn.mybatis.mp.core.util.DefaultValueUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
@@ -55,12 +54,7 @@ public class EntityUpdateCmdCreateUtil {
                 }
                 continue;
             } else if (tableFieldInfo.isTenantId()) {
-                //添加租户条件
-                Object tenantId = TenantUtil.addTenantCondition(update.$where(), update.$(), t.getClass(), tableFieldInfo, 1);
-                if (Objects.nonNull(tenantId)) {
-                    //租户回写
-                    TableInfoUtil.setValue(tableFieldInfo, t, tenantId);
-                }
+                //租户ID不修改
                 continue;
             } else if (tableFieldInfo.isVersion()) {
                 if (Objects.isNull(value)) {
@@ -79,10 +73,8 @@ public class EntityUpdateCmdCreateUtil {
             }
 
             if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
-                //设置默认值
-                value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getTypeClass(), tableFieldInfo.getTableFieldAnnotation().updateDefaultValue());
-                //默认值回写
-                TableInfoUtil.setValue(tableFieldInfo, t, value);
+                //读取回填 修改默认值
+                value = DefaultValueUtil.getAndSetUpdateDefaultValue(t, tableFieldInfo);
             }
 
             boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(tableFieldInfo.getField().getName());

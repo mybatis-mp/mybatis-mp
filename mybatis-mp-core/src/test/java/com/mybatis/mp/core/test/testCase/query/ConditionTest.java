@@ -40,6 +40,7 @@ public class ConditionTest extends BaseTest {
     public void nullPass() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
             Integer id = QueryChain.of(sysUserMapper)
                     .forSearch()
                     .select(SysUser::getId)
@@ -371,6 +372,8 @@ public class ConditionTest extends BaseTest {
                     .select(SysUser::getId)
                     .from(SysUser.class)
                     .between(SysUser::getId, 1, 2)
+                    .between(SysUser::getId, null, Objects::nonNull)
+                    .between(SysUser::getId, () -> 1, () -> 2)
                     .returnType(Integer.class)
                     .list();
 
@@ -389,6 +392,7 @@ public class ConditionTest extends BaseTest {
                     .from(SysUser.class)
                     .between(SysUser::getId, 1, 3)
                     .notBetween(SysUser::getId, 1, 2)
+                    .notBetween(SysUser::getId, null, Objects::nonNull)
                     .returnType(Integer.class)
                     .list();
             assertEquals(1, list.size(), "notLeftLike");

@@ -16,21 +16,53 @@ package db.sql.api.cmd.executor.method.condition.compare;
 
 import db.sql.api.Getter;
 
-import java.io.Serializable;
+import java.util.function.Supplier;
 
-public interface IBetweenGetterCompare<RV> {
+public interface IBetweenGetterCompare<RV, V> {
 
-    default <T> RV between(Getter<T> column, Serializable value, Serializable value2) {
+    default <T> RV between(Getter<T> column, V value, V value2) {
         return between(true, column, 1, value, value2);
     }
 
-    default <T> RV between(boolean when, Getter<T> column, Serializable value, Serializable value2) {
+    default <T> RV between(boolean when, Getter<T> column, V value, V value2) {
         return this.between(when, column, 1, value, value2);
     }
 
-    default <T> RV between(Getter<T> column, int storey, Serializable value, Serializable value2) {
+    default <T> RV between(Getter<T> column, int storey, V value, V value2) {
         return between(true, column, storey, value, value2);
     }
 
-    <T> RV between(boolean when, Getter<T> column, int storey, Serializable value, Serializable value2);
+    <T> RV between(boolean when, Getter<T> column, int storey, V value, V value2);
+
+
+    default <T> RV between(Getter<T> column, V[] values) {
+        return between(true, column, 1, values);
+    }
+
+    default <T> RV between(boolean when, Getter<T> column, V[] values) {
+        return this.between(when, column, 1, values);
+    }
+
+    default <T> RV between(Getter<T> column, int storey, V[] values) {
+        return between(true, column, storey, values);
+    }
+
+    default <T> RV between(boolean when, Getter<T> column, int storey, V[] values) {
+        return this.between(when, column, storey, values[0], values[1]);
+    }
+
+    default <T> RV between(Getter<T> column, Supplier<V> value1Supplier, Supplier<V> value2Supplier) {
+        return between(column, 1, value1Supplier, value2Supplier);
+    }
+
+    default <T> RV between(Getter<T> column, int storey, Supplier<V> value1Supplier, Supplier<V> value2Supplier) {
+        return this.between(true, column, storey, value1Supplier, value2Supplier);
+    }
+
+    default <T> RV between(boolean when, Getter<T> column, int storey, Supplier<V> value1Supplier, Supplier<V> value2Supplier) {
+        if (!when) {
+            return (RV) this;
+        }
+        return this.between(true, column, storey, value1Supplier.get(), value2Supplier.get());
+    }
 }

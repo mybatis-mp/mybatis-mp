@@ -14,12 +14,12 @@
 
 package cn.mybatis.mp.core.mybatis.mapper;
 
-import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.*;
 import cn.mybatis.mp.core.sql.executor.BaseDelete;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.BaseUpdate;
+import cn.mybatis.mp.page.IPager;
 import db.sql.api.impl.cmd.executor.SelectorCall;
 import org.apache.ibatis.cursor.Cursor;
 
@@ -43,6 +43,17 @@ public interface MybatisMapper<T> extends BaseMapper, GetMapper<T>, ExistsMapper
      * @param consumer
      */
     <R> R dbAdapt(Consumer<SelectorCall<R>> consumer);
+
+    /**
+     * 执行原生非查询类sql
+     *
+     * @param sql    例如 update xx set name=? where id=?
+     * @param params 例如 abc ,1
+     * @return 影响的数量
+     */
+    default int execute(String sql, Object... params) {
+        return getBasicMapper().execute(sql, params);
+    }
 
     @Override
     default <T2> T2 get(BaseQuery<? extends BaseQuery, T2> query) {
@@ -85,7 +96,7 @@ public interface MybatisMapper<T> extends BaseMapper, GetMapper<T>, ExistsMapper
     }
 
     @Override
-    default <T2, P extends Pager<T2>> P paging(BaseQuery<? extends BaseQuery, T2> query, P pager) {
+    default <T2, P extends IPager<T2>> P paging(BaseQuery<? extends BaseQuery, T2> query, P pager) {
         return getBasicMapper().paging(query, pager);
     }
 
@@ -93,4 +104,5 @@ public interface MybatisMapper<T> extends BaseMapper, GetMapper<T>, ExistsMapper
     default <K, T2> Map<K, T2> mapWithKey(String mapKey, BaseQuery<? extends BaseQuery, T2> query) {
         return getBasicMapper().mapWithKey(mapKey, query);
     }
+
 }

@@ -16,9 +16,9 @@ package cn.mybatis.mp.core.sql.executor.chain;
 
 import cn.mybatis.mp.core.mybatis.mapper.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
-import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.util.SelectClassUtil;
+import cn.mybatis.mp.page.IPager;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.LambdaUtil;
@@ -245,7 +245,7 @@ public class QueryChain<T> extends BaseQuery<QueryChain<T>, T> {
      * @param pager
      * @return
      */
-    public <P extends Pager<T>> P paging(P pager) {
+    public <P extends IPager<T>> P paging(P pager) {
         this.setDefault();
         return mapper.paging(this, pager);
     }

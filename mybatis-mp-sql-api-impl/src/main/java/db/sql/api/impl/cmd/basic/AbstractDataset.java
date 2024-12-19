@@ -16,6 +16,7 @@ package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
+import db.sql.api.impl.tookit.SqlConst;
 
 public abstract class AbstractDataset<T extends AbstractDataset<T, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> implements IDataset<T, DATASET_FIELD> {
 
@@ -24,4 +25,12 @@ public abstract class AbstractDataset<T extends AbstractDataset<T, DATASET_FIELD
         return (DATASET_FIELD) new DatasetField(this, name);
     }
 
+    /**
+     * 就是 *
+     *
+     * @return DatasetField
+     */
+    public DatasetField all() {
+        return new DatasetField(this, SqlConst.ALL);
+    }
 }

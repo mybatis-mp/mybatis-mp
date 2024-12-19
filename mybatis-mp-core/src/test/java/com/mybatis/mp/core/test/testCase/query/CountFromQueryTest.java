@@ -242,7 +242,7 @@ public class CountFromQueryTest extends BaseTest {
                 getCountSql(Query.create()
                         .select(SysUser::getId, SysUser::getUserName)
                         .from(SysUser.class)
-                        .join(JoinMode.RIGHT, SysUser.class, SysRole.class)
+                        .rightJoin(SysUser.class, SysRole.class)
                         .eq(SysUser::getId, 1)
                         .orderBy(SysUser::getId)
                 )

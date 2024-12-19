@@ -38,7 +38,6 @@ public class JsonContainsPath extends BasicFunction<JsonContainsPath> {
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
-        ;
         this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
         sqlBuilder.append(this.allMatch ? "'ONE'" : "'ALL'");

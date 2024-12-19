@@ -14,14 +14,13 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
-import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.ModelFieldInfo;
 import cn.mybatis.mp.core.db.reflect.ModelInfo;
 import cn.mybatis.mp.core.db.reflect.Models;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.Update;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
-import cn.mybatis.mp.core.tenant.TenantUtil;
+import cn.mybatis.mp.core.util.DefaultValueUtil;
 import cn.mybatis.mp.core.util.ModelInfoUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
@@ -54,12 +53,7 @@ public class ModelUpdateCmdCreateUtil {
                 }
                 continue;
             } else if (modelFieldInfo.getTableFieldInfo().isTenantId()) {
-                //添加租户条件
-                Object tenantId = TenantUtil.addTenantCondition(update.$where(), update.$(), modelInfo.getEntityType(), modelFieldInfo.getTableFieldInfo(), 1);
-                if (Objects.nonNull(tenantId)) {
-                    //租户回写
-                    ModelInfoUtil.setValue(modelFieldInfo, t, tenantId);
-                }
+                //租户ID不修改
                 continue;
             } else if (modelFieldInfo.getTableFieldInfo().isVersion()) {
                 if (Objects.isNull(value)) {
@@ -78,10 +72,8 @@ public class ModelUpdateCmdCreateUtil {
             }
 
             if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValue())) {
-                //设置默认值
-                value = MybatisMpConfig.getDefaultValue(modelFieldInfo.getFieldInfo().getTypeClass(), modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValue());
-                //默认值回写
-                ModelInfoUtil.setValue(modelFieldInfo, t, value);
+                //读取回填 修改默认值
+                value = DefaultValueUtil.getAndSetUpdateDefaultValue(t, modelFieldInfo);
             }
 
             if (allFieldForce || (Objects.nonNull(forceFields) && forceFields.contains(modelFieldInfo.getField().getName()))) {
@@ -110,7 +102,6 @@ public class ModelUpdateCmdCreateUtil {
     public static Update create(Model model, Set<String> forceFields, boolean allFieldForce) {
         Where where = WhereUtil.create();
         ModelInfo modelInfo = Models.get(model.getClass());
-        WhereUtil.appendIdWhereWithModel(where, modelInfo, model);
         return warp(new Update(where), modelInfo, model, forceFields, allFieldForce);
     }
 

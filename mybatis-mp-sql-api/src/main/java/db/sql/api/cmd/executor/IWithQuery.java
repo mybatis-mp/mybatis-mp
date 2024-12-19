@@ -48,9 +48,10 @@ import db.sql.api.cmd.struct.query.*;
  * @param <FORUPDATE>
  * @param <UNION>
  */
-public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, DATASET_FIELD, COLUMN, V, CMD_FACTORY, CONDITION_CHAIN, WITH, RECURSIVE, SELECT, FROM, JOIN, ON, JOINS, WHERE, GROUPBY, HAVING, ORDERBY, LIMIT, FORUPDATE, UNION>,
+public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, WITH_QUERY_DATASET, DATASET_FIELD, COLUMN, V, CMD_FACTORY, CONDITION_CHAIN, WITH, RECURSIVE, SELECT, FROM, JOIN, ON, JOINS, WHERE, GROUPBY, HAVING, ORDERBY, LIMIT, FORUPDATE, UNION>,
         TABLE extends ITable<TABLE, TABLE_FIELD>,
         TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>,
+        WITH_QUERY_DATASET extends IDataset<WITH_QUERY_DATASET, DATASET_FIELD>,
         DATASET_FIELD extends IDatasetField<DATASET_FIELD>,
         COLUMN extends Cmd,
         V,
@@ -101,7 +102,7 @@ public interface IWithQuery<SELF extends IWithQuery<SELF, TABLE, TABLE_FIELD, DA
      * @param alisa
      * @return
      */
-    TABLE asTable(String alisa);
+    WITH_QUERY_DATASET asTable(String alisa);
 
     /**
      * 递归

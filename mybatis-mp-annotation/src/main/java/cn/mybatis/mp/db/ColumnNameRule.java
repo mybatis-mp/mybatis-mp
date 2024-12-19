@@ -29,5 +29,5 @@ public enum ColumnNameRule {
     /**
      * 表示和字段名一样
      */
-    USE_FIELD_NAME;
+    USE_FIELD_NAME
 }

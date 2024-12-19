@@ -48,6 +48,16 @@ public class JoinTest extends BaseTest {
 
 
             assertEquals(Integer.valueOf(2), count, "defaultAddOn");
+
+            count = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, c -> c.count())
+                    .from(SysRole.class)
+                    .join(SysRole.class, SysUser.class)
+                    .returnType(Integer.class)
+                    .get();
+
+
+            assertEquals(Integer.valueOf(2), count, "defaultAddOn");
         }
     }
 

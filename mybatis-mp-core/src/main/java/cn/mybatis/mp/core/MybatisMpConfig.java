@@ -16,10 +16,15 @@ package cn.mybatis.mp.core;
 
 
 import cn.mybatis.mp.core.logicDelete.LogicDeleteSwitch;
-import cn.mybatis.mp.core.sql.MybatisMpQuerySQLBuilder;
-import cn.mybatis.mp.core.sql.QuerySQLBuilder;
+import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
+import cn.mybatis.mp.core.sql.MybatisMpSQLBuilder;
+import cn.mybatis.mp.core.sql.SQLBuilder;
+import cn.mybatis.mp.core.sql.listener.ForeignKeySQLListener;
+import cn.mybatis.mp.core.sql.listener.LogicDeleteSQLListener;
+import cn.mybatis.mp.core.sql.listener.TenantSQLListener;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
+import db.sql.api.cmd.listener.SQLListener;
 
 import java.lang.reflect.Array;
 import java.time.LocalDate;
@@ -41,10 +46,13 @@ public final class MybatisMpConfig {
     private static final String SQL_BUILDER = "SQLBuilder";
     private static final String LOGIC_DELETE_SWITCH = "logicDeleteSwitch";
     private static final String DEFAULT_VALUE_MANAGER = "defaultValueManager";
-
-    private static final QuerySQLBuilder DEFAULT_SQL_BUILDER = new MybatisMpQuerySQLBuilder();
+    private static final String SINGLE_MAPPER_CLASS = "singleMapperClass";
+    private static final List<SQLListener> SQL_LISTENER = new ArrayList<>();
 
     static {
+        SQL_LISTENER.add(new ForeignKeySQLListener());
+        SQL_LISTENER.add(new TenantSQLListener());
+        SQL_LISTENER.add(new LogicDeleteSQLListener());
         Map<String, Function<Class<?>, Object>> defaultValueMap = new ConcurrentHashMap<>();
         defaultValueMap.put("{BLANK}", (type) -> {
             if (type == String.class) {
@@ -141,12 +149,12 @@ public final class MybatisMpConfig {
      *
      * @return 返回QuerySQLBuilder
      */
-    public static QuerySQLBuilder getQuerySQLBuilder() {
-        return (QuerySQLBuilder) CACHE.computeIfAbsent(SQL_BUILDER, key -> DEFAULT_SQL_BUILDER);
+    public static SQLBuilder getSQLBuilder() {
+        return (SQLBuilder) CACHE.computeIfAbsent(SQL_BUILDER, key -> new MybatisMpSQLBuilder());
     }
 
-    public static void setQuerySQLBuilder(QuerySQLBuilder querySQLBuilder) {
-        CACHE.put(SQL_BUILDER, querySQLBuilder);
+    public static void setSQLBuilder(SQLBuilder sqlBuilder) {
+        CACHE.put(SQL_BUILDER, sqlBuilder);
     }
 
     /**
@@ -202,8 +210,58 @@ public final class MybatisMpConfig {
         Map<String, Function<Class<?>, T>> map = (Map<String, Function<Class<?>, T>>) CACHE.get(DEFAULT_VALUE_MANAGER);
         Function<Class<?>, T> f = map.get(key);
         if (f == null) {
-            throw new RuntimeException("key:  " + key + " not set");
+            throw new RuntimeException("default value key:  " + key + " not set");
         }
         return f.apply(clazz);
+    }
+
+    /**
+     * 获取单Mapper的class 用于BasicMapper.withSqlSession方法 statement 拼接
+     *
+     * @return 单Mapper的class
+     */
+    public static Class<? extends BasicMapper> getSingleMapperClass() {
+        return (Class) CACHE.computeIfAbsent(SINGLE_MAPPER_CLASS, key -> BasicMapper.class);
+    }
+
+    /**
+     * 设置单Mapper的class 用于BasicMapper.withSqlSession方法 statement 拼接
+     *
+     * @param singleMapperClass
+     */
+    public static void setSingleMapperClass(Class<? extends BasicMapper> singleMapperClass) {
+        CACHE.putIfAbsent(SINGLE_MAPPER_CLASS, singleMapperClass);
+    }
+
+    /**
+     * 添加SQLListener
+     *
+     * @param sqlListener
+     */
+    public static void addSQLListener(SQLListener sqlListener) {
+        SQL_LISTENER.add(sqlListener);
+    }
+
+    /**
+     * 移除SQLListener
+     *
+     * @param type
+     */
+    public static <T extends SQLListener> void removeSQLListener(Class<T> type) {
+        Iterator<SQLListener> iterator = SQL_LISTENER.iterator();
+        while (iterator.hasNext()) {
+            if (type.isAssignableFrom(iterator.next().getClass())) {
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
+     * 获取所有的SQLListener
+     *
+     * @return
+     */
+    public static List<SQLListener> getSQLListeners() {
+        return Collections.unmodifiableList(SQL_LISTENER);
     }
 }

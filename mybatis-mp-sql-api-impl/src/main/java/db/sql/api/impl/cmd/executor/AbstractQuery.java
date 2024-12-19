@@ -207,13 +207,29 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     @Override
     public SELF selectCount1() {
-        this.select(Count1.INSTANCE);
+        this.select(new Count1());
         return (SELF) this;
     }
 
     @Override
     public SELF selectCountAll() {
-        this.select(CountAll.INSTANCE);
+        this.select(new CountAll());
+        return (SELF) this;
+    }
+
+    @Override
+    public SELF selectCount1(Consumer<ICount1<?>> consumer) {
+        Count1 count = new Count1();
+        consumer.accept(count);
+        this.select(count);
+        return (SELF) this;
+    }
+
+    @Override
+    public SELF selectCountAll(Consumer<ICountAll<?>> consumer) {
+        CountAll count = new CountAll();
+        consumer.accept(count);
+        this.select(count);
         return (SELF) this;
     }
 
@@ -296,12 +312,12 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
             this.append(from);
         }
         this.from.append(table);
+        this.getSQLListeners().stream().forEach(item -> item.onFrom(this, table));
         return from;
     }
 
     @Override
     public SELF from(Class entity, int storey, Consumer<Table> consumer) {
-        this.fromEntityIntercept(entity, storey);
         Table table = $.table(entity, storey);
         this.from(table);
         if (Objects.nonNull(consumer)) {
@@ -318,12 +334,12 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
             this.append(joins);
         }
         joins.add(join);
+        this.getSQLListeners().stream().forEach(item -> item.onJoin(this, mode, mainTable, secondTable, join.getOn()));
         return join;
     }
 
     @Override
     public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<On> consumer) {
-        consumer = this.joinEntityIntercept(mainTable, mainTableStorey, secondTable, secondTableStorey, consumer);
         return this.join(mode, $.table(mainTable, mainTableStorey), $.table(secondTable, secondTableStorey), consumer);
     }
 

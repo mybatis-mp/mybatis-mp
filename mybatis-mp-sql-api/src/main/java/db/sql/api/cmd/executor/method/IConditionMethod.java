@@ -176,13 +176,13 @@ public interface IConditionMethod<SELF extends IConditionMethod,
     }
 
     @Override
-    default SELF between(COLUMN column, Serializable value, Serializable value2) {
+    default SELF between(COLUMN column, V value, V value2) {
         conditionChain().between(column, value, value2);
         return (SELF) this;
     }
 
     @Override
-    default SELF notBetween(COLUMN column, Serializable value, Serializable value2) {
+    default SELF notBetween(COLUMN column, V value, V value2) {
         conditionChain().notBetween(column, value, value2);
         return (SELF) this;
     }
@@ -321,13 +321,13 @@ public interface IConditionMethod<SELF extends IConditionMethod,
     }
 
     @Override
-    default <T> SELF between(boolean when, Getter<T> column, int storey, Serializable value, Serializable value2) {
+    default <T> SELF between(boolean when, Getter<T> column, int storey, V value, V value2) {
         conditionChain().between(when, column, storey, value, value2);
         return (SELF) this;
     }
 
     @Override
-    default <T> SELF notBetween(boolean when, Getter<T> column, int storey, Serializable value, Serializable value2) {
+    default <T> SELF notBetween(boolean when, Getter<T> column, int storey, V value, V value2) {
         conditionChain().notBetween(when, column, storey, value, value2);
         return (SELF) this;
     }

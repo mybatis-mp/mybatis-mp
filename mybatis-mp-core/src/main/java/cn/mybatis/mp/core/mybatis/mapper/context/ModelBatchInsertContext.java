@@ -14,7 +14,6 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
-import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.ModelFieldInfo;
 import cn.mybatis.mp.core.db.reflect.ModelInfo;
 import cn.mybatis.mp.core.db.reflect.TableIds;
@@ -23,10 +22,7 @@ import cn.mybatis.mp.core.incrementer.IdentifierGeneratorFactory;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.tenant.TenantUtil;
-import cn.mybatis.mp.core.util.ModelInfoUtil;
-import cn.mybatis.mp.core.util.StringPool;
-import cn.mybatis.mp.core.util.TableInfoUtil;
-import cn.mybatis.mp.core.util.TypeConvertUtil;
+import cn.mybatis.mp.core.util.*;
 import cn.mybatis.mp.db.IdAutoType;
 import cn.mybatis.mp.db.Model;
 import cn.mybatis.mp.db.annotations.TableField;
@@ -73,11 +69,9 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
             modelInfo.getIdFieldInfos().forEach(idFieldInfo -> {
                 TableId tableId = TableInfoUtil.getTableIdAnnotation(idFieldInfo.getTableFieldInfo().getField(), dbType);
                 if (tableId.value() == IdAutoType.GENERATOR) {
-                    modelInfo.getIdFieldInfos().forEach(item -> {
-                        if (!saveFieldInfoSet.contains(item)) {
-                            saveFieldInfoSet.add(item);
-                        }
-                    });
+                    if (!saveFieldInfoSet.contains(idFieldInfo)) {
+                        saveFieldInfoSet.add(idFieldInfo);
+                    }
                 }
             });
 
@@ -111,7 +105,7 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
 
         int fieldSize = saveFieldInfoSet.size();
         boolean containId = false;
-        for (Object t : insertDatas) {
+        for (Model t : insertDatas) {
             List<Object> values = new ArrayList<>();
             for (int i = 0; i < fieldSize; i++) {
                 ModelFieldInfo modelFieldInfo = saveFieldInfoSet.get(i);
@@ -134,12 +128,20 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
                         }
                     } else if (modelFieldInfo.getTableFieldInfo().isTenantId()) {
                         value = TenantUtil.setTenantId(t);
+                    } else if (modelFieldInfo.getTableFieldInfo().isLogicDelete()) {
+                        //逻辑删除字段
+                        //设置删除初始值
+                        value = modelFieldInfo.getTableFieldInfo().getLogicDeleteInitValue();
+                        if (value != null) {
+                            //逻辑删除初始值回写
+                            ModelInfoUtil.setValue(modelFieldInfo, t, value);
+                        } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
+                            //读取回填 @TableField里的默认值
+                            value = DefaultValueUtil.getAndSetDefaultValue(t, modelFieldInfo);
+                        }
                     } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
-                        //设置默认值
-                        value = MybatisMpConfig.getDefaultValue(modelFieldInfo.getFieldInfo().getTypeClass(), modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue());
-
-                        //默认值回写
-                        ModelInfoUtil.setValue(modelFieldInfo, t, value);
+                        //读取回填 默认值
+                        value = DefaultValueUtil.getAndSetDefaultValue(t, modelFieldInfo);
                     } else if (modelFieldInfo.getTableFieldInfo().isVersion()) {
                         //乐观锁设置 默认值1
                         value = TypeConvertUtil.convert(Integer.valueOf(1), modelFieldInfo.getField().getType());

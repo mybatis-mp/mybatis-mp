@@ -138,6 +138,18 @@ public interface IQuery<SELF extends IQuery
         return this.join(JoinMode.INNER, mainTable, secondTable, consumer);
     }
 
+    default SELF innerJoin(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
+        return this.join(JoinMode.INNER, mainTable, secondTable, consumer);
+    }
+
+    default SELF leftJoin(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
+        return this.join(JoinMode.LEFT, mainTable, secondTable, consumer);
+    }
+
+    default SELF rightJoin(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
+        return this.join(JoinMode.RIGHT, mainTable, secondTable, consumer);
+    }
+
     default SELF join(JoinMode mode, Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
         return this.join(mode, mainTable, 1, secondTable, 1, consumer);
     }
@@ -234,4 +246,6 @@ public interface IQuery<SELF extends IQuery
     }
 
     Map<String, Consumer<WHERE>> getFetchFilters();
+
+
 }

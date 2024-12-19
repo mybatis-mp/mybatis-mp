@@ -14,11 +14,11 @@
 
 package cn.mybatis.mp.core.mybatis.mapper;
 
-import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
 import cn.mybatis.mp.core.sql.executor.BaseDelete;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.BaseUpdate;
+import cn.mybatis.mp.page.IPager;
 import org.apache.ibatis.cursor.Cursor;
 
 import java.util.List;
@@ -99,7 +99,7 @@ public interface BaseMapper {
      * @param pager 分页参数
      * @return 分页结果
      */
-    <T, P extends Pager<T>> P paging(BaseQuery<? extends BaseQuery, T> query, P pager);
+    <T, P extends IPager<T>> P paging(BaseQuery<? extends BaseQuery, T> query, P pager);
 
     /**
      * 将结果转成map

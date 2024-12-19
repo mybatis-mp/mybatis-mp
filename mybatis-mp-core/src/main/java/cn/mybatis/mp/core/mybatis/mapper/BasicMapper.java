@@ -23,6 +23,9 @@ import cn.mybatis.mp.core.sql.executor.BaseDelete;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.BaseUpdate;
+import cn.mybatis.mp.page.IPager;
+import cn.mybatis.mp.page.PageUtil;
+import cn.mybatis.mp.page.PagerField;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.executor.SelectorCall;
 import org.apache.ibatis.annotations.Mapper;
@@ -38,7 +41,7 @@ import java.util.function.Function;
 @Mapper
 public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapper, CountBasicMapper, ListBasicMapper, CursorBasicMapper,
         PagingBasicMapper, MapWithKeyBasicMapper, SaveBasicMapper, SaveOrUpdateBasicMapper, SaveModelBasicMapper, SaveOrUpdateModelBasicMapper,
-        UpdateBasicMapper, UpdateModelBasicMapper, DeleteBasicMapper {
+        UpdateBasicMapper, UpdateModelBasicMapper, DeleteBasicMapper, DbRunner {
 
     /**
      * 获取当前数据库的类型
@@ -146,22 +149,26 @@ public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapp
     }
 
     @Override
-    default <T, P extends Pager<T>> P paging(BaseQuery<? extends BaseQuery, T> query, P pager) {
-        if (pager.isExecuteCount()) {
+    default <T, P extends IPager<T>> P paging(BaseQuery<? extends BaseQuery, T> query, P pager) {
+        if (pager.get(PagerField.IS_EXECUTE_COUNT)) {
             Class returnType = query.getReturnType();
             TablePrefixUtil.prefixMapping(query, returnType);
             query.setReturnType(Integer.class);
             Integer count = this.$countFromQuery(new SQLCmdCountFromQueryContext(query));
             query.setReturnType(returnType);
 
-            pager.setTotal(Optional.of(count).orElse(0));
-            if (pager.getTotal() < 1) {
-                pager.setResults(Collections.emptyList());
+            Integer total = Optional.of(count).orElse(0);
+            pager.set(PagerField.TOTAL, total);
+            if (total < 1) {
+                pager.set(PagerField.RESULTS, Collections.emptyList());
                 return pager;
             }
         }
-        query.limit(pager.getOffset(), pager.getSize());
-        pager.setResults(this.list(query));
+
+        Integer number = pager.get(PagerField.NUMBER);
+        Integer size = pager.get(PagerField.SIZE);
+        query.limit(PageUtil.getOffset(number, size), size);
+        pager.set(PagerField.RESULTS, this.list(query));
         return pager;
     }
 

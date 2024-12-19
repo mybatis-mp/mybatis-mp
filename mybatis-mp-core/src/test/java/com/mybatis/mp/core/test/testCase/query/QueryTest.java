@@ -349,7 +349,7 @@ public class QueryTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             final LongAdder adder = new LongAdder();
             Integer count = QueryChain.of(sysUserMapper)
-                    .selectCount1()
+                    .selectCount1(c -> c.as(SysUser::getId))
                     .from(SysUser.class)
                     .returnType(Integer.class, (cnt) -> {
                         System.out.println(">>>" + cnt);
@@ -697,7 +697,7 @@ public class QueryTest extends BaseTest {
     public void queryConfigTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
-            List<SysUser> list = QueryChain.of(sysUserMapper).timeout(1).fetchSize(1).fetchDirection(ResultSet.FETCH_REVERSE).list();
+            List<SysUser> list = QueryChain.of(sysUserMapper).timeout(1).fetchSize(1).fetchDirection(ResultSet.FETCH_FORWARD).list();
             list.stream().forEach(System.out::println);
             assertEquals(list.size(), 3);
         }

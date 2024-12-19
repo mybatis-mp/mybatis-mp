@@ -14,7 +14,6 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
-import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.ModelFieldInfo;
 import cn.mybatis.mp.core.db.reflect.ModelInfo;
 import cn.mybatis.mp.core.db.reflect.Models;
@@ -25,6 +24,7 @@ import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.tenant.TenantUtil;
+import cn.mybatis.mp.core.util.DefaultValueUtil;
 import cn.mybatis.mp.core.util.ModelInfoUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
@@ -105,13 +105,23 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
                 }
             } else if (Objects.nonNull(value)) {
                 isNeedInsert = true;
+            } else if (modelFieldInfo.getTableFieldInfo().isLogicDelete()) {
+                //逻辑删除字段
+                //设置删除初始值
+                value = modelFieldInfo.getTableFieldInfo().getLogicDeleteInitValue();
+                if (value != null) {
+                    isNeedInsert = true;
+                    //逻辑删除初始值回写
+                    ModelInfoUtil.setValue(modelFieldInfo, model, value);
+                } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
+                    //读取回填 @TableField里的默认值
+                    value = DefaultValueUtil.getAndSetDefaultValue(model, modelFieldInfo);
+                    isNeedInsert = Objects.nonNull(value);
+                }
             } else if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue())) {
-                isNeedInsert = true;
-
-                //设置默认值
-                value = MybatisMpConfig.getDefaultValue(modelFieldInfo.getFieldInfo().getTypeClass(), modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().defaultValue());
-                //默认值回写
-                ModelInfoUtil.setValue(modelFieldInfo, model, value);
+                //读取回填 默认值
+                value = DefaultValueUtil.getAndSetDefaultValue(model, modelFieldInfo);
+                isNeedInsert = Objects.nonNull(value);
             } else if (modelFieldInfo.getTableFieldInfo().isVersion()) {
                 isNeedInsert = true;
 
@@ -119,8 +129,14 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
                 value = TypeConvertUtil.convert(Integer.valueOf(1), modelFieldInfo.getField().getType());
                 //乐观锁回写
                 ModelInfoUtil.setValue(modelFieldInfo, model, value);
-            } else if (allFieldForce || (Objects.nonNull(this.forceFields) && this.forceFields.contains(modelFieldInfo.getField().getName()))) {
+            }
+
+            // 看是否是强制字段
+            if (!isNeedInsert && (allFieldForce || (Objects.nonNull(this.forceFields) && this.forceFields.contains(modelFieldInfo.getField().getName())))) {
                 isNeedInsert = true;
+                if (modelFieldInfo.getTableFieldInfo().isTableId() && value == null) {
+                    isNeedInsert = false;
+                }
             }
 
             if (isNeedInsert) {

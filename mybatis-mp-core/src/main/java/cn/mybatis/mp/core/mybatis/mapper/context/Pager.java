@@ -14,19 +14,23 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
+import cn.mybatis.mp.page.IPager;
+import cn.mybatis.mp.page.PageUtil;
+import cn.mybatis.mp.page.PagerField;
+
 import java.util.List;
 
-public class Pager<T> {
+public class Pager<T> implements IPager<T> {
 
-    private boolean executeCount = true;
+    private Boolean executeCount = true;
 
     private List<T> results;
 
     private Integer total;
 
-    private int number = 1;
+    private Integer number = 1;
 
-    private int size = 20;
+    private Integer size = 20;
 
     public Pager() {
 
@@ -49,11 +53,11 @@ public class Pager<T> {
         return new Pager<>(number, size);
     }
 
-    public int getOffset() {
-        return (number - 1) * size;
+    public Integer getOffset() {
+        return PageUtil.getOffset(this.number, this.size);
     }
 
-    public boolean isExecuteCount() {
+    public Boolean isExecuteCount() {
         return executeCount;
     }
 
@@ -78,7 +82,7 @@ public class Pager<T> {
         this.total = total;
     }
 
-    public int getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
@@ -86,7 +90,7 @@ public class Pager<T> {
         this.number = number;
     }
 
-    public int getSize() {
+    public Integer getSize() {
         return size;
     }
 
@@ -95,12 +99,17 @@ public class Pager<T> {
     }
 
     public Integer getTotalPage() {
-        if (total == null) {
-            total = 1;
-        } else if (total < 1) {
-            return 0;
-        }
-        return this.total / this.size + (this.total % this.size == 0 ? 0 : 1);
+        return PageUtil.getTotalPage(this.size, this.total);
+    }
+
+    @Override
+    public <V> void set(PagerField<V> field, V value) {
+        PagerGetSetUtil.set(this, field, value);
+    }
+
+    @Override
+    public <V> V get(PagerField<V> field) {
+        return PagerGetSetUtil.get(this, field);
     }
 
     @Override

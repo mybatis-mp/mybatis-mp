@@ -14,7 +14,6 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
-import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableIds;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
@@ -24,6 +23,7 @@ import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.tenant.TenantUtil;
+import cn.mybatis.mp.core.util.DefaultValueUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
@@ -105,22 +105,37 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
                 }
             } else if (Objects.nonNull(value)) {
                 isNeedInsert = true;
+            } else if (tableFieldInfo.isLogicDelete()) {
+                //逻辑删除字段
+                //设置删除初始值
+                value = tableFieldInfo.getLogicDeleteInitValue();
+                if (value != null) {
+                    isNeedInsert = true;
+                    //逻辑删除初始值回写
+                    TableInfoUtil.setValue(tableFieldInfo, entity, value);
+                } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
+                    //读取回填 @TableField里的默认值
+                    value = DefaultValueUtil.getAndSetDefaultValue(entity, tableFieldInfo);
+                    isNeedInsert = Objects.nonNull(value);
+                }
             } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
-                isNeedInsert = true;
-
-                //设置默认值
-                value = MybatisMpConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getTypeClass(), tableFieldInfo.getTableFieldAnnotation().defaultValue());
-                //默认值回写
-                TableInfoUtil.setValue(tableFieldInfo, entity, value);
+                //读取回填 默认值
+                value = DefaultValueUtil.getAndSetDefaultValue(entity, tableFieldInfo);
+                isNeedInsert = Objects.nonNull(value);
             } else if (tableFieldInfo.isVersion()) {
                 isNeedInsert = true;
-
                 //乐观锁设置 默认值1
                 value = TypeConvertUtil.convert(Integer.valueOf(1), tableFieldInfo.getField().getType());
                 //乐观锁回写
                 TableInfoUtil.setValue(tableFieldInfo, entity, value);
-            } else if (allFieldForce || (Objects.nonNull(this.forceFields) && this.forceFields.contains(tableFieldInfo.getField().getName()))) {
+            }
+
+            // 看是否是强制字段
+            if (!isNeedInsert && (allFieldForce || (Objects.nonNull(this.forceFields) && this.forceFields.contains(tableFieldInfo.getField().getName())))) {
                 isNeedInsert = true;
+                if (tableFieldInfo.isTableId() && value == null) {
+                    isNeedInsert = false;
+                }
             }
 
             if (isNeedInsert) {

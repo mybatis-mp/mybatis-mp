@@ -112,4 +112,14 @@ public interface DeleteBasicMapper extends BaseBasicMapper {
     default <T> int deleteAll(Class<T> entityType) {
         return DeleteMethodUtil.deleteAll(getBasicMapper(), Tables.get(entityType));
     }
+
+    /**
+     * TRUNCATE TABLE
+     *
+     * @param entityType 实体类
+     * @return 影响条数
+     */
+    default <T> int truncate(Class<T> entityType) {
+        return DeleteMethodUtil.truncate(getBasicMapper(), Tables.get(entityType));
+    }
 }

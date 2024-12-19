@@ -19,8 +19,10 @@ import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
+import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.tookit.CmdUtils;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -113,5 +115,9 @@ public interface IExecutor<T extends IExecutor,
             return sqlBuilder;
         }
         return CmdUtils.join(this, this, context, sqlBuilder, sortedCmds);
+    }
+
+    default List<SQLListener> getSQLListeners() {
+        return Collections.emptyList();
     }
 }

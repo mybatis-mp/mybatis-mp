@@ -16,16 +16,15 @@ package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.ICount1;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.dbFun.Count;
 import db.sql.api.impl.tookit.SqlConst;
 
-public class Count1 extends Count {
-
-    public final static Count1 INSTANCE = new Count1();
+public class Count1 extends Count implements ICount1<Count> {
 
     public Count1() {
-        super(Methods.value(1));
+        super(Methods.column("1"));
     }
 
     @Override
@@ -34,6 +33,11 @@ public class Count1 extends Count {
         sqlBuilder.append(1);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
+    }
+
+    @Override
+    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        return super.sql(module, parent, context, sqlBuilder);
     }
 
     @Override

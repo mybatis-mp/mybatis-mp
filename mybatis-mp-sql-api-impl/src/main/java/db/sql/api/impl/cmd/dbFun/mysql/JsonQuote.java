@@ -34,7 +34,6 @@ public class JsonQuote extends BasicFunction<JsonQuote> {
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
-        ;
         this.value.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;

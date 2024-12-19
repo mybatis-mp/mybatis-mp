@@ -249,7 +249,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
-    public ConditionChain between(Cmd column, Serializable value, Serializable value2) {
+    public ConditionChain between(Cmd column, Object value, Object value2) {
         ICondition condition = conditionFactory.between(column, value, value2);
         if (condition != null) {
             conditionBlocks().add(new ConditionBlock(this.connector, condition));
@@ -258,7 +258,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
-    public ConditionChain notBetween(Cmd column, Serializable value, Serializable value2) {
+    public ConditionChain notBetween(Cmd column, Object value, Object value2) {
         ICondition condition = conditionFactory.notBetween(column, value, value2);
         if (condition != null) {
             conditionBlocks().add(new ConditionBlock(this.connector, condition));
@@ -303,7 +303,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
-    public <T> ConditionChain between(boolean when, Getter<T> column, int storey, Serializable value, Serializable value2) {
+    public <T> ConditionChain between(boolean when, Getter<T> column, int storey, Object value, Object value2) {
         ICondition condition = conditionFactory.between(when, column, storey, value, value2);
         if (condition != null) {
             conditionBlocks().add(new ConditionBlock(this.connector, condition));
@@ -429,7 +429,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
-    public <T> ConditionChain notBetween(boolean when, Getter<T> column, int storey, Serializable value, Serializable value2) {
+    public <T> ConditionChain notBetween(boolean when, Getter<T> column, int storey, Object value, Object value2) {
         ICondition condition = conditionFactory.notBetween(when, column, storey, value, value2);
         if (condition != null) {
             conditionBlocks().add(new ConditionBlock(this.connector, condition));
