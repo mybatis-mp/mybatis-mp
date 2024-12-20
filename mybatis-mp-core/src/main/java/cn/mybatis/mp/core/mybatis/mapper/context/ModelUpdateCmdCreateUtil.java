@@ -48,7 +48,11 @@ public class ModelUpdateCmdCreateUtil {
             Object value = modelFieldInfo.getValue(t);
             if (modelFieldInfo.getTableFieldInfo().isTableId()) {
                 if (Objects.nonNull(value)) {
-                    update.$where().extConditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(value));
+                    if (update.$where().hasContent()) {
+                        update.$where().extConditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(value));
+                    } else {
+                        update.$where().conditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(value));
+                    }
                     hasIdCondition = true;
                 }
                 continue;
