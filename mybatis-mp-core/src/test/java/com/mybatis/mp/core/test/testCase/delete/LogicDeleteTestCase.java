@@ -71,6 +71,14 @@ public class LogicDeleteTestCase extends BaseTest {
         }
     }
 
+    @Test
+    public void deleteWithIdTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
+            int deleteCnt = logicDeleteTestMapper.update(logicDeleteTestMapper.getById(1));
+            assertEquals(deleteCnt, 1);
+        }
+    }
 
     @Test
     public void deleteWithWhereTest() {

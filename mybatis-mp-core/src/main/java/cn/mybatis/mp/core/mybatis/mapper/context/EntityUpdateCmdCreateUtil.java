@@ -49,7 +49,11 @@ public class EntityUpdateCmdCreateUtil {
 
             if (tableFieldInfo.isTableId()) {
                 if (Objects.nonNull(value)) {
-                    update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), Methods.cmd(value));
+                    if (update.$where().hasContent()) {
+                        update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), Methods.cmd(value));
+                    } else {
+                        update.$where().conditionChain().eq($.field(table, tableFieldInfo.getColumnName()), Methods.cmd(value));
+                    }
                     hasIdCondition = true;
                 }
                 continue;
