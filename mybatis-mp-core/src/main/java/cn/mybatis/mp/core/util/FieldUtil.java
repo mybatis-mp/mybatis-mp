@@ -36,23 +36,42 @@ public final class FieldUtil {
         if (Modifier.isFinal(field.getModifiers())) {
             return false;
         }
+        return !field.isAnnotationPresent(Ignore.class);
+    }
 
+    /**
+     * 是否为ignore字段；只针对非静态 非final字段
+     *
+     * @param field
+     * @return
+     */
+    private static boolean isIgnoreField(Field field) {
+        if (Modifier.isStatic(field.getModifiers())) {
+            return false;
+        }
+
+        if (Modifier.isFinal(field.getModifiers())) {
+            return false;
+        }
         return !field.isAnnotationPresent(Ignore.class);
     }
 
     public static List<Field> getResultMappingFields(Class clazz) {
         List<Field> fieldList = new ArrayList<>();
         Set<String> fieldNameSet = new HashSet<>();
+        Set<String> ignoreFieldNameSet = new HashSet<>();
         Class parseClass = clazz;
         while (parseClass != null) {
             Field[] fields = parseClass.getDeclaredFields();
             for (Field field : fields) {
                 if (isResultMappingField(field)) {
-                    if (fieldNameSet.contains(field.getName())) {
+                    if (fieldNameSet.contains(field.getName()) || ignoreFieldNameSet.contains(field.getName())) {
                         continue;
                     }
                     fieldNameSet.add(field.getName());
                     fieldList.add(field);
+                } else if (isIgnoreField(field)) {
+                    ignoreFieldNameSet.add(field.getName());
                 }
             }
             parseClass = parseClass.getSuperclass();
