@@ -43,7 +43,7 @@ public class JoinTest extends BaseTest {
             Integer count = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId, c -> c.count())
                     .from(SysUser.class)
-                    .join(SysUser.class, SysRole.class, SysUser::getRole_id, SysRole::getId)
+                    .join(SysUser::getRole_id, SysRole::getId)
                     .returnType(Integer.class)
                     .get();
 
