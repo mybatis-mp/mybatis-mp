@@ -200,8 +200,12 @@ public interface IJoinMethod<SELF extends IJoinMethod, TABLE extends IDataset, J
         return this.join(JoinMode.RIGHT, mainJoinField, 1, secondJoinField, 1);
     }
 
+    default <T1, T2> SELF join(JoinMode mode, Getter<T1> mainJoinField,  Getter<T2> secondJoinField) {
+        return this.join(mode, mainJoinField, 1, secondJoinField, 1);
+    }
+
     default <T1, T2> SELF join(JoinMode mode, Getter<T1> mainJoinField, int mainTableStorey, Getter<T2> secondJoinField, int secondTableStorey) {
-        return this.join(mode, LambdaUtil.getFieldInfo(mainJoinField).getType(), mainTableStorey, LambdaUtil.getFieldInfo(secondJoinField).getType(), secondTableStorey, on -> on.eq(mainJoinField, secondJoinField));
+        return this.join(mode, LambdaUtil.getFieldInfo(mainJoinField).getType(), mainTableStorey, LambdaUtil.getFieldInfo(secondJoinField).getType(), secondTableStorey, on -> on.eq(mainJoinField,mainTableStorey, secondJoinField,secondTableStorey));
     }
 
     default SELF join(JoinMode mode, Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
