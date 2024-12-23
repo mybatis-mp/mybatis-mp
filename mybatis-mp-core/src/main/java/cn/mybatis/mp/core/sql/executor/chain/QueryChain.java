@@ -21,7 +21,7 @@ import cn.mybatis.mp.core.sql.util.SelectClassUtil;
 import cn.mybatis.mp.page.IPager;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.struct.Where;
-import db.sql.api.impl.tookit.LambdaUtil;
+import db.sql.api.tookit.LambdaUtil;
 import org.apache.ibatis.cursor.Cursor;
 
 import java.util.List;

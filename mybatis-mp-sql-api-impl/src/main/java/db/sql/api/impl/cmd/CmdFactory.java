@@ -25,7 +25,7 @@ import db.sql.api.impl.cmd.basic.AllField;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
-import db.sql.api.impl.tookit.LambdaUtil;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.util.HashMap;
 import java.util.Map;

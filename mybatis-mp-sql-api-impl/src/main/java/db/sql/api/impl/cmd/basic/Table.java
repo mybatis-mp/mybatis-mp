@@ -23,8 +23,8 @@ import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.impl.cmd.struct.From;
 import db.sql.api.impl.cmd.struct.Join;
-import db.sql.api.impl.tookit.LambdaUtil;
 import db.sql.api.impl.tookit.SqlConst;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.util.Objects;
 

@@ -19,6 +19,7 @@ import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.struct.IOn;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -182,6 +183,7 @@ public interface IJoinMethod<SELF extends IJoinMethod, TABLE extends IDataset, J
         return this.join(JoinMode.RIGHT, mainTable, secondTable, consumer);
     }
 
+    //JOIN  Class Class getter getter
     default <T1, T2> SELF join(Class<T1> mainTable, Class<T2> secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
         return this.join(JoinMode.INNER, mainTable, secondTable, on -> on.eq(mainJoinField, secondJoinField));
     }
@@ -196,6 +198,23 @@ public interface IJoinMethod<SELF extends IJoinMethod, TABLE extends IDataset, J
 
     default <T1, T2> SELF rightJoin(Class mainTable, Class secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
         return this.join(JoinMode.RIGHT, mainTable, secondTable, on -> on.eq(mainJoinField, secondJoinField));
+    }
+
+    //JOIN getter getter
+    default <T1, T2> SELF join(Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.INNER, LambdaUtil.getFieldInfo(mainJoinField).getType(), LambdaUtil.getFieldInfo(secondJoinField).getType(), on -> on.eq(mainJoinField, secondJoinField));
+    }
+
+    default <T1, T2> SELF innerJoin(Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.INNER, LambdaUtil.getFieldInfo(mainJoinField).getType(), LambdaUtil.getFieldInfo(secondJoinField).getType(), on -> on.eq(mainJoinField, secondJoinField));
+    }
+
+    default <T1, T2> SELF leftJoin(Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.LEFT, LambdaUtil.getFieldInfo(mainJoinField).getType(), LambdaUtil.getFieldInfo(secondJoinField).getType(), on -> on.eq(mainJoinField, secondJoinField));
+    }
+
+    default <T1, T2> SELF rightJoin(Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.RIGHT, LambdaUtil.getFieldInfo(mainJoinField).getType(), LambdaUtil.getFieldInfo(secondJoinField).getType(), on -> on.eq(mainJoinField, secondJoinField));
     }
 
     default SELF join(JoinMode mode, Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {

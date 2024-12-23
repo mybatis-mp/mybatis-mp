@@ -26,7 +26,7 @@ import cn.mybatis.mp.db.Model;
 import cn.mybatis.mp.db.annotations.TableId;
 import db.sql.api.DbType;
 import db.sql.api.Getter;
-import db.sql.api.impl.tookit.LambdaUtil;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.util.Collection;
 import java.util.HashSet;

@@ -21,7 +21,7 @@ import cn.mybatis.mp.core.mybatis.mapper.context.EntityUpdateWithWhereContext;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
-import db.sql.api.impl.tookit.LambdaUtil;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.util.Collection;
 import java.util.Objects;

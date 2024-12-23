@@ -32,8 +32,8 @@ import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.struct.*;
 import db.sql.api.impl.cmd.struct.query.*;
-import db.sql.api.impl.tookit.LambdaUtil;
 import db.sql.api.impl.tookit.SqlConst;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -18,7 +18,7 @@ import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.util.TableInfoUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.basic.TableField;
-import db.sql.api.impl.tookit.LambdaUtil;
+import db.sql.api.tookit.LambdaUtil;
 
 public class MpTable extends db.sql.api.impl.cmd.basic.Table {
 

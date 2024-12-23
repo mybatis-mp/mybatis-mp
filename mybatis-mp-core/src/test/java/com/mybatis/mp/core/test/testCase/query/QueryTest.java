@@ -254,7 +254,7 @@ public class QueryTest extends BaseTest {
             try (Cursor<SysUser> sysUserCursor = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId, SysUser::getUserName, SysUser::getRole_id)
                     .from(SysUser.class)
-                    .join(SysUser.class, SysRole.class)
+                    .innerJoin(SysUser::getRole_id, SysRole::getId)
                     .eq(SysUser::getId, 2)
                     .cursor()) {
                 assertInstanceOf(Cursor.class, sysUserCursor);

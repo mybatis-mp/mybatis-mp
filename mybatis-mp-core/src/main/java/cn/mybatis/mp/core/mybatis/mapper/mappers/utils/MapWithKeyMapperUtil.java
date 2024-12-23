@@ -20,7 +20,7 @@ import cn.mybatis.mp.core.sql.util.QueryUtil;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
 import db.sql.api.GetterFun;
 import db.sql.api.impl.cmd.struct.Where;
-import db.sql.api.impl.tookit.LambdaUtil;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.io.Serializable;
 import java.util.Collection;
