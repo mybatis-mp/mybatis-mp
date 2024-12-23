@@ -19,11 +19,14 @@ import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
+import com.mybatis.mp.core.test.vo.GroupConcatVo;
 import db.sql.api.DbType;
 import db.sql.api.cmd.GetterFields;
 import db.sql.api.impl.cmd.Methods;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -116,5 +119,23 @@ public class DbFunTest extends BaseTest {
         }
     }
 
+    @Test
+    public void groupConcatTest() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<GroupConcatVo> resultMap = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getRole_id)
+                    .select(SysUser::getId, c -> c.groupConcat().as(GroupConcatVo::getGroupIds))
+                    .from(SysUser.class)
+                    .groupBy(SysUser::getRole_id)
+                    .orderByDesc(SysUser::getRole_id)
+                    .returnType(GroupConcatVo.class)
+                    .list();
 
+            System.out.println(resultMap);
+            assertEquals(resultMap.size(), 2);
+            assertEquals(resultMap.get(1).getGroupIds(), "1");
+            assertEquals(resultMap.get(0).getGroupIds(), "2,3");
+        }
+    }
 }

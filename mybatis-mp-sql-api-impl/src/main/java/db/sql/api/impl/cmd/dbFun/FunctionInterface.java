@@ -963,9 +963,28 @@ public interface FunctionInterface extends Cmd {
      * 可以稍微替代 mysql field 函数
      *
      * @param values 指定值
-     * @return sort
+     * @return Case
      */
     default Case sort(Serializable... values) {
         return Methods.sort(this, values);
+    }
+
+    /**
+     * 分组后对列拼接
+     *
+     * @param split 分隔符
+     * @return GroupConcat
+     */
+    default GroupConcat groupConcat(String split) {
+        return Methods.groupConcat(this, split);
+    }
+
+    /**
+     * 分组后对列拼接
+     *
+     * @return GroupConcat
+     */
+    default GroupConcat groupConcat() {
+        return Methods.groupConcat(this);
     }
 }

@@ -1612,6 +1612,27 @@ public final class Methods {
     }
 
     /**
+     * 分组后对列拼接 函数
+     *
+     * @param column 列
+     * @param split  分隔符
+     * @return GroupConcat
+     */
+    public static GroupConcat groupConcat(Cmd column, String split) {
+        return new GroupConcat(column, split);
+    }
+
+    /**
+     * 分组后对列拼接 函数
+     *
+     * @param column 列
+     * @return GroupConcat
+     */
+    public static GroupConcat groupConcat(Cmd column) {
+        return groupConcat(column, ",");
+    }
+
+    /**
      * 获得 mysql的函数聚合类
      *
      * @param column 列，后续可以以此列操作
