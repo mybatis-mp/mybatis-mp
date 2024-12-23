@@ -18,7 +18,6 @@ package db.sql.api.cmd.executor;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.ICmdFactory;
-import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.*;
 import db.sql.api.cmd.executor.method.*;
 import db.sql.api.cmd.struct.*;
@@ -27,7 +26,6 @@ import db.sql.api.cmd.struct.query.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public interface IQuery<SELF extends IQuery
@@ -56,7 +54,7 @@ public interface IQuery<SELF extends IQuery
         extends IWithMethod<SELF>,
         ISelectMethod<SELF, TABLE, TABLE_FIELD, COLUMN>,
         IFromMethod<SELF, TABLE, TABLE_FIELD>,
-        IJoinMethod<SELF, ON>,
+        IJoinMethod<SELF, TABLE, JOIN, ON>,
         IWhereMethod<SELF, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         IGroupByMethod<SELF, TABLE, TABLE_FIELD, COLUMN>,
         IHavingMethod<SELF, TABLE, TABLE_FIELD, HAVING>,
@@ -73,8 +71,6 @@ public interface IQuery<SELF extends IQuery
     SELECT $select();
 
     <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> FROM $from(IDataset<DATASET, DATASET_FIELD> table);
-
-    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> JOIN $join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<ON> onConsumer);
 
     WHERE $where();
 
@@ -133,44 +129,6 @@ public interface IQuery<SELF extends IQuery
         }
         return (SELF) this;
     }
-
-    default SELF join(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
-        return this.join(JoinMode.INNER, mainTable, secondTable, consumer);
-    }
-
-    default SELF innerJoin(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
-        return this.join(JoinMode.INNER, mainTable, secondTable, consumer);
-    }
-
-    default SELF leftJoin(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
-        return this.join(JoinMode.LEFT, mainTable, secondTable, consumer);
-    }
-
-    default SELF rightJoin(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
-        return this.join(JoinMode.RIGHT, mainTable, secondTable, consumer);
-    }
-
-    default <T1, T2> SELF join(Class<T1> mainTable, Class<T2> secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
-        return this.join(JoinMode.INNER, mainTable, secondTable, on -> on.eq(mainJoinField, secondJoinField));
-    }
-
-    default <T1, T2> SELF innerJoin(Class mainTable, Class secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
-        return this.join(JoinMode.INNER, mainTable, secondTable, on -> on.eq(mainJoinField, secondJoinField));
-    }
-
-    default <T1, T2> SELF leftJoin(Class mainTable, Class secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
-        return this.join(JoinMode.LEFT, mainTable, secondTable, on -> on.eq(mainJoinField, secondJoinField));
-    }
-
-    default <T1, T2> SELF rightJoin(Class mainTable, Class secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
-        return this.join(JoinMode.RIGHT, mainTable, secondTable, on -> on.eq(mainJoinField, secondJoinField));
-    }
-
-    default SELF join(JoinMode mode, Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
-        return this.join(mode, mainTable, 1, secondTable, 1, consumer);
-    }
-
-    SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, BiConsumer<TABLE, ON> consumer);
 
     default SELF where(Consumer<WHERE> whereConsumer) {
         whereConsumer.accept($where());

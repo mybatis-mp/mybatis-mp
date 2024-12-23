@@ -16,7 +16,6 @@ package db.sql.api.cmd.executor;
 
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
-import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.UpdateStrategy;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
@@ -50,7 +49,7 @@ public interface IUpdate<SELF extends IUpdate,
 
         extends IUpdateMethod<SELF, TABLE, TABLE_FIELD, V>,
         IFromMethod<SELF, TABLE, TABLE_FIELD>,
-        IJoinMethod<SELF, ON>,
+        IJoinMethod<SELF, TABLE, JOIN, ON>,
         IWhereMethod<SELF, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         IExecutor<SELF, TABLE, TABLE_FIELD> {
 
@@ -58,8 +57,6 @@ public interface IUpdate<SELF extends IUpdate,
     UPDATE_TABLE $update(TABLE... tables);
 
     <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> FROM $from(IDataset<DATASET, DATASET_FIELD> table);
-
-    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> JOIN $join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<ON> onConsumer);
 
     WHERE $where();
 

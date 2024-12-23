@@ -15,7 +15,6 @@
 package db.sql.api.cmd.executor;
 
 import db.sql.api.Cmd;
-import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.basic.ITable;
@@ -31,8 +30,6 @@ import db.sql.api.cmd.struct.IWhere;
 import db.sql.api.cmd.struct.conditionChain.IConditionChain;
 import db.sql.api.cmd.struct.delete.IDeleteTable;
 
-import java.util.function.Consumer;
-
 public interface IDelete<SELF extends IDelete,
         TABLE extends ITable<TABLE, TABLE_FIELD>,
         TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>,
@@ -47,15 +44,13 @@ public interface IDelete<SELF extends IDelete,
 
         extends IDeleteMethod<SELF>,
         IFromMethod<SELF, TABLE, TABLE_FIELD>,
-        IJoinMethod<SELF, ON>,
+        IJoinMethod<SELF, TABLE, JOIN, ON>,
         IWhereMethod<SELF, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         IExecutor<SELF, TABLE, TABLE_FIELD> {
 
     DELETE_TABLE $delete(IDataset... tables);
 
     FROM $from(IDataset table);
-
-    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> JOIN $join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<ON> onConsumer);
 
     WHERE $where();
 
