@@ -1624,7 +1624,7 @@ public final class Methods {
 
     /**
      * 分组后对列拼接 函数
-     *
+     * 默认是逗号拼接
      * @param column 列
      * @return GroupConcat
      */
