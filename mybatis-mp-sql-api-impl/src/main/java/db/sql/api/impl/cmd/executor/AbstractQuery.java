@@ -327,13 +327,16 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public Join $join(JoinMode mode, IDataset mainTable, IDataset secondTable) {
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> Join $join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<On> onConsumer) {
         Join join = new Join(mode, mainTable, secondTable, (joinDataset -> new On(this.conditionFactory, joinDataset)));
         if (Objects.isNull(joins)) {
             joins = new Joins();
             this.append(joins);
         }
         joins.add(join);
+        if (Objects.nonNull(onConsumer)) {
+            onConsumer.accept(join.getOn());
+        }
         this.getSQLListeners().stream().forEach(item -> item.onJoin(this, mode, mainTable, secondTable, join.getOn()));
         return join;
     }
@@ -379,10 +382,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     @Override
     public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> SELF join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<On> consumer) {
-        Join join = $join(mode, mainTable, secondTable);
-        if (consumer != null) {
-            consumer.accept(join.getOn());
-        }
+        $join(mode, mainTable, secondTable, consumer);
         return (SELF) this;
     }
 

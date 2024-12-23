@@ -31,6 +31,8 @@ import db.sql.api.cmd.struct.IWhere;
 import db.sql.api.cmd.struct.conditionChain.IConditionChain;
 import db.sql.api.cmd.struct.delete.IDeleteTable;
 
+import java.util.function.Consumer;
+
 public interface IDelete<SELF extends IDelete,
         TABLE extends ITable<TABLE, TABLE_FIELD>,
         TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>,
@@ -53,7 +55,7 @@ public interface IDelete<SELF extends IDelete,
 
     FROM $from(IDataset table);
 
-    JOIN $join(JoinMode mode, IDataset mainTable, IDataset secondTable);
+    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> JOIN $join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<ON> onConsumer);
 
     WHERE $where();
 

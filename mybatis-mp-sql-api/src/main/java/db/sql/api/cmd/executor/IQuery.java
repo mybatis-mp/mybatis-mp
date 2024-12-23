@@ -74,7 +74,7 @@ public interface IQuery<SELF extends IQuery
 
     <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> FROM $from(IDataset<DATASET, DATASET_FIELD> table);
 
-    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> JOIN $join(JoinMode mode, DATASET mainTable, DATASET secondTable);
+    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> JOIN $join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<ON> onConsumer);
 
     WHERE $where();
 
@@ -148,6 +148,22 @@ public interface IQuery<SELF extends IQuery
 
     default SELF rightJoin(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
         return this.join(JoinMode.RIGHT, mainTable, secondTable, consumer);
+    }
+
+    default <T1, T2> SELF join(Class<T1> mainTable, Class<T2> secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.INNER, mainTable, secondTable, on -> on.eq(mainJoinField, secondJoinField));
+    }
+
+    default <T1, T2> SELF innerJoin(Class mainTable, Class secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.INNER, mainTable, secondTable, on -> on.eq(mainJoinField, secondJoinField));
+    }
+
+    default <T1, T2> SELF leftJoin(Class mainTable, Class secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.LEFT, mainTable, secondTable, on -> on.eq(mainJoinField, secondJoinField));
+    }
+
+    default <T1, T2> SELF rightJoin(Class mainTable, Class secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.RIGHT, mainTable, secondTable, on -> on.eq(mainJoinField, secondJoinField));
     }
 
     default SELF join(JoinMode mode, Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {

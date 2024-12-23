@@ -59,7 +59,7 @@ public interface IUpdate<SELF extends IUpdate,
 
     <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> FROM $from(IDataset<DATASET, DATASET_FIELD> table);
 
-    JOIN $join(JoinMode mode, IDataset mainTable, IDataset secondTable);
+    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> JOIN $join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<ON> onConsumer);
 
     WHERE $where();
 
