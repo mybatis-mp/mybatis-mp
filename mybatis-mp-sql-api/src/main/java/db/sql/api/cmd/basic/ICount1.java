@@ -17,7 +17,7 @@ package db.sql.api.cmd.basic;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 
-public interface ICount1<COUNT1> extends Alias<COUNT1> , Cmd {
+public interface ICount1<COUNT1> extends Alias<COUNT1>, Cmd {
 
     <T> COUNT1 as(Getter<T> aliasGetter);
 }
