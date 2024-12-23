@@ -39,10 +39,11 @@ public class JoinTest extends BaseTest {
     public void defaultAddOn() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
             Integer count = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId, c -> c.count())
                     .from(SysUser.class)
-                    .join(SysUser.class, SysRole.class)
+                    .join(SysUser.class, SysRole.class, SysUser::getRole_id, SysRole::getId)
                     .returnType(Integer.class)
                     .get();
 
