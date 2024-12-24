@@ -101,6 +101,7 @@ public interface DatePattern extends Cmd {
                 return "YYYY";
             }
 
+            case SQLITE:
             case DM:
             case MARIA_DB:
             case MYSQL: {
@@ -127,6 +128,7 @@ public interface DatePattern extends Cmd {
                 return "MM";
             }
 
+            case SQLITE:
             case DM:
             case MARIA_DB:
             case MYSQL: {
@@ -149,6 +151,7 @@ public interface DatePattern extends Cmd {
                 return "DD";
             }
 
+            case SQLITE:
             case DM:
             case MARIA_DB:
             case MYSQL: {
@@ -174,6 +177,7 @@ public interface DatePattern extends Cmd {
                 return "HH24";
             }
 
+            case SQLITE:
             case DM:
             case MARIA_DB:
             case MYSQL: {
@@ -199,6 +203,10 @@ public interface DatePattern extends Cmd {
                 return "MI";
             }
 
+            case SQLITE: {
+                return "%M";
+            }
+
             case DM:
             case MARIA_DB:
             case MYSQL: {
@@ -222,6 +230,10 @@ public interface DatePattern extends Cmd {
             case ORACLE:
             case DB2: {
                 return "SS";
+            }
+
+            case SQLITE: {
+                return "%S";
             }
 
             case DM:

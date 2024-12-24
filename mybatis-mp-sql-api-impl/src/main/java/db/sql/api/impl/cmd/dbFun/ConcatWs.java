@@ -73,7 +73,7 @@ public class ConcatWs extends BasicFunction<ConcatWs> {
         if (this.values == null || this.values.length < 1) {
             return sqlBuilder;
         }
-        if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.DB2) {
+        if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.DB2 || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             this.key.sql(module, parent, context, sqlBuilder);
             for (Cmd value : this.values) {

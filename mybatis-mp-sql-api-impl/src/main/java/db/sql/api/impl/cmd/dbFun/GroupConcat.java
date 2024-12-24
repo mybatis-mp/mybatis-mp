@@ -66,6 +66,13 @@ public class GroupConcat extends BasicFunction<GroupConcat> {
             sqlBuilder.append(SqlConst.ORDER_BY);
             this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+        } else if (context.getDbType() == DbType.SQLITE) {
+            sqlBuilder.append(GROUP_CONCAT);
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
+            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.DELIMITER);
+            this.split.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         } else {
             sqlBuilder.append(GROUP_CONCAT);
             sqlBuilder.append(SqlConst.BRACKET_LEFT);

@@ -33,7 +33,9 @@ public class Weekday extends BasicFunction<Weekday> {
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(SqlConst.WEEKDAY(context.getDbType()));
-        if (context.getDbType() != DbType.SQL_SERVER) {
+        if (context.getDbType() == DbType.SQLITE) {
+            sqlBuilder.append(SqlConst.BRACKET_LEFT).append("'%w'").append(SqlConst.DELIMITER);
+        } else if (context.getDbType() != DbType.SQL_SERVER) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
         }
 

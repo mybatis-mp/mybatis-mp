@@ -19,6 +19,7 @@ import cn.mybatis.mp.core.mybatis.configuration.MybatisDatabaseIdProvider;
 import cn.mybatis.mp.core.mybatis.mapper.DbRunner;
 import com.mybatis.mp.core.test.db2.typeHandler.LocalDateTimeTypeHandler;
 import com.mybatis.mp.core.test.mapper.*;
+import com.mybatis.mp.core.test.typeHandler.SQLiteLocalDateTimeHandler;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.impl.tookit.SQLPrinter;
@@ -84,6 +85,10 @@ public class BaseTest {
             configuration.getTypeHandlerRegistry().register(LocalDateTime.class, LocalDateTimeTypeHandler.class);
         }
 
+        if (TestDataSource.DB_TYPE == DbType.SQLITE) {
+            configuration.getTypeHandlerRegistry().register(LocalDateTime.class, SQLiteLocalDateTimeHandler.class);
+        }
+
         configuration.setLogImpl(StdOutImpl.class);
         configuration.setMapUnderscoreToCamelCase(false);
 
@@ -110,6 +115,7 @@ public class BaseTest {
         configuration.addMapper(DbRunner.class);
         configuration.addMapper(SysUserIDMapper.class);
 
+
         String mapperLocations = "classpath:/mappers/**.xml";
 
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
@@ -118,7 +124,7 @@ public class BaseTest {
 
 
         //设置多数据库 DatabaseIdProvider xml 多数据库 判断时开启
-        factory.setDatabaseIdProvider(new MybatisDatabaseIdProvider());
+        factory.setDatabaseIdProvider(new MybatisDatabaseIdProvider(false));
 
         factory.setDataSource(dataSource);
         // 5 创建 mybatis sqlSessionFactory

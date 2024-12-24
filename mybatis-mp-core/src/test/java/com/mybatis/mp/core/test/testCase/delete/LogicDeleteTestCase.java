@@ -22,6 +22,8 @@ import com.mybatis.mp.core.test.DO.LogicDeleteTest;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.LogicDeleteTestMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
+import com.mybatis.mp.core.test.testCase.TestDataSource;
+import db.sql.api.DbType;
 import db.sql.api.cmd.JoinMode;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
@@ -168,6 +170,10 @@ public class LogicDeleteTestCase extends BaseTest {
 
     @Test
     public void rightJoinTest4() {
+        if (TestDataSource.DB_TYPE == DbType.SQLITE) {
+            //SQLITE 不支持 right join
+            return;
+        }
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             LogicDeleteTestMapper logicDeleteTestMapper = session.getMapper(LogicDeleteTestMapper.class);
             logicDeleteTestMapper.deleteById(1);

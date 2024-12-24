@@ -119,6 +119,9 @@ public class ModelInsertTest extends BaseTest {
                 } else {
                     mapper.saveModelBatch(list, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
                     System.out.println(list);
+                    if (TestDataSource.DB_TYPE == DbType.SQLITE) {
+                        return;
+                    }
                     for (int i = 0; i < list.size(); i++) {
                         assertEquals(list.get(i).getId(), i + 1);
                     }

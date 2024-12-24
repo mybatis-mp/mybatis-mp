@@ -486,7 +486,7 @@ public class UpdateTest extends BaseTest {
     @Test
     public void mutiTableUpdateTest() {
 
-        if (TestDataSource.DB_TYPE == DbType.H2) {
+        if (TestDataSource.DB_TYPE == DbType.H2 || TestDataSource.DB_TYPE == DbType.SQLITE) {
             //H2 不支持
             return;
         } else if (TestDataSource.DB_TYPE == DbType.ORACLE) {

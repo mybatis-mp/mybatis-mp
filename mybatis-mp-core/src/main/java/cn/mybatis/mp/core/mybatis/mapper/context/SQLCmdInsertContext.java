@@ -27,6 +27,8 @@ public class SQLCmdInsertContext<T extends BaseInsert> extends BaseSQLCmdContext
 
     protected Class<?> entityType;
 
+    protected boolean useBatchExecutor = false;
+
     public SQLCmdInsertContext() {
 
     }
@@ -47,5 +49,9 @@ public class SQLCmdInsertContext<T extends BaseInsert> extends BaseSQLCmdContext
         sqlBuilderContext = new MybatisSqlBuilderContext(dbType, SQLMode.PREPARED);
         sql = MybatisMpConfig.getSQLBuilder().buildInsertSQL(getExecution(), sqlBuilderContext).toString();
         return sql;
+    }
+
+    public void setUseBatchExecutor(boolean useBatchExecutor) {
+        this.useBatchExecutor = useBatchExecutor;
     }
 }

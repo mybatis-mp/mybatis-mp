@@ -68,7 +68,7 @@ public class Concat extends BasicFunction<Concat> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if ((context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.DB2) && this.values.length > 1) {
+        if ((context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.DB2) && this.values.length > 1 || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL);

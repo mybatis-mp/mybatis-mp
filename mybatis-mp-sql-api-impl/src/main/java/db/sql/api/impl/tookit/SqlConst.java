@@ -231,6 +231,9 @@ public final class SqlConst {
             case PGSQL: {
                 return " CURRENT_DATE";
             }
+            case SQLITE: {
+                return " DATE('NOW')";
+            }
         }
         return " CURRENT_DATE()";
     }
@@ -251,6 +254,9 @@ public final class SqlConst {
             }
             case PGSQL: {
                 return " LOCALTIME";
+            }
+            case SQLITE: {
+                return " TIME('NOW')";
             }
         }
         return " CURRENT_TIME()";
@@ -273,6 +279,9 @@ public final class SqlConst {
             case PGSQL: {
                 return " LOCALTIMESTAMP";
             }
+            case SQLITE: {
+                return "DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')";
+            }
         }
         return " CURRENT_TIMESTAMP()";
     }
@@ -290,6 +299,10 @@ public final class SqlConst {
                 return " FORMAT";
             }
 
+            case SQLITE: {
+                return " STRFTIME";
+            }
+
             case DM:
             case MARIA_DB:
             case MYSQL: {
@@ -305,6 +318,9 @@ public final class SqlConst {
             case PGSQL: {
                 return " EXTRACT (YEAR FROM ";
             }
+            case SQLITE: {
+                return "STRFTIME";
+            }
         }
         return " YEAR";
     }
@@ -314,6 +330,9 @@ public final class SqlConst {
             case ORACLE:
             case PGSQL: {
                 return " EXTRACT (MONTH FROM ";
+            }
+            case SQLITE: {
+                return "STRFTIME";
             }
         }
         return " MONTH";
@@ -325,6 +344,9 @@ public final class SqlConst {
             case ORACLE:
             case PGSQL: {
                 return " EXTRACT (DAY FROM ";
+            }
+            case SQLITE: {
+                return "STRFTIME";
             }
         }
         return " DAY";
@@ -340,6 +362,9 @@ public final class SqlConst {
             case PGSQL: {
                 return " EXTRACT(HOUR FROM ";
             }
+            case SQLITE: {
+                return "STRFTIME";
+            }
         }
         return " HOUR";
     }
@@ -353,6 +378,9 @@ public final class SqlConst {
             case PGSQL:
             case ORACLE: {
                 return " TO_CHAR";
+            }
+            case SQLITE: {
+                return "STRFTIME";
             }
         }
         return " DAYOFWEEK";
@@ -376,6 +404,7 @@ public final class SqlConst {
             case SQL_SERVER: {
                 return " LEN";
             }
+            case SQLITE:
             case ORACLE: {
                 return " LENGTH";
             }

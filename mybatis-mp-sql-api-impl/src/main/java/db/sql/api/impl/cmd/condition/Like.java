@@ -79,7 +79,7 @@ public class Like extends BasicCondition {
         }
 
 
-        if (context.getDbType() == DbType.DB2) {
+        if (context.getDbType() == DbType.DB2 || context.getDbType() == DbType.SQLITE) {
             //由于 DB2 CONCAT 不支持 变量，所以只能换方式
             if (!before && !after) {
                 getValue().sql(module, this, context, sqlBuilder);

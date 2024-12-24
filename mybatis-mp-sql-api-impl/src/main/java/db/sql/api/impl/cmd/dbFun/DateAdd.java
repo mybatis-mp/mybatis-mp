@@ -83,6 +83,19 @@ public class DateAdd extends BasicFunction<DateAdd> {
             sqlBuilder.append(timeUnit.name());
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
+        } else if (context.getDbType() == DbType.SQLITE) {
+            sqlBuilder.append("DATETIME");
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
+            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.DELIMITER);
+            sqlBuilder.append(SqlConst.SINGLE_QUOT);
+
+
+            sqlBuilder.append(this.n).append(SqlConst.BLANK);
+            sqlBuilder.append(timeUnit.name());
+            sqlBuilder.append(SqlConst.SINGLE_QUOT);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+            return sqlBuilder;
         }
 
         sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);

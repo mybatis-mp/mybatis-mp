@@ -57,7 +57,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
         this.idHasValue = IdUtil.isIdExists(this.insertDatas[0], tableInfo.getIdFieldInfo());
     }
 
-    private static Insert createCmd(TableInfo tableInfo, Object[] array, Set<String> saveFieldSet, DbType dbType) {
+    private static Insert createCmd(TableInfo tableInfo, Object[] array, Set<String> saveFieldSet, DbType dbType, boolean useBatchExecutor) {
         Insert insert = new Insert();
         insert.$().cacheTableInfo(tableInfo);
         Table table = insert.$().table(tableInfo.getSchemaAndTableName());
@@ -165,7 +165,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
 
         if (dbType == DbType.SQL_SERVER && insert.getInsertValues().getValues().size() > 0) {
             TableId tableId = TableIds.get(tableInfo.getType(), dbType);
-            if (!containId && Objects.nonNull(tableId) && tableId.value() == IdAutoType.AUTO) {
+            if (!useBatchExecutor && !containId && Objects.nonNull(tableId) && tableId.value() == IdAutoType.AUTO) {
                 insert.getInsertFields().setOutput("OUTPUT INSERTED." + tableInfo.getIdFieldInfo().getColumnName());
             }
         }
@@ -177,7 +177,7 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
     public void init(DbType dbType) {
         super.init(dbType);
         if (Objects.isNull(this.execution)) {
-            this.execution = createCmd(this.tableInfo, this.insertDatas, this.saveFieldSet, dbType);
+            this.execution = createCmd(this.tableInfo, this.insertDatas, this.saveFieldSet, dbType, useBatchExecutor);
         }
     }
 

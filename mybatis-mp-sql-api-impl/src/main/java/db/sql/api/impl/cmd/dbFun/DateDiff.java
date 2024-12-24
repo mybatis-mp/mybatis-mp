@@ -32,7 +32,19 @@ public class DateDiff extends BasicFunction<DateDiff> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.H2 || context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.DM) {
+        if (context.getDbType() == DbType.SQLITE) {
+            sqlBuilder.append(SqlConst.CEIL).append(SqlConst.BRACKET_LEFT).append(SqlConst.ABS).append(SqlConst.BRACKET_LEFT);
+            sqlBuilder.append("JULIANDAY");
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
+            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+            sqlBuilder.append(SqlConst.SUBTRACT);
+            sqlBuilder.append("JULIANDAY");
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
+            this.another.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BRACKET_RIGHT).append(SqlConst.BRACKET_RIGHT);
+            return sqlBuilder;
+        } else if (context.getDbType() == DbType.H2 || context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.DM) {
             sqlBuilder.append("ABS(").append(operator).append(SqlConst.BRACKET_LEFT);
             sqlBuilder.append("DAY,");
             this.key.sql(module, this, context, sqlBuilder);

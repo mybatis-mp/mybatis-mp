@@ -45,8 +45,8 @@ public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
                 return;
             }
             final Configuration configuration = ms.getConfiguration();
+            SQLCmdInsertContext insertContext = (SQLCmdInsertContext) parameter;
             if (setIdMethod.getInsertSize() > 1) {
-                SQLCmdInsertContext insertContext = (SQLCmdInsertContext) parameter;
                 if (insertContext.getDbType() == DbType.SQL_SERVER && insertContext.sql(insertContext.getDbType()).contains("OUTPUT INSERTED")) {
                     try (ResultSet rs = stmt.getResultSet()) {
                         if (rs != null) {
@@ -64,7 +64,7 @@ public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
                 if (rsmd.getColumnCount() < keyProperties.length) {
                     // Error?
                 } else {
-                    this.assignKeys(configuration, rs, setIdMethod);
+                    this.assignKeys(configuration, rs, setIdMethod, insertContext.getDbType());
                 }
             } catch (Exception e) {
                 throw new ExecutorException("Error getting generated key or setting result to parameter object. Cause: " + e, e);
@@ -82,10 +82,18 @@ public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
         }
     }
 
-    private void assignKeys(Configuration configuration, ResultSet rs, SetIdMethod setIdMethod) throws SQLException {
+    private void assignKeys(Configuration configuration, ResultSet rs, SetIdMethod setIdMethod, DbType dbType) throws SQLException {
         int insertSize = setIdMethod.getInsertSize();
+
+        if (insertSize > 1 && dbType == DbType.SQLITE) {
+            //SQLITE 批量插入 只能拿到最后一个id
+            return;
+        }
+
         for (int i = 0; i < insertSize; i++) {
-            rs.next();
+            if (!rs.next()) {
+                return;
+            }
             setIdMethod.setId(setIdMethod.getIdTypeHandler(configuration).getResult(rs, 1), i);
         }
     }

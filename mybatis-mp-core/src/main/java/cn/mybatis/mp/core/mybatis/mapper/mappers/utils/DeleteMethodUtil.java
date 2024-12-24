@@ -102,6 +102,10 @@ public final class DeleteMethodUtil {
     public static int truncate(BasicMapper basicMapper, TableInfo tableInfo) {
         return basicMapper.dbAdapt(selectorCall -> selectorCall.when(DbType.DB2, () -> {
             return basicMapper.execute("TRUNCATE TABLE " + tableInfo.getTableName() + " IMMEDIATE");
+        }).when(DbType.SQLITE, () -> {
+            int cnt = basicMapper.execute("DELETE FROM " + tableInfo.getTableName());
+            basicMapper.execute("UPDATE SQLITE_SEQUENCE SET SEQ = 0 WHERE name = '" + tableInfo.getTableName() + "'");
+            return cnt;
         }).otherwise(() -> {
             return basicMapper.execute("TRUNCATE TABLE " + tableInfo.getTableName());
         }));

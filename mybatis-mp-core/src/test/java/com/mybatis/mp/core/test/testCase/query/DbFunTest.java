@@ -36,6 +36,7 @@ public class DbFunTest extends BaseTest {
     public void whereAndGetterTest() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            sysUserMapper.getById(1);
             Integer id = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId)
                     .from(SysUser.class)

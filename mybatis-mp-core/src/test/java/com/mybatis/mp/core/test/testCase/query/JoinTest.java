@@ -21,6 +21,8 @@ import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
+import com.mybatis.mp.core.test.testCase.TestDataSource;
+import db.sql.api.DbType;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.impl.cmd.dbFun.FunctionInterface;
 import org.apache.ibatis.session.SqlSession;
@@ -133,6 +135,11 @@ public class JoinTest extends BaseTest {
 
     @Test
     public void rightJoin() {
+        if (TestDataSource.DB_TYPE == DbType.SQLITE) {
+            //SQLITE 不支持RIGHT JOIN
+            return;
+        }
+
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer count = QueryChain.of(sysUserMapper)

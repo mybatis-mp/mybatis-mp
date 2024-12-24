@@ -26,8 +26,11 @@ public class Year extends BasicFunction<Year> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+
         sqlBuilder.append(SqlConst.YEAR(context.getDbType()));
-        if (context.getDbType() != DbType.PGSQL && context.getDbType() != DbType.ORACLE) {
+        if (context.getDbType() == DbType.SQLITE) {
+            sqlBuilder.append(SqlConst.BRACKET_LEFT).append("'%Y'").append(SqlConst.DELIMITER);
+        } else if (context.getDbType() != DbType.PGSQL && context.getDbType() != DbType.ORACLE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
         }
 
