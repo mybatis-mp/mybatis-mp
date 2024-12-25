@@ -27,6 +27,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -432,11 +433,13 @@ public class ConditionTest extends BaseTest {
                     .in(true, SysUser::getId, 1, 2)
                     .in(SysUser::getId, Arrays.asList(1, 2))
                     .in(true, SysUser::getId, Arrays.asList(1, 2))
+                    .in(true, SysUser::getId, new HashSet<>(Arrays.asList(1, 2)))
 
                     .notIn(SysUser::getId, 5)
                     .notIn(true, SysUser::getId, 5, 6)
                     .notIn(SysUser::getId, Arrays.asList(5, 6))
                     .notIn(true, SysUser::getId, Arrays.asList(5, 6))
+                    .notIn(true, SysUser::getId, new HashSet<>(Arrays.asList(5, 6)))
                     .returnType(Integer.class)
                     .list();
 
