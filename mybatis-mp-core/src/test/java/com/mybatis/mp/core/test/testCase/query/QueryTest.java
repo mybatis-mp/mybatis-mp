@@ -35,10 +35,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
@@ -64,6 +61,18 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             List<SysUser> list = sysUserMapper.listByIds(Arrays.asList(1, 2));
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 2);
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 2);
+        }
+    }
+
+    @Test
+    public void listByIds3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = sysUserMapper.listByIds(new HashSet<>(Arrays.asList(1, 2)));
             list.stream().forEach(System.out::println);
             assertEquals(list.size(), 2);
             assertEquals(list.get(0).getId(), 1);

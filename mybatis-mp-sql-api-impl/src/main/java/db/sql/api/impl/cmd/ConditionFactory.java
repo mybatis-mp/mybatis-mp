@@ -578,7 +578,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
 
     @Override
     public ICondition in(Cmd column, Collection<? extends Serializable> values) {
-        values = (List<Serializable>) checkAndGetValidValue(values);
+        values = (Collection<Serializable>) checkAndGetValidValue(values);
         if (Objects.isNull(values)) {
             return null;
         }
@@ -656,7 +656,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
 
     @Override
     public ICondition notIn(Cmd column, Collection<? extends Serializable> values) {
-        values = (List<Serializable>) checkAndGetValidValue(values);
+        values = (Collection<Serializable>) checkAndGetValidValue(values);
         if (Objects.isNull(values)) {
             return null;
         }
