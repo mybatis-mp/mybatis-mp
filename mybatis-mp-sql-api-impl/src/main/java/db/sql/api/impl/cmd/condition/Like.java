@@ -118,7 +118,7 @@ public class Like extends BasicCondition {
         }
         getValue().sql(module, this, context, sqlBuilder);
 
-        if (getValue().getClass() == BasicValue.class && context.getDbType() == DbType.PGSQL) {
+        if (getValue().getClass() == BasicValue.class && (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS)) {
             BasicValue basicValue = (BasicValue) getValue();
             if (Objects.nonNull(basicValue)) {
                 sqlBuilder.append(SqlConst.CAST_TEXT);

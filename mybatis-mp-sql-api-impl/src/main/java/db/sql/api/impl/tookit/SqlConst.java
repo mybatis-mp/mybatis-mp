@@ -207,6 +207,7 @@ public final class SqlConst {
 
     public static char[] SINGLE_QUOT(DbType dbType) {
         switch (dbType) {
+            case OPEN_GAUSS:
             case PGSQL: {
                 return DOUBLE_QUOT;
             }
@@ -228,6 +229,7 @@ public final class SqlConst {
             case ORACLE: {
                 return " TO_CHAR(CURRENT_DATE,'YYYY-MM-DD')";
             }
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " CURRENT_DATE";
             }
@@ -252,6 +254,7 @@ public final class SqlConst {
             case ORACLE: {
                 return " TO_CHAR(CURRENT_DATE,'HH24:MI:SS')";
             }
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " LOCALTIME";
             }
@@ -276,6 +279,7 @@ public final class SqlConst {
             case ORACLE: {
                 return " CURRENT_DATE";
             }
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " LOCALTIMESTAMP";
             }
@@ -290,6 +294,7 @@ public final class SqlConst {
         switch (dbType) {
             case KING_BASE:
             case H2:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
@@ -315,6 +320,7 @@ public final class SqlConst {
     public static String YEAR(DbType dbType) {
         switch (dbType) {
             case ORACLE:
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " EXTRACT (YEAR FROM ";
             }
@@ -328,6 +334,7 @@ public final class SqlConst {
     public static String MONTH(DbType dbType) {
         switch (dbType) {
             case ORACLE:
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " EXTRACT (MONTH FROM ";
             }
@@ -342,6 +349,7 @@ public final class SqlConst {
         switch (dbType) {
             case KING_BASE:
             case ORACLE:
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " EXTRACT (DAY FROM ";
             }
@@ -359,6 +367,7 @@ public final class SqlConst {
             }
             case KING_BASE:
             case ORACLE:
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " EXTRACT(HOUR FROM ";
             }
@@ -375,6 +384,7 @@ public final class SqlConst {
                 return " DATEPART(WEEKDAY,";
             }
             case KING_BASE:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE: {
                 return " TO_CHAR";
@@ -391,6 +401,7 @@ public final class SqlConst {
             case SQL_SERVER: {
                 return " DATEPART(WEEKDAY,";
             }
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE: {
                 return " TO_TIMESTAMP";

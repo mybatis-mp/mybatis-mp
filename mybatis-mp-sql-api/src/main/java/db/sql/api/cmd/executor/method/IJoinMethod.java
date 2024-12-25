@@ -183,6 +183,48 @@ public interface IJoinMethod<SELF extends IJoinMethod, TABLE extends IDataset, J
         return this.join(JoinMode.RIGHT, mainTable, secondTable, consumer);
     }
 
+    //JOIN class class getter getter
+    default <T1, T2> SELF join(Class<T1> mainTable, Class<T2> secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.INNER, mainTable, secondTable, mainJoinField, secondJoinField);
+    }
+
+    default <T1, T2> SELF innerJoin(Class<T1> mainTable, Class<T2> secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.INNER, mainTable, secondTable, mainJoinField, secondJoinField);
+    }
+
+    default <T1, T2> SELF leftJoin(Class<T1> mainTable, Class<T2> secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.LEFT, mainTable, secondTable, mainJoinField, secondJoinField);
+    }
+
+    default <T1, T2> SELF rightJoin(Class<T1> mainTable, Class<T2> secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.RIGHT, mainTable, secondTable, mainJoinField, secondJoinField);
+    }
+
+    default <T1, T2> SELF join(JoinMode mode, Class<T1> mainTable, Class<T2> secondTable, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(mode, mainTable, 1, secondTable, 1, mainJoinField, secondJoinField);
+    }
+
+    //JOIN class storey class storey getter getter
+    default <T1, T2> SELF join(Class<T1> mainTable, int mainTableStorey, Class<T2> secondTable, int secondTableStorey, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.INNER, mainTable, mainTableStorey, secondTable, secondTableStorey, mainJoinField, secondJoinField);
+    }
+
+    default <T1, T2> SELF innerJoin(Class<T1> mainTable, int mainTableStorey, Class<T2> secondTable, int secondTableStorey, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.INNER, mainTable, mainTableStorey, secondTable, secondTableStorey, mainJoinField, secondJoinField);
+    }
+
+    default <T1, T2> SELF leftJoin(Class<T1> mainTable, int mainTableStorey, Class<T2> secondTable, int secondTableStorey, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.LEFT, mainTable, mainTableStorey, secondTable, secondTableStorey, mainJoinField, secondJoinField);
+    }
+
+    default <T1, T2> SELF rightJoin(Class<T1> mainTable, int mainTableStorey, Class<T2> secondTable, int secondTableStorey, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(JoinMode.RIGHT, mainTable, mainTableStorey, secondTable, secondTableStorey, mainJoinField, secondJoinField);
+    }
+
+    default <T1, T2> SELF join(JoinMode mode, Class<T1> mainTable, int mainTableStorey, Class<T2> secondTable, int secondTableStorey, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
+        return this.join(mode, mainTable, mainTableStorey, secondTable, secondTableStorey, on -> on.eq(mainJoinField, mainTableStorey, secondJoinField, secondTableStorey));
+    }
+
     //JOIN getter getter
     default <T1, T2> SELF join(Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
         return this.join(JoinMode.INNER, mainJoinField, 1, secondJoinField, 1);
@@ -204,8 +246,25 @@ public interface IJoinMethod<SELF extends IJoinMethod, TABLE extends IDataset, J
         return this.join(mode, mainJoinField, 1, secondJoinField, 1);
     }
 
+    //JOIN getter storey  getter storey
+    default <T1, T2> SELF join(Getter<T1> mainJoinField, int mainTableStorey, Getter<T2> secondJoinField, int secondTableStorey) {
+        return this.join(JoinMode.INNER, mainJoinField, mainTableStorey, secondJoinField, secondTableStorey);
+    }
+
+    default <T1, T2> SELF innerJoin(Getter<T1> mainJoinField, int mainTableStorey, Getter<T2> secondJoinField, int secondTableStorey) {
+        return this.join(JoinMode.INNER, mainJoinField, mainTableStorey, secondJoinField, secondTableStorey);
+    }
+
+    default <T1, T2> SELF leftJoin(Getter<T1> mainJoinField, int mainTableStorey, Getter<T2> secondJoinField, int secondTableStorey) {
+        return this.join(JoinMode.LEFT, mainJoinField, mainTableStorey, secondJoinField, secondTableStorey);
+    }
+
+    default <T1, T2> SELF rightJoin(Getter<T1> mainJoinField, int mainTableStorey, Getter<T2> secondJoinField, int secondTableStorey) {
+        return this.join(JoinMode.RIGHT, mainJoinField, mainTableStorey, secondJoinField, secondTableStorey);
+    }
+
     default <T1, T2> SELF join(JoinMode mode, Getter<T1> mainJoinField, int mainTableStorey, Getter<T2> secondJoinField, int secondTableStorey) {
-        return this.join(mode, LambdaUtil.getFieldInfo(mainJoinField).getType(), mainTableStorey, LambdaUtil.getFieldInfo(secondJoinField).getType(), secondTableStorey, on -> on.eq(mainJoinField,mainTableStorey, secondJoinField,secondTableStorey));
+        return this.join(mode, LambdaUtil.getFieldInfo(mainJoinField).getType(), mainTableStorey, LambdaUtil.getFieldInfo(secondJoinField).getType(), secondTableStorey, mainJoinField, secondJoinField);
     }
 
     default SELF join(JoinMode mode, Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {

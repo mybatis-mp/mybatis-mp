@@ -124,7 +124,7 @@ public class BaseTest {
 
 
         //设置多数据库 DatabaseIdProvider xml 多数据库 判断时开启
-        factory.setDatabaseIdProvider(new MybatisDatabaseIdProvider(false));
+        factory.setDatabaseIdProvider(new MybatisDatabaseIdProvider(true));
 
         factory.setDataSource(dataSource);
         // 5 创建 mybatis sqlSessionFactory

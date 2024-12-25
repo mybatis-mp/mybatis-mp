@@ -56,7 +56,7 @@ public class GroupConcat extends BasicFunction<GroupConcat> {
             sqlBuilder.append(SqlConst.ORDER_BY);
             this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
-        } else if (context.getDbType() == DbType.PGSQL) {
+        } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS) {
             sqlBuilder.append("STRING_AGG");
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             this.key.sql(module, this, context, sqlBuilder);

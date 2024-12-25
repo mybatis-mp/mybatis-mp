@@ -42,6 +42,7 @@ public class OneToManyTest extends BaseTest {
                     .select(SysRole.class)
                     .from(SysRole.class)
                     .join(SysRole.class, SysUser.class, on -> on.eq(SysUser::getRole_id, SysRole::getId))
+                    .orderBy(SysUser::getId)
                     .returnType(OneToManyVo.class)
                     .list();
 
@@ -70,6 +71,7 @@ public class OneToManyTest extends BaseTest {
                     .select(SysRole.class)
                     .from(SysRole.class)
                     .join(SysRole.class, SysUser.class, on -> on.eq(SysUser::getRole_id, SysRole::getId))
+                    .orderBy(SysUser::getId)
                     .returnType(OneToManyTypeHandlerVo.class)
                     .list();
 

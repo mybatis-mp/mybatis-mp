@@ -64,6 +64,8 @@ public final class DbTypeUtil {
             return DbType.SQLITE;
         } else if (jdbcUrl.contains(":clickhouse:")) {
             return DbType.CLICK_HOUSE;
+        } else if (jdbcUrl.contains(":opengauss:")) {
+            return DbType.OPEN_GAUSS;
         } else {
             throw new DbTypeParseException("Unrecognized database type:" + jdbcUrl);
         }

@@ -139,6 +139,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.opengauss</groupId>
+            <artifactId>opengauss-jdbc</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!--json optional start-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

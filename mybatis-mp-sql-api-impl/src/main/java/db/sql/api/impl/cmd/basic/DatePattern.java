@@ -95,6 +95,7 @@ public interface DatePattern extends Cmd {
         switch (dbType) {
             case KING_BASE:
             case H2:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
@@ -122,6 +123,7 @@ public interface DatePattern extends Cmd {
             case KING_BASE:
             case H2:
             case SQL_SERVER:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
@@ -145,6 +147,7 @@ public interface DatePattern extends Cmd {
         switch (dbType) {
             case KING_BASE:
             case H2:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
@@ -171,6 +174,7 @@ public interface DatePattern extends Cmd {
         switch (dbType) {
             case KING_BASE:
             case H2:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
@@ -197,6 +201,7 @@ public interface DatePattern extends Cmd {
         switch (dbType) {
             case KING_BASE:
             case H2:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
@@ -226,6 +231,7 @@ public interface DatePattern extends Cmd {
         switch (dbType) {
             case KING_BASE:
             case H2:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
