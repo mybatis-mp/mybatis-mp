@@ -15,12 +15,14 @@
 package com.mybatis.mp.core.test.DO;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 
 @Data
 @FieldNameConstants
 public class SysUserBase {
 
+    @NoArgsConstructor
     public static class Fields {
 
     }
