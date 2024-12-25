@@ -31,19 +31,19 @@ public class FetchSysRoleVo2 {
     private String name;
 
 
-    @Fetch(column = "id", target = SysUser.class, targetProperty = "role_id", targetSelectProperty = "userName", orderBy = "id asc")
+    @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "userName", orderBy = "id asc")
     private List<String> sysRoleNames;
 
 
-    @Fetch(column = "id", target = SysUser.class, targetProperty = "role_id", targetSelectProperty = "[count({id})]")
+    @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "[count({id})]")
     private Integer cnts;
 
     @Fetch(column = "id", target = SysRole.class, targetProperty = "id", targetSelectProperty = "name")
     private String roleName;
 
-    @Fetch(column = "id", target = SysUser.class, targetProperty = "role_id", targetSelectProperty = "[count({id})]")
+    @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "[count({id})]")
     private Integer cnts2;
 
-    @Fetch(column = "id", target = SysUser.class, targetProperty = "role_id", targetSelectProperty = "[count({id})]", groupBy = "role_id", forceUseIn = true)
+    @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "[count({id})]", groupBy = "role_id", forceUseIn = true)
     private Integer cnts3;
 }

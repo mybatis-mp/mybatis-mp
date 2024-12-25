@@ -19,12 +19,18 @@ import cn.mybatis.mp.db.annotations.Table;
 import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
 @Data
 @Table("t_sys_user")
+@FieldNameConstants
 public class SysUser extends SysUserBase {
+
+    public static final class Fields extends SysUserBase.Fields{
+
+    }
 
     @TableId
     @TableField("id")

@@ -20,11 +20,13 @@ import cn.mybatis.mp.db.annotations.Version;
 import db.sql.api.DbType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
 import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
+@FieldNameConstants
 public class BaseEntity {
 
     @TableId

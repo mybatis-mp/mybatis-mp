@@ -63,7 +63,7 @@
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
         <mybatis-mp.version>1.7.9-RC3</mybatis-mp.version>
-        <mybatis-mp-generator-core.version>1.0.6</mybatis-mp-generator-core.version>
+        <mybatis-mp-generator-core.version> 1.0.7-RC</mybatis-mp-generator-core.version>
         <mybatis-mp-datasource-routing.version>1.0.2</mybatis-mp-datasource-routing.version>
         <mybatis-mp-spring-boot-starter.version>1.7.9-RC3</mybatis-mp-spring-boot-starter.version>
 

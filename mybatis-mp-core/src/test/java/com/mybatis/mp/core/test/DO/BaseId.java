@@ -18,10 +18,13 @@ package com.mybatis.mp.core.test.DO;
 import cn.mybatis.mp.db.annotations.Ignore;
 import cn.mybatis.mp.db.annotations.TableId;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
 
 import java.util.List;
 
 @Data
+@FieldNameConstants
 public class BaseId<ID> {
 
     @TableId
@@ -29,4 +32,9 @@ public class BaseId<ID> {
 
     @Ignore
     private List<ID> ids;
+
+    @NoArgsConstructor
+    public static class Fields {
+
+    }
 }

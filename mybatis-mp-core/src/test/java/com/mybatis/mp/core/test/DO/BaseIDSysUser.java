@@ -18,13 +18,19 @@ import cn.mybatis.mp.db.annotations.ForeignKey;
 import cn.mybatis.mp.db.annotations.Table;
 import lombok.Data;
 import lombok.ToString;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
 @Data
 @ToString(callSuper = true)
 @Table("t_sys_user")
+@FieldNameConstants
 public class BaseIDSysUser extends BaseId<Long> {
+
+    public static final class Fields extends BaseId.Fields{
+
+    }
 
     private String userName;
 

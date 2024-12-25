@@ -16,8 +16,10 @@ package com.mybatis.mp.core.test.DO;
 
 
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 @Data
+@FieldNameConstants
 public class BaseRoleId<ID> {
 
     private ID role_id;

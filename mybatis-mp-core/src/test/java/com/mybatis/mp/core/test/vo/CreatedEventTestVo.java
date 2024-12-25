@@ -32,7 +32,7 @@ public class CreatedEventTestVo {
     @NestedResultEntity(target = SysRole.class)
     private CreatedEventNestedTestVo createdEventNestedTestVo;
 
-    @Fetch(source = SysUser.class, property = "role_id", target = SysRole.class, targetProperty = "id")
+    @Fetch(source = SysUser.class, property = SysUser.Fields.role_id, target = SysRole.class, targetProperty = SysRole.Fields.id)
     private CreatedEventFetchTestVo createdEventFetchTestVo;
 
     @Ignore

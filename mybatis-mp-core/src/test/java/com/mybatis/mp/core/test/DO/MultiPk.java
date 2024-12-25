@@ -19,10 +19,12 @@ import cn.mybatis.mp.db.annotations.Table;
 import cn.mybatis.mp.db.annotations.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.FieldNameConstants;
 
 @Data
 @Table
 @EqualsAndHashCode
+@FieldNameConstants
 public class MultiPk {
 
     @TableId(IdAutoType.NONE)

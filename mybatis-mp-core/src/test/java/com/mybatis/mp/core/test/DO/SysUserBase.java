@@ -15,9 +15,15 @@
 package com.mybatis.mp.core.test.DO;
 
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 @Data
+@FieldNameConstants
 public class SysUserBase {
+
+    public static class Fields {
+
+    }
 
     private String userName;
 }

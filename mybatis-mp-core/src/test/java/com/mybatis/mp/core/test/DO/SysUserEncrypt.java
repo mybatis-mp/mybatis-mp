@@ -20,11 +20,13 @@ import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;
 import com.mybatis.mp.core.test.typeHandler.EncryptTypeHandler;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
 @Data
 @Table("t_sys_user")
+@FieldNameConstants
 public class SysUserEncrypt {
 
     @TableId
