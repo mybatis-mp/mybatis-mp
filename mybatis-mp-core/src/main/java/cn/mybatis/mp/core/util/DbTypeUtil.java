@@ -14,7 +14,7 @@
 
 package cn.mybatis.mp.core.util;
 
-import cn.mybatis.mp.core.exception.DbTypeParseException;
+import cn.mybatis.mp.core.MybatisMpConfig;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.Configuration;
 
@@ -26,7 +26,14 @@ import java.util.Objects;
 public final class DbTypeUtil {
 
     public static DbType getDbType(Configuration configuration) {
-        return getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
+        try {
+            return getDbType(configuration.getDatabaseId(), configuration.getEnvironment().getDataSource());
+        } catch (DbTypeParseException e) {
+            if (MybatisMpConfig.getDefaultDbType() != null) {
+                return MybatisMpConfig.getDefaultDbType();
+            }
+            throw e;
+        }
     }
 
     public static DbType getDbType(String databaseId, DataSource dataSource) {
@@ -84,7 +91,7 @@ public final class DbTypeUtil {
         try (Connection connection = dataSource.getConnection()) {
             return getJdbcUrl(connection);
         } catch (Exception e) {
-            throw new RuntimeException("无法解析到 数据库的url", e);
+            throw new DbTypeParseException("无法解析到 数据库的url", e);
         }
     }
 
@@ -92,11 +99,22 @@ public final class DbTypeUtil {
         try {
             return connection.getMetaData().getURL();
         } catch (Exception e) {
-            throw new RuntimeException("无法解析到 数据库的url", e);
+            throw new DbTypeParseException("无法解析到 数据库的url", e);
         }
     }
 
     public static DbType getDbType(Connection connection) {
         return getDbType(getJdbcUrl(connection));
+    }
+
+    public static class DbTypeParseException extends RuntimeException {
+
+        public DbTypeParseException(String message) {
+            super(message);
+        }
+
+        public DbTypeParseException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
 }

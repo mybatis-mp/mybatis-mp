@@ -24,6 +24,7 @@ import cn.mybatis.mp.core.sql.listener.LogicDeleteSQLListener;
 import cn.mybatis.mp.core.sql.listener.TenantSQLListener;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
+import db.sql.api.DbType;
 import db.sql.api.cmd.listener.SQLListener;
 
 import java.lang.reflect.Array;
@@ -48,6 +49,7 @@ public final class MybatisMpConfig {
     private static final String DEFAULT_VALUE_MANAGER = "defaultValueManager";
     private static final String SINGLE_MAPPER_CLASS = "singleMapperClass";
     private static final List<SQLListener> SQL_LISTENER = new ArrayList<>();
+    private static volatile DbType DEFAULT_DB_TYPE;
 
     static {
         SQL_LISTENER.add(new ForeignKeySQLListener());
@@ -90,6 +92,24 @@ public final class MybatisMpConfig {
 
     private MybatisMpConfig() {
 
+    }
+
+    /**
+     * 获取默认DbType
+     *
+     * @return
+     */
+    public static DbType getDefaultDbType() {
+        return MybatisMpConfig.DEFAULT_DB_TYPE;
+    }
+
+    /**
+     * 设置默认DbType
+     *
+     * @param defaultDbType
+     */
+    public static void setDefaultDbType(DbType defaultDbType) {
+        MybatisMpConfig.DEFAULT_DB_TYPE = defaultDbType;
     }
 
     /**
