@@ -12,15 +12,12 @@
  *
  */
 
-package db.sql.api.cmd.executor.method;
+package db.sql.api.impl.cmd.executor;
 
+import db.sql.api.DbType;
 
-import db.sql.api.cmd.basic.ITableField;
+@FunctionalInterface
+public interface DbTypeCallable<V> {
 
-public interface IUpdateMethod<SELF extends IUpdateMethod, TABLE, TABLE_FIELD extends ITableField<TABLE_FIELD, ?>, V> extends IUpdateSetMethod<SELF, TABLE_FIELD, V> {
-
-    SELF update(TABLE... tables);
-
-    SELF update(Class... entities);
-
+    V call(DbType dbType);
 }

@@ -17,12 +17,16 @@ package cn.mybatis.mp.core.sql.executor;
 import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.mybatis.executor.statement.Timeoutable;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
+import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.listener.SQLListener;
+import db.sql.api.impl.cmd.basic.ConflictUpdateTableField;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.AbstractInsert;
+import db.sql.api.impl.cmd.executor.AbstractUpdate;
 
 import java.util.List;
+import java.util.function.Function;
 
 public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert<T, MybatisCmdFactory> implements Timeoutable<T> {
 
@@ -50,9 +54,22 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
     }
 
     @Override
+    protected AbstractUpdate<?, MybatisCmdFactory> createUpdate() {
+        return new Update(this.$) {
+            @Override
+            public <T> Update set(Getter<T> field, Function<TableField, Cmd> f) {
+                TableField tableField = this.$(field);
+                Cmd value = f.apply(new ConflictUpdateTableField(tableField));
+                return super.set(tableField, value);
+            }
+        };
+    }
+
+    @Override
     public List<SQLListener> getSQLListeners() {
         return MybatisMpConfig.getSQLListeners();
     }
+
 
     /**************以下为去除警告************/
 

@@ -57,8 +57,6 @@ public interface IInsert<SELF extends IInsert,
 
     SELF insert(Class entity, Consumer<TABLE> consumer);
 
-    SELF insertIgnore();
-
     default SELF fields(TABLE_FIELD... fields) {
         $fields(fields);
         return (SELF) this;

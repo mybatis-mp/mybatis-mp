@@ -120,11 +120,11 @@ public class QueryTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
             SysUser sysUser = sysUserMapper.dbAdapt(selector -> {
-                selector.when(DbType.H2, () -> {
+                selector.when(DbType.H2, (dbType) -> {
                     return sysUserMapper.getById(1);
-                }).when(DbType.MYSQL, () -> {
+                }).when(DbType.MYSQL, (dbType) -> {
                     return sysUserMapper.getById(2);
-                }).otherwise(() -> {
+                }).otherwise((dbType) -> {
                     return sysUserMapper.getById(3);
                 });
             });

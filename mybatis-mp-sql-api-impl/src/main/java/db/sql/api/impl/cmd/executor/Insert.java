@@ -14,11 +14,29 @@
 
 package db.sql.api.impl.cmd.executor;
 
+import db.sql.api.Cmd;
+import db.sql.api.Getter;
 import db.sql.api.impl.cmd.CmdFactory;
+import db.sql.api.impl.cmd.basic.ConflictUpdateTableField;
+import db.sql.api.impl.cmd.basic.TableField;
+
+import java.util.function.Function;
 
 public class Insert extends AbstractInsert<Insert, CmdFactory> {
 
     public Insert() {
         super(new CmdFactory());
+    }
+
+    @Override
+    protected AbstractUpdate<?, CmdFactory> createUpdate() {
+        return new Update(this.$) {
+            @Override
+            public <T> Update set(Getter<T> field, Function<TableField, Cmd> f) {
+                TableField tableField = this.$(field);
+                Cmd value = f.apply(new ConflictUpdateTableField(tableField));
+                return super.set(tableField, value);
+            }
+        };
     }
 }

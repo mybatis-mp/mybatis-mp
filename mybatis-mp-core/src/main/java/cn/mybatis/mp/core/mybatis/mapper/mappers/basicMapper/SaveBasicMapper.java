@@ -17,6 +17,7 @@ package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 
 import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveMethodUtil;
+import cn.mybatis.mp.core.sql.executor.Insert;
 import db.sql.api.Getter;
 
 import java.util.Collection;
@@ -109,7 +110,7 @@ public interface SaveBasicMapper extends BaseBasicMapper {
             return 0;
         }
         T first = list.stream().findFirst().get();
-        return SaveMethodUtil.saveBatch(getBasicMapper(), Tables.get(first.getClass()), list);
+        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), Tables.get(first.getClass()), list);
     }
 
     /**
@@ -128,6 +129,6 @@ public interface SaveBasicMapper extends BaseBasicMapper {
             return 0;
         }
         T first = list.stream().findFirst().get();
-        return SaveMethodUtil.saveBatch(getBasicMapper(), Tables.get(first.getClass()), list, forceFields);
+        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), Tables.get(first.getClass()), list, forceFields);
     }
 }

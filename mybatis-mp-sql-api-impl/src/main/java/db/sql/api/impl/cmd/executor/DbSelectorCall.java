@@ -19,22 +19,21 @@ import db.sql.api.impl.tookit.Objects;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 public class DbSelectorCall<R> implements SelectorCall<R> {
 
-    private final Map<DbType, Callable> consumers = new HashMap<>();
+    private final Map<DbType, DbTypeCallable> consumers = new HashMap<>();
 
-    private Callable<R> otherwise;
+    private DbTypeCallable<R> otherwise;
 
     @Override
-    public DbSelectorCall<R> when(DbType dbType, Callable<R> runnable) {
+    public DbSelectorCall<R> when(DbType dbType, DbTypeCallable<R> runnable) {
         consumers.put(dbType, runnable);
         return this;
     }
 
     @Override
-    public DbSelectorCall<R> when(DbType[] dbTypes, Callable<R> runnable) {
+    public DbSelectorCall<R> when(DbType[] dbTypes, DbTypeCallable<R> runnable) {
         for (DbType dbType : dbTypes) {
             consumers.put(dbType, runnable);
         }
@@ -42,7 +41,7 @@ public class DbSelectorCall<R> implements SelectorCall<R> {
     }
 
     @Override
-    public DbSelectorCall<R> otherwise(Callable<R> runnable) {
+    public DbSelectorCall<R> otherwise(DbTypeCallable<R> runnable) {
         if (Objects.nonNull(this.otherwise)) {
             throw new RuntimeException("The method of 'otherwise' has already called");
         }
@@ -52,14 +51,14 @@ public class DbSelectorCall<R> implements SelectorCall<R> {
 
     @Override
     public DbSelectorCall<R> otherwise() {
-        return this.otherwise(() -> {
+        return this.otherwise((dbType) -> {
             return null;
         });
     }
 
-    private R execute(Callable<R> callable) {
+    private R execute(DbType dbType, DbTypeCallable<R> callable) {
         try {
-            return callable.call();
+            return callable.call(dbType);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -67,12 +66,12 @@ public class DbSelectorCall<R> implements SelectorCall<R> {
 
     @Override
     public R dbExecute(DbType dbType) {
-        Callable<R> runnable = consumers.get(dbType);
+        DbTypeCallable<R> runnable = consumers.get(dbType);
         if (Objects.nonNull(runnable)) {
-            return this.execute(runnable);
+            return this.execute(dbType, runnable);
         }
         if (Objects.nonNull(this.otherwise)) {
-            return this.execute(this.otherwise);
+            return this.execute(dbType, this.otherwise);
         }
         throw new RuntimeException("Not adapted to DbType " + dbType);
     }

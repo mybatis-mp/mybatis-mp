@@ -16,8 +16,6 @@ package db.sql.api.impl.cmd.executor;
 
 import db.sql.api.DbType;
 
-import java.util.concurrent.Callable;
-
 /**
  * 选择器 不同数据库执行不同的方法
  */
@@ -30,7 +28,7 @@ public interface SelectorCall<R> {
      * @param runnable 执行器
      * @return 自己
      */
-    SelectorCall<R> when(DbType dbType, Callable<R> runnable);
+    SelectorCall<R> when(DbType dbType, DbTypeCallable<R> runnable);
 
     /**
      * 当数据库类型在dbTypes 时
@@ -39,7 +37,7 @@ public interface SelectorCall<R> {
      * @param runnable 执行器
      * @return 自己
      */
-    default SelectorCall<R> when(DbType[] dbTypes, Callable<R> runnable) {
+    default SelectorCall<R> when(DbType[] dbTypes, DbTypeCallable<R> runnable) {
         for (DbType dbType : dbTypes) {
             when(dbType, runnable);
         }
@@ -52,7 +50,7 @@ public interface SelectorCall<R> {
      * @param runnable 执行器
      * @return 自己
      */
-    SelectorCall<R> otherwise(Callable<R> runnable);
+    SelectorCall<R> otherwise(DbTypeCallable<R> runnable);
 
     /**
      * 其他数据库类型时 忽略

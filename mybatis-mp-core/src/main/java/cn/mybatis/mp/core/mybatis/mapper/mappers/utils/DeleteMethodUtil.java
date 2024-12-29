@@ -14,10 +14,12 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.mappers.utils;
 
+import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.sql.executor.Delete;
+import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
 import db.sql.api.DbType;
 import db.sql.api.cmd.basic.SQL1;
@@ -100,14 +102,18 @@ public final class DeleteMethodUtil {
      * @return 影响数量
      */
     public static int truncate(BasicMapper basicMapper, TableInfo tableInfo) {
-        return basicMapper.dbAdapt(selectorCall -> selectorCall.when(DbType.DB2, () -> {
-            return basicMapper.execute("TRUNCATE TABLE " + tableInfo.getTableName() + " IMMEDIATE");
-        }).when(DbType.SQLITE, () -> {
-            int cnt = basicMapper.execute("DELETE FROM " + tableInfo.getTableName());
-            basicMapper.execute("UPDATE SQLITE_SEQUENCE SET SEQ = 0 WHERE name = '" + tableInfo.getTableName() + "'");
+        MpTable mpTable = new MpTable(tableInfo);
+        MybatisMpConfig.getSQLListeners().stream().filter(Objects::nonNull).forEach(listener -> {
+            listener.onTruncate(mpTable);
+        });
+        return basicMapper.dbAdapt(selectorCall -> selectorCall.when(DbType.DB2, (dbType) -> {
+            return basicMapper.execute("TRUNCATE TABLE " + mpTable.getName(dbType) + " IMMEDIATE");
+        }).when(DbType.SQLITE, (dbType) -> {
+            int cnt = basicMapper.execute("DELETE FROM " + mpTable.getName(dbType));
+            basicMapper.execute("UPDATE SQLITE_SEQUENCE SET SEQ = 0 WHERE name = '" + mpTable.getName() + "'");
             return cnt;
-        }).otherwise(() -> {
-            return basicMapper.execute("TRUNCATE TABLE " + tableInfo.getTableName());
+        }).otherwise((dbType) -> {
+            return basicMapper.execute("TRUNCATE TABLE " + mpTable.getName(dbType));
         }));
     }
 }

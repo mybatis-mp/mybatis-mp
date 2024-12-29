@@ -15,11 +15,14 @@
 package cn.mybatis.mp.core.mybatis.mapper.mappers;
 
 
+import cn.mybatis.mp.core.mybatis.mapper.context.SaveBatchStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveMethodUtil;
+import cn.mybatis.mp.core.sql.executor.Insert;
 import db.sql.api.Getter;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public interface SaveMapper<T> extends BaseMapper<T> {
 
@@ -102,7 +105,20 @@ public interface SaveMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveBatch(Collection<T> list) {
-        return SaveMethodUtil.saveBatch(getBasicMapper(), getTableInfo(), list);
+        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list);
+    }
+
+    /**
+     * 使用数据库原生方式批量插入
+     * 一次最好在100条内
+     *
+     * @param list
+     * @return 影响条数
+     */
+    default int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> consumer) {
+        SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy<>();
+        consumer.accept(saveBatchStrategy);
+        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list, saveBatchStrategy);
     }
 
     /**
@@ -117,6 +133,6 @@ public interface SaveMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveBatch(Collection<T> list, Getter<T>... forceFields) {
-        return SaveMethodUtil.saveBatch(getBasicMapper(), getTableInfo(), list, forceFields);
+        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list, forceFields);
     }
 }

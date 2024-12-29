@@ -30,15 +30,8 @@ public class InsertTable implements IInsertTable<Table> {
 
     protected final Table table;
 
-    private boolean insertIgnore = false;
-
     public InsertTable(Table table) {
         this.table = table;
-    }
-
-    public InsertTable(Table table, boolean insertIgnore) {
-        this.table = table;
-        this.insertIgnore = insertIgnore;
     }
 
     @Override
@@ -46,19 +39,11 @@ public class InsertTable implements IInsertTable<Table> {
         return table;
     }
 
-    public boolean isInsertIgnore() {
-        return insertIgnore;
-    }
-
-    public void setInsertIgnore(boolean insertIgnore) {
-        this.insertIgnore = insertIgnore;
-    }
-
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-
+        AbstractInsert abstractInsert = (AbstractInsert) parent;
         if (context.getDbType() == DbType.ORACLE && parent instanceof AbstractInsert) {
-            AbstractInsert abstractInsert = (AbstractInsert) parent;
+
             List<List<Cmd>> insertValuesList = null;
             if (Objects.nonNull(abstractInsert.getInsertValues())) {
                 insertValuesList = abstractInsert.getInsertValues().getValues();
@@ -68,6 +53,12 @@ public class InsertTable implements IInsertTable<Table> {
                 return sqlBuilder;
             }
         }
+
+        boolean insertIgnore = (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB)
+                && abstractInsert.getConflictAction() != null
+                && abstractInsert.getConflictAction().getConflictKeys() == null
+                && abstractInsert.getConflictAction().getUpdateSets() == null;
+
         sqlBuilder.append(insertIgnore && (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB) ? SqlConst.INSERT_IGNORE_INTO : SqlConst.INSERT_INTO);
         sqlBuilder.append(this.table.getName());
         return sqlBuilder;

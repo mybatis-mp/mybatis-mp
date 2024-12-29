@@ -19,15 +19,14 @@ import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.executor.IInsert;
 import db.sql.api.cmd.executor.IQuery;
+import db.sql.api.cmd.executor.method.IUpdateSetMethod;
+import db.sql.api.cmd.struct.insert.ConflictKeys;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
-import db.sql.api.impl.cmd.struct.insert.InsertFields;
-import db.sql.api.impl.cmd.struct.insert.InsertSelect;
-import db.sql.api.impl.cmd.struct.insert.InsertTable;
-import db.sql.api.impl.cmd.struct.insert.InsertValues;
+import db.sql.api.impl.cmd.struct.insert.*;
 import db.sql.api.impl.tookit.Objects;
 
 import java.util.ArrayList;
@@ -55,6 +54,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     protected InsertFields insertFields;
     protected InsertValues insertValues;
     protected InsertSelect insertSelect;
+    protected ConflictAction conflictAction;
 
     public AbstractInsert(CMD_FACTORY $) {
         this.$ = $;
@@ -152,12 +152,6 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     }
 
     @Override
-    public SELF insertIgnore() {
-        this.insertTable.setInsertIgnore(true);
-        return (SELF) this;
-    }
-
-    @Override
     public <T> SELF fields(Getter<T>... fields) {
         TableField[] tableField = new TableField[fields.length];
         for (int i = 0; i < fields.length; i++) {
@@ -192,6 +186,38 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
         return (SELF) this;
     }
 
+    protected abstract AbstractUpdate<?, CMD_FACTORY> createUpdate();
+
+    protected ConflictAction $duplicateAction() {
+        if (this.conflictAction == null) {
+            this.conflictAction = new ConflictAction();
+            this.cmds.add(conflictAction);
+        }
+        return this.conflictAction;
+    }
+
+    public SELF onConflictAction(boolean ignore) {
+        this.$duplicateAction();
+        return (SELF) this;
+    }
+
+    public <T> SELF conflictKeys(Getter<T>... getters) {
+        TableField[] columns = new TableField[getters.length];
+        for (int i = 0; i < getters.length; i++) {
+            columns[i] = $.field(getters[i]);
+        }
+        this.$duplicateAction().setConflictKeys(new ConflictKeys<>(columns));
+        return (SELF) this;
+    }
+
+    public SELF onConflictAction(Consumer<IUpdateSetMethod<?, TableField, Object>> consumer) {
+
+        AbstractUpdate<?, CMD_FACTORY> update = this.createUpdate();
+        consumer.accept(update);
+        this.$duplicateAction().setUpdateSets(update.updateSets);
+        return (SELF) this;
+    }
+
     @Override
     public InsertTable getInsertTable() {
         return this.insertTable;
@@ -211,6 +237,10 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
         return this.insertSelect;
     }
 
+    public ConflictAction getConflictAction() {
+        return conflictAction;
+    }
+
     @Override
     void initCmdSorts(Map<Class<? extends Cmd>, Integer> cmdSorts) {
         int i = 0;
@@ -218,6 +248,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
         cmdSorts.put(InsertFields.class, i += 10);
         cmdSorts.put(InsertValues.class, i += 10);
         cmdSorts.put(InsertSelect.class, i += 10);
+
     }
 
 

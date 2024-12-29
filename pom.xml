@@ -31,6 +31,7 @@
         <module>mybatis-mp-core</module>
         <module>mybatis-mp-sql-api</module>
         <module>mybatis-mp-sql-api-impl</module>
+        <module>mybatis-mp-benchmark</module>
     </modules>
     <issueManagement>
         <system>Gitee Issue</system>

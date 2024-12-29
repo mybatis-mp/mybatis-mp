@@ -33,7 +33,11 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
     protected Integer timeout;
 
     public BaseUpdate() {
-        super(new MybatisCmdFactory());
+        this(new MybatisCmdFactory());
+    }
+
+    public BaseUpdate(MybatisCmdFactory mybatisCmdFactory) {
+        super(mybatisCmdFactory);
     }
 
     public BaseUpdate(Where where) {

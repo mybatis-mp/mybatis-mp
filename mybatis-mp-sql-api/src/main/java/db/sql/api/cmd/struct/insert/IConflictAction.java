@@ -12,15 +12,16 @@
  *
  */
 
-package db.sql.api.cmd.executor.method;
+package db.sql.api.cmd.struct.insert;
 
+import db.sql.api.Cmd;
+import db.sql.api.cmd.struct.update.IUpdateSet;
+import db.sql.api.cmd.struct.update.IUpdateSets;
 
-import db.sql.api.cmd.basic.ITableField;
+public interface IConflictAction<COLUMN extends Cmd, V, UPDATE_SET_VALUE extends IUpdateSet<COLUMN, V>> {
 
-public interface IUpdateMethod<SELF extends IUpdateMethod, TABLE, TABLE_FIELD extends ITableField<TABLE_FIELD, ?>, V> extends IUpdateSetMethod<SELF, TABLE_FIELD, V> {
+    ConflictKeys<COLUMN> getConflictKeys();
 
-    SELF update(TABLE... tables);
-
-    SELF update(Class... entities);
+    IUpdateSets<COLUMN, V, UPDATE_SET_VALUE> getUpdateSets();
 
 }
