@@ -29,7 +29,7 @@ import java.util.Objects;
 
 public class TestDataSource {
 
-    public static final DbType DB_TYPE = DbType.DM;
+    public static final DbType DB_TYPE = DbType.MARIA_DB;
 
     public static final String TIME_ZONE = "Asia/Shanghai";
 

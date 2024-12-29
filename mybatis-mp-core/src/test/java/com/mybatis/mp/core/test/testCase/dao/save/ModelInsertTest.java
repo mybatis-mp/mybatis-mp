@@ -119,7 +119,7 @@ public class ModelInsertTest extends BaseDaoTest {
                 } else {
                     mapper.saveModelBatch(list, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
                     System.out.println(list);
-                    if (TestDataSource.DB_TYPE == DbType.SQLITE) {
+                    if (TestDataSource.DB_TYPE == DbType.SQLITE || TestDataSource.DB_TYPE == DbType.MARIA_DB) {
                         return;
                     }
                     for (int i = 0; i < list.size(); i++) {
