@@ -14,7 +14,9 @@
 
 package cn.mybatis.mp.core.mybatis.executor.keygen;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdInsertContext;
 import cn.mybatis.mp.core.mybatis.mapper.context.SetIdMethod;
+import db.sql.api.DbType;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
@@ -45,6 +47,19 @@ public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
                 return;
             }
             final Configuration configuration = ms.getConfiguration();
+            SQLCmdInsertContext insertContext = (SQLCmdInsertContext) parameter;
+            if (setIdMethod.getInsertSize() > 1) {
+                if (insertContext.getDbType() == DbType.SQL_SERVER && insertContext.sql(insertContext.getDbType()).contains("OUTPUT INSERTED")) {
+                    try (ResultSet rs = stmt.getResultSet()) {
+                        if (rs != null) {
+                            this.assignSQLServerKeys(configuration, rs, setIdMethod);
+                            return;
+                        }
+                    } catch (Exception e) {
+                        throw new ExecutorException("Error getting generated key or setting result to parameter object. Cause: " + e, e);
+                    }
+                }
+            }
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 final ResultSetMetaData rsmd = rs.getMetaData();
 
