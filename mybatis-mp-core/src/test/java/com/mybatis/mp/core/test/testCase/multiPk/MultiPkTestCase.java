@@ -69,7 +69,7 @@ public class MultiPkTestCase extends BaseTest {
             entity.setName("12");
             mapper.saveBatch(Collections.singletonList(entity));
             mapper.saveBatch(Collections.singletonList(entity), c -> {
-                c.onBefore(baseInsert -> baseInsert
+                c.onBefore(insert -> insert
                         .conflictKeys(MultiPk::getId1, MultiPk::getId2)
                         .onConflictAction(true)
                         .onConflictAction(update -> update.set(MultiPk::getName, (java.util.function.Function<TableField, Cmd>) xxx -> xxx.concat(1)))
