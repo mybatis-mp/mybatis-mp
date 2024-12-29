@@ -14,9 +14,7 @@
 
 package cn.mybatis.mp.core.mybatis.executor.keygen;
 
-import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdInsertContext;
 import cn.mybatis.mp.core.mybatis.mapper.context.SetIdMethod;
-import db.sql.api.DbType;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
@@ -81,7 +79,7 @@ public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
             genIds.add(setIdMethod.getIdTypeHandler(configuration).getResult(rs, 1));
         }
 
-        if(genIds.size() == insertSize){
+        if (genIds.size() == insertSize) {
             for (int i = 0; i < insertSize; i++) {
                 setIdMethod.setId(genIds.get(i), i);
             }

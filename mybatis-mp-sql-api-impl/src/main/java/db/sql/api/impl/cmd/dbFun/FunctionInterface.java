@@ -982,6 +982,7 @@ public interface FunctionInterface extends Cmd {
     /**
      * 分组后对列拼接
      * 默认是逗号拼接
+     *
      * @return GroupConcat
      */
     default GroupConcat groupConcat() {

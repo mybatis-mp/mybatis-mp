@@ -45,7 +45,6 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
     }
 
 
-
     @Override
     public void init(DbType dbType) {
         super.init(dbType);

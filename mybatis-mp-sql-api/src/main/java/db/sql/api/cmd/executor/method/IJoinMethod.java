@@ -242,7 +242,7 @@ public interface IJoinMethod<SELF extends IJoinMethod, TABLE extends IDataset, J
         return this.join(JoinMode.RIGHT, mainJoinField, 1, secondJoinField, 1);
     }
 
-    default <T1, T2> SELF join(JoinMode mode, Getter<T1> mainJoinField,  Getter<T2> secondJoinField) {
+    default <T1, T2> SELF join(JoinMode mode, Getter<T1> mainJoinField, Getter<T2> secondJoinField) {
         return this.join(mode, mainJoinField, 1, secondJoinField, 1);
     }
 

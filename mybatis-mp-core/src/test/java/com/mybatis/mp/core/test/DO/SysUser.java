@@ -28,18 +28,15 @@ import java.time.LocalDateTime;
 @FieldNameConstants
 public class SysUser extends SysUserBase {
 
-    public static final class Fields extends SysUserBase.Fields{
-
-    }
-
     @TableId
     @TableField("id")
     private Integer id;
-
     private String password;
-
     @ForeignKey(SysRole.class)
     private Integer role_id;
-
     private LocalDateTime create_time;
+
+    public static final class Fields extends SysUserBase.Fields {
+
+    }
 }

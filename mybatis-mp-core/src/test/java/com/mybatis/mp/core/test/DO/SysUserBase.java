@@ -22,10 +22,10 @@ import lombok.experimental.FieldNameConstants;
 @FieldNameConstants
 public class SysUserBase {
 
+    private String userName;
+
     @NoArgsConstructor
     public static class Fields {
 
     }
-
-    private String userName;
 }
