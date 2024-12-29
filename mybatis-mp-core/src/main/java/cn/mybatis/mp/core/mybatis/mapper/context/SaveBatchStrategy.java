@@ -27,7 +27,7 @@ public class SaveBatchStrategy<T> {
 
     private Set<String> forceFields;
 
-    private Consumer<BaseInsert<?>> listen;
+    private Consumer<BaseInsert<?>> beforeListener;
 
     public SaveBatchStrategy<T> create() {
         return new SaveBatchStrategy();
@@ -38,8 +38,8 @@ public class SaveBatchStrategy<T> {
         return this;
     }
 
-    public SaveBatchStrategy<T> listen(Consumer<BaseInsert<?>> listen) {
-        this.listen = listen;
+    public SaveBatchStrategy<T> onBefore(Consumer<BaseInsert<?>> listener) {
+        this.beforeListener = listener;
         return this;
     }
 }

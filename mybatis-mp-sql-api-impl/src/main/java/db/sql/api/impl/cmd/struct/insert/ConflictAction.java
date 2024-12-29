@@ -52,8 +52,11 @@ public class ConflictAction implements IConflictAction<TableField, Cmd, UpdateSe
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-
-        if (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.OPEN_GAUSS) {
+        if (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB) {
+            if (updateSets != null) {
+                sqlBuilder.append(" ON DUPLICATE KEY");
+            }
+        } else if (context.getDbType() == DbType.OPEN_GAUSS) {
             sqlBuilder.append(" ON DUPLICATE KEY");
         } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE) {
             sqlBuilder.append(" ON CONFLICT");
@@ -65,8 +68,10 @@ public class ConflictAction implements IConflictAction<TableField, Cmd, UpdateSe
         }
 
         if (this.updateSets == null) {
-            if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.OPEN_GAUSS) {
+            if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE) {
                 sqlBuilder.append(" DO NOTHING");
+            } else if (context.getDbType() == DbType.OPEN_GAUSS) {
+                sqlBuilder.append(" UPDATE NOTHING");
             }
         } else {
             if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE) {

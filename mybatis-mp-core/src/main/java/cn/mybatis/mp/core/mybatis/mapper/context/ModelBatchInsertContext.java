@@ -59,7 +59,7 @@ public class ModelBatchInsertContext<M extends Model> extends SQLCmdInsertContex
         Insert insert = new Insert();
         Class<?> entityType = modelInfo.getEntityType();
         insert.$().cacheTableInfo(modelInfo.getTableInfo());
-        Table table = insert.$().table(modelInfo.getTableInfo().getSchemaAndTableName());
+        Table table = insert.$().table(modelInfo.getTableInfo().getType());
         insert.insert(table);
 
         List<ModelFieldInfo> saveFieldInfoSet = saveFieldSet.stream().map(modelInfo::getFieldInfo).collect(Collectors.toList());

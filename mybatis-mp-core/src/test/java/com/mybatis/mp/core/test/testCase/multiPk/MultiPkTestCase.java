@@ -69,11 +69,24 @@ public class MultiPkTestCase extends BaseTest {
             entity.setName("12");
             mapper.saveBatch(Collections.singletonList(entity));
             mapper.saveBatch(Collections.singletonList(entity), c -> {
-                c.listen(baseInsert -> baseInsert
+                c.onBefore(baseInsert -> baseInsert
                         .conflictKeys(MultiPk::getId1, MultiPk::getId2)
                         .onConflictAction(true)
                         .onConflictAction(update -> update.set(MultiPk::getName, (java.util.function.Function<TableField, Cmd>) xxx -> xxx.concat(1)))
                 );
+            });
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
+
+            MultiPk entity = new MultiPk();
+            entity.setId1(1);
+            entity.setId2(2);
+            entity.setName("12");
+            mapper.saveBatch(Collections.singletonList(entity));
+            mapper.saveBatch(Collections.singletonList(entity), c -> {
+                c.onBefore(insert -> insert.onConflictAction(true));
             });
         }
     }

@@ -77,7 +77,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
 
         Insert insert = new Insert();
         MybatisCmdFactory $ = insert.$();
-        Table table = $.table(tableInfo.getSchemaAndTableName());
+        Table table = $.table(tableInfo.getType());
         insert.insert(table);
         List<Object> values = new ArrayList<>();
         for (int i = 0; i < tableInfo.getFieldSize(); i++) {

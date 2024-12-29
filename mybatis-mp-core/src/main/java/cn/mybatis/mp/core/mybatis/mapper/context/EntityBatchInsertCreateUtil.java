@@ -71,7 +71,7 @@ public class EntityBatchInsertCreateUtil {
         insert = insert == null ? new Insert() : insert;
 
         insert.$().cacheTableInfo(tableInfo);
-        Table table = insert.$().table(tableInfo.getSchemaAndTableName());
+        Table table = insert.$().table(tableInfo.getType());
         insert.insert(table);
 
         Set<String> saveFieldSet;
@@ -187,8 +187,8 @@ public class EntityBatchInsertCreateUtil {
                 insert.getInsertFields().setOutput("OUTPUT INSERTED." + tableInfo.getIdFieldInfo().getColumnName());
             }
         }
-        if (saveBatchStrategy.getListen() != null) {
-            saveBatchStrategy.getListen().accept(insert);
+        if (saveBatchStrategy.getBeforeListener() != null) {
+            saveBatchStrategy.getBeforeListener().accept(insert);
         }
         return insert;
     }

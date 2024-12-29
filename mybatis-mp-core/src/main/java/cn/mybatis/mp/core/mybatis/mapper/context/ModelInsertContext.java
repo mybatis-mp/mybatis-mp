@@ -82,7 +82,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
         MybatisCmdFactory $ = insert.$();
         $.cacheTableInfo(modelInfo.getTableInfo());
 
-        Table table = $.table(modelInfo.getTableInfo().getSchemaAndTableName());
+        Table table = $.table(modelInfo.getTableInfo().getType());
         insert.insert(table);
         List<Object> values = new ArrayList<>();
         for (int i = 0; i < modelInfo.getFieldSize(); i++) {
