@@ -14,12 +14,15 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.SaveBatchStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveModelMethodUtil;
+import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public interface SaveModelBasicMapper extends BaseBasicMapper {
     /**
@@ -101,7 +104,7 @@ public interface SaveModelBasicMapper extends BaseBasicMapper {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        return SaveModelMethodUtil.saveBatch(getBasicMapper(), list);
+        return SaveModelMethodUtil.saveBatch(getBasicMapper(), new Insert(), list);
     }
 
     /**
@@ -119,6 +122,20 @@ public interface SaveModelBasicMapper extends BaseBasicMapper {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        return SaveModelMethodUtil.saveBatch(getBasicMapper(), list, forceFields);
+        return SaveModelMethodUtil.saveBatch(getBasicMapper(), new Insert(), list, forceFields);
+    }
+
+    /**
+     * 使用数据库原生方式批量插入
+     * 一次最好在100条内
+     *
+     * @param list     需要插入数据
+     * @param strategy 插入策略
+     * @return 影响条数
+     */
+    default <T, M extends Model<T>> int saveModelBatch(Collection<M> list, Consumer<SaveBatchStrategy<T>> strategy) {
+        SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy<>();
+        strategy.accept(saveBatchStrategy);
+        return SaveModelMethodUtil.saveBatch(getBasicMapper(), new Insert(), list, saveBatchStrategy);
     }
 }

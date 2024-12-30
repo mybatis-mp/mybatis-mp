@@ -12,62 +12,62 @@
  *
  */
 
-package db.sql.api.impl.cmd.struct.insert;
+package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
-import db.sql.api.cmd.struct.insert.ConflictKeys;
-import db.sql.api.cmd.struct.insert.IConflictAction;
-import db.sql.api.cmd.struct.update.IUpdateSets;
-import db.sql.api.impl.cmd.basic.TableField;
-import db.sql.api.impl.cmd.struct.update.UpdateSet;
-import db.sql.api.impl.cmd.struct.update.UpdateSets;
-import db.sql.api.impl.tookit.SqlConst;
+import db.sql.api.cmd.basic.IConflictAction;
+import db.sql.api.cmd.basic.IConflictUpdate;
+import db.sql.api.impl.cmd.CmdFactory;
+import db.sql.api.impl.cmd.struct.insert.ConflictUpdate;
 import db.sql.api.tookit.CmdUtils;
 
-public class ConflictAction implements IConflictAction<TableField, Cmd, UpdateSet>, Cmd {
+import java.util.function.Consumer;
 
-    private ConflictKeys<TableField> conflictKeys;
+public class ConflictAction implements IConflictAction {
 
-    private UpdateSets updateSets;
+    private final CmdFactory cmdFactory;
 
-    @Override
-    public ConflictKeys getConflictKeys() {
-        return conflictKeys;
-    }
+    private IConflictUpdate conflictUpdate;
+    private boolean doNothing;
 
-    public void setConflictKeys(ConflictKeys<TableField> conflictKeys) {
-        this.conflictKeys = conflictKeys;
+    public ConflictAction(CmdFactory cmdFactory) {
+        this.cmdFactory = cmdFactory;
     }
 
     @Override
-    public IUpdateSets<TableField, Cmd, UpdateSet> getUpdateSets() {
-        return updateSets;
+    public void doNothing() {
+        doNothing = true;
     }
 
-    public void setUpdateSets(UpdateSets updateSets) {
-        this.updateSets = updateSets;
+    @Override
+    public IConflictAction doUpdate(Consumer<IConflictUpdate> consumer) {
+        if (this.conflictUpdate == null) {
+            this.conflictUpdate = new ConflictUpdate(cmdFactory);
+        }
+        consumer.accept(this.conflictUpdate);
+        return this;
+    }
+
+    @Override
+    public boolean isDoNothing() {
+        return doNothing && this.conflictUpdate == null;
     }
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2) {
-            if (updateSets != null) {
+            if (this.conflictUpdate != null) {
                 sqlBuilder.append(" ON DUPLICATE KEY");
             }
         } else if (context.getDbType() == DbType.OPEN_GAUSS) {
             sqlBuilder.append(" ON DUPLICATE KEY");
         } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE) {
             sqlBuilder.append(" ON CONFLICT");
-            if (this.conflictKeys != null && this.conflictKeys.getConflictKeys().length > 0) {
-                sqlBuilder.append(SqlConst.BRACKET_LEFT);
-                this.conflictKeys.sql(module, this, context, sqlBuilder);
-                sqlBuilder.append(SqlConst.BRACKET_RIGHT);
-            }
         }
 
-        if (this.updateSets == null) {
+        if (this.conflictUpdate == null) {
             if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE) {
                 sqlBuilder.append(" DO NOTHING");
             } else if (context.getDbType() == DbType.OPEN_GAUSS) {
@@ -79,13 +79,13 @@ public class ConflictAction implements IConflictAction<TableField, Cmd, UpdateSe
             } else if (context.getDbType() == DbType.OPEN_GAUSS) {
                 sqlBuilder.append(" UPDATE");
             }
-            this.updateSets.sql(module, this, context, sqlBuilder);
+            this.conflictUpdate.sql(module, this, context, sqlBuilder);
         }
         return sqlBuilder;
     }
 
     @Override
     public boolean contain(Cmd cmd) {
-        return CmdUtils.contain(cmd, this.conflictKeys, this.updateSets);
+        return CmdUtils.contain(cmd, this.conflictUpdate);
     }
 }

@@ -66,7 +66,7 @@ public class EntityBatchInsertCreateUtil {
     }
 
 
-    public static <T> BaseInsert<?> create(BaseInsert<?> insert, TableInfo tableInfo, T[] array, SaveBatchStrategy<T> saveBatchStrategy, DbType dbType, boolean useBatchExecutor) {
+    public static <T> BaseInsert<?> create(BaseInsert<?> insert, TableInfo tableInfo, T[] insertData, SaveBatchStrategy<T> saveBatchStrategy, DbType dbType, boolean useBatchExecutor) {
 
         insert = insert == null ? new Insert() : insert;
 
@@ -76,7 +76,7 @@ public class EntityBatchInsertCreateUtil {
 
         Set<String> saveFieldSet;
         if (saveBatchStrategy.getForceFields() == null || saveBatchStrategy.getForceFields().isEmpty()) {
-            saveFieldSet = getAllSaveField(tableInfo, dbType, array[0]);
+            saveFieldSet = getAllSaveField(tableInfo, dbType, insertData[0]);
         } else {
             saveFieldSet = saveBatchStrategy.getForceFields();
         }
@@ -124,7 +124,7 @@ public class EntityBatchInsertCreateUtil {
         int fieldSize = saveFieldInfoSet.size();
 
         boolean containId = false;
-        for (Object t : array) {
+        for (Object t : insertData) {
             List<Object> values = new ArrayList<>();
             for (int i = 0; i < fieldSize; i++) {
                 TableFieldInfo tableFieldInfo = saveFieldInfoSet.get(i);
@@ -187,8 +187,8 @@ public class EntityBatchInsertCreateUtil {
                 insert.getInsertFields().setOutput("OUTPUT INSERTED." + tableInfo.getIdFieldInfo().getColumnName());
             }
         }
-        if (saveBatchStrategy.getBeforeListener() != null) {
-            saveBatchStrategy.getBeforeListener().accept(insert);
+        if (saveBatchStrategy.getConflictAction() != null) {
+            insert.onConflict(saveBatchStrategy.getConflictAction());
         }
         return insert;
     }

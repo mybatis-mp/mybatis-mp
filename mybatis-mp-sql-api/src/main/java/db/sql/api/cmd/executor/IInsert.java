@@ -15,6 +15,7 @@
 package db.sql.api.cmd.executor;
 
 import db.sql.api.Getter;
+import db.sql.api.cmd.basic.IConflictAction;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
 import db.sql.api.cmd.struct.insert.IInsertFields;
@@ -75,6 +76,8 @@ public interface IInsert<SELF extends IInsert,
 
     SELF values(List<Object> values, boolean enableNull);
 
+    SELF onConflict(Consumer<IConflictAction> action);
+
     SELF fromSelect(IQuery query);
 
     INSERT_TABLE getInsertTable();
@@ -82,5 +85,7 @@ public interface IInsert<SELF extends IInsert,
     INSERT_FIELD getInsertFields();
 
     INSERT_VALUE getInsertValues();
+
+    IConflictAction getConflictAction();
 
 }

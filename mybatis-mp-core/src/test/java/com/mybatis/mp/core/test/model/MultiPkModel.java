@@ -12,13 +12,20 @@
  *
  */
 
-package db.sql.api.impl.cmd.executor;
+package com.mybatis.mp.core.test.model;
 
-import db.sql.api.impl.cmd.CmdFactory;
+import cn.mybatis.mp.db.Model;
+import cn.mybatis.mp.db.annotations.ModelEntityField;
+import com.mybatis.mp.core.test.DO.MultiPk;
+import lombok.Data;
 
-public class Insert extends AbstractInsert<Insert, CmdFactory> {
+@Data
+public class MultiPkModel implements Model<MultiPk> {
 
-    public Insert() {
-        super(new CmdFactory());
-    }
+    private Integer id1;
+
+    @ModelEntityField(MultiPk.Fields.id2)
+    private Integer id2x;
+
+    private String name;
 }

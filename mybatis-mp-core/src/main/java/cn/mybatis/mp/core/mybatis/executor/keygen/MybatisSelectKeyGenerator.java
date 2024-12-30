@@ -81,7 +81,7 @@ public class MybatisSelectKeyGenerator extends SelectKeyGenerator {
     }
 
     protected List<Object> getId(Executor keyExecutor, SetIdMethod setIdMethod, int index) throws SQLException {
-        List<Object> values = keyExecutor.query(keyStatement, setIdMethod.getInsertObject(index), RowBounds.DEFAULT, Executor.NO_RESULT_HANDLER);
+        List<Object> values = keyExecutor.query(keyStatement, setIdMethod.getInsertData(index), RowBounds.DEFAULT, Executor.NO_RESULT_HANDLER);
         if (values.isEmpty()) {
             throw new ExecutorException("SelectKey returned no data.");
         }

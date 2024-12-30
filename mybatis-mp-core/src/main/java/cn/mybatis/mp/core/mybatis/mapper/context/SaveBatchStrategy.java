@@ -15,8 +15,8 @@
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
 
-import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import db.sql.api.Getter;
+import db.sql.api.cmd.basic.IConflictAction;
 import db.sql.api.tookit.LambdaUtil;
 
 import java.util.Set;
@@ -27,7 +27,7 @@ public class SaveBatchStrategy<T> {
 
     private Set<String> forceFields;
 
-    private Consumer<BaseInsert<?>> beforeListener;
+    private Consumer<IConflictAction> conflictAction;
 
     public SaveBatchStrategy<T> create() {
         return new SaveBatchStrategy();
@@ -38,8 +38,8 @@ public class SaveBatchStrategy<T> {
         return this;
     }
 
-    public SaveBatchStrategy<T> onBefore(Consumer<BaseInsert<?>> listener) {
-        this.beforeListener = listener;
+    public SaveBatchStrategy<T> onConflict(Consumer<IConflictAction> conflictAction) {
+        this.conflictAction = conflictAction;
         return this;
     }
 }

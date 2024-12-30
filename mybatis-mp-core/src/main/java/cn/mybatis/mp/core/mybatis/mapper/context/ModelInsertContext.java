@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<BaseInsert> implements SetIdMethod {
+public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<BaseInsert, T> implements SetIdMethod {
 
     private final T model;
 
@@ -171,7 +171,7 @@ public class ModelInsertContext<T extends Model> extends SQLCmdInsertContext<Bas
     }
 
     @Override
-    public Object getInsertObject(int index) {
+    public Object getInsertData(int index) {
         return this.model;
     }
 

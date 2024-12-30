@@ -45,7 +45,7 @@ public interface SetIdMethod {
      *
      * @return
      */
-    Object getInsertObject(int index);
+    Object getInsertData(int index);
 
     /**
      * 获取ID的TypeHandler

@@ -111,19 +111,6 @@ public interface SaveMapper<T> extends BaseMapper<T> {
     /**
      * 使用数据库原生方式批量插入
      * 一次最好在100条内
-     *
-     * @param list
-     * @return 影响条数
-     */
-    default int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> consumer) {
-        SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy<>();
-        consumer.accept(saveBatchStrategy);
-        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list, saveBatchStrategy);
-    }
-
-    /**
-     * 使用数据库原生方式批量插入
-     * 一次最好在100条内
      * <p>
      * 会自动加入 主键 租户ID 逻辑删除列 乐观锁
      * 自动设置 默认值,不会忽略NULL值字段
@@ -134,5 +121,19 @@ public interface SaveMapper<T> extends BaseMapper<T> {
      */
     default int saveBatch(Collection<T> list, Getter<T>... forceFields) {
         return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list, forceFields);
+    }
+
+    /**
+     * 使用数据库原生方式批量插入
+     * 一次最好在100条内
+     *
+     * @param list     需要插入数据
+     * @param strategy 插入策略
+     * @return 影响条数
+     */
+    default int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> strategy) {
+        SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy<>();
+        strategy.accept(saveBatchStrategy);
+        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list, saveBatchStrategy);
     }
 }

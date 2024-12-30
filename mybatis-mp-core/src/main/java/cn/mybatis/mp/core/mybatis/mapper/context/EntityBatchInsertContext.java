@@ -23,9 +23,7 @@ import org.apache.ibatis.type.TypeHandler;
 import java.util.Collection;
 import java.util.Objects;
 
-public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert> implements SetIdMethod {
-
-    private final T[] insertDatas;
+public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert, T[]> implements SetIdMethod {
 
     private final SaveBatchStrategy<T> saveBatchStrategy;
 
@@ -36,12 +34,12 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
     private final BaseInsert<?> insert;
 
     public EntityBatchInsertContext(BaseInsert<?> insert, TableInfo tableInfo, Collection<T> list, SaveBatchStrategy<T> saveBatchStrategy) {
+        super(list.toArray((T[]) new Object[0]));
         this.insert = insert;
         this.tableInfo = tableInfo;
-        this.insertDatas = list.toArray((T[]) new Object[0]);
         this.saveBatchStrategy = saveBatchStrategy;
         this.entityType = tableInfo.getType();
-        this.idHasValue = IdUtil.isIdExists(this.insertDatas[0], tableInfo.getIdFieldInfo());
+        this.idHasValue = IdUtil.isIdExists(this.getInsertData()[0], tableInfo.getIdFieldInfo());
     }
 
 
@@ -49,13 +47,13 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
     public void init(DbType dbType) {
         super.init(dbType);
         if (Objects.isNull(this.execution)) {
-            this.execution = EntityBatchInsertCreateUtil.create(insert, this.tableInfo, this.insertDatas, saveBatchStrategy, dbType, useBatchExecutor);
+            this.execution = EntityBatchInsertCreateUtil.create(insert, this.tableInfo, this.getInsertData(), saveBatchStrategy, dbType, useBatchExecutor);
         }
     }
 
     @Override
     public void setId(Object id, int index) {
-        IdUtil.setId(this.insertDatas[index], this.tableInfo.getSingleIdFieldInfo(true), id);
+        IdUtil.setId(this.getInsertData()[index], this.tableInfo.getSingleIdFieldInfo(true), id);
     }
 
     @Override
@@ -65,12 +63,12 @@ public class EntityBatchInsertContext<T> extends SQLCmdInsertContext<BaseInsert>
 
     @Override
     public int getInsertSize() {
-        return this.insertDatas.length;
+        return this.getInsertData().length;
     }
 
     @Override
-    public Object getInsertObject(int index) {
-        return this.insertDatas[index];
+    public Object getInsertData(int index) {
+        return this.getInsertData()[index];
     }
 
     @Override

@@ -43,13 +43,6 @@ public final class SaveMethodUtil {
         return cnt;
     }
 
-    public static <E> int saveBatch(BasicMapper basicMapper, BaseInsert<?> insert, TableInfo tableInfo, Collection<E> list, SaveBatchStrategy<E> saveBatchStrategy) {
-        if (Objects.isNull(list) || list.isEmpty()) {
-            return 0;
-        }
-        return basicMapper.$save(new EntityBatchInsertContext(insert, tableInfo, list, saveBatchStrategy));
-    }
-
     public static <E> int saveBatch(BasicMapper basicMapper, BaseInsert<?> insert, TableInfo tableInfo, Collection<E> list) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
@@ -65,5 +58,12 @@ public final class SaveMethodUtil {
         SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy();
         saveBatchStrategy.forceFields(forceFields);
         return saveBatch(basicMapper, insert, tableInfo, list, saveBatchStrategy);
+    }
+
+    public static <E> int saveBatch(BasicMapper basicMapper, BaseInsert<?> insert, TableInfo tableInfo, Collection<E> list, SaveBatchStrategy<E> saveBatchStrategy) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
+        }
+        return basicMapper.$save(new EntityBatchInsertContext(insert, tableInfo, list, saveBatchStrategy));
     }
 }

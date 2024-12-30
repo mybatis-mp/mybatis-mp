@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> implements SetIdMethod {
+public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert, T> implements SetIdMethod {
 
     private final T entity;
 
@@ -170,7 +170,7 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert> impl
     }
 
     @Override
-    public Object getInsertObject(int index) {
+    public Object getInsertData(int index) {
         return this.entity;
     }
 

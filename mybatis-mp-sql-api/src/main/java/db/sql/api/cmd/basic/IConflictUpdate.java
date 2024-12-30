@@ -12,16 +12,29 @@
  *
  */
 
-package db.sql.api.cmd.struct.insert;
+package db.sql.api.cmd.basic;
 
 import db.sql.api.Cmd;
-import db.sql.api.cmd.struct.update.IUpdateSet;
-import db.sql.api.cmd.struct.update.IUpdateSets;
+import db.sql.api.Getter;
 
-public interface IConflictAction<COLUMN extends Cmd, V, UPDATE_SET_VALUE extends IUpdateSet<COLUMN, V>> {
+public interface IConflictUpdate extends Cmd {
 
-    ConflictKeys<COLUMN> getConflictKeys();
+    /**
+     * 设置值
+     *
+     * @param field
+     * @param value
+     * @param <T>
+     * @return
+     */
+    <T> IConflictUpdate set(Getter<T> field, Object value);
 
-    IUpdateSets<COLUMN, V, UPDATE_SET_VALUE> getUpdateSets();
-
+    /**
+     * 覆盖字段
+     *
+     * @param fields
+     * @param <T>
+     * @return
+     */
+    <T> IConflictUpdate overwrite(Getter<T>... fields);
 }

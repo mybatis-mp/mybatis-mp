@@ -12,13 +12,17 @@
  *
  */
 
-package db.sql.api.impl.cmd.executor;
+package db.sql.api.cmd.basic;
 
-import db.sql.api.impl.cmd.CmdFactory;
+import db.sql.api.Cmd;
 
-public class Insert extends AbstractInsert<Insert, CmdFactory> {
+import java.util.function.Consumer;
 
-    public Insert() {
-        super(new CmdFactory());
-    }
+public interface IConflictAction extends Cmd {
+
+    void doNothing();
+
+    IConflictAction doUpdate(Consumer<IConflictUpdate> consumer);
+
+    boolean isDoNothing();
 }

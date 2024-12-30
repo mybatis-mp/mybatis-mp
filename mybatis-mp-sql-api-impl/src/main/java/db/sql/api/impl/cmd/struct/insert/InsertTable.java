@@ -56,8 +56,7 @@ public class InsertTable implements IInsertTable<Table> {
 
         boolean insertIgnore = (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2)
                 && abstractInsert.getConflictAction() != null
-                && abstractInsert.getConflictAction().getConflictKeys() == null
-                && abstractInsert.getConflictAction().getUpdateSets() == null;
+                && abstractInsert.getConflictAction().isDoNothing();
 
         sqlBuilder.append(insertIgnore ? SqlConst.INSERT_IGNORE_INTO : SqlConst.INSERT_INTO);
         sqlBuilder.append(this.table.getName());
