@@ -33,7 +33,7 @@ public class ConflictUpdateTableField extends TableField {
         if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.OPEN_GAUSS) {
             sqlBuilder.append(" EXCLUDED.").append(this.getName());
         } else {
-            this.tableField.sql(module, parent, context, sqlBuilder);
+            sqlBuilder.append(" VALUES(").append(this.getName()).append(")");
         }
         return sqlBuilder;
     }

@@ -68,6 +68,7 @@ public class MultiPkTestCase extends BaseTest {
             entity.setId2(2);
             entity.setName("12");
             mapper.saveBatch(Collections.singletonList(entity));
+            entity.setName("xxxx");
             mapper.saveBatch(Collections.singletonList(entity), c -> {
                 c.onBefore(insert -> insert
                         .conflictKeys(MultiPk::getId1, MultiPk::getId2)
@@ -75,6 +76,9 @@ public class MultiPkTestCase extends BaseTest {
                         .onConflictAction(update -> update.set(MultiPk::getName, (java.util.function.Function<TableField, Cmd>) xxx -> xxx.concat(1)))
                 );
             });
+            entity = mapper.get(where -> where.eq(MultiPk::getId1, 1).eq(MultiPk::getId2, 2));
+            assertEquals("xxxx1", entity.getName());
+            System.out.println(entity);
         }
 
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {

@@ -88,7 +88,7 @@ public class TestDataSource {
 
     private static DataSource createH2DataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setJdbcUrl("jdbc:h2:mem:" + DB_NAME + ";DB_CLOSE_ON_EXIT=FALSE");
+        ds.setJdbcUrl("jdbc:h2:mem:" + DB_NAME + ";DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL");
         ds.setUsername("sa");
         ds.setPassword("");
         ds.setDriverClassName("org.h2.Driver");
