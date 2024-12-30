@@ -53,7 +53,7 @@ public class MultiPkTestCase extends BaseTest {
 
     @Test
     public void saveBatchConflictTest() {
-        if (TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB
+        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB
                 && TestDataSource.DB_TYPE != DbType.PGSQL
                 && TestDataSource.DB_TYPE != DbType.KING_BASE
                 && TestDataSource.DB_TYPE != DbType.OPEN_GAUSS) {

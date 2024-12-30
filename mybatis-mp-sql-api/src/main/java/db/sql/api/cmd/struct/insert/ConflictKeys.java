@@ -35,7 +35,7 @@ public class ConflictKeys<COLUMN extends Cmd> implements Cmd {
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         IConflictAction duplicateAction = (IConflictAction) parent;
         if (duplicateAction.getUpdateSets() == null) {
-            if (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB) {
+            if (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2) {
                 return sqlBuilder;
             }
         }

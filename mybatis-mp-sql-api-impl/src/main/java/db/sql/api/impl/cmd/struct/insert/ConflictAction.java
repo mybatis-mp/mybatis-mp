@@ -52,7 +52,7 @@ public class ConflictAction implements IConflictAction<TableField, Cmd, UpdateSe
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB) {
+        if (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2) {
             if (updateSets != null) {
                 sqlBuilder.append(" ON DUPLICATE KEY");
             }
