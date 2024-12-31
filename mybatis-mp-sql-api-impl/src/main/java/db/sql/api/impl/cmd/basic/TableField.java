@@ -18,8 +18,11 @@ import db.sql.api.cmd.basic.ITableField;
 
 public class TableField extends AbstractDatasetField<TableField> implements ITableField<TableField, Table> {
 
-    public TableField(Table table, String name) {
+    private boolean id;
+
+    public TableField(Table table, String name, boolean id) {
         super(table, name);
+        this.id = id;
     }
 
     protected boolean canEqual(Object other) {
@@ -29,6 +32,10 @@ public class TableField extends AbstractDatasetField<TableField> implements ITab
     @Override
     public Table getTable() {
         return (Table) super.getTable();
+    }
+
+    public boolean isId() {
+        return id;
     }
 
     @Override

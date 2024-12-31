@@ -22,6 +22,7 @@ import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.ConflictUpdateTableField;
 import db.sql.api.impl.cmd.basic.TableField;
+import db.sql.api.impl.cmd.executor.AbstractInsert;
 import db.sql.api.impl.cmd.struct.update.UpdateSets;
 import db.sql.api.tookit.CmdUtils;
 
@@ -29,7 +30,9 @@ public class ConflictUpdate<T> implements IConflictUpdate<T> {
 
     private final CmdFactory cmdFactory;
 
-    private UpdateSets updateSets = new UpdateSets();
+    private boolean overwriteAll;
+
+    private UpdateSets updateSets;
 
     public ConflictUpdate(CmdFactory cmdFactory) {
         this.cmdFactory = cmdFactory;
@@ -37,12 +40,18 @@ public class ConflictUpdate<T> implements IConflictUpdate<T> {
 
     @Override
     public IConflictUpdate<T> set(Getter<T> field, Object value) {
+        if (this.updateSets == null) {
+            this.updateSets = new UpdateSets();
+        }
         updateSets.set(cmdFactory.field(field), Methods.cmd(value));
         return this;
     }
 
     @Override
     public IConflictUpdate<T> overwrite(Getter<T>... fields) {
+        if (this.updateSets == null) {
+            this.updateSets = new UpdateSets();
+        }
         for (Getter<T> field : fields) {
             TableField tableField = cmdFactory.field(field);
             updateSets.set(tableField, new ConflictUpdateTableField(tableField));
@@ -51,7 +60,33 @@ public class ConflictUpdate<T> implements IConflictUpdate<T> {
     }
 
     @Override
+    public IConflictUpdate<T> overwriteAll() {
+        this.overwriteAll = true;
+        return this;
+    }
+
+    @Override
+    public boolean isOverwriteAll() {
+        return overwriteAll;
+    }
+
+    @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        AbstractInsert insert = (AbstractInsert) module;
+        ConflictKeyUtil.addDefaultConflictKeys(insert, context.getDbType());
+
+        if (this.isOverwriteAll() && this.updateSets == null) {
+            this.updateSets = new UpdateSets();
+            //从插入字段里读取 然后覆盖
+            ConflictKeyUtil.addDefaultConflictKeys(insert, context.getDbType());
+            InsertFields insertFields = insert.getInsertFields();
+            insertFields.getFields().stream().filter(item -> !item.isId()).forEach(item -> {
+                updateSets.set(item, new ConflictUpdateTableField(item));
+            });
+        }
+        if (this.updateSets == null) {
+            return sqlBuilder;
+        }
         return this.updateSets.sql(module, this, context, sqlBuilder);
     }
 

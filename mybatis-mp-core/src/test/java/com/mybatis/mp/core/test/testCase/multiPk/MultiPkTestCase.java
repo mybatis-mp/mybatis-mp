@@ -217,7 +217,7 @@ public class MultiPkTestCase extends BaseTest {
             entity.setName("xxxx");
             mapper.saveBatch(Collections.singletonList(entity), strategy -> {
                 //strategy.conflictKeys(MultiPk::getId1, MultiPk::getId2);
-                strategy.onConflict(action -> action.doUpdate(update -> update.overwrite(MultiPk::getName)));
+                strategy.onConflict(action -> action.doUpdate(update -> update.overwriteAll()));
             });
             entity = mapper.get(where -> where.eq(MultiPk::getId1, 1).eq(MultiPk::getId2, 2));
             assertEquals("xxxx", entity.getName());

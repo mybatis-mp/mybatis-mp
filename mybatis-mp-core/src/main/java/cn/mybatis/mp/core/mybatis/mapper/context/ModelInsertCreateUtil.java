@@ -109,7 +109,7 @@ public class ModelInsertCreateUtil {
             }
 
             if (isNeedInsert) {
-                insert.fields(insert.$().field(table, modelFieldInfo.getTableFieldInfo().getColumnName()));
+                insert.fields(insert.$().field(table, modelFieldInfo.getTableFieldInfo().getColumnName(), modelFieldInfo.getTableFieldInfo().isTableId()));
                 if (Objects.isNull(value)) {
                     values.add(NULL.NULL);
                 } else {
@@ -124,7 +124,6 @@ public class ModelInsertCreateUtil {
         if (saveStrategy.getConflictAction() != null) {
             insert.conflictKeys(saveStrategy.getConflictKeys());
             insert.onConflict(saveStrategy.getConflictAction());
-            ConflictKeyUtil.addDefaultConflictKeys(tableInfo, insert, dbType);
         }
         return insert;
     }

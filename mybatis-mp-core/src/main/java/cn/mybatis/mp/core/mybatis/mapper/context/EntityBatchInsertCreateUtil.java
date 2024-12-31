@@ -119,7 +119,7 @@ public class EntityBatchInsertCreateUtil {
 
         //设置insert 列
         for (TableFieldInfo tableFieldInfo : saveFieldInfoSet) {
-            insert.fields(insert.$().field(table, tableFieldInfo.getColumnName()));
+            insert.fields(insert.$().field(table, tableFieldInfo.getColumnName(), tableFieldInfo.isTableId()));
         }
 
         int fieldSize = saveFieldInfoSet.size();
@@ -191,7 +191,6 @@ public class EntityBatchInsertCreateUtil {
         if (saveBatchStrategy.getConflictAction() != null) {
             insert.conflictKeys(saveBatchStrategy.getConflictKeys());
             insert.onConflict(saveBatchStrategy.getConflictAction());
-            ConflictKeyUtil.addDefaultConflictKeys(tableInfo, insert, dbType);
         }
         return insert;
     }

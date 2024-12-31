@@ -35,4 +35,20 @@ public interface IConflictUpdate<T> extends Cmd {
      * @return
      */
     IConflictUpdate<T> overwrite(Getter<T>... fields);
+
+    /**
+     * 覆盖所有修改字段
+     * 除主键外
+     *
+     * @return
+     */
+    IConflictUpdate<T> overwriteAll();
+
+    /**
+     * 覆盖所有修改字段
+     * 除主键外
+     *
+     * @return
+     */
+    boolean isOverwriteAll();
 }

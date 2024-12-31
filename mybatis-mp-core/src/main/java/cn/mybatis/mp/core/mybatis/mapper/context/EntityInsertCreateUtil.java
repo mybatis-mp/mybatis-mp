@@ -112,7 +112,7 @@ public class EntityInsertCreateUtil {
             }
 
             if (isNeedInsert) {
-                insert.fields(insert.$().field(table, tableFieldInfo.getColumnName()));
+                insert.fields(insert.$().field(table, tableFieldInfo.getColumnName(), tableFieldInfo.isTableId()));
                 if (Objects.isNull(value)) {
                     values.add(NULL.NULL);
                 } else {
@@ -127,7 +127,6 @@ public class EntityInsertCreateUtil {
         if (saveStrategy.getConflictAction() != null) {
             insert.conflictKeys(saveStrategy.getConflictKeys());
             insert.onConflict(saveStrategy.getConflictAction());
-            ConflictKeyUtil.addDefaultConflictKeys(tableInfo, insert, dbType);
         }
         return insert;
     }

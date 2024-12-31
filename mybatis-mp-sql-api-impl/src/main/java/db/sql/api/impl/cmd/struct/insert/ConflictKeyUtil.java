@@ -12,17 +12,17 @@
  *
  */
 
-package cn.mybatis.mp.core.mybatis.mapper.context;
+package db.sql.api.impl.cmd.struct.insert;
 
-import cn.mybatis.mp.core.db.reflect.TableInfo;
-import cn.mybatis.mp.core.sql.executor.BaseInsert;
+
 import db.sql.api.DbType;
+import db.sql.api.impl.cmd.executor.AbstractInsert;
 
 import java.util.stream.Collectors;
 
 public class ConflictKeyUtil {
 
-    public final static void addDefaultConflictKeys(TableInfo tableInfo, BaseInsert<?> insert, DbType dbType) {
+    public final static void addDefaultConflictKeys(AbstractInsert insert, DbType dbType) {
         if (insert.getConflictAction() == null) {
             return;
         }
@@ -33,7 +33,7 @@ public class ConflictKeyUtil {
         if (dbType == DbType.ORACLE
                 || ((dbType == DbType.PGSQL || dbType == DbType.KING_BASE) && !insert.getConflictAction().isDoNothing())
                 || ((dbType == DbType.OPEN_GAUSS || dbType == DbType.SQLITE) && insert.getConflictAction().getConflictUpdate() == null)) {
-            String[] conflictKeys = tableInfo.getIdFieldInfos().stream().map(item -> item.getColumnName()).collect(Collectors.toList()).toArray(new String[0]);
+            String[] conflictKeys = insert.getInsertFields().getFields().stream().map(item -> item.getName()).collect(Collectors.toList()).toArray(new String[0]);
             insert.getConflictAction().conflictKeys(conflictKeys);
         }
     }

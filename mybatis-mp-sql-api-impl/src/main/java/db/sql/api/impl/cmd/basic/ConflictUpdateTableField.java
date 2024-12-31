@@ -23,7 +23,7 @@ public class ConflictUpdateTableField extends TableField {
     private TableField tableField;
 
     public ConflictUpdateTableField(TableField tableField) {
-        super(tableField.getTable(), tableField.getName());
+        super(tableField.getTable(), tableField.getName(), tableField.isId());
         this.tableField = tableField;
     }
 

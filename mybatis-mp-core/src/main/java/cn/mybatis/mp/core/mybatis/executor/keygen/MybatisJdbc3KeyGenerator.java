@@ -78,9 +78,18 @@ public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
 
     private void assignSQLServerKeys(Configuration configuration, ResultSet rs, SetIdMethod setIdMethod) throws SQLException {
         int insertSize = setIdMethod.getInsertSize();
+        List<Object> genIds = new ArrayList<>(insertSize);
         for (int i = 0; i < insertSize; i++) {
-            rs.next();
-            setIdMethod.setId(setIdMethod.getIdTypeHandler(configuration).getResult(rs, setIdMethod.getIdColumnName()), i);
+            if (!rs.next()) {
+                return;
+            }
+            genIds.add(setIdMethod.getIdTypeHandler(configuration).getResult(rs, setIdMethod.getIdColumnName()));
+        }
+
+        if (genIds.size() == insertSize) {
+            for (int i = 0; i < insertSize; i++) {
+                setIdMethod.setId(genIds.get(i), i);
+            }
         }
     }
 

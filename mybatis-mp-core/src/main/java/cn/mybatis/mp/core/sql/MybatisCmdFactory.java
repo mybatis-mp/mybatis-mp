@@ -115,8 +115,17 @@ public class MybatisCmdFactory extends CmdFactory {
         if (dataset instanceof MpTable) {
             return (DATASET_FIELD) new MpTableField((MpTable) dataset, tableFieldInfo);
         } else if (dataset instanceof Table) {
-            return (DATASET_FIELD) new TableField((Table) dataset, tableFieldInfo.getColumnName());
+            return (DATASET_FIELD) new TableField((Table) dataset, tableFieldInfo.getColumnName(), tableFieldInfo.isTableId());
         }
         return (DATASET_FIELD) new MpDatasetField(dataset, tableFieldInfo.getColumnName(), tableFieldInfo.getFieldInfo(), tableFieldInfo.getTypeHandler(), tableFieldInfo.getTableFieldAnnotation().jdbcType());
+    }
+
+    @Override
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD field(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
+        if (dataset instanceof MpTable) {
+            MpTable mpTable = (MpTable) dataset;
+            return (DATASET_FIELD) new MpTableField(mpTable, mpTable.getTableInfo().getFieldInfoByColumnName(columnName));
+        }
+        return super.field(dataset, columnName);
     }
 }

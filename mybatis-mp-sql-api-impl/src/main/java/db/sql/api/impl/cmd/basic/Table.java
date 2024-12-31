@@ -49,7 +49,7 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
 
     @Override
     public TableField $(String name) {
-        return new TableField(this, name);
+        return new TableField(this, name, false);
     }
 
 

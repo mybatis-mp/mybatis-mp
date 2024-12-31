@@ -118,7 +118,7 @@ public class ModelBatchInsertCreateUtil {
 
         //设置insert 列
         for (ModelFieldInfo modelFieldInfo : saveFieldInfoSet) {
-            insert.fields(insert.$().field(table, modelFieldInfo.getTableFieldInfo().getColumnName()));
+            insert.fields(insert.$().field(table, modelFieldInfo.getTableFieldInfo().getColumnName(), modelFieldInfo.getTableFieldInfo().isTableId()));
         }
 
         int fieldSize = saveFieldInfoSet.size();
@@ -192,7 +192,6 @@ public class ModelBatchInsertCreateUtil {
         if (saveBatchStrategy.getConflictAction() != null) {
             insert.conflictKeys(saveBatchStrategy.getConflictKeys());
             insert.onConflict(saveBatchStrategy.getConflictAction());
-            ConflictKeyUtil.addDefaultConflictKeys(tableInfo, insert, dbType);
         }
         return insert;
     }

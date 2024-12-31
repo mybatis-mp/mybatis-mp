@@ -104,7 +104,7 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
     }
 
     public <T> TableField field(Table table, Getter<T> column) {
-        return new TableField(table, columnName(column));
+        return new TableField(table, columnName(column), false);
     }
 
     @Override
@@ -112,8 +112,8 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
         return this.field(entity, storey, filedName);
     }
 
-    public TableField field(Table table, String columnName) {
-        return new TableField(table, columnName);
+    public TableField field(Table table, String columnName, boolean id) {
+        return new TableField(table, columnName, id);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
     @Override
     public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD field(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
         if (dataset instanceof Table) {
-            return (DATASET_FIELD) new TableField((Table) dataset, columnName);
+            return (DATASET_FIELD) new TableField((Table) dataset, columnName, false);
         }
         return (DATASET_FIELD) new DatasetField(dataset, columnName);
     }
@@ -142,6 +142,6 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
 
     protected TableField field(Class<?> clazz, int storey, String filedName) {
         Table table = table(clazz, storey);
-        return new TableField(table, filedName);
+        return new TableField(table, filedName, false);
     }
 }
