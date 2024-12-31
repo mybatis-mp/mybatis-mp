@@ -30,7 +30,9 @@ public class ConflictKeyUtil {
             return;
         }
 
-        if (dbType == DbType.ORACLE || ((dbType == DbType.PGSQL || dbType == DbType.OPEN_GAUSS || dbType == DbType.SQLITE) && insert.getConflictAction().getConflictUpdate() == null)) {
+        if (dbType == DbType.ORACLE
+                || (dbType == DbType.PGSQL && !insert.getConflictAction().isDoNothing())
+                || ((dbType == DbType.OPEN_GAUSS || dbType == DbType.SQLITE) && insert.getConflictAction().getConflictUpdate() == null)) {
             String[] conflictKeys = tableInfo.getIdFieldInfos().stream().map(item -> item.getColumnName()).collect(Collectors.toList()).toArray(new String[0]);
             insert.getConflictAction().conflictKeys(conflictKeys);
         }
