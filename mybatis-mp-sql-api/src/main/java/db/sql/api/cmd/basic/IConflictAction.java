@@ -15,14 +15,19 @@
 package db.sql.api.cmd.basic;
 
 import db.sql.api.Cmd;
+import db.sql.api.Getter;
 
 import java.util.function.Consumer;
 
-public interface IConflictAction extends Cmd {
+public interface IConflictAction<T> extends Cmd {
+
+    IConflictAction<T> conflictKeys(String[] conflictKeys);
+
+    IConflictAction<T> conflictKeys(Getter<T>[] conflictKeys);
 
     void doNothing();
 
-    IConflictAction doUpdate(Consumer<IConflictUpdate> consumer);
+    IConflictAction<T> doUpdate(Consumer<IConflictUpdate<T>> consumer);
 
     boolean isDoNothing();
 }

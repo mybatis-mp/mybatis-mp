@@ -57,7 +57,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     protected InsertFields insertFields;
     protected InsertValues insertValues;
     protected InsertSelect insertSelect;
-    protected IConflictAction conflictAction;
+    protected ConflictAction conflictAction;
 
     public AbstractInsert(CMD_FACTORY $) {
         this.$ = $;
@@ -189,14 +189,23 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
         return (SELF) this;
     }
 
-
-    @Override
-    public SELF onConflict(Consumer<IConflictAction> action) {
+    protected ConflictAction createConflictAction() {
         if (this.conflictAction == null) {
             this.conflictAction = new ConflictAction(this.$);
             this.cmds().add(this.conflictAction);
         }
-        action.accept(this.conflictAction);
+        return this.conflictAction;
+    }
+
+    @Override
+    public <T> SELF conflictKeys(Getter<T>... conflictKeys) {
+        createConflictAction().conflictKeys(conflictKeys);
+        return (SELF) this;
+    }
+
+    @Override
+    public <T> SELF onConflict(Consumer<IConflictAction<T>> action) {
+        action.accept(createConflictAction());
         return (SELF) this;
     }
 
@@ -219,7 +228,8 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
         return this.insertSelect;
     }
 
-    public IConflictAction getConflictAction() {
+    @Override
+    public ConflictAction getConflictAction() {
         return conflictAction;
     }
 

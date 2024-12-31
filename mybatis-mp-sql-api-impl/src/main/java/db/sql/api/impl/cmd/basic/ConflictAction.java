@@ -16,24 +16,58 @@ package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
+import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IConflictAction;
 import db.sql.api.cmd.basic.IConflictUpdate;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.struct.insert.ConflictUpdate;
+import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
 import java.util.function.Consumer;
 
-public class ConflictAction implements IConflictAction {
+public class ConflictAction<T> implements IConflictAction<T> {
 
     private final CmdFactory cmdFactory;
 
-    private IConflictUpdate conflictUpdate;
+    private String[] conflictKeys;
+
+    private IConflictUpdate<T> conflictUpdate;
+
     private boolean doNothing;
 
     public ConflictAction(CmdFactory cmdFactory) {
         this.cmdFactory = cmdFactory;
+    }
+
+    @Override
+    public IConflictAction<T> conflictKeys(String[] conflictKeys) {
+        this.conflictKeys = conflictKeys;
+        return this;
+    }
+
+    public IConflictUpdate<T> getConflictUpdate() {
+        return conflictUpdate;
+    }
+
+    public String[] getConflictKeys() {
+        return conflictKeys;
+    }
+
+    @Override
+    @SafeVarargs
+    public final IConflictAction<T> conflictKeys(Getter<T>... conflictKeys) {
+        if (conflictKeys != null && conflictKeys.length > 0) {
+            String[] array = new String[conflictKeys.length];
+            for (int i = 0; i < conflictKeys.length; i++) {
+                array[i] = this.cmdFactory.columnName(conflictKeys[i]);
+            }
+            this.conflictKeys = array;
+        } else {
+            this.conflictKeys = null;
+        }
+        return this;
     }
 
     @Override
@@ -42,7 +76,7 @@ public class ConflictAction implements IConflictAction {
     }
 
     @Override
-    public IConflictAction doUpdate(Consumer<IConflictUpdate> consumer) {
+    public IConflictAction<T> doUpdate(Consumer<IConflictUpdate<T>> consumer) {
         if (this.conflictUpdate == null) {
             this.conflictUpdate = new ConflictUpdate(cmdFactory);
         }
@@ -63,18 +97,28 @@ public class ConflictAction implements IConflictAction {
             }
         } else if (context.getDbType() == DbType.OPEN_GAUSS) {
             sqlBuilder.append(" ON DUPLICATE KEY");
-        } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE) {
+        } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(" ON CONFLICT");
+            if (this.conflictKeys != null) {
+                sqlBuilder.append(SqlConst.BRACKET_LEFT);
+                for (int i = 0; i < this.conflictKeys.length; i++) {
+                    if (i != 0) {
+                        sqlBuilder.append(SqlConst.DELIMITER);
+                    }
+                    sqlBuilder.append(context.getDbType().wrap(this.conflictKeys[i]));
+                }
+                sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+            }
         }
 
         if (this.conflictUpdate == null) {
-            if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE) {
+            if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
                 sqlBuilder.append(" DO NOTHING");
             } else if (context.getDbType() == DbType.OPEN_GAUSS) {
                 sqlBuilder.append(" UPDATE NOTHING");
             }
         } else {
-            if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE) {
+            if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.SQLITE) {
                 sqlBuilder.append(" DO UPDATE");
             } else if (context.getDbType() == DbType.OPEN_GAUSS) {
                 sqlBuilder.append(" UPDATE");

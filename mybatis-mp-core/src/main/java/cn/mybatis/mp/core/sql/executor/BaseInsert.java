@@ -18,11 +18,13 @@ import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.mybatis.executor.statement.Timeoutable;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import db.sql.api.Getter;
+import db.sql.api.cmd.basic.IConflictAction;
 import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.AbstractInsert;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert<T, MybatisCmdFactory> implements Timeoutable<T> {
 
@@ -54,6 +56,10 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
         return MybatisMpConfig.getSQLListeners();
     }
 
+    @Override
+    public <T1> T onConflict(Consumer<IConflictAction<T1>> action) {
+        return super.onConflict(action);
+    }
 
     /**************以下为去除警告************/
 

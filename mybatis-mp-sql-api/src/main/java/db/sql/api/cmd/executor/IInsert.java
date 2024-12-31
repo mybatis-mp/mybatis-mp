@@ -76,7 +76,9 @@ public interface IInsert<SELF extends IInsert,
 
     SELF values(List<Object> values, boolean enableNull);
 
-    SELF onConflict(Consumer<IConflictAction> action);
+    <T> SELF conflictKeys(Getter<T>... conflictKeys);
+
+    <T> SELF onConflict(Consumer<IConflictAction<T>> action);
 
     SELF fromSelect(IQuery query);
 

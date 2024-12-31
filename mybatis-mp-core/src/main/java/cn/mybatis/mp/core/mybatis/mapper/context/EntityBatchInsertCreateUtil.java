@@ -188,7 +188,9 @@ public class EntityBatchInsertCreateUtil {
             }
         }
         if (saveBatchStrategy.getConflictAction() != null) {
+            insert.conflictKeys(saveBatchStrategy.getConflictKeys());
             insert.onConflict(saveBatchStrategy.getConflictAction());
+            ConflictKeyUtil.addDefaultConflictKeys(tableInfo, insert, dbType);
         }
         return insert;
     }

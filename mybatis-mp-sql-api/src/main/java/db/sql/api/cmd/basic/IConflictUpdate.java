@@ -17,24 +17,22 @@ package db.sql.api.cmd.basic;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 
-public interface IConflictUpdate extends Cmd {
+public interface IConflictUpdate<T> extends Cmd {
 
     /**
      * 设置值
      *
      * @param field
      * @param value
-     * @param <T>
      * @return
      */
-    <T> IConflictUpdate set(Getter<T> field, Object value);
+    IConflictUpdate<T> set(Getter<T> field, Object value);
 
     /**
      * 覆盖字段
      *
      * @param fields
-     * @param <T>
      * @return
      */
-    <T> IConflictUpdate overwrite(Getter<T>... fields);
+    IConflictUpdate<T> overwrite(Getter<T>... fields);
 }

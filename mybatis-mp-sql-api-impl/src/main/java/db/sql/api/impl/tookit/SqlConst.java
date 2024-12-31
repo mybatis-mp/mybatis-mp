@@ -50,6 +50,7 @@ public final class SqlConst {
     public static final char[] DELETE = "DELETE ".toCharArray();
     public static final char[] UPDATE = "UPDATE ".toCharArray();
     public static final char[] ALTER_TABLE = "ALTER TABLE ".toCharArray();
+    public static final char[] INSERT = "INSERT ".toCharArray();
     public static final char[] INSERT_INTO = "INSERT INTO ".toCharArray();
     public static final char[] INSERT_IGNORE_INTO = "INSERT IGNORE INTO ".toCharArray();
     public static final char[] INTO = " INTO ".toCharArray();
@@ -169,6 +170,8 @@ public final class SqlConst {
     public static final char[] CAST_TEXT = "::TEXT".toCharArray();
 
     public static final char[] SELF_FROM_DUAL = "SELECT * FROM DUAL".toCharArray();
+
+    public static final char[] FROM_DUAL = " FROM DUAL".toCharArray();
 
     public static final char[] RECURSIVE = " RECURSIVE ".toCharArray();
 

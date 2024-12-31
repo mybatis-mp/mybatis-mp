@@ -25,7 +25,7 @@ import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.update.UpdateSets;
 import db.sql.api.tookit.CmdUtils;
 
-public class ConflictUpdate implements IConflictUpdate {
+public class ConflictUpdate<T> implements IConflictUpdate<T> {
 
     private final CmdFactory cmdFactory;
 
@@ -36,13 +36,13 @@ public class ConflictUpdate implements IConflictUpdate {
     }
 
     @Override
-    public <T> IConflictUpdate set(Getter<T> field, Object value) {
+    public IConflictUpdate<T> set(Getter<T> field, Object value) {
         updateSets.set(cmdFactory.field(field), Methods.cmd(value));
         return this;
     }
 
     @Override
-    public <T> IConflictUpdate overwrite(Getter<T>... fields) {
+    public IConflictUpdate<T> overwrite(Getter<T>... fields) {
         for (Getter<T> field : fields) {
             TableField tableField = cmdFactory.field(field);
             updateSets.set(tableField, new ConflictUpdateTableField(tableField));

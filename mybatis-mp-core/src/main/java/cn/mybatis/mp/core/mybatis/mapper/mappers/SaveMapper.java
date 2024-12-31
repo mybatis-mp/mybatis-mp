@@ -132,7 +132,7 @@ public interface SaveMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> strategy) {
-        SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy<>();
+        SaveBatchStrategy<T> saveBatchStrategy = new SaveBatchStrategy<>();
         strategy.accept(saveBatchStrategy);
         return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list, saveBatchStrategy);
     }

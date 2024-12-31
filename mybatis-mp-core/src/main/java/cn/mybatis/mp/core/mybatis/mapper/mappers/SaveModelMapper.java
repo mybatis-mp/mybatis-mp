@@ -130,7 +130,7 @@ public interface SaveModelMapper<T> extends BaseMapper<T> {
      * @param strategy 插入策略
      * @return 影响条数
      */
-    default <M extends Model<T>> int saveModelBatch(Collection<M> list, Consumer<SaveBatchStrategy<T>> strategy) {
+    default <M extends Model<T>> int saveModelBatch(Collection<M> list, Consumer<SaveBatchStrategy<M>> strategy) {
         SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy<>();
         strategy.accept(saveBatchStrategy);
         return SaveModelMethodUtil.saveBatch(getBasicMapper(), new Insert(), list, saveBatchStrategy);

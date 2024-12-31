@@ -27,18 +27,21 @@ public class SaveBatchStrategy<T> {
 
     private Set<String> forceFields;
 
-    private Consumer<IConflictAction> conflictAction;
+    private Getter<T>[] conflictKeys;
 
-    public SaveBatchStrategy<T> create() {
-        return new SaveBatchStrategy();
-    }
+    private Consumer<IConflictAction<T>> conflictAction;
 
     public SaveBatchStrategy<T> forceFields(Getter<T>... forceFields) {
         this.forceFields = LambdaUtil.getFieldNames(forceFields);
         return this;
     }
 
-    public SaveBatchStrategy<T> onConflict(Consumer<IConflictAction> conflictAction) {
+    public SaveBatchStrategy<T> conflictKeys(Getter<T>... conflictKeys) {
+        this.conflictKeys = conflictKeys;
+        return this;
+    }
+
+    public SaveBatchStrategy<T> onConflict(Consumer<IConflictAction<T>> conflictAction) {
         this.conflictAction = conflictAction;
         return this;
     }

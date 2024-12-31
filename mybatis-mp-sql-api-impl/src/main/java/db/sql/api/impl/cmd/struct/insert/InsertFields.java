@@ -19,9 +19,7 @@ import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.struct.insert.IInsertFields;
 import db.sql.api.impl.cmd.basic.TableField;
-import db.sql.api.impl.cmd.executor.AbstractInsert;
 import db.sql.api.impl.tookit.Lists;
-import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
@@ -65,18 +63,6 @@ public class InsertFields implements IInsertFields<TableField> {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.ORACLE && parent instanceof AbstractInsert) {
-            AbstractInsert abstractInsert = (AbstractInsert) parent;
-
-            List<List<Cmd>> insertValues = null;
-            if (Objects.nonNull(abstractInsert.getInsertValues())) {
-                insertValues = abstractInsert.getInsertValues().getValues();
-            }
-            if (Objects.nonNull(insertValues) && insertValues.size() > 1) {
-                //啥也不做
-                return sqlBuilder;
-            }
-        }
 
         sqlBuilder.append(SqlConst.BLANK).append(SqlConst.BRACKET_LEFT);
         boolean isFirst = true;

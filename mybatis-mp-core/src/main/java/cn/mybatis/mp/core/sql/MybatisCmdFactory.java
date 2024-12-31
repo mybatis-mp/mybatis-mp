@@ -14,13 +14,11 @@
 
 package cn.mybatis.mp.core.sql;
 
-import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
-import cn.mybatis.mp.core.db.reflect.TableInfo;
-import cn.mybatis.mp.core.db.reflect.Tables;
+import cn.mybatis.mp.core.db.reflect.*;
 import cn.mybatis.mp.core.sql.executor.MpDatasetField;
 import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.core.sql.executor.MpTableField;
-import cn.mybatis.mp.core.util.TableInfoUtil;
+import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
@@ -67,12 +65,26 @@ public class MybatisCmdFactory extends CmdFactory {
     @Override
     public <T> TableField field(Getter<T> column, int storey) {
         LambdaUtil.LambdaFieldInfo fieldInfo = LambdaUtil.getFieldInfo(column);
+        if (Model.class.isAssignableFrom(fieldInfo.getType())) {
+            ModelInfo modelInfo = Models.get(fieldInfo.getType());
+            this.cacheTableInfo(modelInfo.getTableInfo());
+            return this.field(modelInfo.getEntityType(), modelInfo.getFieldInfo(fieldInfo.getName()).getTableFieldInfo().getField().getName(), storey);
+        }
         return this.field(fieldInfo.getType(), fieldInfo.getName(), storey);
     }
 
     @Override
     public <T> String columnName(Getter<T> column) {
-        return TableInfoUtil.getColumnName(column);
+        LambdaUtil.LambdaFieldInfo fieldInfo = LambdaUtil.getFieldInfo(column);
+        if (Model.class.isAssignableFrom(fieldInfo.getType())) {
+            ModelInfo modelInfo = Models.get(fieldInfo.getType());
+            this.cacheTableInfo(modelInfo.getTableInfo());
+            return modelInfo.getFieldInfo(fieldInfo.getName()).getTableFieldInfo().getColumnName();
+        } else {
+            TableInfo tableInfo = this.getTableInfo(fieldInfo.getType());
+            this.cacheTableInfo(tableInfo);
+            return tableInfo.getFieldInfo(fieldInfo.getName()).getColumnName();
+        }
     }
 
     @Override
@@ -87,15 +99,9 @@ public class MybatisCmdFactory extends CmdFactory {
 
     @Override
     public <T> TableField[] fields(int storey, Getter<T>... columns) {
-        if (columns.length < 2) {
-            return new TableField[]{this.field(columns[0], 1)};
-        }
-        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(columns[0]);
-        TableInfo tableInfo = getTableInfo(lambdaFieldInfo.getType());
-        Table table = this.table(lambdaFieldInfo.getType(), storey);
         TableField[] tableFields = new TableField[columns.length];
         for (int i = 0; i < columns.length; i++) {
-            tableFields[i] = table.$(tableInfo.getFieldInfo(LambdaUtil.getName(columns[i])).getColumnName());
+            tableFields[i] = this.field(columns[i], storey);
         }
         return tableFields;
     }

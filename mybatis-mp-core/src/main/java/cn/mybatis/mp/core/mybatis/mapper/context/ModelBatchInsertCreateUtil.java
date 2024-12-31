@@ -14,7 +14,10 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
-import cn.mybatis.mp.core.db.reflect.*;
+import cn.mybatis.mp.core.db.reflect.ModelFieldInfo;
+import cn.mybatis.mp.core.db.reflect.ModelInfo;
+import cn.mybatis.mp.core.db.reflect.TableIds;
+import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.incrementer.IdentifierGenerator;
 import cn.mybatis.mp.core.incrementer.IdentifierGeneratorFactory;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
@@ -63,7 +66,7 @@ public class ModelBatchInsertCreateUtil {
 
         insert = insert == null ? new Insert() : insert;
 
-        TableInfo tableInfo =modelInfo.getTableInfo();
+        TableInfo tableInfo = modelInfo.getTableInfo();
 
         insert.$().cacheTableInfo(tableInfo);
         Table table = insert.$().table(tableInfo.getType());
@@ -186,7 +189,9 @@ public class ModelBatchInsertCreateUtil {
             }
         }
         if (saveBatchStrategy.getConflictAction() != null) {
+            insert.conflictKeys(saveBatchStrategy.getConflictKeys());
             insert.onConflict(saveBatchStrategy.getConflictAction());
+            ConflictKeyUtil.addDefaultConflictKeys(tableInfo, insert, dbType);
         }
         return insert;
     }

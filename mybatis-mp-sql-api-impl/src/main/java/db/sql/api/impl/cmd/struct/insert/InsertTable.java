@@ -20,11 +20,10 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.struct.insert.IInsertTable;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.AbstractInsert;
-import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-import java.util.List;
+import java.util.regex.Matcher;
 
 public class InsertTable implements IInsertTable<Table> {
 
@@ -42,23 +41,25 @@ public class InsertTable implements IInsertTable<Table> {
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         AbstractInsert abstractInsert = (AbstractInsert) parent;
-        if (context.getDbType() == DbType.ORACLE && parent instanceof AbstractInsert) {
-
-            List<List<Cmd>> insertValuesList = null;
-            if (Objects.nonNull(abstractInsert.getInsertValues())) {
-                insertValuesList = abstractInsert.getInsertValues().getValues();
-            }
-            if (Objects.nonNull(insertValuesList) && insertValuesList.size() > 1) {
-                sqlBuilder.append(" INSERT ALL ");
-                return sqlBuilder;
-            }
-        }
-
-        boolean insertIgnore = (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2)
+        boolean insertIgnore = (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2 || context.getDbType() == DbType.ORACLE)
                 && abstractInsert.getConflictAction() != null
                 && abstractInsert.getConflictAction().isDoNothing();
 
-        sqlBuilder.append(insertIgnore ? SqlConst.INSERT_IGNORE_INTO : SqlConst.INSERT_INTO);
+        if (insertIgnore) {
+            if (context.getDbType() == DbType.ORACLE) {
+                sqlBuilder.append(SqlConst.INSERT).append("--+ IGNORE_ROW_ON_DUPKEY_INDEX(")
+                        .append(table.getName(context.getDbType())).append(SqlConst.BRACKET_LEFT)
+                        .append(String.join(",", abstractInsert.getConflictAction().getConflictKeys()))
+                        .append(SqlConst.BRACKET_RIGHT).append(SqlConst.BRACKET_RIGHT)
+                        .append(System.lineSeparator().replaceAll(Matcher.quoteReplacement("\\"), Matcher.quoteReplacement("\\\\")))
+                        .append(SqlConst.INTO);
+            } else {
+                sqlBuilder.append(SqlConst.INSERT_IGNORE_INTO);
+            }
+        } else {
+            sqlBuilder.append(SqlConst.INSERT_INTO);
+        }
+
         sqlBuilder.append(this.table.getName());
         return sqlBuilder;
     }

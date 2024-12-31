@@ -65,17 +65,20 @@ public class InsertValues implements IInsertValues<Cmd> {
         boolean isFirstLine = true;
         for (List<Cmd> values : this.values) {
 
-            if (oracleMuti) {
-                sqlBuilder.append(SqlConst.INTO);
-                sqlBuilder.append(abstractInsert.getInsertTable().getTable().getName(context.getDbType()));
-                abstractInsert.getInsertFields().sql(module, this, context, sqlBuilder);
-                sqlBuilder.append(SqlConst.VALUES);
+            if (!isFirstLine) {
+                if (oracleMuti) {
+                    sqlBuilder.append(SqlConst.UNION);
+                } else {
+                    sqlBuilder.append(SqlConst.DELIMITER);
+                }
             }
 
-            if (!isFirstLine && !oracleMuti) {
-                sqlBuilder.append(SqlConst.DELIMITER);
+            if (!oracleMuti) {
+                sqlBuilder.append(SqlConst.BLANK).append(SqlConst.BRACKET_LEFT);
+            } else {
+                sqlBuilder.append(SqlConst.BLANK).append(SqlConst.SELECT);
             }
-            sqlBuilder.append(SqlConst.BLANK).append(SqlConst.BRACKET_LEFT);
+
             boolean isFirst = true;
             for (Cmd value : values) {
                 if (!isFirst) {
@@ -84,12 +87,12 @@ public class InsertValues implements IInsertValues<Cmd> {
                 value.sql(module, this, context, sqlBuilder);
                 isFirst = false;
             }
-            sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BLANK);
+            if (!oracleMuti) {
+                sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BLANK);
+            } else {
+                sqlBuilder.append(SqlConst.BLANK).append(SqlConst.FROM_DUAL);
+            }
             isFirstLine = false;
-        }
-
-        if (oracleMuti) {
-            sqlBuilder.append(SqlConst.SELF_FROM_DUAL);
         }
 
         return sqlBuilder;
