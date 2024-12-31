@@ -42,7 +42,7 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveOrUpdate(T entity, boolean allFieldForce) {
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, allFieldForce);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, allFieldForce, null);
     }
 
     /**

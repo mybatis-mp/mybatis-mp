@@ -43,7 +43,7 @@ public interface SaveOrUpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int saveOrUpdate(T entity, boolean allFieldForce) {
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(entity.getClass()), entity, allFieldForce,null);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(entity.getClass()), entity, allFieldForce, null);
     }
 
     /**
