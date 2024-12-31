@@ -15,6 +15,7 @@
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
 import cn.mybatis.mp.core.db.reflect.TableInfo;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import db.sql.api.DbType;
 import org.apache.ibatis.session.Configuration;

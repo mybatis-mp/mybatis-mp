@@ -14,11 +14,13 @@
 
 package cn.mybatis.mp.core.mvc;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Dao 接口
@@ -88,6 +90,15 @@ public interface Dao<T, ID> {
     /**
      * 实体类保存
      *
+     * @param entity       实体类对象
+     * @param saveStrategy 保存策略
+     * @return 影响条数
+     */
+    int save(T entity, Consumer<SaveStrategy<T>> saveStrategy);
+
+    /**
+     * 实体类保存
+     *
      * @param list 实体类对象List
      * @return 影响条数
      */
@@ -110,6 +121,15 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     int save(Collection<T> list, Getter<T>... forceFields);
+
+    /**
+     * 实体类保存
+     *
+     * @param list         实体类对象List
+     * @param saveStrategy 保存策略
+     * @return 影响条数
+     */
+    int save(Collection<T> list, Consumer<SaveStrategy<T>> saveStrategy);
 
     /**
      * 实体类Model保存
@@ -140,6 +160,15 @@ public interface Dao<T, ID> {
     /**
      * 实体类Model保存
      *
+     * @param model        实体类Model对象
+     * @param saveStrategy 保存策略
+     * @return 影响条数
+     */
+    <M extends Model<T>> int save(M model, Consumer<SaveStrategy<M>> saveStrategy);
+
+    /**
+     * 实体类Model保存
+     *
      * @param list 实体类Model对象List
      * @return 影响条数
      */
@@ -162,6 +191,15 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     <M extends Model<T>> int saveModel(Collection<M> list, Getter<M>... forceFields);
+
+    /**
+     * 实体类Model保存
+     *
+     * @param list         实体类Model对象List
+     * @param saveStrategy 保存策略
+     * @return 影响条数
+     */
+    <M extends Model<T>> int saveModel(Collection<M> list, Consumer<SaveStrategy<M>> saveStrategy);
 
     /**
      * 实体类修改

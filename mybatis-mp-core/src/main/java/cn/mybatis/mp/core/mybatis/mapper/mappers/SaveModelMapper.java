@@ -14,7 +14,8 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.mappers;
 
-import cn.mybatis.mp.core.mybatis.mapper.context.SaveBatchStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveModelMethodUtil;
 import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.db.Model;
@@ -59,6 +60,19 @@ public interface SaveModelMapper<T> extends BaseMapper<T> {
 
 
     /**
+     * 实体类新增
+     *
+     * @param model    实体类Model实例
+     * @param consumer 保存策略
+     * @return 影响条数
+     */
+    default <M extends Model<T>> int save(M model, Consumer<SaveStrategy<M>> consumer) {
+        SaveStrategy strategy = new SaveStrategy();
+        consumer.accept(strategy);
+        return SaveModelMethodUtil.save(getBasicMapper(), model, strategy);
+    }
+
+    /**
      * 多个保存，非批量行为
      *
      * @param list
@@ -88,6 +102,19 @@ public interface SaveModelMapper<T> extends BaseMapper<T> {
      */
     default <M extends Model<T>> int saveModel(Collection<M> list, Getter<M>... forceFields) {
         return SaveModelMethodUtil.save(getBasicMapper(), list, false, forceFields);
+    }
+
+    /**
+     * 多个保存，非批量行为
+     *
+     * @param list
+     * @param consumer 保存策略
+     * @return 影响条数
+     */
+    default <M extends Model<T>> int saveModel(Collection<M> list, Consumer<SaveStrategy<M>> consumer) {
+        SaveStrategy<M> strategy = new SaveStrategy();
+        consumer.accept(strategy);
+        return SaveModelMethodUtil.save(getBasicMapper(), list, strategy);
     }
 
     /**

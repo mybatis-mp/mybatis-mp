@@ -26,7 +26,7 @@ import java.util.Objects;
 
 public class SaveOrUpdateMethodUtil {
 
-    public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Getter<T>... forceFields) {
+    public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Getter<T>[] forceFields) {
         Class<?> entityType = entity.getClass();
         if (tableInfo.getIdFieldInfos().isEmpty()) {
             throw new RuntimeException(entityType.getName() + " has no id");
@@ -56,7 +56,7 @@ public class SaveOrUpdateMethodUtil {
         }
     }
 
-    public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, boolean allFieldForce, Getter<T>... forceFields) {
+    public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, boolean allFieldForce, Getter<T>[] forceFields) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }

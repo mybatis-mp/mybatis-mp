@@ -14,52 +14,32 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
-import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
-import cn.mybatis.mp.core.db.reflect.TableIds;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
-import cn.mybatis.mp.core.incrementer.IdentifierGenerator;
-import cn.mybatis.mp.core.incrementer.IdentifierGeneratorFactory;
-import cn.mybatis.mp.core.sql.MybatisCmdFactory;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
-import cn.mybatis.mp.core.sql.executor.Insert;
-import cn.mybatis.mp.core.tenant.TenantUtil;
-import cn.mybatis.mp.core.util.DefaultValueUtil;
-import cn.mybatis.mp.core.util.StringPool;
-import cn.mybatis.mp.core.util.TableInfoUtil;
-import cn.mybatis.mp.core.util.TypeConvertUtil;
-import cn.mybatis.mp.db.IdAutoType;
-import cn.mybatis.mp.db.annotations.TableField;
-import cn.mybatis.mp.db.annotations.TableId;
 import db.sql.api.DbType;
-import db.sql.api.impl.cmd.Methods;
-import db.sql.api.impl.cmd.basic.NULL;
-import db.sql.api.impl.cmd.basic.Table;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert, T> implements SetIdMethod {
+    private final BaseInsert<?> insert;
 
     private final T entity;
 
     private final TableInfo tableInfo;
 
-    private final boolean allFieldForce;
-
-    private final Set<String> forceFields;
+    private final SaveStrategy strategy;
 
     private final boolean idHasValue;
 
-    public EntityInsertContext(TableInfo tableInfo, T entity, boolean allFieldForce, Set<String> forceFields) {
+    public EntityInsertContext(BaseInsert<?> insert, TableInfo tableInfo, T entity, SaveStrategy strategy) {
+        this.insert = insert;
         this.entity = entity;
-        this.allFieldForce = allFieldForce;
+        this.strategy = strategy;
         this.entityType = entity.getClass();
         this.tableInfo = tableInfo;
-        this.forceFields = forceFields;
         this.idHasValue = IdUtil.isIdExists(entity, tableInfo.getIdFieldInfo());
     }
 
@@ -71,87 +51,8 @@ public class EntityInsertContext<T> extends SQLCmdInsertContext<BaseInsert, T> i
         }
     }
 
-    private Insert createCmd(DbType dbType) {
-        //设置租户ID
-        TenantUtil.setTenantId(this.tableInfo, this.entity);
-
-        Insert insert = new Insert();
-        MybatisCmdFactory $ = insert.$();
-        Table table = $.table(tableInfo.getType());
-        insert.insert(table);
-        List<Object> values = new ArrayList<>();
-        for (int i = 0; i < tableInfo.getFieldSize(); i++) {
-            TableFieldInfo tableFieldInfo = tableInfo.getTableFieldInfos().get(i);
-
-            if (!tableFieldInfo.getTableFieldAnnotation().insert()) {
-                continue;
-            }
-
-            boolean isNeedInsert = false;
-            Object value = tableFieldInfo.getValue(entity);
-            if (tableFieldInfo.isTableId()) {
-                if (!IdUtil.isIdValueExists(value)) {
-                    TableId tableId = TableIds.get(entity.getClass(), dbType);
-                    if (tableId.value() == IdAutoType.GENERATOR) {
-                        isNeedInsert = true;
-                        IdentifierGenerator identifierGenerator = IdentifierGeneratorFactory.getIdentifierGenerator(tableId.generatorName());
-                        Object id = identifierGenerator.nextId(tableInfo.getType());
-                        if (IdUtil.setId(entity, tableFieldInfo, id)) {
-                            value = id;
-                        }
-                    }
-                } else {
-                    isNeedInsert = true;
-                }
-            } else if (Objects.nonNull(value)) {
-                isNeedInsert = true;
-            } else if (tableFieldInfo.isLogicDelete()) {
-                //逻辑删除字段
-                //设置删除初始值
-                value = tableFieldInfo.getLogicDeleteInitValue();
-                if (value != null) {
-                    isNeedInsert = true;
-                    //逻辑删除初始值回写
-                    TableInfoUtil.setValue(tableFieldInfo, entity, value);
-                } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
-                    //读取回填 @TableField里的默认值
-                    value = DefaultValueUtil.getAndSetDefaultValue(entity, tableFieldInfo);
-                    isNeedInsert = Objects.nonNull(value);
-                }
-            } else if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
-                //读取回填 默认值
-                value = DefaultValueUtil.getAndSetDefaultValue(entity, tableFieldInfo);
-                isNeedInsert = Objects.nonNull(value);
-            } else if (tableFieldInfo.isVersion()) {
-                isNeedInsert = true;
-                //乐观锁设置 默认值1
-                value = TypeConvertUtil.convert(Integer.valueOf(1), tableFieldInfo.getField().getType());
-                //乐观锁回写
-                TableInfoUtil.setValue(tableFieldInfo, entity, value);
-            }
-
-            // 看是否是强制字段
-            if (!isNeedInsert && (allFieldForce || (Objects.nonNull(this.forceFields) && this.forceFields.contains(tableFieldInfo.getField().getName())))) {
-                isNeedInsert = true;
-                if (tableFieldInfo.isTableId() && value == null) {
-                    isNeedInsert = false;
-                }
-            }
-
-            if (isNeedInsert) {
-                insert.fields($.field(table, tableFieldInfo.getColumnName()));
-                if (Objects.isNull(value)) {
-                    values.add(NULL.NULL);
-                } else {
-                    TableField tableField = tableFieldInfo.getTableFieldAnnotation();
-                    MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                    values.add(Methods.value(mybatisParameter));
-                }
-            }
-        }
-        insert.values(values);
-
-        return insert;
+    private BaseInsert createCmd(DbType dbType) {
+        return EntityInsertCreateUtil.create(insert, tableInfo, entity, strategy, dbType);
     }
 
     @Override

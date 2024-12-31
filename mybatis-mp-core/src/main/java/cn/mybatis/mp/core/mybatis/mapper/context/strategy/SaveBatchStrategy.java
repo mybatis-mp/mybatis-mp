@@ -12,7 +12,7 @@
  *
  */
 
-package cn.mybatis.mp.core.mybatis.mapper.context;
+package cn.mybatis.mp.core.mybatis.mapper.context.strategy;
 
 
 import db.sql.api.Getter;

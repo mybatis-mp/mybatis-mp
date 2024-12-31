@@ -20,7 +20,8 @@ import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.mvc.Dao;
 import cn.mybatis.mp.core.mybatis.mapper.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
-import cn.mybatis.mp.core.mybatis.mapper.context.SaveBatchStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.*;
 import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.sql.executor.chain.DeleteChain;
@@ -593,6 +594,13 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
+    public int save(T entity, Consumer<SaveStrategy<T>> saveStrategy) {
+        SaveStrategy<T> strategy = new SaveStrategy<>();
+        saveStrategy.accept(strategy);
+        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), entity, strategy);
+    }
+
+    @Override
     public int saveOrUpdate(T entity) {
         return this.saveOrUpdate(entity, false);
     }
@@ -602,7 +610,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, allFieldForce);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, allFieldForce, null);
     }
 
     @Override
@@ -649,6 +657,13 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), list, false, forceFields);
     }
 
+    @Override
+    public int save(Collection<T> list, Consumer<SaveStrategy<T>> saveStrategy) {
+        SaveStrategy strategy = new SaveStrategy();
+        saveStrategy.accept(strategy);
+        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), list, strategy);
+    }
+
     public int saveBatch(Collection<T> list) {
         return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list);
     }
@@ -675,6 +690,13 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
+    public <M extends Model<T>> int save(M model, Consumer<SaveStrategy<M>> saveStrategy) {
+        SaveStrategy<M> strategy = new SaveStrategy<>();
+        saveStrategy.accept(strategy);
+        return SaveModelMethodUtil.save(getBasicMapper(), model, strategy);
+    }
+
+    @Override
     public <M extends Model<T>> int saveModel(Collection<M> list) {
         return this.saveModel(list, false);
     }
@@ -687,6 +709,13 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     @Override
     public <M extends Model<T>> int saveModel(Collection<M> list, Getter<M>... forceFields) {
         return SaveModelMethodUtil.save(getBasicMapper(), list, false, forceFields);
+    }
+
+    @Override
+    public <M extends Model<T>> int saveModel(Collection<M> list, Consumer<SaveStrategy<M>> saveStrategy) {
+        SaveStrategy<M> strategy = new SaveStrategy<>();
+        saveStrategy.accept(strategy);
+        return SaveModelMethodUtil.save(getBasicMapper(), list, strategy);
     }
 
     public <M extends Model<T>> int saveModelBatch(Collection<M> list) {
