@@ -20,7 +20,9 @@ import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.mvc.Dao;
 import cn.mybatis.mp.core.mybatis.mapper.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
+import cn.mybatis.mp.core.mybatis.mapper.context.SaveBatchStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.*;
+import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.sql.executor.chain.DeleteChain;
 import cn.mybatis.mp.core.sql.executor.chain.InsertChain;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
@@ -647,6 +649,16 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), list, false, forceFields);
     }
 
+    public int saveBatch(Collection<T> list) {
+        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list);
+    }
+
+    public int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> consumer) {
+        SaveBatchStrategy strategy = new SaveBatchStrategy();
+        consumer.accept(strategy);
+        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list, strategy);
+    }
+
     @Override
     public <M extends Model<T>> int save(M model) {
         return this.save(model, false);
@@ -675,6 +687,16 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     @Override
     public <M extends Model<T>> int saveModel(Collection<M> list, Getter<M>... forceFields) {
         return SaveModelMethodUtil.save(getBasicMapper(), list, false, forceFields);
+    }
+
+    public <M extends Model<T>> int saveModelBatch(Collection<M> list) {
+        return SaveModelMethodUtil.saveBatch(getBasicMapper(), new Insert(), list);
+    }
+
+    public <M extends Model<T>> int saveModelBatch(Collection<M> list, Consumer<SaveBatchStrategy<M>> consumer) {
+        SaveBatchStrategy strategy = new SaveBatchStrategy();
+        consumer.accept(strategy);
+        return SaveModelMethodUtil.saveBatch(getBasicMapper(), new Insert(), list, strategy);
     }
 
     @Override
