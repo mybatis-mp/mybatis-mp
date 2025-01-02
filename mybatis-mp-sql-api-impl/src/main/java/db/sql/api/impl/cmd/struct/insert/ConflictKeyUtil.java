@@ -18,8 +18,6 @@ package db.sql.api.impl.cmd.struct.insert;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.executor.AbstractInsert;
 
-import java.util.stream.Collectors;
-
 public class ConflictKeyUtil {
 
     public final static void addDefaultConflictKeys(AbstractInsert insert, DbType dbType) {
@@ -33,8 +31,10 @@ public class ConflictKeyUtil {
         if (dbType == DbType.ORACLE
                 || ((dbType == DbType.PGSQL || dbType == DbType.KING_BASE) && !insert.getConflictAction().isDoNothing())
                 || ((dbType == DbType.OPEN_GAUSS || dbType == DbType.SQLITE) && insert.getConflictAction().getConflictUpdate() == null)) {
-            String[] conflictKeys = insert.getInsertFields().getFields().stream().map(item -> item.getName()).collect(Collectors.toList()).toArray(new String[0]);
-            insert.getConflictAction().conflictKeys(conflictKeys);
+            String[] conflictKeys = insert.getInsertTable().getTable().getIds();
+            if (conflictKeys != null && conflictKeys.length > 0) {
+                insert.getConflictAction().conflictKeys(conflictKeys);
+            }
         }
     }
 }

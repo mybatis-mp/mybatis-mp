@@ -25,6 +25,7 @@ import cn.mybatis.mp.db.annotations.Table;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TableInfo {
 
@@ -56,6 +57,8 @@ public class TableInfo {
     private final int fieldSize;
 
     private final List<TableFieldInfo> idFieldInfos;
+
+    private final String[] idColumnNames;
 
     private final boolean hasMultiId;
 
@@ -164,6 +167,7 @@ public class TableInfo {
         this.fieldSize = this.tableFieldInfos.size();
         this.hasMultiId = hasMutilId;
         this.idFieldInfos = Collections.unmodifiableList(idFieldInfos);
+        this.idColumnNames = idFieldInfos.stream().filter(item -> item.isTableId()).map(item -> item.getColumnName()).collect(Collectors.toList()).toArray(new String[0]);
         this.idFieldInfo = idFieldInfo;
         this.versionFieldInfo = versionFieldInfo;
         this.tenantIdFieldInfo = tenantIdFieldInfo;
@@ -279,5 +283,9 @@ public class TableInfo {
 
     public TableFieldInfo getIdFieldInfo() {
         return idFieldInfo;
+    }
+
+    public String[] getIdColumnNames() {
+        return idColumnNames;
     }
 }

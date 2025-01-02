@@ -21,7 +21,8 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IConflictAction;
 import db.sql.api.cmd.basic.IConflictUpdate;
 import db.sql.api.impl.cmd.CmdFactory;
-import db.sql.api.impl.cmd.struct.insert.ConflictUpdate;
+import db.sql.api.impl.cmd.executor.AbstractInsert;
+import db.sql.api.impl.cmd.struct.insert.ConflictKeyUtil;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
@@ -33,7 +34,7 @@ public class ConflictAction<T> implements IConflictAction<T> {
 
     private String[] conflictKeys;
 
-    private IConflictUpdate<T> conflictUpdate;
+    private ConflictUpdate<T> conflictUpdate;
 
     private boolean doNothing;
 
@@ -89,8 +90,20 @@ public class ConflictAction<T> implements IConflictAction<T> {
         return doNothing && this.conflictUpdate == null;
     }
 
+    private boolean hasChecked = false;
+
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        AbstractInsert insert = (AbstractInsert) module;
+        if (!hasChecked) {
+            this.hasChecked = true;
+            if (conflictUpdate != null) {
+                conflictUpdate.loadDefault(insert, context.getDbType());
+            } else {
+                ConflictKeyUtil.addDefaultConflictKeys(insert, context.getDbType());
+            }
+        }
+
         if (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2) {
             if (this.conflictUpdate != null) {
                 sqlBuilder.append(" ON DUPLICATE KEY");

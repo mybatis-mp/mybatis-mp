@@ -59,7 +59,10 @@ public class MybatisCmdFactory extends CmdFactory {
 
     @Override
     public MpTable table(Class entity, int storey) {
-        return (MpTable) MapUtil.computeIfAbsent(this.tableCache, storey + entity.getName(), key -> new MpTable(getTableInfo(entity), tableAs(storey, ++tableNums)));
+        return (MpTable) MapUtil.computeIfAbsent(this.tableCache, storey + entity.getName(), key -> {
+            TableInfo tableInfo = getTableInfo(entity);
+            return new MpTable(tableInfo, tableAs(storey, ++tableNums));
+        });
     }
 
     @Override
@@ -124,7 +127,7 @@ public class MybatisCmdFactory extends CmdFactory {
     public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD field(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
         if (dataset instanceof MpTable) {
             MpTable mpTable = (MpTable) dataset;
-            return (DATASET_FIELD) new MpTableField(mpTable, mpTable.getTableInfo().getFieldInfoByColumnName(columnName));
+            return (DATASET_FIELD) mpTable.$(columnName);
         }
         return super.field(dataset, columnName);
     }

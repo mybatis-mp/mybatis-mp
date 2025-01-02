@@ -26,7 +26,9 @@ import db.sql.api.impl.cmd.struct.Join;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.LambdaUtil;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class Table implements ITable<Table, TableField>, IDataset<Table, TableField> {
 
@@ -35,6 +37,10 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
     protected String prefix;
 
     protected String name;
+
+    protected String[] ids;
+
+    protected Set<String> idsSet;
 
     protected String forceIndex;
 
@@ -47,9 +53,15 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
         this.alias = alias;
     }
 
+    public Table(String name, String[] ids, String alias) {
+        this(name);
+        this.alias = alias;
+        this.ids = ids;
+    }
+
     @Override
     public TableField $(String name) {
-        return new TableField(this, name, false);
+        return new TableField(this, name);
     }
 
 
@@ -116,5 +128,22 @@ public class Table implements ITable<Table, TableField>, IDataset<Table, TableFi
     @Override
     public <E> TableField $(Getter<E> column) {
         return this.$(LambdaUtil.getName(column));
+    }
+
+    public String[] getIds() {
+        return ids;
+    }
+
+    public boolean isId(String column) {
+        if (this.ids == null || this.ids.length == 0) {
+            return false;
+        }
+        if (idsSet == null) {
+            this.idsSet = new HashSet<>();
+            for (String id : this.ids) {
+                this.idsSet.add(id);
+            }
+        }
+        return this.idsSet.contains(column);
     }
 }

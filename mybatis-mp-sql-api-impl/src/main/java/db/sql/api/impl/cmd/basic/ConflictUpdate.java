@@ -12,17 +12,18 @@
  *
  */
 
-package db.sql.api.impl.cmd.struct.insert;
+package db.sql.api.impl.cmd.basic;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbType;
 import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IConflictUpdate;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
-import db.sql.api.impl.cmd.basic.ConflictUpdateTableField;
-import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.AbstractInsert;
+import db.sql.api.impl.cmd.struct.insert.ConflictKeyUtil;
+import db.sql.api.impl.cmd.struct.insert.InsertFields;
 import db.sql.api.impl.cmd.struct.update.UpdateSets;
 import db.sql.api.tookit.CmdUtils;
 
@@ -70,20 +71,22 @@ public class ConflictUpdate<T> implements IConflictUpdate<T> {
         return overwriteAll;
     }
 
-    @Override
-    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        AbstractInsert insert = (AbstractInsert) module;
-        ConflictKeyUtil.addDefaultConflictKeys(insert, context.getDbType());
-
+    void loadDefault(AbstractInsert insert, DbType dbType) {
         if (this.isOverwriteAll() && this.updateSets == null) {
             this.updateSets = new UpdateSets();
-            //从插入字段里读取 然后覆盖
-            ConflictKeyUtil.addDefaultConflictKeys(insert, context.getDbType());
             InsertFields insertFields = insert.getInsertFields();
             insertFields.getFields().stream().filter(item -> !item.isId()).forEach(item -> {
                 updateSets.set(item, new ConflictUpdateTableField(item));
             });
+
+            ConflictKeyUtil.addDefaultConflictKeys(insert, dbType);
+        } else if (insert.getConflictAction().getConflictKeys() == null) {
+            ConflictKeyUtil.addDefaultConflictKeys(insert, dbType);
         }
+    }
+
+    @Override
+    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (this.updateSets == null) {
             return sqlBuilder;
         }

@@ -18,7 +18,11 @@ import db.sql.api.cmd.basic.ITableField;
 
 public class TableField extends AbstractDatasetField<TableField> implements ITableField<TableField, Table> {
 
-    private boolean id;
+    private Boolean id;
+
+    public TableField(Table table, String name) {
+        super(table, name);
+    }
 
     public TableField(Table table, String name, boolean id) {
         super(table, name);
@@ -35,6 +39,9 @@ public class TableField extends AbstractDatasetField<TableField> implements ITab
     }
 
     public boolean isId() {
+        if (id == null) {
+            this.id = getTable().isId(this.getName());
+        }
         return id;
     }
 

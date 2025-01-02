@@ -47,6 +47,9 @@ public class InsertTable implements IInsertTable<Table> {
 
         if (insertIgnore) {
             if (context.getDbType() == DbType.ORACLE) {
+                //可能需要增加ConflictKeys
+                ConflictKeyUtil.addDefaultConflictKeys(abstractInsert, context.getDbType());
+
                 sqlBuilder.append(SqlConst.INSERT).append("--+ IGNORE_ROW_ON_DUPKEY_INDEX(")
                         .append(table.getName(context.getDbType())).append(SqlConst.BRACKET_LEFT)
                         .append(String.join(",", abstractInsert.getConflictAction().getConflictKeys()))
