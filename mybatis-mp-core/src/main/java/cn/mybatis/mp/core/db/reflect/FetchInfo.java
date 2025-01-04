@@ -78,7 +78,7 @@ public class FetchInfo {
 
         if (fetch.limit() >= 1) {
             isUseIn = false;
-        } else if (!fetch.forceUseIn() && Objects.isNull(this.eqGetFieldInvoker) && this.targetSelectColumn.contains("(")) {
+        } else if (!fetch.forceUseIn() && Objects.isNull(this.eqGetFieldInvoker) && this.targetSelectColumn != null && this.targetSelectColumn.contains("(")) {
             isUseIn = false;
         }
 
