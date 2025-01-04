@@ -18,14 +18,17 @@ import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.mybatis.executor.statement.Fetchable;
 import cn.mybatis.mp.core.mybatis.executor.statement.Timeoutable;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
+import cn.mybatis.mp.core.sql.paging.IPagingProcessor;
 import cn.mybatis.mp.core.sql.util.SelectClassUtil;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
+import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.basic.IOrderByDirection;
 import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.impl.cmd.executor.AbstractQuery;
+import db.sql.api.impl.cmd.struct.Limit;
 import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.impl.tookit.OptimizeOptions;
 
@@ -139,6 +142,25 @@ public abstract class BaseQuery<Q extends BaseQuery<Q, T>, T> extends AbstractQu
     @Override
     public List<SQLListener> getSQLListeners() {
         return MybatisMpConfig.getSQLListeners();
+    }
+
+    @Override
+    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        if (this.limit == null) {
+            return super.sql(module, parent, context, sqlBuilder);
+        }
+        Limit oldLimit = this.limit;
+        this.cmds.remove(this.limit);
+        this.limit = null;
+        StringBuilder newSQL = new StringBuilder();
+        newSQL = super.sql(module, parent, context, newSQL);
+
+        this.cmds.add(this.limit);
+        this.limit = oldLimit;
+
+        IPagingProcessor pagingProcessor = MybatisMpConfig.getPagingProcessor(context.getDbType());
+        StringBuilder pagedSQL = pagingProcessor.buildPagingSQL(context.getDbType(), parent, newSQL, oldLimit);
+        return sqlBuilder.append(pagedSQL);
     }
 
     /**************以下为去除警告************/

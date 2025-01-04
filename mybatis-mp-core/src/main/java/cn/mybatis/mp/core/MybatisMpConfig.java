@@ -22,6 +22,8 @@ import cn.mybatis.mp.core.sql.SQLBuilder;
 import cn.mybatis.mp.core.sql.listener.ForeignKeySQLListener;
 import cn.mybatis.mp.core.sql.listener.LogicDeleteSQLListener;
 import cn.mybatis.mp.core.sql.listener.TenantSQLListener;
+import cn.mybatis.mp.core.sql.paging.CommonPagingProcessor;
+import cn.mybatis.mp.core.sql.paging.IPagingProcessor;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
 import db.sql.api.DbType;
@@ -283,5 +285,25 @@ public final class MybatisMpConfig {
      */
     public static List<SQLListener> getSQLListeners() {
         return Collections.unmodifiableList(SQL_LISTENER);
+    }
+
+    /**
+     * 设置分页处理器
+     *
+     * @param dbType          数据库类型
+     * @param pagingProcessor 分页处理器
+     */
+    public static void setPagingProcessor(DbType dbType, IPagingProcessor pagingProcessor) {
+        CACHE.putIfAbsent(dbType.name(), pagingProcessor);
+    }
+
+    /**
+     * 获取分页处理器
+     *
+     * @param dbType 数据库类型
+     * @return 分页处理器
+     */
+    public static IPagingProcessor getPagingProcessor(DbType dbType) {
+        return (IPagingProcessor) CACHE.computeIfAbsent(dbType.name(), key -> new CommonPagingProcessor());
     }
 }

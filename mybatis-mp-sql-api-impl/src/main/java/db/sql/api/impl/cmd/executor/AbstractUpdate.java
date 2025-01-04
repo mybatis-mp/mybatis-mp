@@ -319,7 +319,7 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
 
 
     @Override
-    public StringBuilder sql(SqlBuilderContext context, StringBuilder sqlBuilder) {
+    public StringBuilder sql(Cmd mould, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (Objects.nonNull(this.getJoins())) {
             if (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.DM) {
                 // mysql dm 类数据库 update join 是在 update table 之后的
@@ -327,6 +327,6 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
                 this.cmdSorts().put(Joins.class, this.cmdSorts().get(UpdateTable.class) + 1);
             }
         }
-        return super.sql(context, sqlBuilder);
+        return super.sql(mould, parent, context, sqlBuilder);
     }
 }

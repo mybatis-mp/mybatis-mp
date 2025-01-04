@@ -56,7 +56,7 @@ public abstract class BaseSQLCmdContext<E extends Executor> implements SQLCmdCon
             return sql;
         }
         sqlBuilderContext = new MybatisSqlBuilderContext(dbType, SQLMode.PREPARED);
-        sql = getExecution().sql(sqlBuilderContext, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(getExecution().cmds()))).toString();
+        sql = getExecution().sql(null, null, sqlBuilderContext, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(getExecution().cmds()))).toString();
         return sql;
     }
 

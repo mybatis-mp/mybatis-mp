@@ -65,16 +65,16 @@ public class MybatisMpSQLBuilder implements SQLBuilder {
 
     @Override
     public StringBuilder buildInsertSQL(BaseInsert insert, SqlBuilderContext context) {
-        return insert.sql(context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(insert.cmds())));
+        return insert.sql(null, null, context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(insert.cmds())));
     }
 
     @Override
     public StringBuilder buildUpdateSQL(BaseUpdate update, SqlBuilderContext context) {
-        return update.sql(context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(update.cmds())));
+        return update.sql(null, null, context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(update.cmds())));
     }
 
     @Override
     public StringBuilder buildDeleteSQL(BaseDelete delete, SqlBuilderContext context) {
-        return delete.sql(context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(delete.cmds())));
+        return delete.sql(null, null, context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(delete.cmds())));
     }
 }
