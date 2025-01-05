@@ -105,6 +105,7 @@ public class PagingTest extends BaseTest {
                     //.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll())
                     .selectAll()
                     .from(subQuery)
+                    .orderByDesc(subQuery.$outerField(SysUser::getId))
                     .paging(Pager.of(2, 1));
 
             assertEquals(pager.getTotal(), 2);
