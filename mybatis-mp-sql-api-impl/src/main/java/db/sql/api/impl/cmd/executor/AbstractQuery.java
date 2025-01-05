@@ -16,6 +16,7 @@ package db.sql.api.impl.cmd.executor;
 
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
+import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.ColumnField;
 import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.IColumnField;
@@ -32,10 +33,13 @@ import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.struct.*;
 import db.sql.api.impl.cmd.struct.query.*;
+import db.sql.api.impl.tookit.QuerySQLUtil;
 import db.sql.api.impl.tookit.SqlConst;
+import db.sql.api.tookit.CmdUtils;
 import db.sql.api.tookit.LambdaUtil;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -797,6 +801,23 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     @Override
     public ForUpdate getForUpdate() {
         return forUpdate;
+    }
+
+    @Override
+    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        this.selectorExecute(context.getDbType());
+        if (this.limit == null) {
+            List<Cmd> cmdList = cmds();
+            if (cmdList == null || cmdList.isEmpty()) {
+                return sqlBuilder;
+            }
+            List<Cmd> sortedCmds = this.sortedCmds();
+            if (sortedCmds == null || sortedCmds.isEmpty()) {
+                return sqlBuilder;
+            }
+            return CmdUtils.join(this, this, context, sqlBuilder, sortedCmds);
+        }
+        return QuerySQLUtil.buildQuerySQL(context, module, parent, this, sqlBuilder, this.sortedCmds());
     }
 }
 

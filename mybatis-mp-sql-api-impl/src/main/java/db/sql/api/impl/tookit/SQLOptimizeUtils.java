@@ -32,6 +32,7 @@ import db.sql.api.impl.cmd.struct.Limit;
 import db.sql.api.impl.cmd.struct.query.GroupBy;
 import db.sql.api.impl.cmd.struct.query.OrderBy;
 import db.sql.api.impl.cmd.struct.query.Select;
+import db.sql.api.impl.paging.PagingProcessorFactory;
 import db.sql.api.tookit.CmdUtils;
 
 import java.util.ArrayList;
@@ -46,6 +47,19 @@ import java.util.stream.Collectors;
  * 优化count的order by 和 left join
  */
 public final class SQLOptimizeUtils {
+
+    /**
+     * 构建分页sql
+     *
+     * @param sqlBuilderContext 构建上下文
+     * @param sql               查询sql
+     * @param parent            父节点
+     * @param limit             limit 分页对象
+     * @return 包含分页的SQL
+     */
+    protected static StringBuilder buildPagingSQL(SqlBuilderContext sqlBuilderContext, Cmd parent, IQuery query, StringBuilder sql, Limit limit) {
+        return PagingProcessorFactory.getProcessor(sqlBuilderContext.getDbType()).buildPagingSQL(sqlBuilderContext, parent, query, sql, limit);
+    }
 
     public static int getStringBuilderCapacity(List<Cmd> cmds) {
         return 16;
@@ -227,7 +241,7 @@ public final class SQLOptimizeUtils {
         }
         optimizedCmdList(context.getDbType(), classCmdMap, false, false, true, classCmdMap.containsKey(Unions.class));
         cmdList = (List<Cmd>) classCmdMap.values().stream().sorted(query.comparator()).collect(Collectors.toList());
-        return CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList);
+        return QuerySQLUtil.buildQuerySQL(context, null, null, query, new StringBuilder(), cmdList);
     }
 
 

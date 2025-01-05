@@ -153,16 +153,18 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+
         if (parent instanceof In || parent instanceof Exists || parent instanceof With) {
-            return super.sql(module, this, context, sqlBuilder);
+            return super.sql(module, parent, context, sqlBuilder);
         }
         sqlBuilder.append(SqlConst.BRACKET_LEFT);
-        super.sql(module, this, context, sqlBuilder);
+        super.sql(module, parent, context, sqlBuilder);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         if (this.getAlias() != null) {
             sqlBuilder.append(SqlConst.AS(context.getDbType())).append(this.getAlias());
+        } else if (parent instanceof From) {
+            sqlBuilder.append(" T ");
         }
-
         return sqlBuilder;
     }
 

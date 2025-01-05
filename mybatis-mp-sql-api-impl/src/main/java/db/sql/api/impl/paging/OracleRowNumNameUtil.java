@@ -12,21 +12,21 @@
  *
  */
 
-package cn.mybatis.mp.core.sql.paging;
+package db.sql.api.impl.paging;
 
-import db.sql.api.Cmd;
-import db.sql.api.DbType;
-import db.sql.api.impl.cmd.struct.Limit;
+import db.sql.api.SqlBuilderContext;
 
-public interface IPagingProcessor {
+public class OracleRowNumNameUtil {
 
-    /**
-     * 构建分页sql
-     *
-     * @param sql    查询sql
-     * @param parent 父节点
-     * @param limit  limit 分页对象
-     * @return 包含分页的SQL
-     */
-    StringBuilder buildPagingSQL(DbType dbType, Cmd parent, StringBuilder sql, Limit limit);
+    public static String getRowName(SqlBuilderContext sqlBuilderContext) {
+        String rnName = "R$N";
+        Integer rnCount = (Integer) sqlBuilderContext.getExtMap().get(rnName);
+        if (rnCount == null) {
+            rnCount = 1;
+        } else {
+            rnCount = rnCount + 1;
+        }
+        sqlBuilderContext.getExtMap().put(rnName, rnCount);
+        return rnName + rnCount;
+    }
 }

@@ -16,17 +16,14 @@ package cn.mybatis.mp.core.sql.executor;
 
 import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
-import cn.mybatis.mp.core.sql.paging.IPagingProcessor;
 import cn.mybatis.mp.core.sql.util.SelectClassUtil;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
-import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.basic.IOrderByDirection;
 import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.impl.cmd.executor.AbstractSubQuery;
-import db.sql.api.impl.cmd.struct.Limit;
 import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.List;
@@ -50,25 +47,6 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
     protected void initCmdSorts(Map<Class<? extends Cmd>, Integer> cmdSorts) {
         super.initCmdSorts(cmdSorts);
         cmdSorts.put(cn.mybatis.mp.core.sql.executor.Where.class, cmdSorts.get(db.sql.api.impl.cmd.struct.Where.class));
-    }
-
-    @Override
-    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (this.limit == null) {
-            return super.sql(module, parent, context, sqlBuilder);
-        }
-        Limit oldLimit = this.limit;
-        this.cmds.remove(this.limit);
-        this.limit = null;
-        StringBuilder newSQL = new StringBuilder();
-        newSQL = super.sql(module, parent, context, newSQL);
-        sqlBuilder.append(newSQL);
-        this.cmds.add(this.limit);
-        this.limit = oldLimit;
-
-        IPagingProcessor pagingProcessor = MybatisMpConfig.getPagingProcessor(context.getDbType());
-        StringBuilder pagedSQL = pagingProcessor.buildPagingSQL(context.getDbType(), parent, newSQL, oldLimit);
-        return sqlBuilder.append(pagedSQL);
     }
 
     @Override

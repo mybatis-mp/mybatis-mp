@@ -22,12 +22,12 @@ import cn.mybatis.mp.core.sql.SQLBuilder;
 import cn.mybatis.mp.core.sql.listener.ForeignKeySQLListener;
 import cn.mybatis.mp.core.sql.listener.LogicDeleteSQLListener;
 import cn.mybatis.mp.core.sql.listener.TenantSQLListener;
-import cn.mybatis.mp.core.sql.paging.CommonPagingProcessor;
-import cn.mybatis.mp.core.sql.paging.IPagingProcessor;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
 import db.sql.api.DbType;
 import db.sql.api.cmd.listener.SQLListener;
+import db.sql.api.impl.paging.IPagingProcessor;
+import db.sql.api.impl.paging.PagingProcessorFactory;
 
 import java.lang.reflect.Array;
 import java.time.LocalDate;
@@ -294,7 +294,7 @@ public final class MybatisMpConfig {
      * @param pagingProcessor 分页处理器
      */
     public static void setPagingProcessor(DbType dbType, IPagingProcessor pagingProcessor) {
-        CACHE.putIfAbsent(dbType.name(), pagingProcessor);
+        PagingProcessorFactory.setProcessor(dbType, pagingProcessor);
     }
 
     /**
@@ -304,6 +304,6 @@ public final class MybatisMpConfig {
      * @return 分页处理器
      */
     public static IPagingProcessor getPagingProcessor(DbType dbType) {
-        return (IPagingProcessor) CACHE.computeIfAbsent(dbType.name(), key -> new CommonPagingProcessor());
+        return PagingProcessorFactory.getProcessor(dbType);
     }
 }

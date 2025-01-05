@@ -12,21 +12,23 @@
  *
  */
 
-package cn.mybatis.mp.core.sql.paging;
+package db.sql.api.impl.paging;
 
 import db.sql.api.Cmd;
-import db.sql.api.DbType;
+import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.struct.Limit;
-import db.sql.api.impl.tookit.SqlConst;
 
-public class CommonPagingProcessor implements IPagingProcessor {
+public interface IPagingProcessor {
 
-    @Override
-    public StringBuilder buildPagingSQL(DbType dbType, Cmd parent, StringBuilder sql, Limit limit) {
-        if (dbType == DbType.ORACLE || dbType == DbType.SQL_SERVER) {
-            return sql.append(SqlConst.OFFSET).append(limit.getOffset()).append(SqlConst.ROWS_FETCH_NEXT).append(limit.getLimit()).append(SqlConst.ROWS_ONLY);
-        }
-        sql.append(SqlConst.LIMIT).append(limit.getLimit()).append(SqlConst.OFFSET).append(limit.getOffset());
-        return sql;
-    }
+    /**
+     * 构建分页sql
+     *
+     * @param sqlBuilderContext 构建上下文
+     * @param sql    查询sql
+     * @param parent 父节点
+     * @param limit  limit 分页对象
+     * @return 包含分页的SQL
+     */
+    StringBuilder buildPagingSQL(SqlBuilderContext sqlBuilderContext, Cmd parent, IQuery query, StringBuilder sql, Limit limit);
 }
