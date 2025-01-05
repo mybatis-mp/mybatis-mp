@@ -19,16 +19,22 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.struct.Limit;
 
+import java.util.List;
+
 public interface IPagingProcessor {
 
     /**
      * 构建分页sql
      *
      * @param sqlBuilderContext 构建上下文
-     * @param sql    查询sql
+     * @param module 所属模块
      * @param parent 父节点
+     * @param query 查询类
+     * @param beforeCmds 分页前面的cmd列表
+     * @param afterCmds 分页后面的cmd列表
      * @param limit  limit 分页对象
      * @return 包含分页的SQL
      */
-    StringBuilder buildPagingSQL(SqlBuilderContext sqlBuilderContext, Cmd parent, IQuery query, StringBuilder sql, Limit limit);
+    StringBuilder buildPagingSQL(SqlBuilderContext sqlBuilderContext, Cmd module, Cmd parent
+            , IQuery query, StringBuilder parentSQL, List<Cmd> beforeCmds, List<Cmd> afterCmds, Limit limit);
 }

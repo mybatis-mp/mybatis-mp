@@ -18,17 +18,12 @@ import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.cmd.struct.ILimit;
-import db.sql.api.cmd.struct.query.IOrderBy;
-import db.sql.api.cmd.struct.query.ISelect;
 import db.sql.api.impl.cmd.struct.Limit;
-import db.sql.api.impl.paging.IPagingProcessor;
 import db.sql.api.impl.paging.PagingProcessorFactory;
-import db.sql.api.impl.paging.SQLServerRowNumberOverPagingProcessor;
 import db.sql.api.tookit.CmdUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class QuerySQLUtil {
 
@@ -57,13 +52,13 @@ public class QuerySQLUtil {
             //没有分页
             return CmdUtils.join(null, query, context, parentSql, before);
         }
-        IPagingProcessor pagingProcessor = PagingProcessorFactory.getProcessor(context.getDbType());
-        if(pagingProcessor instanceof SQLServerRowNumberOverPagingProcessor){
-            before = before.stream().filter(item->!(item instanceof ISelect) && !(item instanceof IOrderBy)).collect(Collectors.toList());
-        }
-        StringBuilder sql = CmdUtils.join(module, query, context, new StringBuilder(200), before);
-        parentSql.append(pagingProcessor.buildPagingSQL(context, parent, query, sql, limit));
-        parentSql.append(CmdUtils.join(module, query, context, new StringBuilder(), after));
-        return parentSql;
+//        IPagingProcessor pagingProcessor = PagingProcessorFactory.getProcessor(context.getDbType());
+//        if(pagingProcessor instanceof SQLServerRowNumberOverPagingProcessor){
+//            before = before.stream().filter(item->!(item instanceof ISelect) && !(item instanceof IOrderBy)).collect(Collectors.toList());
+//        }
+        //StringBuilder sql = CmdUtils.join(module, query, context, new StringBuilder(200), before);
+        // parentSql.append(pagingProcessor.buildPagingSQL(context, parent, query, sql, limit));
+        //parentSql.append(CmdUtils.join(module, query, context, new StringBuilder(), after));
+        return PagingProcessorFactory.getProcessor(context.getDbType()).buildPagingSQL(context, module, parent, query, parentSql, before, after, limit);
     }
 }

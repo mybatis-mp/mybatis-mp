@@ -22,13 +22,25 @@ import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.condition.In;
 import db.sql.api.impl.cmd.struct.Limit;
 import db.sql.api.impl.cmd.struct.update.UpdateSet;
+import db.sql.api.tookit.CmdUtils;
 
 import java.util.List;
 
 public class OracleRowNumPagingProcessor implements IPagingProcessor {
 
     @Override
-    public StringBuilder buildPagingSQL(SqlBuilderContext sqlBuilderContext, Cmd parent, IQuery query, StringBuilder sql, Limit limit) {
+    public StringBuilder buildPagingSQL(SqlBuilderContext context, Cmd module, Cmd parent
+            , IQuery query, StringBuilder parentSQL, List<Cmd> beforeCmds, List<Cmd> afterCmds, Limit limit) {
+        if (parentSQL == null) {
+            parentSQL = new StringBuilder(200);
+        }
+        parentSQL = CmdUtils.join(module, query, context, parentSQL, beforeCmds);
+        parentSQL = this.sql(context, parent, query, parentSQL, limit);
+        parentSQL.append(CmdUtils.join(module, query, context, new StringBuilder(), afterCmds));
+        return parentSQL;
+    }
+
+    public StringBuilder sql(SqlBuilderContext sqlBuilderContext, Cmd parent, IQuery query, StringBuilder sql, Limit limit) {
         String alias = null;
         if (query instanceof Alias) {
             alias = ((Alias) query).getAlias();
@@ -36,7 +48,7 @@ public class OracleRowNumPagingProcessor implements IPagingProcessor {
         if (alias == null || alias.isEmpty()) {
             alias = "NT";
         }
-        String rnName = OracleRowNumNameUtil.getRowName(sqlBuilderContext);
+        String rnName = RowNumNameUtil.getRowName(sqlBuilderContext);
         StringBuilder newSql = new StringBuilder("SELECT ");
 
         boolean handlerSelect = false;

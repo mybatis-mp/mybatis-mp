@@ -16,7 +16,7 @@ package db.sql.api.impl.paging;
 
 import db.sql.api.SqlBuilderContext;
 
-public class OracleRowNumNameUtil {
+public class RowNumNameUtil {
 
     public static String getRowName(SqlBuilderContext sqlBuilderContext) {
         String rnName = "R$N";

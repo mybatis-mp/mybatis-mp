@@ -20,17 +20,29 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.struct.Limit;
 import db.sql.api.impl.tookit.SqlConst;
+import db.sql.api.tookit.CmdUtils;
 
+import java.util.List;
 public class CommonPagingProcessor implements IPagingProcessor {
 
     @Override
-    public StringBuilder buildPagingSQL(SqlBuilderContext sqlBuilderContext, Cmd parent, IQuery query, StringBuilder sql, Limit limit) {
-        DbType dbType = sqlBuilderContext.getDbType();
-
-        if (dbType == DbType.ORACLE || dbType == DbType.SQL_SERVER) {
-            return sql.append(SqlConst.OFFSET).append(limit.getOffset()).append(SqlConst.ROWS_FETCH_NEXT).append(limit.getLimit()).append(SqlConst.ROWS_ONLY);
+    public StringBuilder buildPagingSQL(SqlBuilderContext context, Cmd module, Cmd parent
+            , IQuery query, StringBuilder parentSQL, List<Cmd> beforeCmds, List<Cmd> afterCmds, Limit limit) {
+        if (parentSQL == null) {
+            parentSQL = new StringBuilder(200);
         }
-        sql.append(SqlConst.LIMIT).append(limit.getLimit()).append(SqlConst.OFFSET).append(limit.getOffset());
-        return sql;
+        parentSQL = CmdUtils.join(module, query, context, parentSQL, beforeCmds);
+        parentSQL = this.sql(context, module, parent, query, parentSQL, limit);
+        parentSQL.append(CmdUtils.join(module, query, context, new StringBuilder(), afterCmds));
+        return parentSQL;
+    }
+
+    private StringBuilder sql(SqlBuilderContext sqlBuilderContext, Cmd module, Cmd parent, IQuery query, StringBuilder parentSQL, Limit limit) {
+        DbType dbType = sqlBuilderContext.getDbType();
+        if (dbType == DbType.ORACLE || dbType == DbType.SQL_SERVER) {
+            return parentSQL.append(SqlConst.OFFSET).append(limit.getOffset()).append(SqlConst.ROWS_FETCH_NEXT).append(limit.getLimit()).append(SqlConst.ROWS_ONLY);
+        }
+        parentSQL.append(SqlConst.LIMIT).append(limit.getLimit()).append(SqlConst.OFFSET).append(limit.getOffset());
+        return parentSQL;
     }
 }

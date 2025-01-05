@@ -108,6 +108,8 @@ public class PagingTest extends BaseTest {
                     .orderByDesc(subQuery.$outerField(SysUser::getId))
                     .paging(Pager.of(2, 1));
 
+            System.out.println(pager);
+
             assertEquals(pager.getTotal(), 2);
             assertEquals(pager.getTotalPage(), 2);
 
