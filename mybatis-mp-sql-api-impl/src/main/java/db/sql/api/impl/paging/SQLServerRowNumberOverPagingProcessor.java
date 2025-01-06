@@ -56,7 +56,6 @@ public class SQLServerRowNumberOverPagingProcessor implements IPagingProcessor {
 
         sql.append("SELECT TOP ").append(limit.getLimit()).append(" ");
 
-
         boolean handlerSelect = false;
         if (parent != null && (parent instanceof In || parent instanceof UpdateSet)) {
             //假如是在in条件里

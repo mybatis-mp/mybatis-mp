@@ -35,7 +35,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * 全局配置
@@ -57,8 +57,8 @@ public final class MybatisMpConfig {
         SQL_LISTENER.add(new ForeignKeySQLListener());
         SQL_LISTENER.add(new TenantSQLListener());
         SQL_LISTENER.add(new LogicDeleteSQLListener());
-        Map<String, Function<Class<?>, Object>> defaultValueMap = new ConcurrentHashMap<>();
-        defaultValueMap.put("{BLANK}", (type) -> {
+        Map<String, BiFunction<Class<?>, Class<?>, Object>> defaultValueMap = new ConcurrentHashMap<>();
+        defaultValueMap.put("{BLANK}", (source, type) -> {
             if (type == String.class) {
                 return StringPool.EMPTY;
             } else if (type.isArray()) {
@@ -73,7 +73,7 @@ public final class MybatisMpConfig {
             throw new RuntimeException("Inconsistent types：" + type);
         });
 
-        defaultValueMap.put("{NOW}", (type) -> {
+        defaultValueMap.put("{NOW}", (source, type) -> {
             if (type == LocalDateTime.class) {
                 return LocalDateTime.now();
             } else if (type == LocalDate.class) {
@@ -206,9 +206,9 @@ public final class MybatisMpConfig {
         return key.startsWith("{") && key.endsWith("}");
     }
 
-    public static void setDefaultValue(String key, Function<Class<?>, Object> f) {
+    public static void setDefaultValue(String key, BiFunction<Class<?>, Class<?>, Object> f) {
         checkDefaultValueKey(key);
-        ((Map<String, Function<Class<?>, Object>>) CACHE.get(DEFAULT_VALUE_MANAGER)).computeIfAbsent(key, mapKey -> f);
+        ((Map<String, BiFunction<Class<?>, Class<?>, Object>>) CACHE.get(DEFAULT_VALUE_MANAGER)).computeIfAbsent(key, mapKey -> f);
     }
 
     private static void checkDefaultValueKey(String key) {
@@ -219,22 +219,22 @@ public final class MybatisMpConfig {
 
     /**
      * 获取默认值
-     *
-     * @param clazz 默认值的类型
+     * @param clazz 字段所在的class
+     * @param type 默认值的类型
      * @param key   默认值的key，key必须以{}包裹，例如:{NOW}
      * @param <T>   类型clazz的泛型
      * @return 返回指定类型clazz key的默认值
      */
-    public static <T> T getDefaultValue(Class<T> clazz, String key) {
+    public static <T> T getDefaultValue(Class<?> clazz, Class<T> type, String key) {
         if (!isDefaultValueKeyFormat(key)) {
-            return TypeConvertUtil.convert(key, clazz);
+            return TypeConvertUtil.convert(key, type);
         }
-        Map<String, Function<Class<?>, T>> map = (Map<String, Function<Class<?>, T>>) CACHE.get(DEFAULT_VALUE_MANAGER);
-        Function<Class<?>, T> f = map.get(key);
+        Map<String, BiFunction<Class<?>, Class<?>, T>> map = (Map<String, BiFunction<Class<?>, Class<?>, T>>) CACHE.get(DEFAULT_VALUE_MANAGER);
+        BiFunction<Class<?>, Class<?>, T> f = map.get(key);
         if (f == null) {
             throw new RuntimeException("default value key:  " + key + " not set");
         }
-        return f.apply(clazz);
+        return f.apply(clazz, type);
     }
 
     /**

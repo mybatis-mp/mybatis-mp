@@ -37,6 +37,7 @@ public class ConflictAction<T> implements IConflictAction<T> {
     private ConflictUpdate<T> conflictUpdate;
 
     private boolean doNothing;
+    private boolean hasChecked = false;
 
     public ConflictAction(CmdFactory cmdFactory) {
         this.cmdFactory = cmdFactory;
@@ -89,8 +90,6 @@ public class ConflictAction<T> implements IConflictAction<T> {
     public boolean isDoNothing() {
         return doNothing && this.conflictUpdate == null;
     }
-
-    private boolean hasChecked = false;
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {

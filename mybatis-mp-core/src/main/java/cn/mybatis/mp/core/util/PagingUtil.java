@@ -14,6 +14,7 @@
 
 package cn.mybatis.mp.core.util;
 
+import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.mybatis.MappedStatementUtil;
 import cn.mybatis.mp.core.mybatis.provider.PagingCountSqlSource;
 import cn.mybatis.mp.core.mybatis.provider.PagingListSqlSource;
@@ -22,6 +23,8 @@ import cn.mybatis.mp.page.IPager;
 import cn.mybatis.mp.page.PageUtil;
 import cn.mybatis.mp.page.PagerField;
 import db.sql.api.DbType;
+import db.sql.api.impl.paging.OracleRowNumPagingProcessor;
+import db.sql.api.impl.paging.SQLServerRowNumberOverPagingProcessor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -122,6 +125,14 @@ public final class PagingUtil {
         Integer size = pager.get(PagerField.SIZE);
         int offset = PageUtil.getOffset(number, size);
 
+        if (dbType == DbType.ORACLE && MybatisMpConfig.getPagingProcessor(dbType) instanceof OracleRowNumPagingProcessor) {
+            return getOracleRowNumLimitedSQL(size, offset, sql);
+        }
+
+        if (dbType == DbType.SQL_SERVER && MybatisMpConfig.getPagingProcessor(dbType) instanceof SQLServerRowNumberOverPagingProcessor) {
+            return getSQLServerRowNumLimitedSQL(size, offset, sql);
+        }
+
         if (dbType == DbType.SQL_SERVER) {
             return sql + " OFFSET " + offset + " ROWS FETCH NEXT " + size + " ROWS ONLY";
         }
@@ -134,6 +145,32 @@ public final class PagingUtil {
         }
         sqlBuilder.append(" LIMIT ").append(size).append(" OFFSET ").append(offset);
         return sqlBuilder.toString();
+    }
+
+    private static String getOracleRowNumLimitedSQL(Integer size, int offset, String sql) {
+        return new StringBuilder().append("SELECT *  FROM ( SELECT IT.*,ROWNUM R$N FROM (")
+                .append(sql).append(") IT WHERE ROWNUM <= ")
+                .append(size + offset)
+                .append(") NT WHERE NT.R$N  >").append(offset)
+                .toString();
+    }
+
+    private static String getSQLServerRowNumLimitedSQL(Integer size, int offset, String sql) {
+        String upperCaseSql = sql.toUpperCase();
+        int formIndex = upperCaseSql.toUpperCase().indexOf("FROM");
+        String selectSql = sql.substring(0, formIndex) + ",ROW_NUMBER() OVER(";
+        String middleSql = sql.substring(formIndex, upperCaseSql.length());
+        int orderByIndex = middleSql.toUpperCase().lastIndexOf("ORDER BY");
+        String orderBy;
+        if (orderByIndex != -1) {
+            orderBy = middleSql.substring(orderByIndex);
+            middleSql = middleSql.substring(0, orderByIndex);
+        } else {
+            orderBy = " ORDER BY CURRENT_TIMESTAMP";
+        }
+        selectSql = selectSql + orderBy + ") R$N ";
+
+        return "SELECT TOP " + size + " * FROM  ( " + selectSql + middleSql + " ) T WHERE R$N > " + offset;
     }
 
     public static String getCountSQL(DbType dbType, String sql, boolean optimize) {

@@ -28,11 +28,6 @@ public class PagingProcessorFactory {
     }
 
     public static IPagingProcessor getProcessor(DbType dbType) {
-        if (dbType == DbType.ORACLE) {
-            //return new OracleRowNumPagingProcessor();
-        } else if (dbType == DbType.SQL_SERVER) {
-            return new SQLServerRowNumberOverPagingProcessor();
-        }
         return MAP.computeIfAbsent(dbType, c -> new CommonPagingProcessor());
     }
 }

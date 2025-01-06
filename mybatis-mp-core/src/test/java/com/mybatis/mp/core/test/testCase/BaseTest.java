@@ -69,6 +69,8 @@ public class BaseTest {
 
     @BeforeEach
     public void init() {
+        //MybatisMpConfig.setPagingProcessor(DbType.ORACLE, new OracleRowNumPagingProcessor());
+        //MybatisMpConfig.setPagingProcessor(DbType.SQL_SERVER, new SQLServerRowNumberOverPagingProcessor());
         dataSource = TestDataSource.getDataSource();
 
         // 1 创建 事务管理工厂

@@ -27,12 +27,12 @@ public interface IPagingProcessor {
      * 构建分页sql
      *
      * @param sqlBuilderContext 构建上下文
-     * @param module 所属模块
-     * @param parent 父节点
-     * @param query 查询类
-     * @param beforeCmds 分页前面的cmd列表
-     * @param afterCmds 分页后面的cmd列表
-     * @param limit  limit 分页对象
+     * @param module            所属模块
+     * @param parent            父节点
+     * @param query             查询类
+     * @param beforeCmds        分页前面的cmd列表
+     * @param afterCmds         分页后面的cmd列表
+     * @param limit             limit 分页对象
      * @return 包含分页的SQL
      */
     StringBuilder buildPagingSQL(SqlBuilderContext sqlBuilderContext, Cmd module, Cmd parent

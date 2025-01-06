@@ -65,14 +65,14 @@ public class DefaultValueUtil {
         if (StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().defaultValue())) {
             return null;
         }
-        return MybatisMpConfig.getDefaultValue(defaultValueType, tableFieldInfo.getTableFieldAnnotation().defaultValue());
+        return MybatisMpConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getClazz(), defaultValueType, tableFieldInfo.getTableFieldAnnotation().defaultValue());
     }
 
     private static Object getUpdateDefaultValue(TableFieldInfo tableFieldInfo, Class<?> defaultValueType) {
         if (StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
             return null;
         }
-        return MybatisMpConfig.getDefaultValue(defaultValueType, tableFieldInfo.getTableFieldAnnotation().updateDefaultValue());
+        return MybatisMpConfig.getDefaultValue(tableFieldInfo.getFieldInfo().getClazz(), defaultValueType, tableFieldInfo.getTableFieldAnnotation().updateDefaultValue());
     }
 
 }

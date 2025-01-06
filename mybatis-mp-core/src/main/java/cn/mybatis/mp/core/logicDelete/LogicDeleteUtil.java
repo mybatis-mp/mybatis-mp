@@ -72,7 +72,7 @@ public final class LogicDeleteUtil {
         Object value;
         LogicDelete logicDelete = logicDeleteFieldInfo.getLogicDeleteAnnotation();
         Class type = logicDeleteFieldInfo.getFieldInfo().getTypeClass();
-        value = MybatisMpConfig.getDefaultValue(type, logicDelete.afterValue());
+        value = MybatisMpConfig.getDefaultValue(logicDeleteFieldInfo.getFieldInfo().getClazz(), type, logicDelete.afterValue());
         if (value == null) {
             throw new RuntimeException("Unable to obtain deleted value，please use MybatisMpConfig.setDefaultValue(\"" + logicDelete.afterValue() + "\") to resolve it");
         }
