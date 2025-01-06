@@ -70,7 +70,7 @@ public class Concat extends BasicFunction<Concat> {
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if ((context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.DB2) && this.values.length > 1 || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
-            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL);
             CmdUtils.join(module, parent, context, sqlBuilder, this.values, CONCAT_SPLIT_SYMBOL);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
@@ -78,7 +78,7 @@ public class Concat extends BasicFunction<Concat> {
         }
 
         sqlBuilder.append(this.operator).append(SqlConst.BRACKET_LEFT);
-        this.key.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
         join(module, this, context, sqlBuilder, this.values, SqlConst.DELIMITER);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);

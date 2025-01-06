@@ -35,7 +35,7 @@ public class Log extends BasicFunction<Log> {
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
         if (this.key != null) {
-            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
         }
 
         if (number != null) {

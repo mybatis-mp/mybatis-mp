@@ -39,7 +39,7 @@ public class Unions implements Cmd {
             return sqlBuilder;
         }
         for (IUnion union : unions) {
-            union.sql(module, this, context, sqlBuilder);
+            sqlBuilder = union.sql(module, this, context, sqlBuilder);
         }
         return sqlBuilder;
     }

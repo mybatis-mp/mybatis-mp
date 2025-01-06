@@ -29,7 +29,7 @@ public class PagingProcessorFactory {
 
     public static IPagingProcessor getProcessor(DbType dbType) {
         if (dbType == DbType.ORACLE) {
-            return new OracleRowNumPagingProcessor();
+            //return new OracleRowNumPagingProcessor();
         } else if (dbType == DbType.SQL_SERVER) {
             return new SQLServerRowNumberOverPagingProcessor();
         }

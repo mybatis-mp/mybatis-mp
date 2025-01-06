@@ -34,9 +34,9 @@ public class OracleRowNumPagingProcessor implements IPagingProcessor {
         if (parentSQL == null) {
             parentSQL = new StringBuilder(200);
         }
-        parentSQL = CmdUtils.join(module, query, context, parentSQL, beforeCmds);
-        parentSQL = this.sql(context, parent, query, parentSQL, limit);
-        parentSQL.append(CmdUtils.join(module, query, context, new StringBuilder(), afterCmds));
+        StringBuilder querySQL = CmdUtils.join(module, query, context, new StringBuilder(), beforeCmds);
+        parentSQL.append(this.sql(context, parent, query, querySQL, limit));
+        parentSQL = CmdUtils.join(module, query, context, parentSQL, afterCmds);
         return parentSQL;
     }
 

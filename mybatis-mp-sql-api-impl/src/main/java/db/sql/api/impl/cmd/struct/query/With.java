@@ -46,7 +46,7 @@ public class With implements IWith<With> {
         }
 
         sqlBuilder.append(SqlConst.AS).append(SqlConst.BRACKET_LEFT);
-        this.withQuery.sql(module, this, context, sqlBuilder).append(SqlConst.BRACKET_RIGHT);
+        sqlBuilder = this.withQuery.sql(module, this, context, sqlBuilder).append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
     }
 

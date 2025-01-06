@@ -57,16 +57,16 @@ public class UpdateSet implements IUpdateSet<TableField, Cmd> {
             //SQL_SERVER 别名支持的话 需要 带有from ；否则 只能是表面
             AbstractUpdate abstractUpdate = (AbstractUpdate) module;
             if (Objects.nonNull(abstractUpdate.getFrom())) {
-                this.field.sql(module, this, context, sqlBuilder);
+                sqlBuilder = this.field.sql(module, this, context, sqlBuilder);
             } else {
                 sqlBuilder.append(this.field.getName(context.getDbType()));
             }
         } else {
-            this.field.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.field.sql(module, this, context, sqlBuilder);
         }
 
         sqlBuilder.append(SqlConst.EQ);
-        this.value.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.value.sql(module, this, context, sqlBuilder);
         return sqlBuilder;
     }
 

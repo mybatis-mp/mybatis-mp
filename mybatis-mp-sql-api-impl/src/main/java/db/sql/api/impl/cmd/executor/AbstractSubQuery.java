@@ -158,7 +158,7 @@ public abstract class AbstractSubQuery<SELF extends AbstractSubQuery<SELF, CMD_F
             return super.sql(module, parent, context, sqlBuilder);
         }
         sqlBuilder.append(SqlConst.BRACKET_LEFT);
-        super.sql(module, parent, context, sqlBuilder);
+        sqlBuilder = super.sql(module, parent, context, sqlBuilder);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         if (this.getAlias() != null) {
             sqlBuilder.append(SqlConst.AS(context.getDbType())).append(this.getAlias());

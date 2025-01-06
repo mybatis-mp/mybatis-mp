@@ -262,7 +262,7 @@ public interface DatePattern extends Cmd {
     @Override
     default StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         Cmd pattern = Methods.cmd(pattern(context.getDbType()));
-        pattern.sql(module, parent, context, sqlBuilder);
+        sqlBuilder = pattern.sql(module, parent, context, sqlBuilder);
         return sqlBuilder;
     }
 

@@ -75,20 +75,20 @@ public class ConcatWs extends BasicFunction<ConcatWs> {
         }
         if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.DB2 || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
-            this.key.sql(module, parent, context, sqlBuilder);
+            sqlBuilder = this.key.sql(module, parent, context, sqlBuilder);
             for (Cmd value : this.values) {
                 sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL);
-                this.split.sql(module, parent, context, sqlBuilder);
+                sqlBuilder = this.split.sql(module, parent, context, sqlBuilder);
                 sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL);
-                value.sql(module, parent, context, sqlBuilder);
+                sqlBuilder = value.sql(module, parent, context, sqlBuilder);
             }
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
         }
         sqlBuilder.append(this.operator).append(SqlConst.BRACKET_LEFT);
-        this.split.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.split.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
-        this.key.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
         join(module, this, context, sqlBuilder, this.values, SqlConst.DELIMITER);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);

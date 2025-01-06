@@ -53,7 +53,7 @@ public class Like extends BasicCondition {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        getField().sql(module, this, context, sqlBuilder);
+        sqlBuilder = getField().sql(module, this, context, sqlBuilder);
         sqlBuilder.append(getOperator());
 
 
@@ -82,14 +82,14 @@ public class Like extends BasicCondition {
         if (context.getDbType() == DbType.DB2 || context.getDbType() == DbType.SQLITE) {
             //由于 DB2 CONCAT 不支持 变量，所以只能换方式
             if (!before && !after) {
-                getValue().sql(module, this, context, sqlBuilder);
+                sqlBuilder = getValue().sql(module, this, context, sqlBuilder);
             } else {
                 sqlBuilder.append(SqlConst.BRACKET_LEFT);
                 if (before) {
                     sqlBuilder.append(SqlConst.VAGUE_SYMBOL);
                     sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL);
                 }
-                getValue().sql(module, this, context, sqlBuilder);
+                sqlBuilder = getValue().sql(module, this, context, sqlBuilder);
                 if (after) {
                     sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL).append(SqlConst.VAGUE_SYMBOL);
                 }
@@ -102,7 +102,7 @@ public class Like extends BasicCondition {
             //ORACLE Concat 不支持2个以上参数
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
             sqlBuilder.append(SqlConst.VAGUE_SYMBOL).append(SqlConst.CONCAT_SPLIT_SYMBOL);
-            getValue().sql(module, this, context, sqlBuilder);
+            sqlBuilder = getValue().sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.CONCAT_SPLIT_SYMBOL).append(SqlConst.VAGUE_SYMBOL);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
@@ -116,7 +116,7 @@ public class Like extends BasicCondition {
         if (before) {
             sqlBuilder.append(SqlConst.VAGUE_SYMBOL).append(SqlConst.DELIMITER);
         }
-        getValue().sql(module, this, context, sqlBuilder);
+        sqlBuilder = getValue().sql(module, this, context, sqlBuilder);
 
         if (getValue().getClass() == BasicValue.class && (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS)) {
             BasicValue basicValue = (BasicValue) getValue();

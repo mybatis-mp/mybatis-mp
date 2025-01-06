@@ -36,7 +36,7 @@ public class Left extends BasicFunction<Left> {
             sqlBuilder.append(operator);
         }
         sqlBuilder.append(SqlConst.BRACKET_LEFT);
-        this.key.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
         if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(SqlConst.DELIMITER).append(1);
         }
