@@ -20,7 +20,7 @@
     <parent>
         <groupId>cn.mybatis-mp</groupId>
         <artifactId>mybatis-mp</artifactId>
-        <version>1.7.9-RC7</version>
+        <version>1.7.9-RC8</version>
     </parent>
 
     <url>https://gitee.com/mybatis-mp</url>
