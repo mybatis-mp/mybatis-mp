@@ -336,6 +336,9 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
 
     @Override
     public <T> ICondition between(boolean when, Getter<T> column, int storey, Object value, Object value2) {
+        if (!when) {
+            return null;
+        }
         value = (Serializable) checkAndGetValidValue(value);
         value2 = (Serializable) checkAndGetValidValue(value2);
         if (Objects.isNull(value) || Objects.isNull(value2)) {
