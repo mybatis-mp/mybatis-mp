@@ -14,6 +14,7 @@
 
 package com.mybatis.mp.core.test.testCase;
 
+import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.mybatis.configuration.MybatisConfiguration;
 import cn.mybatis.mp.core.mybatis.configuration.MybatisDatabaseIdProvider;
 import cn.mybatis.mp.core.mybatis.mapper.DbRunner;
@@ -22,6 +23,8 @@ import com.mybatis.mp.core.test.mapper.*;
 import com.mybatis.mp.core.test.typeHandler.SQLiteLocalDateTimeHandler;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
+import db.sql.api.impl.paging.OracleRowNumPagingProcessor;
+import db.sql.api.impl.paging.SQLServerRowNumberOverPagingProcessor;
 import db.sql.api.impl.tookit.SQLPrinter;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.apache.ibatis.mapping.Environment;
@@ -69,8 +72,8 @@ public class BaseTest {
 
     @BeforeEach
     public void init() {
-        //MybatisMpConfig.setPagingProcessor(DbType.ORACLE, new OracleRowNumPagingProcessor());
-        //MybatisMpConfig.setPagingProcessor(DbType.SQL_SERVER, new SQLServerRowNumberOverPagingProcessor());
+        MybatisMpConfig.setPagingProcessor(DbType.ORACLE, new OracleRowNumPagingProcessor());
+        MybatisMpConfig.setPagingProcessor(DbType.SQL_SERVER, new SQLServerRowNumberOverPagingProcessor());
         dataSource = TestDataSource.getDataSource();
 
         // 1 创建 事务管理工厂
