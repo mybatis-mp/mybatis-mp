@@ -14,10 +14,9 @@
 
 package db.sql.api.cmd.basic;
 
-import db.sql.api.Cmd;
 import db.sql.api.Getter;
 
-public interface IConflictUpdate<T> extends Cmd {
+public interface IConflictUpdate<T> {
 
     /**
      * 设置值

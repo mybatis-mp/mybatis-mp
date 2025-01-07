@@ -15,6 +15,7 @@
 package db.sql.api.cmd.executor;
 
 import db.sql.api.Getter;
+import db.sql.api.cmd.basic.IConflict;
 import db.sql.api.cmd.basic.IConflictAction;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
@@ -88,6 +89,6 @@ public interface IInsert<SELF extends IInsert,
 
     INSERT_VALUE getInsertValues();
 
-    IConflictAction getConflictAction();
+    IConflict getConflict();
 
 }

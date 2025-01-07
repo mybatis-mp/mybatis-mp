@@ -52,13 +52,7 @@ public class MultiPkTestCase extends BaseTest {
 
     @Test
     public void saveConflictTest() {
-        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB
-                && TestDataSource.DB_TYPE != DbType.PGSQL
-                && TestDataSource.DB_TYPE != DbType.KING_BASE
-                && TestDataSource.DB_TYPE != DbType.OPEN_GAUSS
-                && TestDataSource.DB_TYPE != DbType.SQLITE
-                && TestDataSource.DB_TYPE != DbType.ORACLE
-        ) {
+        if (!isSupportConflict()) {
             return;
         }
 
@@ -112,12 +106,7 @@ public class MultiPkTestCase extends BaseTest {
 
     @Test
     public void saveConflictTest2() {
-        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB
-                && TestDataSource.DB_TYPE != DbType.PGSQL
-                && TestDataSource.DB_TYPE != DbType.KING_BASE
-                && TestDataSource.DB_TYPE != DbType.OPEN_GAUSS
-                && TestDataSource.DB_TYPE != DbType.ORACLE
-        ) {
+        if (!isSupportConflict()) {
             return;
         }
 
@@ -168,13 +157,7 @@ public class MultiPkTestCase extends BaseTest {
 
     @Test
     public void saveBatchConflictTest() {
-        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB
-                && TestDataSource.DB_TYPE != DbType.PGSQL
-                && TestDataSource.DB_TYPE != DbType.KING_BASE
-                && TestDataSource.DB_TYPE != DbType.OPEN_GAUSS
-                && TestDataSource.DB_TYPE != DbType.SQLITE
-                && TestDataSource.DB_TYPE != DbType.ORACLE
-        ) {
+        if (!isSupportConflict()) {
             return;
         }
 
@@ -227,14 +210,22 @@ public class MultiPkTestCase extends BaseTest {
 
     }
 
-    @Test
-    public void saveBatchConflictTest2() {
+    private boolean isSupportConflict() {
         if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB
                 && TestDataSource.DB_TYPE != DbType.PGSQL
                 && TestDataSource.DB_TYPE != DbType.KING_BASE
                 && TestDataSource.DB_TYPE != DbType.OPEN_GAUSS
+                && TestDataSource.DB_TYPE != DbType.SQLITE
                 && TestDataSource.DB_TYPE != DbType.ORACLE
         ) {
+            return false;
+        }
+        return true;
+    }
+
+    @Test
+    public void saveBatchConflictTest2() {
+        if (!isSupportConflict()) {
             return;
         }
 
@@ -245,8 +236,13 @@ public class MultiPkTestCase extends BaseTest {
             entity.setId1(1);
             entity.setId2x(2);
             entity.setName("12");
-            mapper.saveModelBatch(Collections.singletonList(entity));
-            mapper.saveModelBatch(Collections.singletonList(entity), strategy ->
+
+            MultiPkModel entity2 = new MultiPkModel();
+            entity2.setId1(2);
+            entity2.setId2x(2);
+            entity2.setName("12");
+            mapper.saveModelBatch(Arrays.asList(entity, entity2));
+            mapper.saveModelBatch(Arrays.asList(entity, entity2), strategy ->
                     strategy.onConflict(action -> action.doNothing())
             );
         }

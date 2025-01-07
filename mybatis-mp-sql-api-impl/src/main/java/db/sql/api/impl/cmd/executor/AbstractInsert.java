@@ -22,7 +22,7 @@ import db.sql.api.cmd.executor.IInsert;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
-import db.sql.api.impl.cmd.basic.ConflictAction;
+import db.sql.api.impl.cmd.basic.Conflict;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
@@ -57,7 +57,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     protected InsertFields insertFields;
     protected InsertValues insertValues;
     protected InsertSelect insertSelect;
-    protected ConflictAction conflictAction;
+    protected Conflict conflict;
 
     public AbstractInsert(CMD_FACTORY $) {
         this.$ = $;
@@ -189,23 +189,23 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
         return (SELF) this;
     }
 
-    protected ConflictAction createConflictAction() {
-        if (this.conflictAction == null) {
-            this.conflictAction = new ConflictAction(this.$);
-            this.cmds().add(this.conflictAction);
+    protected Conflict $conflict() {
+        if (this.conflict == null) {
+            this.conflict = new Conflict(this.$);
+            this.cmds().add(this.conflict);
         }
-        return this.conflictAction;
+        return this.conflict;
     }
 
     @Override
     public <T> SELF conflictKeys(Getter<T>... conflictKeys) {
-        createConflictAction().conflictKeys(conflictKeys);
+        this.$conflict().conflictKeys(conflictKeys);
         return (SELF) this;
     }
 
     @Override
     public <T> SELF onConflict(Consumer<IConflictAction<T>> action) {
-        action.accept(createConflictAction());
+        this.$conflict().onConflict(action);
         return (SELF) this;
     }
 
@@ -229,8 +229,8 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     }
 
     @Override
-    public ConflictAction getConflictAction() {
-        return conflictAction;
+    public Conflict getConflict() {
+        return conflict;
     }
 
     @Override
@@ -240,7 +240,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
         cmdSorts.put(InsertFields.class, i += 10);
         cmdSorts.put(InsertValues.class, i += 10);
         cmdSorts.put(InsertSelect.class, i += 10);
-        cmdSorts.put(ConflictAction.class, i += 10);
+        cmdSorts.put(Conflict.class, i += 10);
     }
 
 

@@ -41,18 +41,19 @@ public class InsertTable implements IInsertTable<Table> {
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         AbstractInsert abstractInsert = (AbstractInsert) parent;
+
         boolean insertIgnore = (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2 || context.getDbType() == DbType.ORACLE)
-                && abstractInsert.getConflictAction() != null
-                && abstractInsert.getConflictAction().isDoNothing();
+                && abstractInsert.getConflict() != null
+                && abstractInsert.getConflict().getConflictAction().isDoNothing();
 
         if (insertIgnore) {
             if (context.getDbType() == DbType.ORACLE) {
                 //可能需要增加ConflictKeys
-                ConflictKeyUtil.addDefaultConflictKeys(abstractInsert, context.getDbType());
+                abstractInsert.getConflict().addDefaultConflictKeys(abstractInsert, context.getDbType());
 
                 sqlBuilder.append(SqlConst.INSERT).append("--+ IGNORE_ROW_ON_DUPKEY_INDEX(")
                         .append(table.getName(context.getDbType())).append(SqlConst.BRACKET_LEFT)
-                        .append(String.join(",", abstractInsert.getConflictAction().getConflictKeys()))
+                        .append(String.join(",", abstractInsert.getConflict().getConflictKeys()))
                         .append(SqlConst.BRACKET_RIGHT).append(SqlConst.BRACKET_RIGHT)
                         .append(System.lineSeparator().replaceAll(Matcher.quoteReplacement("\\"), Matcher.quoteReplacement("\\\\")))
                         .append(SqlConst.INTO);
