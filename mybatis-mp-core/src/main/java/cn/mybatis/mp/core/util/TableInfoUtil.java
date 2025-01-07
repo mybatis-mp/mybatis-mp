@@ -87,13 +87,20 @@ public final class TableInfoUtil {
             }
         }
         TableInfoUtil.checkId(tableInfo);
-        Serializable id;
+        return (Serializable) getEntityFieldValue(tableInfo.getSingleIdFieldInfo(true), entity);
+    }
+
+    /**
+     * @param tableFieldInfo
+     * @param entity
+     * @return
+     */
+    public static Object getEntityFieldValue(TableFieldInfo tableFieldInfo, Object entity) {
         try {
-            id = (Serializable) tableInfo.getSingleIdFieldInfo(true).getReadFieldInvoker().invoke(entity, null);
+            return tableFieldInfo.getReadFieldInvoker().invoke(entity, null);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        return id;
     }
 
 

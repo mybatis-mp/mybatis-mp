@@ -60,7 +60,7 @@ public interface SaveMapper<T> extends BaseMapper<T> {
     }
 
     /**
-     * 多个保存，非批量行为
+     * 单个保存
      *
      * @param entity   实体类实例
      * @param consumer 保存策略

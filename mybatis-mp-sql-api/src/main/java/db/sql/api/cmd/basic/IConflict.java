@@ -24,5 +24,5 @@ public interface IConflict<T> {
 
     IConflict<T> conflictKeys(Getter<T>... conflictKeys);
 
-    IConflict<T> onConflict(Consumer<IConflictAction> action);
+    void onConflict(Consumer<IConflictAction> action);
 }

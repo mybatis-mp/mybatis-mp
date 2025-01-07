@@ -46,12 +46,11 @@ public class ConflictAction<T> implements IConflictAction<T>, Cmd {
     }
 
     @Override
-    public IConflictAction<T> doUpdate(Consumer<IConflictUpdate<T>> consumer) {
+    public void doUpdate(Consumer<IConflictUpdate<T>> consumer) {
         if (this.conflictUpdate == null) {
             this.conflictUpdate = new ConflictUpdate(cmdFactory);
         }
         consumer.accept(this.conflictUpdate);
-        return this;
     }
 
     @Override

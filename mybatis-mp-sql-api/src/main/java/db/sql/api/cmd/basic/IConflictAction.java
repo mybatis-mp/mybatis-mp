@@ -20,7 +20,7 @@ public interface IConflictAction<T> {
 
     void doNothing();
 
-    IConflictAction<T> doUpdate(Consumer<IConflictUpdate<T>> consumer);
+    void doUpdate(Consumer<IConflictUpdate<T>> consumer);
 
     boolean isDoNothing();
 }

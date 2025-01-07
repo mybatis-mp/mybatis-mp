@@ -47,7 +47,7 @@ public class ConflictUpdate<T> implements IConflictUpdate<T>, Cmd {
     }
 
     @Override
-    public IConflictUpdate<T> overwrite(Getter<T>... fields) {
+    public void overwrite(Getter<T>... fields) {
         if (this.updateSets == null) {
             this.updateSets = new UpdateSets();
         }
@@ -55,13 +55,11 @@ public class ConflictUpdate<T> implements IConflictUpdate<T>, Cmd {
             TableField tableField = cmdFactory.field(field);
             updateSets.set(tableField, new ConflictUpdateTableField(tableField));
         }
-        return this;
     }
 
     @Override
-    public IConflictUpdate<T> overwriteAll() {
+    public void overwriteAll() {
         this.overwriteAll = true;
-        return this;
     }
 
     @Override

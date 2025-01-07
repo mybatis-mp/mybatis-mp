@@ -41,8 +41,7 @@ public class SaveBatchStrategy<T> {
         return this;
     }
 
-    public SaveBatchStrategy<T> onConflict(Consumer<IConflictAction<T>> conflictAction) {
+    public void onConflict(Consumer<IConflictAction<T>> conflictAction) {
         this.conflictAction = conflictAction;
-        return this;
     }
 }

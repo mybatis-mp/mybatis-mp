@@ -63,9 +63,8 @@ public class Conflict<T> implements IConflict<T>, Cmd {
     }
 
     @Override
-    public Conflict<T> onConflict(Consumer<IConflictAction> action) {
+    public void onConflict(Consumer<IConflictAction> action) {
         action.accept(this.conflictAction);
-        return this;
     }
 
     //增加默认 争议key

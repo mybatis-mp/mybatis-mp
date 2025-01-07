@@ -47,8 +47,7 @@ public class SaveStrategy<T> {
         return this;
     }
 
-    public SaveStrategy<T> onConflict(Consumer<IConflictAction<T>> conflictAction) {
+    public void onConflict(Consumer<IConflictAction<T>> conflictAction) {
         this.conflictAction = conflictAction;
-        return this;
     }
 }
