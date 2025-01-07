@@ -339,8 +339,8 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         if (!when) {
             return null;
         }
-        value = (Serializable) checkAndGetValidValue(value);
-        value2 = (Serializable) checkAndGetValidValue(value2);
+        value = checkAndGetValidValue(value);
+        value2 = checkAndGetValidValue(value2);
         if (Objects.isNull(value) || Objects.isNull(value2)) {
             if (Objects.isNull(value) && Objects.isNull(value2)) {
                 return null;
@@ -372,8 +372,8 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             return null;
         }
 
-        value = (Serializable) checkAndGetValidValue(value);
-        value2 = (Serializable) checkAndGetValidValue(value2);
+        value = checkAndGetValidValue(value);
+        value2 = checkAndGetValidValue(value2);
         if (Objects.isNull(value) || Objects.isNull(value2)) {
             if (Objects.isNull(value) && Objects.isNull(value2)) {
                 return null;
