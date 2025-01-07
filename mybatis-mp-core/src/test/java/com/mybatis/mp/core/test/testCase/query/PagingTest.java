@@ -96,26 +96,42 @@ public class PagingTest extends BaseTest {
 
             subQuery.select(SysUser.class)
                     .from(SysUser.class)
-                    .in(SysUser::getId, 1, 2)
+                    .in(SysUser::getId, 1, 2, 3, 4)
                     .orderByDesc(SysUser::getId)
                     .limit(10);
 
 
             Pager<SysUser> pager = QueryChain.of(sysUserMapper)
-                    //.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll())
+                    .optimizeOptions(optimizeOptions -> optimizeOptions.disableAll())
                     .selectAll()
                     .from(subQuery)
                     .orderByDesc(subQuery.$outerField(SysUser::getId))
-                    .paging(Pager.of(2, 1));
+                    .paging(Pager.of(2, 2));
 
             System.out.println(pager);
 
-            assertEquals(pager.getTotal(), 2);
+            assertEquals(pager.getTotal(), 3);
             assertEquals(pager.getTotalPage(), 2);
 
             assertEquals(pager.getResults().size(), 1);
             assertEquals(pager.getResults().get(0).getId(), 1);
 
+
+            pager = QueryChain.of(sysUserMapper)
+                    //.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll())
+                    .selectAll()
+                    .from(subQuery)
+                    .orderByDesc(subQuery.$outerField(SysUser::getId))
+                    .paging(Pager.of(1, 2));
+
+            System.out.println(pager);
+
+            assertEquals(pager.getTotal(), 3);
+            assertEquals(pager.getTotalPage(), 2);
+
+            assertEquals(pager.getResults().size(), 2);
+            assertEquals(pager.getResults().get(0).getId(), 3);
+            assertEquals(pager.getResults().get(1).getId(), 2);
         }
     }
 }
