@@ -17,15 +17,12 @@ package db.sql.api.impl.cmd.dbFun;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.Alias;
 import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.impl.tookit.SqlUtil;
 
-public interface Function<T> extends Cmd {
-
-    String getAlias();
-
-    T as(String alias);
+public interface Function<T> extends Cmd, Alias<T> {
 
     default <T2> T as(Getter<T2> aliasGetter) {
         return this.as(SqlUtil.getAsName(aliasGetter));
