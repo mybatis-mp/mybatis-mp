@@ -23,7 +23,7 @@ public interface IConflictAction<T> extends Cmd {
 
     IConflictAction<T> conflictKeys(String[] conflictKeys);
 
-    IConflictAction<T> conflictKeys(Getter<T>[] conflictKeys);
+    IConflictAction<T> conflictKeys(Getter<T>... conflictKeys);
 
     void doNothing();
 
