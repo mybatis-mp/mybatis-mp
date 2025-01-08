@@ -88,7 +88,7 @@ public interface SaveMapper<T> extends BaseMapper<T> {
         }
         SaveStrategy strategy = new SaveStrategy();
         consumer.accept(strategy);
-        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), list, strategy);
+        return SaveMethodUtil.saveList(getBasicMapper(), getTableInfo(), list, strategy);
     }
 
 
