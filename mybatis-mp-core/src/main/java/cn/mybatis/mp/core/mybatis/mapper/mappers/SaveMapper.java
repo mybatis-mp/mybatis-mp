@@ -22,10 +22,22 @@ import cn.mybatis.mp.core.sql.executor.Insert;
 import db.sql.api.Getter;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public interface SaveMapper<T> extends BaseMapper<T> {
+
+    /**
+     * 单个保存
+     *
+     * @param entity   实体类实例
+     * @param consumer 保存策略
+     * @return 影响条数
+     */
+    default int save(T entity, Consumer<SaveStrategy<T>> consumer) {
+        SaveStrategy strategy = new SaveStrategy();
+        consumer.accept(strategy);
+        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), entity, strategy);
+    }
 
     /**
      * 实体类新增
@@ -45,7 +57,9 @@ public interface SaveMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int save(T entity, boolean allFieldForce) {
-        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), entity, allFieldForce, null);
+        return this.save(entity, saveStrategy -> {
+            saveStrategy.allFieldSave(allFieldForce);
+        });
     }
 
     /**
@@ -56,20 +70,25 @@ public interface SaveMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int save(T entity, Getter<T>... forceFields) {
-        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), entity, false, forceFields);
+        return this.save(entity, saveStrategy -> {
+            saveStrategy.forceFields(forceFields);
+        });
     }
 
     /**
-     * 单个保存
+     * 多个保存，非批量行为
      *
-     * @param entity   实体类实例
+     * @param list
      * @param consumer 保存策略
      * @return 影响条数
      */
-    default int save(T entity, Consumer<SaveStrategy<T>> consumer) {
+    default int save(Collection<T> list, Consumer<SaveStrategy<T>> consumer) {
+        if (list == null || list.isEmpty()) {
+            return 0;
+        }
         SaveStrategy strategy = new SaveStrategy();
         consumer.accept(strategy);
-        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), entity, strategy);
+        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), list, strategy);
     }
 
 
@@ -91,10 +110,9 @@ public interface SaveMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int save(Collection<T> list, boolean allFieldForce) {
-        if (Objects.isNull(list) || list.isEmpty()) {
-            return 0;
-        }
-        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), list, allFieldForce, (Getter<T>[]) null);
+        return this.save(list, saveStrategy -> {
+            saveStrategy.allFieldSave(allFieldForce);
+        });
     }
 
     /**
@@ -105,49 +123,9 @@ public interface SaveMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int save(Collection<T> list, Getter<T>... forceFields) {
-        if (Objects.isNull(list) || list.isEmpty()) {
-            return 0;
-        }
-        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), list, false, forceFields);
-    }
-
-    /**
-     * 多个保存，非批量行为
-     *
-     * @param list
-     * @param consumer 保存策略
-     * @return 影响条数
-     */
-    default int save(Collection<T> list, Consumer<SaveStrategy<T>> consumer) {
-        SaveStrategy strategy = new SaveStrategy();
-        consumer.accept(strategy);
-        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), list, strategy);
-    }
-
-    /**
-     * 使用数据库原生方式批量插入
-     * 一次最好在100条内
-     *
-     * @param list
-     * @return 影响条数
-     */
-    default int saveBatch(Collection<T> list) {
-        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list);
-    }
-
-    /**
-     * 使用数据库原生方式批量插入
-     * 一次最好在100条内
-     * <p>
-     * 会自动加入 主键 租户ID 逻辑删除列 乐观锁
-     * 自动设置 默认值,不会忽略NULL值字段
-     *
-     * @param list
-     * @param forceFields 指定那些列强制插入，null值将会以NULL的形式插入
-     * @return 影响条数
-     */
-    default int saveBatch(Collection<T> list, Getter<T>... forceFields) {
-        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list, forceFields);
+        return this.save(list, saveStrategy -> {
+            saveStrategy.forceFields(forceFields);
+        });
     }
 
     /**
@@ -163,4 +141,34 @@ public interface SaveMapper<T> extends BaseMapper<T> {
         strategy.accept(saveBatchStrategy);
         return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list, saveBatchStrategy);
     }
+
+    /**
+     * 使用数据库原生方式批量插入
+     * 一次最好在100条内
+     *
+     * @param list
+     * @return 影响条数
+     */
+    default int saveBatch(Collection<T> list) {
+        return SaveMethodUtil.saveBatch(getBasicMapper(), list);
+    }
+
+    /**
+     * 使用数据库原生方式批量插入
+     * 一次最好在100条内
+     * <p>
+     * 会自动加入 主键 租户ID 逻辑删除列 乐观锁
+     * 自动设置 默认值,不会忽略NULL值字段
+     *
+     * @param list
+     * @param forceFields 指定那些列强制插入，null值将会以NULL的形式插入
+     * @return 影响条数
+     */
+    default int saveBatch(Collection<T> list, Getter<T>... forceFields) {
+        return this.saveBatch(list, saveStrategy -> {
+            saveStrategy.forceFields(forceFields);
+        });
+    }
+
+
 }

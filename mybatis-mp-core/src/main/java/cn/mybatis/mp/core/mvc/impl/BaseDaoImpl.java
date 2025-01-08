@@ -667,7 +667,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     public int save(Collection<T> list, Consumer<SaveStrategy<T>> saveStrategy) {
         SaveStrategy strategy = new SaveStrategy();
         saveStrategy.accept(strategy);
-        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), list, strategy);
+        return SaveMethodUtil.saveList(getBasicMapper(), getTableInfo(), list, strategy);
     }
 
     @Override
@@ -696,7 +696,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     public int saveBatch(Collection<T> list) {
-        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list);
+        return SaveMethodUtil.saveBatch(getBasicMapper(), list);
     }
 
     @Override
