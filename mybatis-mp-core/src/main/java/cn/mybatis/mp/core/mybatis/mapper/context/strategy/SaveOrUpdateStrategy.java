@@ -22,24 +22,49 @@ import java.util.function.Consumer;
 @lombok.Getter
 public class SaveOrUpdateStrategy<T> {
 
+    private boolean ignoreLogicDeleteWhenCheck = false;
+
     private boolean allField;
 
     private Getter[] forceFields;
 
     private Consumer<Where> on;
 
+    public SaveOrUpdateStrategy<T> ignoreLogicDeleteWhenCheck(boolean ignoreLogicDeleteWhenCheck) {
+        this.ignoreLogicDeleteWhenCheck = ignoreLogicDeleteWhenCheck;
+        return this;
+    }
+
+    /**
+     * 设置是否所有字段 新增 或 修改 - null值字段 将会被修改成NULL
+     *
+     * @param allField 是否所有字段 新增 或 修改
+     * @return SELF
+     */
     public SaveOrUpdateStrategy<T> allField(boolean allField) {
         this.allField = allField;
         return this;
     }
 
+    /**
+     * 设置强制字段 - null值字段 将会被修改成NULL
+     *
+     * @param forceFields 强制字段
+     * @return SELF
+     */
     public SaveOrUpdateStrategy<T> forceFields(Getter<T>... forceFields) {
         this.forceFields = forceFields;
         return this;
     }
 
-    public SaveOrUpdateStrategy<T> on(Consumer<Where> on) {
-        this.on = on;
+    /**
+     * 设置 自定义存在的where 条件
+     *
+     * @param where 自定义存在的where 条件
+     * @return SELF
+     */
+    public SaveOrUpdateStrategy<T> where(Consumer<Where> where) {
+        this.on = where;
         return this;
     }
 

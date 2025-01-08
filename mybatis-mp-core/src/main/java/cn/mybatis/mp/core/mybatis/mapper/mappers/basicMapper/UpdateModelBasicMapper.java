@@ -79,8 +79,10 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
      * @param list 实体类对象List
      * @return 影响条数
      */
-    default <T, M extends Model<T>> int updateModel(Collection<M> list, UpdateStrategy<M> updateStrategy) {
-        return UpdateModelMethodUtil.updateList(getBasicMapper(), list, updateStrategy);
+    default <T, M extends Model<T>> int updateModel(Collection<M> list, Consumer<UpdateStrategy<M>> updateStrategy) {
+        UpdateStrategy strategy = UpdateMethodUtil.createUpdateStrategy();
+        updateStrategy.accept(strategy);
+        return UpdateModelMethodUtil.updateList(getBasicMapper(), list, strategy);
     }
 
     /**
@@ -101,9 +103,9 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int updateModel(Collection<M> list, boolean allFieldForce) {
-        UpdateStrategy updateStrategy = UpdateMethodUtil.createUpdateStrategy();
-        updateStrategy.allFieldUpdate(allFieldForce);
-        return this.updateModel(list, updateStrategy);
+        return this.updateModel(list, updateStrategy -> {
+            updateStrategy.allFieldUpdate(allFieldForce);
+        });
     }
 
     /**
@@ -114,9 +116,9 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int updateModel(Collection<M> list, Getter<M>... forceFields) {
-        UpdateStrategy updateStrategy = UpdateMethodUtil.createUpdateStrategy();
-        updateStrategy.forceFields(forceFields);
-        return this.updateModel(list, updateStrategy);
+        return this.updateModel(list, updateStrategy -> {
+            updateStrategy.forceFields(forceFields);
+        });
     }
 
 

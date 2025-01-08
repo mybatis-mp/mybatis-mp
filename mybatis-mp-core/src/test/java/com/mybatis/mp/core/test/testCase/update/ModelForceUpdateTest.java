@@ -81,4 +81,22 @@ public class ModelForceUpdateTest extends BaseTest {
             assertEquals(sysUser.getRole_id(), 0);
         }
     }
+
+    @Test
+    public void forceInsertTest7() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUserModel sysUserModel = QueryChain.of(sysUserMapper).returnType(SysUserModel.class)
+                    .eq(SysUser::getId, 1).get();
+            sysUserModel.setId(null);
+            sysUserModel.setUserName(null);
+            sysUserMapper.saveOrUpdate(sysUserModel, saveOrUpdateStrategy -> {
+                saveOrUpdateStrategy.forceFields(SysUserModel::getUserName);
+                saveOrUpdateStrategy.where(where -> where.eq(SysUser::getId, 1));
+            });
+            SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
+            assertEquals(sysUser.getUserName(), null);
+            assertEquals(sysUser.getRole_id(), 0);
+        }
+    }
 }

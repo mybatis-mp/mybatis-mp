@@ -73,53 +73,6 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
     }
 
     /**
-     * 多个修改，非批量行为
-     *
-     * @param list 实体类对象List
-     * @return 影响条数
-     */
-    default <T, M extends Model<T>> int updateModel(Collection<M> list, UpdateStrategy<M> updateStrategy) {
-        return UpdateModelMethodUtil.updateList(getBasicMapper(), list, updateStrategy);
-    }
-
-    /**
-     * 多个修改，非批量行为
-     *
-     * @param list 实体类对象List
-     * @return 影响条数
-     */
-    default <M extends Model<T>> int updateModel(Collection<M> list) {
-        return this.updateModel(list, false);
-    }
-
-    /**
-     * 多个修改，非批量行为
-     *
-     * @param list          实体类对象List
-     * @param allFieldForce 所有字段都强制保存
-     * @return 影响条数
-     */
-    default <M extends Model<T>> int updateModel(Collection<M> list, boolean allFieldForce) {
-        UpdateStrategy updateStrategy = UpdateMethodUtil.createUpdateStrategy();
-        updateStrategy.allFieldUpdate(allFieldForce);
-        return this.updateModel(list, updateStrategy);
-    }
-
-    /**
-     * 多个修改，非批量行为
-     *
-     * @param list        实体类对象List
-     * @param forceFields 强制更新指定，解决需要修改为null的需求
-     * @return 影响条数
-     */
-    default <M extends Model<T>> int updateModel(Collection<M> list, Getter<M>... forceFields) {
-        UpdateStrategy updateStrategy = UpdateMethodUtil.createUpdateStrategy();
-        updateStrategy.forceFields(forceFields);
-        return this.updateModel(list, updateStrategy);
-    }
-
-
-    /**
      * 动态条件修改
      *
      * @param model    实体类
@@ -169,5 +122,53 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
         updateStrategy.allFieldUpdate(allFieldForce);
         updateStrategy.where(where);
         return this.update(model, updateStrategy);
+    }
+
+    /**
+     * 多个修改，非批量行为
+     *
+     * @param list 实体类对象List
+     * @return 影响条数
+     */
+    default <T, M extends Model<T>> int updateModel(Collection<M> list, Consumer<UpdateStrategy<M>> updateStrategy) {
+        UpdateStrategy strategy = UpdateMethodUtil.createUpdateStrategy();
+        updateStrategy.accept(strategy);
+        return UpdateModelMethodUtil.updateList(getBasicMapper(), list, strategy);
+    }
+
+    /**
+     * 多个修改，非批量行为
+     *
+     * @param list 实体类对象List
+     * @return 影响条数
+     */
+    default <M extends Model<T>> int updateModel(Collection<M> list) {
+        return this.updateModel(list, false);
+    }
+
+    /**
+     * 多个修改，非批量行为
+     *
+     * @param list          实体类对象List
+     * @param allFieldForce 所有字段都强制保存
+     * @return 影响条数
+     */
+    default <M extends Model<T>> int updateModel(Collection<M> list, boolean allFieldForce) {
+        return this.updateModel(list, updateStrategy -> {
+            updateStrategy.allFieldUpdate(allFieldForce);
+        });
+    }
+
+    /**
+     * 多个修改，非批量行为
+     *
+     * @param list        实体类对象List
+     * @param forceFields 强制更新指定，解决需要修改为null的需求
+     * @return 影响条数
+     */
+    default <M extends Model<T>> int updateModel(Collection<M> list, Getter<M>... forceFields) {
+        return this.updateModel(list, updateStrategy -> {
+            updateStrategy.forceFields(forceFields);
+        });
     }
 }

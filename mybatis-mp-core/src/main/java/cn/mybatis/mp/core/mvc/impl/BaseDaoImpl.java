@@ -883,11 +883,15 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         });
     }
 
-    @Override
-    public int updateListWithStrategy(Collection<T> list, Consumer<UpdateStrategy<T>> updateStrategy) {
+    protected int updateWithStrategy(Collection<T> list, Consumer<UpdateStrategy<T>> updateStrategy) {
         UpdateStrategy strategy = new UpdateStrategy();
         updateStrategy.accept(strategy);
         return UpdateMethodUtil.updateList(getBasicMapper(), getTableInfo(), list, strategy);
+    }
+
+    @Override
+    public int update(Collection<T> list, UpdateStrategy<T> updateStrategy) {
+        return UpdateMethodUtil.updateList(getBasicMapper(), getTableInfo(), list, updateStrategy);
     }
 
     @Override
@@ -900,7 +904,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
-        return this.updateListWithStrategy(list, updateStrategy -> {
+        return this.updateWithStrategy(list, updateStrategy -> {
             updateStrategy.allFieldUpdate(allFieldForce);
         });
     }
@@ -910,7 +914,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
-        return this.updateListWithStrategy(list, updateStrategy -> {
+        return this.updateWithStrategy(list, updateStrategy -> {
             updateStrategy.forceFields(forceFields);
         });
     }
@@ -951,14 +955,10 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
 
-    protected <M extends Model<T>> int updateModelWithStrategy(Collection<M> list, Consumer<UpdateStrategy<M>> updateStrategy) {
+    public <M extends Model<T>> int updateModel(Collection<M> list, Consumer<UpdateStrategy<M>> updateStrategy) {
         UpdateStrategy strategy = UpdateMethodUtil.createUpdateStrategy();
         updateStrategy.accept(strategy);
-        return this.updateModel(list, strategy);
-    }
-
-    protected <M extends Model<T>> int updateModel(Collection<M> list, UpdateStrategy<M> updateStrategy) {
-        return UpdateModelMethodUtil.updateList(getBasicMapper(), list, updateStrategy);
+        return UpdateModelMethodUtil.updateList(getBasicMapper(), list, strategy);
     }
 
     @Override
@@ -968,14 +968,14 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public <M extends Model<T>> int updateModel(Collection<M> list, Getter<M>... forceFields) {
-        return this.updateModelWithStrategy(list, updateStrategy -> {
+        return this.updateModel(list, updateStrategy -> {
             updateStrategy.forceFields(forceFields);
         });
     }
 
     @Override
     public <M extends Model<T>> int updateModel(Collection<M> list, boolean allFieldForce) {
-        return this.updateModelWithStrategy(list, updateStrategy -> {
+        return this.updateModel(list, updateStrategy -> {
             updateStrategy.allFieldUpdate(allFieldForce);
         });
     }

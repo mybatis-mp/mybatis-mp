@@ -15,6 +15,7 @@
 package cn.mybatis.mp.core.mybatis.mapper.mappers.utils;
 
 import cn.mybatis.mp.core.db.reflect.TableInfo;
+import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
@@ -64,7 +65,14 @@ public class SaveOrUpdateMethodUtil {
         Query<T> query = new Query<>(checkWhere);
         query.$().cacheTableInfo(tableInfo);
         Table table = query.$(entityType);
-        query.from(table).returnType(entityType);
+
+        if (saveOrUpdateStrategy.isIgnoreLogicDeleteWhenCheck()) {
+            LogicDeleteUtil.execute(false, () -> {
+                query.from(table).returnType(entityType);
+            });
+        } else {
+            query.from(table).returnType(entityType);
+        }
 
         for (String c : tableInfo.getIdColumnNames()) {
             query.select(table.$(c));

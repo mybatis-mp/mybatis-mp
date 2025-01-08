@@ -15,11 +15,8 @@
 package cn.mybatis.mp.core.mybatis.mapper.context.strategy;
 
 import db.sql.api.Getter;
-import db.sql.api.cmd.basic.IConflictAction;
 import db.sql.api.impl.cmd.struct.Where;
-import db.sql.api.tookit.LambdaUtil;
 
-import java.util.Set;
 import java.util.function.Consumer;
 
 @lombok.Getter
@@ -33,21 +30,45 @@ public class UpdateStrategy<T> {
 
     private Where where;
 
+    /**
+     * 设置是否所有字段 修改 - null值字段 将会被修改成NULL
+     *
+     * @param allFieldUpdate 是否所有字段 修改
+     * @return SELF
+     */
     public UpdateStrategy<T> allFieldUpdate(boolean allFieldUpdate) {
         this.allFieldUpdate = allFieldUpdate;
         return this;
     }
 
+    /**
+     * 设置强制字段 - null值字段 将会被修改成NULL
+     *
+     * @param forceFields 强制字段
+     * @return SELF
+     */
     public UpdateStrategy<T> forceFields(Getter<T>... forceFields) {
         this.forceFields = forceFields;
         return this;
     }
 
+    /**
+     * 设置 自定义存在的where 条件
+     *
+     * @param where 自定义存在的where 条件
+     * @return SELF
+     */
     public UpdateStrategy<T> where(Where where){
         this.where = where;
         return this;
     }
 
+    /**
+     * 设置 自定义存在的where 条件
+     *
+     * @param where 自定义存在的where 条件
+     * @return SELF
+     */
     public UpdateStrategy<T> where(Consumer<Where> where){
         this.on = where;
         return this;

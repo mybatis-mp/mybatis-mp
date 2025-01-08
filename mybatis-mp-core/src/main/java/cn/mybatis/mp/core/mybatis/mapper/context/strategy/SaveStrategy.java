@@ -32,26 +32,44 @@ public class SaveStrategy<T> {
 
     private Consumer<IConflictAction<T>> conflictAction;
 
+    /**
+     * 设置是否所有字段 新增 - null值字段 将会被修改成NULL
+     *
+     * @param allFieldSave 是否所有字段 新增
+     * @return SELF
+     */
     public SaveStrategy<T> allFieldSave(boolean allFieldSave) {
         this.allFieldSave = allFieldSave;
         return this;
     }
 
+    /**
+     * 设置强制字段 - null值字段 将会被修改成NULL
+     *
+     * @param forceFields 强制字段
+     * @return SELF
+     */
     public SaveStrategy<T> forceFields(Getter<T>... forceFields) {
         this.forceFields = LambdaUtil.getFieldNames(forceFields);
         return this;
     }
 
-    public SaveStrategy<T> forceFields(Set<String> forceFields) {
-        this.forceFields = forceFields;
-        return this;
-    }
-
+    /**
+     * 设置 争议/冲突字段
+     *
+     * @param conflictKeys 争议/冲突字段 - 重复数据的KEY
+     * @return SELF
+     */
     public SaveStrategy<T> conflictKeys(Getter<T>... conflictKeys) {
         this.conflictKeys = conflictKeys;
         return this;
     }
 
+    /**
+     * 设置发生争议（重复）的操作
+     *
+     * @param conflictAction
+     */
     public void onConflict(Consumer<IConflictAction<T>> conflictAction) {
         this.conflictAction = conflictAction;
     }

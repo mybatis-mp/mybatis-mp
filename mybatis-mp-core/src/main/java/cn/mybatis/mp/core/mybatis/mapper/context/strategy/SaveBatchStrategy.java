@@ -22,6 +22,11 @@ import db.sql.api.tookit.LambdaUtil;
 import java.util.Set;
 import java.util.function.Consumer;
 
+/**
+ * 批量插入策略
+ *
+ * @param <T>
+ */
 @lombok.Getter
 public class SaveBatchStrategy<T> {
 
@@ -31,16 +36,33 @@ public class SaveBatchStrategy<T> {
 
     private Consumer<IConflictAction<T>> conflictAction;
 
+    /**
+     * 设置强制字段 - null值字段 将会被修改成NULL
+     *
+     * @param forceFields 强制字段
+     * @return SELF
+     */
     public SaveBatchStrategy<T> forceFields(Getter<T>... forceFields) {
         this.forceFields = LambdaUtil.getFieldNames(forceFields);
         return this;
     }
 
+    /**
+     * 设置 争议/冲突字段
+     *
+     * @param conflictKeys 争议/冲突字段 - 重复数据的KEY
+     * @return SELF
+     */
     public SaveBatchStrategy<T> conflictKeys(Getter<T>... conflictKeys) {
         this.conflictKeys = conflictKeys;
         return this;
     }
 
+    /**
+     * 设置发生争议（重复）的操作
+     *
+     * @param conflictAction
+     */
     public void onConflict(Consumer<IConflictAction<T>> conflictAction) {
         this.conflictAction = conflictAction;
     }

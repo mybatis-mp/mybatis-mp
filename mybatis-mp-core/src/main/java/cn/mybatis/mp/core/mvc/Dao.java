@@ -172,14 +172,6 @@ public interface Dao<T, ID> {
     /**
      * 实体类Model保存
      *
-     * @param list           实体类Model对象List
-     * @param updateStrategy 策略
-     * @return 影响条数
-     */
-    int updateListWithStrategy(Collection<T> list, Consumer<UpdateStrategy<T>> updateStrategy);
-    /**
-     * 实体类Model保存
-     *
      * @param list 实体类Model对象List
      * @return 影响条数
      */
@@ -194,6 +186,7 @@ public interface Dao<T, ID> {
      */
     <M extends Model<T>> int saveModel(Collection<M> list, boolean allFieldForce);
 
+
     /**
      * 实体类Model保存
      *
@@ -202,6 +195,7 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     <M extends Model<T>> int saveModel(Collection<M> list, Getter<M>... forceFields);
+
 
     /**
      * 实体类Model保存
@@ -283,6 +277,14 @@ public interface Dao<T, ID> {
     int update(T entity, Getter<T>... forceFields);
 
     /**
+     * 实体类保存
+     *
+     * @param list           实体类对象List
+     * @param updateStrategy 策略
+     * @return 影响条数
+     */
+    int update(Collection<T> list, UpdateStrategy<T> updateStrategy);
+    /**
      * 实体类修改
      *
      * @param list 实体类对象List
@@ -346,6 +348,14 @@ public interface Dao<T, ID> {
     <M extends Model<T>> int update(M model, boolean allFieldForce);
 
 
+    /**
+     * 实体类Model修改
+     *
+     * @param list           实体类Model对象List
+     * @param updateStrategy 策略
+     * @return 影响条数
+     */
+    <M extends Model<T>> int updateModel(Collection<M> list, Consumer<UpdateStrategy<M>> updateStrategy);
     /**
      * 实体类Model修改
      *
