@@ -14,6 +14,7 @@
 
 package cn.mybatis.mp.core.mvc;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.mybatis.mp.db.Model;
@@ -202,6 +203,40 @@ public interface Dao<T, ID> {
      */
     <M extends Model<T>> int saveModel(Collection<M> list, Consumer<SaveStrategy<M>> saveStrategy);
 
+
+    /**
+     * 原生批量插入 实体类Model保存
+     *
+     * @param list 实体类Model对象List
+     * @return 影响条数
+     */
+    <M extends Model<T>> int saveModelBatch(Collection<M> list);
+
+    /**
+     * 原生批量插入 实体类Model保存
+     *
+     * @param list              实体类Model对象List
+     * @param saveBatchStrategy 保存策略
+     * @return 影响条数
+     */
+    <M extends Model<T>> int saveModelBatch(Collection<M> list, Consumer<SaveBatchStrategy<M>> saveBatchStrategy);
+
+    /**
+     * 原生批量插入
+     *
+     * @param list 实体类对象List
+     * @return 影响条数
+     */
+    int saveBatch(Collection<T> list);
+
+    /**
+     * 原生批量插入
+     *
+     * @param list              实体类对象List
+     * @param saveBatchStrategy 策略
+     * @return 影响条数
+     */
+    int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> saveBatchStrategy);
     /**
      * 实体类修改
      *

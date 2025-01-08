@@ -29,6 +29,19 @@ public interface SaveModelMapper<T> extends BaseMapper<T> {
     /**
      * 实体类新增
      *
+     * @param model    实体类Model实例
+     * @param consumer 保存策略
+     * @return 影响条数
+     */
+    default <M extends Model<T>> int save(M model, Consumer<SaveStrategy<M>> consumer) {
+        SaveStrategy strategy = new SaveStrategy();
+        consumer.accept(strategy);
+        return SaveModelMethodUtil.save(getBasicMapper(), model, strategy);
+    }
+
+    /**
+     * 实体类新增
+     *
      * @param model
      * @return 影响条数
      */
@@ -44,7 +57,9 @@ public interface SaveModelMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default <M extends Model<T>> int save(M model, boolean allFieldForce) {
-        return SaveModelMethodUtil.save(getBasicMapper(), model, allFieldForce, null);
+        return this.save(model, saveStrategy -> {
+            saveStrategy.allFieldSave(allFieldForce);
+        });
     }
 
     /**
@@ -55,21 +70,23 @@ public interface SaveModelMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default <M extends Model<T>> int save(M model, Getter<M>... forceFields) {
-        return SaveModelMethodUtil.save(getBasicMapper(), model, false, forceFields);
+        return this.save(model, saveStrategy -> {
+            saveStrategy.forceFields(forceFields);
+        });
     }
 
 
     /**
-     * 实体类新增
+     * 多个保存，非批量行为
      *
-     * @param model    实体类Model实例
+     * @param list
      * @param consumer 保存策略
      * @return 影响条数
      */
-    default <M extends Model<T>> int save(M model, Consumer<SaveStrategy<M>> consumer) {
-        SaveStrategy strategy = new SaveStrategy();
+    default <M extends Model<T>> int saveModel(Collection<M> list, Consumer<SaveStrategy<M>> consumer) {
+        SaveStrategy<M> strategy = new SaveStrategy();
         consumer.accept(strategy);
-        return SaveModelMethodUtil.save(getBasicMapper(), model, strategy);
+        return SaveModelMethodUtil.saveList(getBasicMapper(), list, strategy);
     }
 
     /**
@@ -90,7 +107,9 @@ public interface SaveModelMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default <M extends Model<T>> int saveModel(Collection<M> list, boolean allFieldForce) {
-        return SaveModelMethodUtil.save(getBasicMapper(), list, allFieldForce, null);
+        return this.saveModel(list, saveStrategy -> {
+            saveStrategy.allFieldSave(allFieldForce);
+        });
     }
 
     /**
@@ -101,52 +120,9 @@ public interface SaveModelMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default <M extends Model<T>> int saveModel(Collection<M> list, Getter<M>... forceFields) {
-        return SaveModelMethodUtil.save(getBasicMapper(), list, false, forceFields);
-    }
-
-    /**
-     * 多个保存，非批量行为
-     *
-     * @param list
-     * @param consumer 保存策略
-     * @return 影响条数
-     */
-    default <M extends Model<T>> int saveModel(Collection<M> list, Consumer<SaveStrategy<M>> consumer) {
-        SaveStrategy<M> strategy = new SaveStrategy();
-        consumer.accept(strategy);
-        return SaveModelMethodUtil.save(getBasicMapper(), list, strategy);
-    }
-
-    /**
-     * 使用数据库原生方式批量插入
-     * 一次最好在100条内
-     *
-     * @param list
-     * @return 影响条数
-     */
-    default <M extends Model<T>> int saveModelBatch(Collection<M> list) {
-        if (Objects.isNull(list) || list.isEmpty()) {
-            return 0;
-        }
-        return SaveModelMethodUtil.saveBatch(getBasicMapper(), new Insert(), list);
-    }
-
-    /**
-     * 使用数据库原生方式批量插入
-     * 一次最好在100条内
-     * <p>
-     * 会自动加入 主键 租户ID 逻辑删除列 乐观锁
-     * 自动设置 默认值,不会忽略NULL值字段
-     *
-     * @param list
-     * @param forceFields 指定那些列强制插入，null值将会以NULL的形式插入
-     * @return 影响条数
-     */
-    default <M extends Model<T>> int saveModelBatch(Collection<M> list, Getter<M>... forceFields) {
-        if (Objects.isNull(list) || list.isEmpty()) {
-            return 0;
-        }
-        return SaveModelMethodUtil.saveBatch(getBasicMapper(), new Insert(), list, forceFields);
+        return this.saveModel(list, saveStrategy -> {
+            saveStrategy.forceFields(forceFields);
+        });
     }
 
     /**
@@ -161,5 +137,36 @@ public interface SaveModelMapper<T> extends BaseMapper<T> {
         SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy<>();
         strategy.accept(saveBatchStrategy);
         return SaveModelMethodUtil.saveBatch(getBasicMapper(), new Insert(), list, saveBatchStrategy);
+    }
+
+    /**
+     * 使用数据库原生方式批量插入
+     * 一次最好在100条内
+     *
+     * @param list
+     * @return 影响条数
+     */
+    default <M extends Model<T>> int saveModelBatch(Collection<M> list) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
+        }
+        return SaveModelMethodUtil.saveBatch(getBasicMapper(), list);
+    }
+
+    /**
+     * 使用数据库原生方式批量插入
+     * 一次最好在100条内
+     * <p>
+     * 会自动加入 主键 租户ID 逻辑删除列 乐观锁
+     * 自动设置 默认值,不会忽略NULL值字段
+     *
+     * @param list
+     * @param forceFields 指定那些列强制插入，null值将会以NULL的形式插入
+     * @return 影响条数
+     */
+    default <M extends Model<T>> int saveModelBatch(Collection<M> list, Getter<M>... forceFields) {
+        return this.saveModelBatch(list, saveBatchStrategy -> {
+            saveBatchStrategy.forceFields(forceFields);
+        });
     }
 }

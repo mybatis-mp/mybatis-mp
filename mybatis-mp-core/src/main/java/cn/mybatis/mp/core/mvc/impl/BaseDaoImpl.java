@@ -24,7 +24,6 @@ import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.*;
-import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.core.sql.executor.chain.DeleteChain;
 import cn.mybatis.mp.core.sql.executor.chain.InsertChain;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
@@ -689,29 +688,16 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         });
     }
 
-    public int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> consumer) {
+    @Override
+    public int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> saveBatchStrategy) {
         SaveBatchStrategy strategy = new SaveBatchStrategy();
-        consumer.accept(strategy);
-        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list, strategy);
+        saveBatchStrategy.accept(strategy);
+        return SaveMethodUtil.saveBatch(getBasicMapper(), getTableInfo(), list, strategy);
     }
 
+    @Override
     public int saveBatch(Collection<T> list) {
         return SaveMethodUtil.saveBatch(getBasicMapper(), list);
-    }
-
-    @Override
-    public <M extends Model<T>> int save(M model) {
-        return this.save(model, false);
-    }
-
-    @Override
-    public <M extends Model<T>> int save(M model, Getter<M>... forceFields) {
-        return SaveModelMethodUtil.save(getBasicMapper(), model, false, forceFields);
-    }
-
-    @Override
-    public <M extends Model<T>> int save(M model, boolean allFieldForce) {
-        return SaveModelMethodUtil.save(getBasicMapper(), model, allFieldForce, null);
     }
 
     @Override
@@ -722,35 +708,60 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
-    public <M extends Model<T>> int saveModel(Collection<M> list) {
-        return this.saveModel(list, false);
+    public <M extends Model<T>> int save(M model) {
+        return this.save(model, false);
     }
 
     @Override
-    public <M extends Model<T>> int saveModel(Collection<M> list, boolean allFieldForce) {
-        return SaveModelMethodUtil.save(getBasicMapper(), list, allFieldForce, null);
+    public <M extends Model<T>> int save(M model, Getter<M>... forceFields) {
+        return this.save(model, saveStrategy -> {
+            saveStrategy.forceFields(forceFields);
+        });
     }
 
     @Override
-    public <M extends Model<T>> int saveModel(Collection<M> list, Getter<M>... forceFields) {
-        return SaveModelMethodUtil.save(getBasicMapper(), list, false, forceFields);
+    public <M extends Model<T>> int save(M model, boolean allFieldForce) {
+        return this.save(model, saveStrategy -> {
+            saveStrategy.allFieldSave(allFieldForce);
+        });
     }
 
     @Override
     public <M extends Model<T>> int saveModel(Collection<M> list, Consumer<SaveStrategy<M>> saveStrategy) {
         SaveStrategy<M> strategy = new SaveStrategy<>();
         saveStrategy.accept(strategy);
-        return SaveModelMethodUtil.save(getBasicMapper(), list, strategy);
+        return SaveModelMethodUtil.saveList(getBasicMapper(), list, strategy);
     }
 
+    @Override
+    public <M extends Model<T>> int saveModel(Collection<M> list) {
+        return this.saveModel(list, false);
+    }
+
+    @Override
+    public <M extends Model<T>> int saveModel(Collection<M> list, boolean allFieldForce) {
+        return this.saveModel(list, saveStrategy -> {
+            saveStrategy.allFieldSave(allFieldForce);
+        });
+    }
+
+    @Override
+    public <M extends Model<T>> int saveModel(Collection<M> list, Getter<M>... forceFields) {
+        return this.saveModel(list, saveStrategy -> {
+            saveStrategy.forceFields(forceFields);
+        });
+    }
+
+    @Override
     public <M extends Model<T>> int saveModelBatch(Collection<M> list) {
-        return SaveModelMethodUtil.saveBatch(getBasicMapper(), new Insert(), list);
+        return SaveModelMethodUtil.saveBatch(getBasicMapper(), list);
     }
 
-    public <M extends Model<T>> int saveModelBatch(Collection<M> list, Consumer<SaveBatchStrategy<M>> consumer) {
+    @Override
+    public <M extends Model<T>> int saveModelBatch(Collection<M> list, Consumer<SaveBatchStrategy<M>> saveBatchStrategy) {
         SaveBatchStrategy strategy = new SaveBatchStrategy();
-        consumer.accept(strategy);
-        return SaveModelMethodUtil.saveBatch(getBasicMapper(), new Insert(), list, strategy);
+        saveBatchStrategy.accept(strategy);
+        return SaveModelMethodUtil.saveBatch(getBasicMapper(), list, strategy);
     }
 
     @Override
