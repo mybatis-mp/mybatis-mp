@@ -14,6 +14,7 @@
 
 package cn.mybatis.mp.core.mvc;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
@@ -309,6 +310,14 @@ public interface Dao<T, ID> {
     /**
      * 实体类保存或修改
      *
+     * @param entity               实体类对象
+     * @param saveOrUpdateStrategy 策略
+     * @return 影响条数
+     */
+    int saveOrUpdate(T entity, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy);
+    /**
+     * 实体类保存或修改
+     *
      * @param entity 实体类对象
      * @return 影响条数
      */
@@ -331,6 +340,15 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     int saveOrUpdate(T entity, Getter<T>... forceFields);
+
+    /**
+     * 实体类保存或修改
+     *
+     * @param list                 实体类对象List
+     * @param saveOrUpdateStrategy
+     * @return
+     */
+    int saveOrUpdate(Collection<T> list, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy);
 
     /**
      * 实体类保存或修改

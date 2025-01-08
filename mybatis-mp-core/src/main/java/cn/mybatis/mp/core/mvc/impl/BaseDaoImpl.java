@@ -605,6 +605,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         });
     }
 
+    @Override
     public int saveOrUpdate(T entity, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
@@ -633,6 +634,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         });
     }
 
+    @Override
     public int saveOrUpdate(Collection<T> list, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
