@@ -82,12 +82,12 @@ public interface SaveMapper<T> extends BaseMapper<T> {
      * @param consumer 保存策略
      * @return 影响条数
      */
-    default int save(Collection<T> list, Consumer<SaveStrategy<T>> consumer) {
+    default int save(Collection<T> list, Consumer<SaveStrategy<T>> saveStrategy) {
         if (list == null || list.isEmpty()) {
             return 0;
         }
         SaveStrategy strategy = new SaveStrategy();
-        consumer.accept(strategy);
+        saveStrategy.accept(strategy);
         return SaveMethodUtil.saveList(getBasicMapper(), getTableInfo(), list, strategy);
     }
 
@@ -133,13 +133,13 @@ public interface SaveMapper<T> extends BaseMapper<T> {
      * 一次最好在100条内
      *
      * @param list     需要插入数据
-     * @param strategy 插入策略
+     * @param saveBatchStrategy 插入策略
      * @return 影响条数
      */
-    default int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> strategy) {
-        SaveBatchStrategy<T> saveBatchStrategy = new SaveBatchStrategy<>();
-        strategy.accept(saveBatchStrategy);
-        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list, saveBatchStrategy);
+    default int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> saveBatchStrategy) {
+        SaveBatchStrategy<T> strategy = new SaveBatchStrategy<>();
+        saveBatchStrategy.accept(strategy);
+        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list, strategy);
     }
 
     /**
