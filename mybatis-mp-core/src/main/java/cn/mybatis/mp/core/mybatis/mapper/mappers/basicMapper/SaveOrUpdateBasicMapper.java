@@ -16,6 +16,7 @@ package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 
 
 import cn.mybatis.mp.core.db.reflect.Tables;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveOrUpdateMethodUtil;
 import db.sql.api.Getter;
 
@@ -43,7 +44,9 @@ public interface SaveOrUpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int saveOrUpdate(T entity, boolean allFieldForce) {
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(entity.getClass()), entity, allFieldForce, null);
+        SaveOrUpdateStrategy saveOrUpdateStrategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.allField(allFieldForce);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(entity.getClass()), entity, saveOrUpdateStrategy);
     }
 
     /**
@@ -55,7 +58,10 @@ public interface SaveOrUpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int saveOrUpdate(T entity, Getter<T>... forceFields) {
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(entity.getClass()), entity, false, forceFields);
+        SaveOrUpdateStrategy saveOrUpdateStrategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.allField(false);
+        saveOrUpdateStrategy.forceFields(forceFields);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(entity.getClass()), entity, saveOrUpdateStrategy);
     }
 
     /**
@@ -82,7 +88,9 @@ public interface SaveOrUpdateBasicMapper extends BaseBasicMapper {
             return 0;
         }
         T first = list.stream().findFirst().get();
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(first.getClass()), list, allFieldForce, (Getter<T>[]) null);
+        SaveOrUpdateStrategy saveOrUpdateStrategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.allField(allFieldForce);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(first.getClass()), list, saveOrUpdateStrategy);
     }
 
     /**
@@ -98,6 +106,9 @@ public interface SaveOrUpdateBasicMapper extends BaseBasicMapper {
             return 0;
         }
         T first = list.stream().findFirst().get();
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(first.getClass()), list, false, forceFields);
+        SaveOrUpdateStrategy saveOrUpdateStrategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.allField(false);
+        saveOrUpdateStrategy.forceFields(forceFields);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(first.getClass()), list, saveOrUpdateStrategy);
     }
 }

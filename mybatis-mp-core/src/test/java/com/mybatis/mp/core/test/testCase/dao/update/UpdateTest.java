@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class UpdateTest extends BaseDaoTest {
 
@@ -49,7 +50,7 @@ public class UpdateTest extends BaseDaoTest {
             int cnt = getDao(sysUserMapper).update(sysUser, true);
             assertEquals(cnt, 1);
             sysUser = getDao(sysUserMapper).getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
         }
     }
 
@@ -62,7 +63,7 @@ public class UpdateTest extends BaseDaoTest {
             int cnt = getDao(sysUserMapper).update(sysUser, SysUser::getUserName);
             assertEquals(cnt, 1);
             sysUser = getDao(sysUserMapper).getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
         }
     }
 
@@ -75,7 +76,7 @@ public class UpdateTest extends BaseDaoTest {
             int cnt = getDao(sysUserMapper).saveOrUpdate(sysUser, true);
             assertEquals(cnt, 1);
             sysUser = getDao(sysUserMapper).getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
         }
     }
 
@@ -88,7 +89,7 @@ public class UpdateTest extends BaseDaoTest {
             int cnt = getDao(sysUserMapper).saveOrUpdate(sysUser, SysUser::getUserName);
             assertEquals(cnt, 1);
             sysUser = getDao(sysUserMapper).getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
         }
     }
 
@@ -101,7 +102,7 @@ public class UpdateTest extends BaseDaoTest {
             int cnt = getDao(sysUserMapper).update(Collections.singletonList(sysUser), true);
             assertEquals(cnt, 1);
             sysUser = getDao(sysUserMapper).getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
         }
     }
 
@@ -114,7 +115,7 @@ public class UpdateTest extends BaseDaoTest {
             int cnt = getDao(sysUserMapper).update(Collections.singletonList(sysUser), SysUser::getUserName);
             assertEquals(cnt, 1);
             sysUser = getDao(sysUserMapper).getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
         }
     }
 
@@ -127,7 +128,7 @@ public class UpdateTest extends BaseDaoTest {
             int cnt = getDao(sysUserMapper).saveOrUpdate(Collections.singletonList(sysUser), true);
             assertEquals(cnt, 1);
             sysUser = getDao(sysUserMapper).getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
         }
     }
 
@@ -140,7 +141,7 @@ public class UpdateTest extends BaseDaoTest {
             int cnt = getDao(sysUserMapper).saveOrUpdate(Collections.singletonList(sysUser), SysUser::getUserName);
             assertEquals(cnt, 1);
             sysUser = getDao(sysUserMapper).getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
         }
     }
 
@@ -156,7 +157,7 @@ public class UpdateTest extends BaseDaoTest {
 
             assertEquals(cnt, 1);
             SysUser sysUser = getDao(sysUserMapper).getById(1);
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
         }
     }
 
@@ -346,7 +347,7 @@ public class UpdateTest extends BaseDaoTest {
 
             SysUser sysUser = getDao(sysUserMapper).getById(1);
             if (TestDataSource.DB_TYPE == DbType.ORACLE || TestDataSource.DB_TYPE == DbType.KING_BASE) {
-                assertEquals(null, sysUser.getUserName());
+                assertNull(sysUser.getUserName());
             } else {
                 assertEquals("", sysUser.getUserName());
             }

@@ -21,6 +21,7 @@ import cn.mybatis.mp.core.mvc.Dao;
 import cn.mybatis.mp.core.mybatis.mapper.BaseMapper;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.*;
 import cn.mybatis.mp.core.sql.executor.Insert;
@@ -607,19 +608,27 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public int saveOrUpdate(T entity, boolean allFieldForce) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, allFieldForce, null);
+        return this.saveOrUpdate(entity, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.allField(allFieldForce);
+        });
     }
 
     @Override
     public int saveOrUpdate(T entity, Getter<T>... forceFields) {
+        return this.saveOrUpdate(entity, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.forceFields(forceFields);
+        });
+    }
+
+    public int saveOrUpdate(T entity, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, false, forceFields);
+        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.accept(strategy);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, strategy);
     }
+
 
     @Override
     public int saveOrUpdate(Collection<T> list) {
@@ -628,10 +637,9 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public int saveOrUpdate(Collection<T> list, boolean allFieldForce) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, allFieldForce, (Getter<T>[]) null);
+        return this.saveOrUpdate(list, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.allField(allFieldForce);
+        });
     }
 
     @Override
@@ -639,8 +647,20 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, false, forceFields);
+        return this.saveOrUpdate(list, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.forceFields(forceFields);
+        });
     }
+
+    public int saveOrUpdate(Collection<T> list, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.accept(strategy);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, strategy);
+    }
+
 
     @Override
     public int save(Collection<T> list) {

@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class EntityListForceUpdateTest extends BaseDaoTest {
 
@@ -34,7 +35,7 @@ public class EntityListForceUpdateTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             sysUserMapper.update(Collections.singletonList(sysUserModel), true);
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 0);
         }
     }
@@ -47,7 +48,7 @@ public class EntityListForceUpdateTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             sysUserMapper.update(Collections.singletonList(sysUserModel), SysUser::getUserName);
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 0);
         }
     }
@@ -60,7 +61,7 @@ public class EntityListForceUpdateTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             sysUserMapper.saveOrUpdate(Collections.singletonList(sysUserModel), true);
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 0);
         }
     }
@@ -73,7 +74,7 @@ public class EntityListForceUpdateTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             sysUserMapper.saveOrUpdate(Collections.singletonList(sysUserModel), SysUser::getUserName);
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 0);
         }
     }

@@ -15,6 +15,7 @@
 package cn.mybatis.mp.core.mybatis.mapper.mappers;
 
 
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveOrUpdateMethodUtil;
 import db.sql.api.Getter;
 
@@ -42,7 +43,9 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveOrUpdate(T entity, boolean allFieldForce) {
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, allFieldForce, null);
+        SaveOrUpdateStrategy saveOrUpdateStrategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.allField(allFieldForce);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, saveOrUpdateStrategy);
     }
 
     /**
@@ -54,7 +57,10 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveOrUpdate(T entity, Getter<T>... forceFields) {
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, false, forceFields);
+        SaveOrUpdateStrategy saveOrUpdateStrategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.allField(false);
+        saveOrUpdateStrategy.forceFields(forceFields);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, saveOrUpdateStrategy);
     }
 
     /**
@@ -77,7 +83,9 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveOrUpdate(Collection<T> list, boolean allFieldForce) {
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, allFieldForce, (Getter<T>[]) null);
+        SaveOrUpdateStrategy saveOrUpdateStrategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.allField(allFieldForce);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, saveOrUpdateStrategy);
     }
 
     /**
@@ -89,6 +97,9 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveOrUpdate(Collection<T> list, Getter<T>... forceFields) {
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, false, forceFields);
+        SaveOrUpdateStrategy saveOrUpdateStrategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.allField(false);
+        saveOrUpdateStrategy.forceFields(forceFields);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, saveOrUpdateStrategy);
     }
 }

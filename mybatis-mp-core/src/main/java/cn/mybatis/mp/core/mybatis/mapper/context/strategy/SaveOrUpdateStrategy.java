@@ -15,44 +15,37 @@
 package cn.mybatis.mp.core.mybatis.mapper.context.strategy;
 
 import db.sql.api.Getter;
-import db.sql.api.cmd.basic.IConflictAction;
+import db.sql.api.impl.cmd.struct.Where;
 import db.sql.api.tookit.LambdaUtil;
 
 import java.util.Set;
 import java.util.function.Consumer;
 
 @lombok.Getter
-public class SaveStrategy<T> {
+public class SaveOrUpdateStrategy<T> {
 
-    private boolean allFieldSave;
+    private boolean allField;
 
     private Set<String> forceFields;
 
-    private Getter<T>[] conflictKeys;
+    private Consumer<Where> on;
 
-    private Consumer<IConflictAction<T>> conflictAction;
-
-    public SaveStrategy<T> allFieldSave(boolean allFieldSave) {
-        this.allFieldSave = allFieldSave;
+    public SaveOrUpdateStrategy<T> allField(boolean allField) {
+        this.allField = allField;
         return this;
     }
 
-    public SaveStrategy<T> forceFields(Getter<T>... forceFields) {
+    public SaveOrUpdateStrategy<T> forceFields(Getter<T>... forceFields) {
         this.forceFields = LambdaUtil.getFieldNames(forceFields);
         return this;
     }
 
-    public SaveStrategy<T> forceFields(Set<String> forceFields) {
-        this.forceFields = forceFields;
+    public SaveOrUpdateStrategy<T> on(Consumer<Where> on) {
+        this.on = on;
         return this;
     }
 
-    public SaveStrategy<T> conflictKeys(Getter<T>... conflictKeys) {
-        this.conflictKeys = conflictKeys;
-        return this;
-    }
-
-    public void onConflict(Consumer<IConflictAction<T>> conflictAction) {
-        this.conflictAction = conflictAction;
+    public Consumer<Where> getOn() {
+        return on;
     }
 }

@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ModelForceInsertTest extends BaseDaoTest {
 
@@ -41,7 +42,7 @@ public class ModelForceInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).save(sysUserModel, true);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 1);
         }
     }
@@ -58,7 +59,7 @@ public class ModelForceInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).save(sysUserModel, SysUserModel::getUserName);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 1);
         }
     }
@@ -75,7 +76,7 @@ public class ModelForceInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).saveOrUpdate(sysUserModel, true);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 1);
         }
     }
@@ -92,7 +93,7 @@ public class ModelForceInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).saveOrUpdate(sysUserModel, SysUserModel::getUserName);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 1);
         }
     }
