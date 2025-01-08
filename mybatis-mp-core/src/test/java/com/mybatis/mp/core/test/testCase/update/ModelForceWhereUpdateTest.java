@@ -53,7 +53,7 @@ public class ModelForceWhereUpdateTest extends BaseTest {
             sysUserModel.setId(null);
             sysUserModel.setUserName(null);
             UpdateStrategy<SysUserModel> updateStrategy = new UpdateStrategy();
-            updateStrategy.where(where -> where.eq(SysUser::getId, 1));
+            updateStrategy.on(where -> where.eq(SysUser::getId, 1));
             updateStrategy.forceFields(SysUserModel::getUserName);
             sysUserMapper.update(sysUserModel, updateStrategy);
             SysUser sysUser = sysUserMapper.getById(1);
@@ -86,7 +86,7 @@ public class ModelForceWhereUpdateTest extends BaseTest {
             sysUserModel.setId(null);
             sysUserModel.setUserName(null);
             UpdateStrategy<SysUserModel> updateStrategy = new UpdateStrategy();
-            updateStrategy.where(WhereUtil.create().eq(SysUser::getId, 1));
+            updateStrategy.on(WhereUtil.create().eq(SysUser::getId, 1));
             updateStrategy.forceFields(SysUserModel::getUserName);
             sysUserMapper.update(sysUserModel, updateStrategy);
 

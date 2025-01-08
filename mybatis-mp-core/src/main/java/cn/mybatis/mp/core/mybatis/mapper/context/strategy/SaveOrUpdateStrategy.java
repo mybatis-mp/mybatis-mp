@@ -63,7 +63,7 @@ public class SaveOrUpdateStrategy<T> {
      * @param where 自定义存在的where 条件
      * @return SELF
      */
-    public SaveOrUpdateStrategy<T> where(Consumer<Where> where) {
+    public SaveOrUpdateStrategy<T> on(Consumer<Where> where) {
         this.on = where;
         return this;
     }

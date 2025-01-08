@@ -79,7 +79,7 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      */
     default int update(T entity, Consumer<Where> where) {
         return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, updateStrategy -> {
-            updateStrategy.where(where);
+            updateStrategy.on(where);
         });
     }
 
@@ -93,7 +93,7 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      */
     default int update(T entity, boolean allFieldForce, Consumer<Where> where) {
         return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, updateStrategy -> {
-            updateStrategy.allFieldUpdate(allFieldForce).where(where);
+            updateStrategy.allFieldUpdate(allFieldForce).on(where);
         });
     }
 
@@ -107,7 +107,7 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      */
     default int update(T entity, Where where) {
         return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, updateStrategy -> {
-            updateStrategy.where(where);
+            updateStrategy.on(where);
         });
     }
 
@@ -121,7 +121,7 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      */
     default int update(T entity, boolean allFieldForce, Where where) {
         return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, updateStrategy -> {
-            updateStrategy.allFieldUpdate(allFieldForce).where(where);
+            updateStrategy.allFieldUpdate(allFieldForce).on(where);
         });
     }
 

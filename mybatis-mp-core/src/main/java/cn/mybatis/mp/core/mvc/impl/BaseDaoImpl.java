@@ -866,7 +866,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      */
     protected int update(T entity, Consumer<Where> where) {
         return this.updateWithStrategy(entity, updateStrategy -> {
-            updateStrategy.where(where);
+            updateStrategy.on(where);
         });
     }
 
@@ -879,7 +879,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      */
     protected int update(T entity, Where where) {
         return this.updateWithStrategy(entity, updateStrategy -> {
-            updateStrategy.where(where);
+            updateStrategy.on(where);
         });
     }
 

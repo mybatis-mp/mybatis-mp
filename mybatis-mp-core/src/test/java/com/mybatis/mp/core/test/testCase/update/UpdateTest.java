@@ -467,7 +467,7 @@ public class UpdateTest extends BaseTest {
             updateSysUser.setUserName("adminxx");
 
             UpdateStrategy<SysUser> updateStrategy = new UpdateStrategy<>();
-            updateStrategy.where(where -> where.eq(SysUser::getId, 1)).forceFields(SysUser::getPassword);
+            updateStrategy.on(where -> where.eq(SysUser::getId, 1)).forceFields(SysUser::getPassword);
 
             int cnt = sysUserMapper.update(updateSysUser, updateStrategy);
             assertEquals(cnt, 1);

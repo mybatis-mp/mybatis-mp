@@ -49,7 +49,7 @@ public class EntityForceWhereUpdateTest extends BaseTest {
             sysUserModel.setUserName(null);
 
             UpdateStrategy<SysUser> updateStrategy = new UpdateStrategy<>();
-            updateStrategy.where(where -> where.eq(SysUser::getId, 1))
+            updateStrategy.on(where -> where.eq(SysUser::getId, 1))
                     .forceFields(SysUser::getUserName);
 
             sysUserMapper.update(sysUserModel, updateStrategy);
@@ -84,7 +84,7 @@ public class EntityForceWhereUpdateTest extends BaseTest {
             sysUserModel.setUserName(null);
 
             UpdateStrategy<SysUser> updateStrategy = new UpdateStrategy<>();
-            updateStrategy.where(WhereUtil.create().eq(SysUser::getId, 1))
+            updateStrategy.on(WhereUtil.create().eq(SysUser::getId, 1))
                     .forceFields(SysUser::getUserName);
 
             sysUserMapper.update(sysUserModel, updateStrategy);
@@ -103,7 +103,7 @@ public class EntityForceWhereUpdateTest extends BaseTest {
             sysUserModel.setUserName(null);
             sysUserMapper.saveOrUpdate(sysUserModel, updateStrategy -> {
                 updateStrategy.forceFields(SysUser::getUserName);
-                updateStrategy.where(where -> where.eq(SysUser::getId, 1));
+                updateStrategy.on(where -> where.eq(SysUser::getId, 1));
             });
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
             assertEquals(sysUser.getUserName(), null);

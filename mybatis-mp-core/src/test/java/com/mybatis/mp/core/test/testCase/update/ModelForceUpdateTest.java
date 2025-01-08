@@ -92,7 +92,7 @@ public class ModelForceUpdateTest extends BaseTest {
             sysUserModel.setUserName(null);
             sysUserMapper.saveOrUpdate(sysUserModel, saveOrUpdateStrategy -> {
                 saveOrUpdateStrategy.forceFields(SysUserModel::getUserName);
-                saveOrUpdateStrategy.where(where -> where.eq(SysUser::getId, 1));
+                saveOrUpdateStrategy.on(where -> where.eq(SysUser::getId, 1));
             });
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
             assertEquals(sysUser.getUserName(), null);

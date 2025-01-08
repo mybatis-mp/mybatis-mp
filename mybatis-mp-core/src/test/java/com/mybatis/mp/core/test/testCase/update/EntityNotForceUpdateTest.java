@@ -114,7 +114,8 @@ public class EntityNotForceUpdateTest extends BaseTest {
             sysUserModel.setId(null);
             sysUserModel.setUserName(null);
             sysUserMapper.saveOrUpdate(sysUserModel, updateStrategy -> {
-                updateStrategy.where(where -> where.eq(SysUser::getId, 1));
+                updateStrategy.on(where -> where.eq(SysUser::getId, 1));
+                updateStrategy.allField(true);
             });
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
             assertEquals(sysUser.getUserName(), "admin");

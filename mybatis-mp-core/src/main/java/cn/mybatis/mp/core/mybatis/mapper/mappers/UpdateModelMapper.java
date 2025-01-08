@@ -94,7 +94,7 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
     default <M extends Model<T>> int update(M model, boolean allFieldForce, Consumer<Where> where) {
         UpdateStrategy updateStrategy = UpdateMethodUtil.createUpdateStrategy();
         updateStrategy.allFieldUpdate(allFieldForce);
-        updateStrategy.where(where);
+        updateStrategy.on(where);
         return this.update(model, updateStrategy);
     }
 
@@ -120,7 +120,7 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
     default <M extends Model<T>> int update(M model, boolean allFieldForce, Where where) {
         UpdateStrategy updateStrategy = UpdateMethodUtil.createUpdateStrategy();
         updateStrategy.allFieldUpdate(allFieldForce);
-        updateStrategy.where(where);
+        updateStrategy.on(where);
         return this.update(model, updateStrategy);
     }
 

@@ -58,7 +58,7 @@ public class UpdateStrategy<T> {
      * @param where 自定义存在的where 条件
      * @return SELF
      */
-    public UpdateStrategy<T> where(Where where){
+    public UpdateStrategy<T> on(Where where) {
         this.where = where;
         return this;
     }
@@ -69,7 +69,7 @@ public class UpdateStrategy<T> {
      * @param where 自定义存在的where 条件
      * @return SELF
      */
-    public UpdateStrategy<T> where(Consumer<Where> where){
+    public UpdateStrategy<T> on(Consumer<Where> where) {
         this.on = where;
         return this;
     }

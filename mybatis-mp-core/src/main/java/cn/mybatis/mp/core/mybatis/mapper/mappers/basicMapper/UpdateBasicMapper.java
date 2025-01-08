@@ -81,7 +81,7 @@ public interface UpdateBasicMapper extends BaseBasicMapper {
      */
     default <T> int update(T entity, Consumer<Where> consumer) {
         return UpdateMethodUtil.update(getBasicMapper(), entity, updateStrategy -> {
-            updateStrategy.where(consumer);
+            updateStrategy.on(consumer);
         });
     }
 
@@ -94,7 +94,7 @@ public interface UpdateBasicMapper extends BaseBasicMapper {
      */
     default <T> int update(T entity, Where where) {
         return UpdateMethodUtil.update(getBasicMapper(), entity, updateStrategy -> {
-            updateStrategy.where(where);
+            updateStrategy.on(where);
         });
     }
 

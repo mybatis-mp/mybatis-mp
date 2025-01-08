@@ -118,8 +118,8 @@ public class ModelNotForceUpdateTest extends BaseTest {
                     .eq(SysUser::getId, 1).get();
             sysUserModel.setId(null);
             sysUserModel.setUserName(null);
-            sysUserMapper.saveOrUpdate(sysUserModel, saveOrUpdateStrategy -> {
-                saveOrUpdateStrategy.where(where -> where.eq(SysUser::getId, 1));
+            sysUserMapper.saveOrUpdate(sysUserModel, strategy -> {
+                strategy.on(where -> where.eq(SysUser::getId, 1));
             });
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
             assertEquals(sysUser.getUserName(), "admin");
