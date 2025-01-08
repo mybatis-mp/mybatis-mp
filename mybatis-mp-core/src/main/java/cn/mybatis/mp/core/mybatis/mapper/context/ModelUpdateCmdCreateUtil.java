@@ -48,6 +48,8 @@ public class ModelUpdateCmdCreateUtil {
             updateStrategy.getOn().accept(where);
         }
 
+        boolean hasPutConditionBefore = where.hasContent();
+
         MybatisCmdFactory $ = update.$();
         Table table = $.table(modelInfo.getEntityType());
 
@@ -109,7 +111,7 @@ public class ModelUpdateCmdCreateUtil {
             }
         }
 
-        if (!hasIdCondition && (where.getConditionChain() == null || !where.getConditionChain().hasContent())) {
+        if (!hasIdCondition && !hasPutConditionBefore) {
             throw new RuntimeException("update has no where condition content ");
         }
         update.update(table);
