@@ -376,6 +376,16 @@ public interface Dao<T, ID> {
      */
     int saveOrUpdate(Collection<T> list, Getter<T>... forceFields);
 
+
+    /**
+     * 实体类Model保存或修改
+     *
+     * @param model                实体类Model对象
+     * @param saveOrUpdateStrategy 策略
+     * @return 影响条数
+     */
+    <M extends Model<T>> int saveOrUpdate(M model, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy);
+
     /**
      * 实体类Model保存或修改
      *
@@ -401,6 +411,16 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     <M extends Model<T>> int saveOrUpdate(M model, Getter<M>... forceFields);
+
+
+    /**
+     * 实体类Model保存或修改
+     *
+     * @param list                 实体类Model对象List
+     * @param saveOrUpdateStrategy 策略
+     * @return 影响条数
+     */
+    <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy);
 
     /**
      * 实体类Model保存或修改

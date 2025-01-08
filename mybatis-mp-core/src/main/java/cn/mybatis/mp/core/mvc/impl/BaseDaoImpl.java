@@ -754,24 +754,42 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
+    public <M extends Model<T>> int saveOrUpdate(M model, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.accept(strategy);
+        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), Models.get(model.getClass()), model, strategy);
+    }
+
+    @Override
     public <M extends Model<T>> int saveOrUpdate(M model) {
         return this.saveOrUpdate(model, false);
     }
 
     @Override
     public <M extends Model<T>> int saveOrUpdate(M model, boolean allFieldForce) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
-        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), Models.get(model.getClass()), model, allFieldForce, null);
+        return this.saveOrUpdate(model, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.allField(allFieldForce);
+        });
     }
 
     @Override
     public <M extends Model<T>> int saveOrUpdate(M model, Getter<M>... forceFields) {
+        return this.saveOrUpdate(model, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.forceFields(forceFields);
+        });
+    }
+
+    @Override
+    public <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
-        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), Models.get(model.getClass()), model, false, forceFields);
+        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.accept(strategy);
+        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), list, strategy);
     }
 
     @Override
@@ -781,18 +799,16 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, boolean allFieldForce) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
-        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), list, allFieldForce, null);
+        return this.saveOrUpdateModel(list, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.allField(allFieldForce);
+        });
     }
 
     @Override
     public <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, Getter<M>... forceFields) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
-        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), list, false, forceFields);
+        return this.saveOrUpdateModel(list, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.forceFields(forceFields);
+        });
     }
 
     @Override

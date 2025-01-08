@@ -31,18 +31,17 @@ public class SaveOrUpdateMethodUtil {
 
     public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, T entity, SaveOrUpdateStrategy saveOrUpdateStrategy) {
         Class<?> entityType = entity.getClass();
-        if (tableInfo.getIdFieldInfos().isEmpty()) {
-            throw new RuntimeException(entityType.getName() + " has no id");
-        }
 
         boolean checkById = true;
-
         if (saveOrUpdateStrategy.getOn() != null) {
             checkById = false;
         }
 
         Where checkWhere = WhereUtil.create(tableInfo);
         if (checkById) {
+            if (tableInfo.getIdFieldInfos().isEmpty()) {
+                throw new RuntimeException(entityType.getName() + " has no id");
+            }
             Object id;
             try {
                 id = tableInfo.getIdFieldInfos().get(0).getReadFieldInvoker().invoke(entity, null);
