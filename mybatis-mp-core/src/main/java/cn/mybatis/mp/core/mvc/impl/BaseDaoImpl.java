@@ -580,25 +580,38 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
+    public int save(T entity, Consumer<SaveStrategy<T>> saveStrategy) {
+        SaveStrategy<T> strategy = new SaveStrategy<>();
+        saveStrategy.accept(strategy);
+        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), entity, strategy);
+    }
+
+    @Override
     public int save(T entity) {
         return this.save(entity, false);
     }
 
     @Override
-    public int save(T entity, Getter<T>... forceFields) {
-        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), entity, false, forceFields);
-    }
-
-    @Override
     public int save(T entity, boolean allFieldForce) {
-        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), entity, allFieldForce, null);
+        return this.save(entity, saveStrategy -> {
+            saveStrategy.allFieldSave(allFieldForce);
+        });
     }
 
     @Override
-    public int save(T entity, Consumer<SaveStrategy<T>> saveStrategy) {
-        SaveStrategy<T> strategy = new SaveStrategy<>();
-        saveStrategy.accept(strategy);
-        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), entity, strategy);
+    public int save(T entity, Getter<T>... forceFields) {
+        return this.save(entity, saveStrategy -> {
+            saveStrategy.forceFields(forceFields);
+        });
+    }
+
+    public int saveOrUpdate(T entity, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.accept(strategy);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, strategy);
     }
 
     @Override
@@ -620,15 +633,14 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         });
     }
 
-    public int saveOrUpdate(T entity, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
+    public int saveOrUpdate(Collection<T> list, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
         SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
         saveOrUpdateStrategy.accept(strategy);
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, strategy);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, strategy);
     }
-
 
     @Override
     public int saveOrUpdate(Collection<T> list) {
@@ -644,37 +656,9 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public int saveOrUpdate(Collection<T> list, Getter<T>... forceFields) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
         return this.saveOrUpdate(list, (saveOrUpdateStrategy) -> {
             saveOrUpdateStrategy.forceFields(forceFields);
         });
-    }
-
-    public int saveOrUpdate(Collection<T> list, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
-        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
-        saveOrUpdateStrategy.accept(strategy);
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, strategy);
-    }
-
-
-    @Override
-    public int save(Collection<T> list) {
-        return this.save(list, false);
-    }
-
-    @Override
-    public int save(Collection<T> list, boolean allFieldForce) {
-        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), list, allFieldForce, (Getter<T>[]) null);
-    }
-
-    @Override
-    public int save(Collection<T> list, Getter<T>... forceFields) {
-        return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), list, false, forceFields);
     }
 
     @Override
@@ -684,14 +668,33 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         return SaveMethodUtil.save(getBasicMapper(), getTableInfo(), list, strategy);
     }
 
-    public int saveBatch(Collection<T> list) {
-        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list);
+    @Override
+    public int save(Collection<T> list) {
+        return this.save(list, false);
+    }
+
+    @Override
+    public int save(Collection<T> list, boolean allFieldForce) {
+        return this.save(list, (saveStrategy) -> {
+            saveStrategy.allFieldSave(allFieldForce);
+        });
+    }
+
+    @Override
+    public int save(Collection<T> list, Getter<T>... forceFields) {
+        return this.save(list, (saveStrategy) -> {
+            saveStrategy.forceFields(forceFields);
+        });
     }
 
     public int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> consumer) {
         SaveBatchStrategy strategy = new SaveBatchStrategy();
         consumer.accept(strategy);
         return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list, strategy);
+    }
+
+    public int saveBatch(Collection<T> list) {
+        return SaveMethodUtil.saveBatch(getBasicMapper(), new Insert(), getTableInfo(), list);
     }
 
     @Override

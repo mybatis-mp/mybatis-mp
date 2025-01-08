@@ -20,8 +20,23 @@ import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveOrUpdateMethodUtil;
 import db.sql.api.Getter;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
+
+    /**
+     * 实体类新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param entity
+     * @param saveOrUpdateStrategy 策略
+     * @return 影响条数
+     */
+    default int saveOrUpdate(T entity, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
+        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.accept(strategy);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, strategy);
+    }
 
     /**
      * 实体类新增或修改
@@ -31,7 +46,9 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveOrUpdate(T entity) {
-        return saveOrUpdate(entity, false);
+        return this.saveOrUpdate(entity, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.allField(false);
+        });
     }
 
     /**
@@ -43,9 +60,9 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveOrUpdate(T entity, boolean allFieldForce) {
-        SaveOrUpdateStrategy saveOrUpdateStrategy = new SaveOrUpdateStrategy();
-        saveOrUpdateStrategy.allField(allFieldForce);
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, saveOrUpdateStrategy);
+        return this.saveOrUpdate(entity, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.allField(allFieldForce);
+        });
     }
 
     /**
@@ -57,10 +74,23 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveOrUpdate(T entity, Getter<T>... forceFields) {
-        SaveOrUpdateStrategy saveOrUpdateStrategy = new SaveOrUpdateStrategy();
-        saveOrUpdateStrategy.allField(false);
-        saveOrUpdateStrategy.forceFields(forceFields);
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, saveOrUpdateStrategy);
+        return this.saveOrUpdate(entity, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.forceFields(forceFields);
+        });
+    }
+
+    /**
+     * 实体类新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param list                 实体类对象List
+     * @param saveOrUpdateStrategy 策略
+     * @return 影响条数
+     */
+    default int saveOrUpdate(Collection<T> list, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
+        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.accept(strategy);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, strategy);
     }
 
     /**
@@ -83,9 +113,9 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveOrUpdate(Collection<T> list, boolean allFieldForce) {
-        SaveOrUpdateStrategy saveOrUpdateStrategy = new SaveOrUpdateStrategy();
-        saveOrUpdateStrategy.allField(allFieldForce);
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, saveOrUpdateStrategy);
+        return this.saveOrUpdate(list, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.allField(allFieldForce);
+        });
     }
 
     /**
@@ -97,9 +127,8 @@ public interface SaveOrUpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int saveOrUpdate(Collection<T> list, Getter<T>... forceFields) {
-        SaveOrUpdateStrategy saveOrUpdateStrategy = new SaveOrUpdateStrategy();
-        saveOrUpdateStrategy.allField(false);
-        saveOrUpdateStrategy.forceFields(forceFields);
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, saveOrUpdateStrategy);
+        return this.saveOrUpdate(list, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.forceFields(forceFields);
+        });
     }
 }
