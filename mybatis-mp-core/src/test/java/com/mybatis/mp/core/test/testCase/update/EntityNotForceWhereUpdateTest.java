@@ -14,6 +14,7 @@
 
 package com.mybatis.mp.core.test.testCase.update;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
@@ -58,11 +59,12 @@ public class EntityNotForceWhereUpdateTest extends BaseTest {
             SysUser sysUserModel = sysUserMapper.getById(1);
             sysUserModel.setUserName(null);
             sysUserModel.setId(null);
-            sysUserMapper.updateWithStrategy(sysUserModel, updateStrategy -> {
-                updateStrategy.where(where -> where.eq(SysUser::getId, 1))
-                        .forceFields(SysUser::getRole_id);
 
-            });
+            UpdateStrategy<SysUser> updateStrategy = new UpdateStrategy<>();
+            updateStrategy.where(where -> where.eq(SysUser::getId, 1))
+                    .forceFields(SysUser::getRole_id);
+
+            sysUserMapper.update(sysUserModel, updateStrategy);
 
             SysUser sysUser = sysUserMapper.getById(1);
             assertEquals(sysUser.getUserName(), "admin");
@@ -77,11 +79,12 @@ public class EntityNotForceWhereUpdateTest extends BaseTest {
             SysUser sysUserModel = sysUserMapper.getById(1);
             sysUserModel.setUserName(null);
             sysUserModel.setId(null);
-            sysUserMapper.updateWithStrategy(sysUserModel, updateStrategy -> {
-                updateStrategy.where(WhereUtil.create().eq(SysUser::getId, 1))
-                        .forceFields(SysUser::getRole_id);
 
-            });
+            UpdateStrategy<SysUser> updateStrategy = new UpdateStrategy();
+            updateStrategy.where(WhereUtil.create().eq(SysUser::getId, 1))
+                    .forceFields(SysUser::getRole_id);
+
+            sysUserMapper.update(sysUserModel, updateStrategy);
             SysUser sysUser = sysUserMapper.getById(1);
             assertEquals(sysUser.getUserName(), "admin");
             assertEquals(sysUser.getRole_id(), 0);

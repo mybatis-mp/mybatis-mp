@@ -32,10 +32,8 @@ public interface UpdateBasicMapper extends BaseBasicMapper {
      * @param updateStrategy 策略
      * @return 影响条数
      */
-    default <T> int updateWithStrategy(T entity, Consumer<UpdateStrategy<T>> updateStrategy) {
-        UpdateStrategy<T> strategy = UpdateMethodUtil.createUpdateStrategy();
-        updateStrategy.accept(strategy);
-        return UpdateMethodUtil.update(getBasicMapper(), Tables.get(entity.getClass()), entity, strategy);
+    default <T> int update(T entity, UpdateStrategy<T> updateStrategy) {
+        return UpdateMethodUtil.update(getBasicMapper(), Tables.get(entity.getClass()), entity, updateStrategy);
     }
 
     /**
@@ -56,7 +54,7 @@ public interface UpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int update(T entity, boolean allFieldForce) {
-        return this.updateWithStrategy(entity, updateStrategy -> {
+        return UpdateMethodUtil.update(getBasicMapper(), entity, updateStrategy -> {
             updateStrategy.allFieldUpdate(allFieldForce);
         });
     }
@@ -69,8 +67,34 @@ public interface UpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int update(T entity, Getter<T>... forceFields) {
-        return this.updateWithStrategy(entity, updateStrategy -> {
+        return UpdateMethodUtil.update(getBasicMapper(), entity, updateStrategy -> {
             updateStrategy.forceFields(forceFields);
+        });
+    }
+
+    /**
+     * 动态条件修改
+     *
+     * @param entity   实体类
+     * @param consumer where
+     * @return 影响条数
+     */
+    default <T> int update(T entity, Consumer<Where> consumer) {
+        return UpdateMethodUtil.update(getBasicMapper(), entity, updateStrategy -> {
+            updateStrategy.where(consumer);
+        });
+    }
+
+    /**
+     * 指定where 修改
+     *
+     * @param entity 实体类对象
+     * @param where  where
+     * @return 影响条数
+     */
+    default <T> int update(T entity, Where where) {
+        return UpdateMethodUtil.update(getBasicMapper(), entity, updateStrategy -> {
+            updateStrategy.where(where);
         });
     }
 
@@ -81,10 +105,8 @@ public interface UpdateBasicMapper extends BaseBasicMapper {
      * @param updateStrategy 策略
      * @return 影响条数
      */
-    default <T> int updateListWithStrategy(Collection<T> list, Consumer<UpdateStrategy<T>> updateStrategy) {
-        UpdateStrategy<T> strategy = UpdateMethodUtil.createUpdateStrategy();
-        updateStrategy.accept(strategy);
-        return UpdateMethodUtil.updateList(getBasicMapper(), list, strategy);
+    default <T> int update(Collection<T> list, UpdateStrategy<T> updateStrategy) {
+        return UpdateMethodUtil.updateList(getBasicMapper(), list, updateStrategy);
     }
 
     /**
@@ -105,7 +127,7 @@ public interface UpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int update(Collection<T> list, boolean allFieldForce) {
-        return this.updateListWithStrategy(list, updateStrategy -> {
+        return UpdateMethodUtil.updateList(getBasicMapper(), list, updateStrategy -> {
             updateStrategy.allFieldUpdate(allFieldForce);
         });
     }
@@ -118,35 +140,8 @@ public interface UpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int update(Collection<T> list, Getter<T>... forceFields) {
-        return this.updateListWithStrategy(list, updateStrategy -> {
+        return UpdateMethodUtil.updateList(getBasicMapper(), list, updateStrategy -> {
             updateStrategy.forceFields(forceFields);
-        });
-    }
-
-
-    /**
-     * 动态条件修改
-     *
-     * @param entity   实体类
-     * @param consumer where
-     * @return 影响条数
-     */
-    default <T> int update(T entity, Consumer<Where> consumer) {
-        return this.updateWithStrategy(entity, updateStrategy -> {
-            updateStrategy.where(consumer);
-        });
-    }
-
-    /**
-     * 指定where 修改
-     *
-     * @param entity 实体类对象
-     * @param where  where
-     * @return 影响条数
-     */
-    default <T> int update(T entity, Where where) {
-        return this.updateWithStrategy(entity, updateStrategy -> {
-            updateStrategy.where(where);
         });
     }
 }

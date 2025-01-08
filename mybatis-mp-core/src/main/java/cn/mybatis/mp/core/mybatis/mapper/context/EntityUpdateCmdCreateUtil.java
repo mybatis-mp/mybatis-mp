@@ -64,10 +64,8 @@ public class EntityUpdateCmdCreateUtil {
         boolean hasIdCondition = false;
 
         Set<String> forceFields = LambdaUtil.getFieldNames(updateStrategy.getForceFields());
-        for (int i = 0; i < tableInfo.getFieldSize(); i++) {
-            TableFieldInfo tableFieldInfo = tableInfo.getTableFieldInfos().get(i);
+        for (TableFieldInfo tableFieldInfo : tableInfo.getTableFieldInfos()) {
             Object value = tableFieldInfo.getValue(entity);
-
             if (tableFieldInfo.isTableId()) {
                 if (Objects.nonNull(value)) {
                     if (update.$where().hasContent()) {

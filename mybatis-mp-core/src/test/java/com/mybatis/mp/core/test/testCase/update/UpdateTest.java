@@ -14,6 +14,7 @@
 
 package com.mybatis.mp.core.test.testCase.update;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.core.sql.executor.SubQuery;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import cn.mybatis.mp.core.sql.executor.chain.UpdateChain;
@@ -462,11 +463,13 @@ public class UpdateTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
             SysUser updateSysUser = new SysUser();
+            updateSysUser.setId(null);
             updateSysUser.setUserName("adminxx");
-            int cnt = sysUserMapper.updateWithStrategy(updateSysUser, updateStrategy -> {
-                updateStrategy.where(where -> where.eq(SysUser::getId, 1))
-                        .forceFields(SysUser::getPassword);
-            });
+
+            UpdateStrategy<SysUser> updateStrategy = new UpdateStrategy<>();
+            updateStrategy.where(where -> where.eq(SysUser::getId, 1)).forceFields(SysUser::getPassword);
+
+            int cnt = sysUserMapper.update(updateSysUser, updateStrategy);
             assertEquals(cnt, 1);
 
 

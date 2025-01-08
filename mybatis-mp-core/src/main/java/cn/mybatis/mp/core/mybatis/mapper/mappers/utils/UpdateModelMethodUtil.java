@@ -14,51 +14,42 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.mappers.utils;
 
+import cn.mybatis.mp.core.db.reflect.ModelInfo;
+import cn.mybatis.mp.core.db.reflect.Models;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.ModelUpdateContext;
-import cn.mybatis.mp.core.mybatis.mapper.context.ModelUpdateWithWhereContext;
-import cn.mybatis.mp.core.sql.util.WhereUtil;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.db.Model;
-import db.sql.api.Getter;
-import db.sql.api.impl.cmd.struct.Where;
-import db.sql.api.tookit.LambdaUtil;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Consumer;
 
 public final class UpdateModelMethodUtil {
 
-    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, boolean allFieldForce, Set<String> forceFields) {
-        return basicMapper.$update(new ModelUpdateContext<>(model, allFieldForce, forceFields));
+    public static <M extends Model> int update(BasicMapper basicMapper, M model, Consumer<UpdateStrategy<M>> updateStrategy) {
+        UpdateStrategy<M> strategy = UpdateMethodUtil.createUpdateStrategy();
+        updateStrategy.accept(strategy);
+        return update(basicMapper, Models.get(model.getClass()), model, strategy);
     }
 
-    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, boolean allFieldForce, Getter<MODEL>[] forceFields) {
-        return update(basicMapper, model, allFieldForce, LambdaUtil.getFieldNames(forceFields));
+    public static <M extends Model> int update(BasicMapper basicMapper, M model, UpdateStrategy<M> updateStrategy) {
+        return update(basicMapper, Models.get(model.getClass()), model, updateStrategy);
     }
 
-    public static <MODEL extends Model> int update(BasicMapper basicMapper, Collection<MODEL> list, boolean allFieldForce, Getter<MODEL>[] forceFields) {
+    public static <M extends Model> int update(BasicMapper basicMapper, ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy) {
+        return basicMapper.$update(new ModelUpdateContext<>(modelInfo, model, updateStrategy));
+    }
+
+    public static <M extends Model> int updateList(BasicMapper basicMapper, Collection<M> list, UpdateStrategy<M> updateStrategy) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        Set<String> forceFieldNames = LambdaUtil.getFieldNames(forceFields);
+        ModelInfo modelInfo = Models.get(list.stream().findFirst().get().getClass());
         int cnt = 0;
-        for (MODEL model : list) {
-            cnt += update(basicMapper, model, allFieldForce, forceFieldNames);
+        for (M model : list) {
+            cnt += update(basicMapper, modelInfo, model, updateStrategy);
         }
         return cnt;
-    }
-
-    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, boolean allFieldForce, Getter<MODEL>[] forceFields, Consumer<Where> consumer) {
-        return update(basicMapper, model, allFieldForce, LambdaUtil.getFieldNames(forceFields), WhereUtil.create(consumer));
-    }
-
-    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, boolean allFieldForce, Getter<MODEL>[] forceFields, Where where) {
-        return update(basicMapper, model, allFieldForce, LambdaUtil.getFieldNames(forceFields), where);
-    }
-
-    public static <MODEL extends Model> int update(BasicMapper basicMapper, MODEL model, boolean allFieldForce, Set<String> forceFields, Where where) {
-        return basicMapper.$update(new ModelUpdateWithWhereContext<>(model, where, allFieldForce, forceFields));
     }
 }

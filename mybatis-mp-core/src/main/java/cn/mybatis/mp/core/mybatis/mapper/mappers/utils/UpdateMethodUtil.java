@@ -22,11 +22,16 @@ import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public final class UpdateMethodUtil {
 
     public static <T> UpdateStrategy<T> createUpdateStrategy() {
         return new UpdateStrategy<>();
+    }
+
+    public static <T> int update(BasicMapper basicMapper, T entity, UpdateStrategy<T> updateStrategy) {
+        return update(basicMapper, Tables.get(entity.getClass()), entity, updateStrategy);
     }
 
     public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity) {
@@ -37,12 +42,34 @@ public final class UpdateMethodUtil {
         return basicMapper.$update(new EntityUpdateContext(tableInfo, entity, updateStrategy));
     }
 
+    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, Consumer<UpdateStrategy<T>> updateStrategy) {
+        UpdateStrategy strategy = createUpdateStrategy();
+        updateStrategy.accept(strategy);
+        return update(basicMapper, tableInfo, entity, strategy);
+    }
+
+    public static <T> int update(BasicMapper basicMapper, T entity, Consumer<UpdateStrategy<T>> updateStrategy) {
+        return update(basicMapper, Tables.get(entity.getClass()), entity, updateStrategy);
+    }
+
+    public static <T> int updateList(BasicMapper basicMapper, Collection<T> list, Consumer<UpdateStrategy<T>> updateStrategy) {
+        UpdateStrategy strategy = createUpdateStrategy();
+        updateStrategy.accept(strategy);
+        return updateList(basicMapper, list, strategy);
+    }
+
     public static <T> int updateList(BasicMapper basicMapper, Collection<T> list, UpdateStrategy<T> updateStrategy) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
         TableInfo tableInfo = Tables.get(list.stream().findFirst().get().getClass());
         return updateList(basicMapper, tableInfo, list, updateStrategy);
+    }
+
+    public static <T> int updateList(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, Consumer<UpdateStrategy<T>> updateStrategy) {
+        UpdateStrategy strategy = createUpdateStrategy();
+        updateStrategy.accept(strategy);
+        return updateList(basicMapper, tableInfo, list, strategy);
     }
 
     public static <T> int updateList(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, UpdateStrategy<T> updateStrategy) {

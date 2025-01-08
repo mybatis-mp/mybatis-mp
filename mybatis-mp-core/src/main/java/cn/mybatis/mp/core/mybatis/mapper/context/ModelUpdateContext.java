@@ -15,18 +15,13 @@
 package cn.mybatis.mp.core.mybatis.mapper.context;
 
 
-import cn.mybatis.mp.core.sql.executor.Update;
+import cn.mybatis.mp.core.db.reflect.ModelInfo;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.db.Model;
 
-import java.util.Set;
+public class ModelUpdateContext<M extends Model> extends SQLCmdUpdateContext {
 
-public class ModelUpdateContext<T extends Model> extends SQLCmdUpdateContext {
-
-    public ModelUpdateContext(T t, boolean allFieldForce, Set<String> forceFields) {
-        super(createCmd(t, allFieldForce, forceFields));
-    }
-
-    private static Update createCmd(Model t, boolean allFieldForce, Set<String> forceFields) {
-        return ModelUpdateCmdCreateUtil.create(t, forceFields, allFieldForce);
+    public ModelUpdateContext(ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy) {
+        super(ModelUpdateCmdCreateUtil.create(modelInfo, model, updateStrategy));
     }
 }

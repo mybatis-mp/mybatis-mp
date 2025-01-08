@@ -137,6 +137,15 @@ public interface Dao<T, ID> {
     /**
      * 实体类Model保存
      *
+     * @param model        实体类Model对象
+     * @param saveStrategy 保存策略
+     * @return 影响条数
+     */
+    <M extends Model<T>> int save(M model, Consumer<SaveStrategy<M>> saveStrategy);
+
+    /**
+     * 实体类Model保存
+     *
      * @param model 实体类Model对象
      * @return 影响条数
      */
@@ -163,12 +172,11 @@ public interface Dao<T, ID> {
     /**
      * 实体类Model保存
      *
-     * @param model        实体类Model对象
-     * @param saveStrategy 保存策略
+     * @param list           实体类Model对象List
+     * @param updateStrategy 策略
      * @return 影响条数
      */
-    <M extends Model<T>> int save(M model, Consumer<SaveStrategy<M>> saveStrategy);
-
+    int updateListWithStrategy(Collection<T> list, Consumer<UpdateStrategy<T>> updateStrategy);
     /**
      * 实体类Model保存
      *
@@ -246,7 +254,8 @@ public interface Dao<T, ID> {
      * @param updateStrategy 策略
      * @return
      */
-    int updateWithStrategy(T entity, Consumer<UpdateStrategy<T>> updateStrategy);
+    int update(T entity, UpdateStrategy<T> updateStrategy);
+
     /**
      * 实体类修改
      *
@@ -309,6 +318,16 @@ public interface Dao<T, ID> {
     <M extends Model<T>> int update(M model);
 
     /**
+     * 修改策略
+     *
+     * @param model
+     * @param updateStrategy
+     * @param <M>
+     * @return
+     */
+    <M extends Model<T>> int update(M model, UpdateStrategy<M> updateStrategy);
+
+    /**
      * 实体类Model修改
      *
      * @param model       实体类Model对象
@@ -325,6 +344,7 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     <M extends Model<T>> int update(M model, boolean allFieldForce);
+
 
     /**
      * 实体类Model修改

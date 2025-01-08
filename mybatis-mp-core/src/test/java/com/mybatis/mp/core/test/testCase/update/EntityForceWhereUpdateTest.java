@@ -14,6 +14,7 @@
 
 package com.mybatis.mp.core.test.testCase.update;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
@@ -43,13 +44,17 @@ public class EntityForceWhereUpdateTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUserModel = sysUserMapper.getById(1);
-            sysUserModel.setUserName(null);
-            sysUserMapper.updateWithStrategy(sysUserModel, updateStrategy -> {
-                updateStrategy.where(where -> where.eq(SysUser::getId, 1))
-                        .forceFields(SysUser::getUserName);
 
-            });
-            SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
+            sysUserModel.setId(null);
+            sysUserModel.setUserName(null);
+
+            UpdateStrategy<SysUser> updateStrategy = new UpdateStrategy<>();
+            updateStrategy.where(where -> where.eq(SysUser::getId, 1))
+                    .forceFields(SysUser::getUserName);
+
+            sysUserMapper.update(sysUserModel, updateStrategy);
+
+            SysUser sysUser = sysUserMapper.getById(1);
             assertEquals(sysUser.getUserName(), null);
             assertEquals(sysUser.getRole_id(), 0);
         }
@@ -77,11 +82,12 @@ public class EntityForceWhereUpdateTest extends BaseTest {
             SysUser sysUserModel = sysUserMapper.getById(1);
             sysUserModel.setId(null);
             sysUserModel.setUserName(null);
-            sysUserMapper.updateWithStrategy(sysUserModel, updateStrategy -> {
-                updateStrategy.where(WhereUtil.create().eq(SysUser::getId, 1))
-                        .forceFields(SysUser::getUserName);
 
-            });
+            UpdateStrategy<SysUser> updateStrategy = new UpdateStrategy<>();
+            updateStrategy.where(WhereUtil.create().eq(SysUser::getId, 1))
+                    .forceFields(SysUser::getUserName);
+
+            sysUserMapper.update(sysUserModel, updateStrategy);
             SysUser sysUser = sysUserMapper.getById(1);
             assertEquals(sysUser.getUserName(), null);
             assertEquals(sysUser.getRole_id(), 0);

@@ -823,14 +823,19 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         });
     }
 
-    @Override
-    public int updateWithStrategy(T entity, Consumer<UpdateStrategy<T>> updateStrategy) {
+
+    protected int updateWithStrategy(T entity, Consumer<UpdateStrategy<T>> updateStrategy) {
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
         UpdateStrategy strategy = new UpdateStrategy();
         updateStrategy.accept(strategy);
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, strategy);
+        return this.update(entity, strategy);
+    }
+
+    @Override
+    public int update(T entity, UpdateStrategy<T> updateStrategy) {
+        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, updateStrategy);
     }
 
     @Override
@@ -878,6 +883,7 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         });
     }
 
+    @Override
     public int updateListWithStrategy(Collection<T> list, Consumer<UpdateStrategy<T>> updateStrategy) {
         UpdateStrategy strategy = new UpdateStrategy();
         updateStrategy.accept(strategy);
@@ -909,6 +915,16 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         });
     }
 
+    protected <M extends Model<T>> int updateWithStrategy(M model, Consumer<UpdateStrategy<M>> updateStrategy) {
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, updateStrategy);
+    }
+
+
+    @Override
+    public <M extends Model<T>> int update(M model, UpdateStrategy<M> updateStrategy) {
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, updateStrategy);
+    }
+
     @Override
     public <M extends Model<T>> int update(M model) {
         return this.update(model, false);
@@ -919,7 +935,9 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, false, forceFields);
+        return this.updateWithStrategy(model, updateStrategy -> {
+            updateStrategy.forceFields(forceFields);
+        });
     }
 
     @Override
@@ -927,7 +945,20 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, allFieldForce, (Getter<M>[]) null);
+        return this.updateWithStrategy(model, updateStrategy -> {
+            updateStrategy.allFieldUpdate(allFieldForce);
+        });
+    }
+
+
+    protected <M extends Model<T>> int updateModelWithStrategy(Collection<M> list, Consumer<UpdateStrategy<M>> updateStrategy) {
+        UpdateStrategy strategy = UpdateMethodUtil.createUpdateStrategy();
+        updateStrategy.accept(strategy);
+        return this.updateModel(list, strategy);
+    }
+
+    protected <M extends Model<T>> int updateModel(Collection<M> list, UpdateStrategy<M> updateStrategy) {
+        return UpdateModelMethodUtil.updateList(getBasicMapper(), list, updateStrategy);
     }
 
     @Override
@@ -937,27 +968,25 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public <M extends Model<T>> int updateModel(Collection<M> list, Getter<M>... forceFields) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), list, false, forceFields);
+        return this.updateModelWithStrategy(list, updateStrategy -> {
+            updateStrategy.forceFields(forceFields);
+        });
     }
 
     @Override
     public <M extends Model<T>> int updateModel(Collection<M> list, boolean allFieldForce) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), list, allFieldForce, null);
+        return this.updateModelWithStrategy(list, updateStrategy -> {
+            updateStrategy.allFieldUpdate(allFieldForce);
+        });
     }
 
     @Override
     public int delete(T entity) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
         return DeleteMethodUtil.delete(getBasicMapper(), getTableInfo(), entity);
     }
 
     @Override
     public int delete(Collection<T> list) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
         return DeleteMethodUtil.delete(getBasicMapper(), getTableInfo(), list);
     }
 

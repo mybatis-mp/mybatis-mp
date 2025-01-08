@@ -16,10 +16,9 @@ package cn.mybatis.mp.core.mybatis.mapper.context;
 
 import cn.mybatis.mp.core.db.reflect.ModelFieldInfo;
 import cn.mybatis.mp.core.db.reflect.ModelInfo;
-import cn.mybatis.mp.core.db.reflect.Models;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.Update;
-import cn.mybatis.mp.core.sql.util.WhereUtil;
 import cn.mybatis.mp.core.util.DefaultValueUtil;
 import cn.mybatis.mp.core.util.ModelInfoUtil;
 import cn.mybatis.mp.core.util.StringPool;
@@ -30,22 +29,44 @@ import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.struct.Where;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.util.Objects;
 import java.util.Set;
 
 public class ModelUpdateCmdCreateUtil {
 
+    public static <M extends Model<T>, T> Update create(ModelInfo modelInfo, M model, UpdateStrategy<M> updateStrategy) {
+        Where $postWhere = updateStrategy.getWhere();
+        Update update;
+        boolean hasPostWhere = false;
+        if ($postWhere != null) {
+            hasPostWhere = true;
+            //传了where
+            if (updateStrategy.getOn() != null) {
+                updateStrategy.getOn().accept($postWhere);
+            }
+            if (!$postWhere.hasContent()) {
+                throw new RuntimeException("update has no where condition content ");
+            }
+            update = new Update($postWhere);
+        } else {
+            update = new Update();
+            if (updateStrategy.getOn() != null) {
+                updateStrategy.getOn().accept(update.$where());
+                hasPostWhere = update.$where().hasContent();
+            }
+        }
 
-    private static Update warp(Update update, ModelInfo modelInfo, Model t, Set<String> forceFields, boolean allFieldForce) {
         MybatisCmdFactory $ = update.$();
         Table table = $.table(modelInfo.getEntityType());
         update.update(table);
 
         boolean hasIdCondition = false;
-        for (int i = 0; i < modelInfo.getFieldSize(); i++) {
-            ModelFieldInfo modelFieldInfo = modelInfo.getModelFieldInfos().get(i);
-            Object value = modelFieldInfo.getValue(t);
+
+        Set<String> forceFields = LambdaUtil.getFieldNames(updateStrategy.getForceFields());
+        for (ModelFieldInfo modelFieldInfo : modelInfo.getModelFieldInfos()) {
+            Object value = modelFieldInfo.getValue(model);
             if (modelFieldInfo.getTableFieldInfo().isTableId()) {
                 if (Objects.nonNull(value)) {
                     if (update.$where().hasContent()) {
@@ -65,22 +86,27 @@ public class ModelUpdateCmdCreateUtil {
                     continue;
                 }
                 //乐观锁+1
-                Object version = TypeConvertUtil.convert(Long.valueOf(value.toString()) + 1, modelFieldInfo.getField().getType());
+                Object version = TypeConvertUtil.convert(Long.valueOf(1) + 1, modelFieldInfo.getField().getType());
                 //乐观锁设置
                 update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(version));
                 //乐观锁条件
                 update.$where().extConditionChain().eq($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(value));
                 //乐观锁回写
-                ModelInfoUtil.setValue(modelFieldInfo, t, version);
+                ModelInfoUtil.setValue(modelFieldInfo, model, version);
                 continue;
             }
 
             if (!StringPool.EMPTY.equals(modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().updateDefaultValue())) {
                 //读取回填 修改默认值
-                value = DefaultValueUtil.getAndSetUpdateDefaultValue(t, modelFieldInfo);
+                value = DefaultValueUtil.getAndSetUpdateDefaultValue(model, modelFieldInfo);
             }
 
-            if (allFieldForce || (Objects.nonNull(forceFields) && forceFields.contains(modelFieldInfo.getField().getName()))) {
+            boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(modelFieldInfo.getField().getName());
+            if (!isForceUpdate && !modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation().update()) {
+                continue;
+            }
+
+            if (isForceUpdate || updateStrategy.isAllFieldUpdate()) {
                 if (Objects.isNull(value)) {
                     update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), NULL.NULL);
                     continue;
@@ -94,26 +120,10 @@ public class ModelUpdateCmdCreateUtil {
             }
         }
 
-        if (!hasIdCondition) {
-            if (update.getWhere() == null || !update.getWhere().hasContent()) {
-                throw new RuntimeException("update has no where condition content ");
-            }
+        if (!hasIdCondition && !hasPostWhere) {
+            throw new RuntimeException("update has no where condition content ");
         }
         return update;
     }
 
-
-    public static Update create(Model model, Set<String> forceFields, boolean allFieldForce) {
-        Where where = WhereUtil.create();
-        ModelInfo modelInfo = Models.get(model.getClass());
-        return warp(new Update(where), modelInfo, model, forceFields, allFieldForce);
-    }
-
-    public static Update create(Model model, Where where, Set<String> forceFields, boolean allFieldForce) {
-        if (Objects.isNull(where) || !where.hasContent()) {
-            throw new RuntimeException("update has no where condition content ");
-        }
-        ModelInfo modelInfo = Models.get(model.getClass());
-        return warp(new Update(where), modelInfo, model, forceFields, allFieldForce);
-    }
 }
