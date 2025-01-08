@@ -19,6 +19,7 @@ import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.Update;
+import cn.mybatis.mp.core.sql.util.WhereUtil;
 import cn.mybatis.mp.core.util.DefaultValueUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
@@ -36,25 +37,14 @@ import java.util.Set;
 public class EntityUpdateCmdCreateUtil {
 
     public static Update create(TableInfo tableInfo, Object entity, UpdateStrategy<?> updateStrategy) {
-        Where $postWhere = updateStrategy.getWhere();
-        Update update;
-        boolean hasPostWhere = false;
-        if ($postWhere != null) {
-            hasPostWhere = true;
-            //传了where
-            if (updateStrategy.getOn() != null) {
-                updateStrategy.getOn().accept($postWhere);
-            }
-            if (!$postWhere.hasContent()) {
-                throw new RuntimeException("update has no where condition content ");
-            }
-            update = new Update($postWhere);
-        } else {
-            update = new Update();
-            if (updateStrategy.getOn() != null) {
-                updateStrategy.getOn().accept(update.$where());
-                hasPostWhere = update.$where().hasContent();
-            }
+        Where where = updateStrategy.getWhere();
+        if (where == null) {
+            where = WhereUtil.create(tableInfo);
+        }
+
+        Update update = new Update(where);
+        if (updateStrategy.getOn() != null) {
+            updateStrategy.getOn().accept(where);
         }
 
         MybatisCmdFactory $ = update.$();
@@ -119,7 +109,7 @@ public class EntityUpdateCmdCreateUtil {
             }
         }
 
-        if (!hasIdCondition && !hasPostWhere) {
+        if (!hasIdCondition && !where.getConditionChain().hasContent()) {
             throw new RuntimeException("update has no where condition content ");
         }
         return update;

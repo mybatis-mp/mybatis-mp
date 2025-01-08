@@ -607,9 +607,6 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public int saveOrUpdate(T entity, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
         SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
         saveOrUpdateStrategy.accept(strategy);
         return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), entity, strategy);
@@ -636,9 +633,6 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public int saveOrUpdate(Collection<T> list, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
         SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
         saveOrUpdateStrategy.accept(strategy);
         return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), getTableInfo(), list, strategy);
@@ -767,9 +761,6 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public <M extends Model<T>> int saveOrUpdate(M model, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
         SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
         saveOrUpdateStrategy.accept(strategy);
         return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), Models.get(model.getClass()), model, strategy);
@@ -796,9 +787,6 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
         SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
         saveOrUpdateStrategy.accept(strategy);
         return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), list, strategy);
@@ -825,9 +813,6 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
 
     protected int updateWithStrategy(T entity, Consumer<UpdateStrategy<T>> updateStrategy) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
         UpdateStrategy strategy = new UpdateStrategy();
         updateStrategy.accept(strategy);
         return this.update(entity, strategy);
@@ -901,9 +886,6 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public int update(Collection<T> list, boolean allFieldForce) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
         return this.updateWithStrategy(list, updateStrategy -> {
             updateStrategy.allFieldUpdate(allFieldForce);
         });
@@ -911,9 +893,6 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public int update(Collection<T> list, Getter<T>... forceFields) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
         return this.updateWithStrategy(list, updateStrategy -> {
             updateStrategy.forceFields(forceFields);
         });
@@ -936,9 +915,6 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public <M extends Model<T>> int update(M model, Getter<M>... forceFields) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
         return this.updateWithStrategy(model, updateStrategy -> {
             updateStrategy.forceFields(forceFields);
         });
@@ -946,9 +922,6 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
 
     @Override
     public <M extends Model<T>> int update(M model, boolean allFieldForce) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
         return this.updateWithStrategy(model, updateStrategy -> {
             updateStrategy.allFieldUpdate(allFieldForce);
         });
