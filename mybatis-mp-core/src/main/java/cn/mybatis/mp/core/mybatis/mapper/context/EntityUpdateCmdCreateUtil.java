@@ -49,8 +49,6 @@ public class EntityUpdateCmdCreateUtil {
 
         MybatisCmdFactory $ = update.$();
         Table table = $.table(entity.getClass());
-        update.update(table);
-
         boolean hasIdCondition = false;
 
         Set<String> forceFields = LambdaUtil.getFieldNames(updateStrategy.getForceFields());
@@ -109,9 +107,10 @@ public class EntityUpdateCmdCreateUtil {
             }
         }
 
-        if (!hasIdCondition && !where.getConditionChain().hasContent()) {
+        if (!hasIdCondition && (where.getConditionChain() == null || !where.getConditionChain().hasContent())) {
             throw new RuntimeException("update has no where condition content ");
         }
+        update.update(table);
         return update;
     }
 }

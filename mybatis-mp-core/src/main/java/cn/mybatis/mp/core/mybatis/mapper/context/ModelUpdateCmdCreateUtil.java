@@ -50,7 +50,6 @@ public class ModelUpdateCmdCreateUtil {
 
         MybatisCmdFactory $ = update.$();
         Table table = $.table(modelInfo.getEntityType());
-        update.update(table);
 
         boolean hasIdCondition = false;
 
@@ -110,9 +109,10 @@ public class ModelUpdateCmdCreateUtil {
             }
         }
 
-        if (!hasIdCondition && !where.getConditionChain().hasContent()) {
+        if (!hasIdCondition && (where.getConditionChain() == null || !where.getConditionChain().hasContent())) {
             throw new RuntimeException("update has no where condition content ");
         }
+        update.update(table);
         return update;
     }
 
