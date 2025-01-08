@@ -26,7 +26,6 @@ import com.mybatis.mp.core.test.testCase.TestDataSource;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.basic.TableField;
-import db.sql.api.impl.cmd.struct.Where;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
@@ -37,7 +36,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -465,7 +463,10 @@ public class UpdateTest extends BaseTest {
 
             SysUser updateSysUser = new SysUser();
             updateSysUser.setUserName("adminxx");
-            int cnt = sysUserMapper.update(updateSysUser, (Consumer<Where>) where -> where.eq(SysUser::getId, 1), SysUser::getPassword);
+            int cnt = sysUserMapper.updateWithStrategy(updateSysUser, updateStrategy -> {
+                updateStrategy.where(where -> where.eq(SysUser::getId, 1))
+                        .forceFields(SysUser::getPassword);
+            });
             assertEquals(cnt, 1);
 
 

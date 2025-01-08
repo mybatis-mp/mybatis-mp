@@ -14,6 +14,7 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.mappers;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.UpdateMethodUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.struct.Where;
@@ -22,6 +23,18 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 public interface UpdateMapper<T> extends BaseMapper<T> {
+
+    /**
+     * 实体类修改
+     *
+     * @param entity 实体类对象
+     * @return 影响条数
+     */
+    default int updateWithStrategy(T entity, Consumer<UpdateStrategy<T>> updateStrategy) {
+        UpdateStrategy<T> strategy = UpdateMethodUtil.createUpdateStrategy();
+        updateStrategy.accept(strategy);
+        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, strategy);
+    }
 
     /**
      * 实体类修改
@@ -41,7 +54,9 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int update(T entity, boolean allFieldForce) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, allFieldForce, (Getter<T>[]) null);
+        return this.updateWithStrategy(entity, updateStrategy -> {
+            updateStrategy.allFieldUpdate(allFieldForce);
+        });
     }
 
     /**
@@ -52,7 +67,23 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int update(T entity, Getter<T>... forceFields) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, false, forceFields);
+        return this.updateWithStrategy(entity, updateStrategy -> {
+            updateStrategy.forceFields(forceFields);
+        });
+    }
+
+
+    /**
+     * 多个修改，非批量行为
+     *
+     * @param list           实体类对象List
+     * @param updateStrategy 策略
+     * @return 影响条数
+     */
+    default int updateWithStrategy(Collection<T> list, Consumer<UpdateStrategy<T>> updateStrategy) {
+        UpdateStrategy<T> strategy = UpdateMethodUtil.createUpdateStrategy();
+        updateStrategy.accept(strategy);
+        return UpdateMethodUtil.updateList(getBasicMapper(), getTableInfo(), list, strategy);
     }
 
     /**
@@ -73,7 +104,9 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int update(Collection<T> list, boolean allFieldForce) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), list, allFieldForce, (Getter<T>[]) null);
+        return this.updateWithStrategy(list, updateStrategy -> {
+            updateStrategy.allFieldUpdate(allFieldForce);
+        });
     }
 
     /**
@@ -84,7 +117,9 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int update(Collection<T> list, Getter<T>... forceFields) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), list, false, forceFields);
+        return this.updateWithStrategy(list, updateStrategy -> {
+            updateStrategy.forceFields(forceFields);
+        });
     }
 
 
@@ -92,11 +127,13 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * 动态条件修改
      *
      * @param entity   实体类
-     * @param consumer where
+     * @param where where
      * @return 影响条数
      */
-    default int update(T entity, Consumer<Where> consumer) {
-        return this.update(entity, false, consumer);
+    default int update(T entity, Consumer<Where> where) {
+        return this.updateWithStrategy(entity, updateStrategy -> {
+            updateStrategy.where(where);
+        });
     }
 
     /**
@@ -104,24 +141,15 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      *
      * @param entity        实体类对象
      * @param allFieldForce 是否所有字段都修改，如果是null值，则变成NULL
-     * @param consumer      where
+     * @param where      where
      * @return 影响条数
      */
-    default int update(T entity, boolean allFieldForce, Consumer<Where> consumer) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, allFieldForce, null, consumer);
+    default int update(T entity, boolean allFieldForce, Consumer<Where> where) {
+        return this.updateWithStrategy(entity, updateStrategy -> {
+            updateStrategy.allFieldUpdate(allFieldForce).where(where);
+        });
     }
 
-    /**
-     * 动态where 修改
-     *
-     * @param entity      实体类对象
-     * @param consumer    where
-     * @param forceFields 强制更新指定，解决需要修改为null的需求
-     * @return 影响条数
-     */
-    default int update(T entity, Consumer<Where> consumer, Getter<T>... forceFields) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, false, forceFields, consumer);
-    }
 
     /**
      * 指定where 修改
@@ -131,7 +159,9 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int update(T entity, Where where) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, false, null, where);
+        return this.updateWithStrategy(entity, updateStrategy -> {
+            updateStrategy.where(where);
+        });
     }
 
     /**
@@ -143,18 +173,8 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default int update(T entity, boolean allFieldForce, Where where) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, allFieldForce, null, where);
-    }
-
-    /**
-     * 指定where 修改
-     *
-     * @param entity      实体类对象
-     * @param where       where
-     * @param forceFields 强制更新指定，解决需要修改为null的需求
-     * @return 影响条数
-     */
-    default int update(T entity, Where where, Getter<T>... forceFields) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, false, forceFields, where);
+        return this.updateWithStrategy(entity, updateStrategy -> {
+            updateStrategy.allFieldUpdate(allFieldForce).where(where);
+        });
     }
 }

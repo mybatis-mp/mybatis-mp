@@ -18,6 +18,7 @@ import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
 import cn.mybatis.mp.core.util.TableInfoUtil;
@@ -79,7 +80,11 @@ public class SaveOrUpdateMethodUtil {
             tableInfo.getIdFieldInfos().stream().forEach(item -> {
                 TableInfoUtil.setValue(item, entity, TableInfoUtil.getEntityFieldValue(item, obj));
             });
-            return UpdateMethodUtil.update(basicMapper, tableInfo, entity, saveOrUpdateStrategy.isAllField(), saveOrUpdateStrategy.getForceFields());
+            UpdateStrategy<T> updateStrategy = new UpdateStrategy<>();
+            updateStrategy
+                    .allFieldUpdate(saveOrUpdateStrategy.isAllField())
+                    .forceFields(saveOrUpdateStrategy.getForceFields());
+            return UpdateMethodUtil.update(basicMapper, tableInfo, entity, updateStrategy);
         }
     }
 

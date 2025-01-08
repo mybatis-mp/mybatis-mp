@@ -15,51 +15,45 @@
 package cn.mybatis.mp.core.mybatis.mapper.mappers.utils;
 
 import cn.mybatis.mp.core.db.reflect.TableInfo;
+import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.EntityUpdateContext;
-import cn.mybatis.mp.core.mybatis.mapper.context.EntityUpdateWithWhereContext;
-import cn.mybatis.mp.core.sql.util.WhereUtil;
-import db.sql.api.Getter;
-import db.sql.api.impl.cmd.struct.Where;
-import db.sql.api.tookit.LambdaUtil;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
 
 public final class UpdateMethodUtil {
 
-    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Set<String> forceFields) {
-        return basicMapper.$update(new EntityUpdateContext(tableInfo, entity, allFieldForce, forceFields));
+    public static <T> UpdateStrategy<T> createUpdateStrategy() {
+        return new UpdateStrategy<>();
     }
 
-    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Getter<T>[] forceFields) {
-        return update(basicMapper, tableInfo, entity, allFieldForce, LambdaUtil.getFieldNames(forceFields));
+    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity) {
+        return update(basicMapper, tableInfo, entity, createUpdateStrategy());
     }
 
-    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, Where where, boolean allFieldForce, Set<String> forceFields) {
-        return basicMapper.$update(new EntityUpdateWithWhereContext<>(tableInfo, entity, where, allFieldForce, forceFields));
+    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, UpdateStrategy<T> updateStrategy) {
+        return basicMapper.$update(new EntityUpdateContext(tableInfo, entity, updateStrategy));
     }
 
-    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, boolean allFieldForce, Getter<T>[] forceFields) {
+    public static <T> int updateList(BasicMapper basicMapper, Collection<T> list, UpdateStrategy<T> updateStrategy) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        Set<String> forceFieldNames = LambdaUtil.getFieldNames(forceFields);
+        TableInfo tableInfo = Tables.get(list.stream().findFirst().get().getClass());
+        return updateList(basicMapper, tableInfo, list, updateStrategy);
+    }
+
+    public static <T> int updateList(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, UpdateStrategy<T> updateStrategy) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
+        }
+
         int cnt = 0;
         for (T entity : list) {
-            cnt += update(basicMapper, tableInfo, entity, allFieldForce, forceFieldNames);
+            cnt += update(basicMapper, tableInfo, entity, updateStrategy);
         }
         return cnt;
     }
-
-    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Getter<T>[] forceFields, Where where) {
-        return update(basicMapper, tableInfo, entity, where, allFieldForce, LambdaUtil.getFieldNames(forceFields));
-    }
-
-    public static <T> int update(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Getter<T>[] forceFields, Consumer<Where> consumer) {
-        return update(basicMapper, tableInfo, entity, allFieldForce, forceFields, WhereUtil.create(consumer));
-    }
-
 }

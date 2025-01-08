@@ -16,6 +16,7 @@ package cn.mybatis.mp.core.mybatis.mapper.context;
 
 import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.Update;
 import cn.mybatis.mp.core.util.DefaultValueUtil;
@@ -27,25 +28,45 @@ import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.struct.Where;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.util.Objects;
 import java.util.Set;
 
 public class EntityUpdateCmdCreateUtil {
 
-    private static Update warp(Update update, TableInfo tableInfo, Object t, Set<String> forceFields, boolean allFieldForce) {
+    public static Update create(TableInfo tableInfo, Object entity, UpdateStrategy<?> updateStrategy) {
+        Where $postWhere = updateStrategy.getWhere();
+        Update update;
+        boolean hasPostWhere = false;
+        if ($postWhere != null) {
+            hasPostWhere = true;
+            //传了where
+            if (updateStrategy.getOn() != null) {
+                updateStrategy.getOn().accept($postWhere);
+            }
+            if (!$postWhere.hasContent()) {
+                throw new RuntimeException("update has no where condition content ");
+            }
+            update = new Update($postWhere);
+        } else {
+            update = new Update();
+            if (updateStrategy.getOn() != null) {
+                updateStrategy.getOn().accept(update.$where());
+                hasPostWhere = update.$where().hasContent();
+            }
+        }
 
         MybatisCmdFactory $ = update.$();
-
-        Table table = $.table(t.getClass());
+        Table table = $.table(entity.getClass());
         update.update(table);
 
         boolean hasIdCondition = false;
 
+        Set<String> forceFields = LambdaUtil.getFieldNames(updateStrategy.getForceFields());
         for (int i = 0; i < tableInfo.getFieldSize(); i++) {
             TableFieldInfo tableFieldInfo = tableInfo.getTableFieldInfos().get(i);
-
-            Object value = tableFieldInfo.getValue(t);
+            Object value = tableFieldInfo.getValue(entity);
 
             if (tableFieldInfo.isTableId()) {
                 if (Objects.nonNull(value)) {
@@ -72,13 +93,13 @@ public class EntityUpdateCmdCreateUtil {
                 //乐观锁条件
                 update.$where().extConditionChain().eq($.field(table, tableFieldInfo.getColumnName()), Methods.cmd(value));
                 //乐观锁回写
-                TableInfoUtil.setValue(tableFieldInfo, t, version);
+                TableInfoUtil.setValue(tableFieldInfo, entity, version);
                 continue;
             }
 
             if (!StringPool.EMPTY.equals(tableFieldInfo.getTableFieldAnnotation().updateDefaultValue())) {
                 //读取回填 修改默认值
-                value = DefaultValueUtil.getAndSetUpdateDefaultValue(t, tableFieldInfo);
+                value = DefaultValueUtil.getAndSetUpdateDefaultValue(entity, tableFieldInfo);
             }
 
             boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(tableFieldInfo.getField().getName());
@@ -86,7 +107,7 @@ public class EntityUpdateCmdCreateUtil {
                 continue;
             }
 
-            if (isForceUpdate || allFieldForce) {
+            if (isForceUpdate || updateStrategy.isAllFieldUpdate()) {
                 if (Objects.isNull(value)) {
                     update.set($.field(table, tableFieldInfo.getColumnName()), NULL.NULL);
                     continue;
@@ -100,22 +121,9 @@ public class EntityUpdateCmdCreateUtil {
             }
         }
 
-        if (!hasIdCondition) {
-            if (update.getWhere() == null || !update.getWhere().hasContent()) {
-                throw new RuntimeException("update has no where condition content ");
-            }
-        }
-        return update;
-    }
-
-    public static Update create(TableInfo tableInfo, Object entity, boolean allFieldForce, Set<String> forceFields) {
-        return warp(new Update(), tableInfo, entity, forceFields, allFieldForce);
-    }
-
-    public static Update create(TableInfo tableInfo, Object entity, Where where, boolean allFieldForce, Set<String> forceFields) {
-        if (Objects.isNull(where) || !where.hasContent()) {
+        if (!hasIdCondition && !hasPostWhere) {
             throw new RuntimeException("update has no where condition content ");
         }
-        return warp(new Update(where), tableInfo, entity, forceFields, allFieldForce);
+        return update;
     }
 }

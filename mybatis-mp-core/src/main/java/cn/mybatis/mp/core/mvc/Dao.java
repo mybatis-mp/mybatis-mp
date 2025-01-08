@@ -17,6 +17,7 @@ package cn.mybatis.mp.core.mvc;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 
@@ -237,6 +238,15 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> saveBatchStrategy);
+
+    /**
+     * 实体类修改
+     *
+     * @param entity         实体类对象
+     * @param updateStrategy 策略
+     * @return
+     */
+    int updateWithStrategy(T entity, Consumer<UpdateStrategy<T>> updateStrategy);
     /**
      * 实体类修改
      *

@@ -15,35 +15,41 @@
 package cn.mybatis.mp.core.mybatis.mapper.context.strategy;
 
 import db.sql.api.Getter;
+import db.sql.api.cmd.basic.IConflictAction;
 import db.sql.api.impl.cmd.struct.Where;
+import db.sql.api.tookit.LambdaUtil;
 
+import java.util.Set;
 import java.util.function.Consumer;
 
 @lombok.Getter
-public class SaveOrUpdateStrategy<T> {
+public class UpdateStrategy<T> {
 
-    private boolean allField;
+    private boolean allFieldUpdate;
 
-    private Getter[] forceFields;
+    private Getter<T>[] forceFields;
 
     private Consumer<Where> on;
 
-    public SaveOrUpdateStrategy<T> allField(boolean allField) {
-        this.allField = allField;
+    private Where where;
+
+    public UpdateStrategy<T> allFieldUpdate(boolean allFieldUpdate) {
+        this.allFieldUpdate = allFieldUpdate;
         return this;
     }
 
-    public SaveOrUpdateStrategy<T> forceFields(Getter<T>... forceFields) {
+    public UpdateStrategy<T> forceFields(Getter<T>... forceFields) {
         this.forceFields = forceFields;
         return this;
     }
 
-    public SaveOrUpdateStrategy<T> on(Consumer<Where> on) {
-        this.on = on;
+    public UpdateStrategy<T> where(Where where){
+        this.where = where;
         return this;
     }
 
-    public Consumer<Where> getOn() {
-        return on;
+    public UpdateStrategy<T> where(Consumer<Where> where){
+        this.on = where;
+        return this;
     }
 }

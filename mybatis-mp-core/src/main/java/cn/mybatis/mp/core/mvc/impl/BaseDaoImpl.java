@@ -23,6 +23,7 @@ import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.*;
 import cn.mybatis.mp.core.sql.executor.chain.DeleteChain;
 import cn.mybatis.mp.core.sql.executor.chain.InsertChain;
@@ -823,59 +824,45 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     }
 
     @Override
+    public int updateWithStrategy(T entity, Consumer<UpdateStrategy<T>> updateStrategy) {
+        if (!getTableInfo().isHasMultiId()) {
+            this.checkIdType();
+        }
+        UpdateStrategy strategy = new UpdateStrategy();
+        updateStrategy.accept(strategy);
+        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, strategy);
+    }
+
+    @Override
     public int update(T entity) {
         return this.update(entity, false);
     }
 
     @Override
     public int update(T entity, boolean allFieldForce) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
-        return UpdateMethodUtil.update(getBasicMapper(), Tables.get(entity.getClass()), entity, allFieldForce, (Getter<T>[]) null);
+        return this.updateWithStrategy(entity, updateStrategy -> {
+            updateStrategy.allFieldUpdate(allFieldForce);
+        });
     }
 
     @Override
     public int update(T entity, Getter<T>... forceFields) {
-        if (!getTableInfo().isHasMultiId()) {
-            this.checkIdType();
-        }
-        return UpdateMethodUtil.update(getBasicMapper(), Tables.get(entity.getClass()), entity, false, forceFields);
+        return this.updateWithStrategy(entity, updateStrategy -> {
+            updateStrategy.forceFields(forceFields);
+        });
     }
 
     /**
      * 动态条件修改
      *
      * @param entity   实体类
-     * @param consumer where
+     * @param where where
      * @return 影响条数
      */
-    protected int update(T entity, Consumer<Where> consumer) {
-        return this.update(entity, false, consumer);
-    }
-
-    /**
-     * 动态条件修改
-     *
-     * @param entity        实体类对象
-     * @param allFieldForce 是否所有字段都修改，如果是null值，则变成NULL
-     * @param consumer      where
-     * @return 影响条数
-     */
-    protected int update(T entity, boolean allFieldForce, Consumer<Where> consumer) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, allFieldForce, null, consumer);
-    }
-
-    /**
-     * 动态where 修改
-     *
-     * @param entity      实体类对象
-     * @param consumer    where
-     * @param forceFields 强制更新指定，解决需要修改为null的需求
-     * @return 影响条数
-     */
-    protected int update(T entity, Consumer<Where> consumer, Getter<T>... forceFields) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, false, forceFields, consumer);
+    protected int update(T entity, Consumer<Where> where) {
+        return this.updateWithStrategy(entity, updateStrategy -> {
+            updateStrategy.where(where);
+        });
     }
 
     /**
@@ -886,31 +873,15 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
      * @return 影响条数
      */
     protected int update(T entity, Where where) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, false, null, where);
+        return this.updateWithStrategy(entity, updateStrategy -> {
+            updateStrategy.where(where);
+        });
     }
 
-    /**
-     * 指定where 修改
-     *
-     * @param entity        实体类对象
-     * @param where         where
-     * @param allFieldForce 是否所有字段都修改，如果是null值，则变成NULL
-     * @return 影响条数
-     */
-    protected int update(T entity, boolean allFieldForce, Where where) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, allFieldForce, null, where);
-    }
-
-    /**
-     * 指定where 修改
-     *
-     * @param entity      实体类对象
-     * @param where       where
-     * @param forceFields 强制更新指定，解决需要修改为null的需求
-     * @return 影响条数
-     */
-    protected int update(T entity, Where where, Getter<T>... forceFields) {
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), entity, false, forceFields, where);
+    public int updateListWithStrategy(Collection<T> list, Consumer<UpdateStrategy<T>> updateStrategy) {
+        UpdateStrategy strategy = new UpdateStrategy();
+        updateStrategy.accept(strategy);
+        return UpdateMethodUtil.updateList(getBasicMapper(), getTableInfo(), list, strategy);
     }
 
     @Override
@@ -923,7 +894,9 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), list, allFieldForce, (Getter<T>[]) null);
+        return this.updateListWithStrategy(list, updateStrategy -> {
+            updateStrategy.allFieldUpdate(allFieldForce);
+        });
     }
 
     @Override
@@ -931,7 +904,9 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
         if (!getTableInfo().isHasMultiId()) {
             this.checkIdType();
         }
-        return UpdateMethodUtil.update(getBasicMapper(), getTableInfo(), list, false, forceFields);
+        return this.updateListWithStrategy(list, updateStrategy -> {
+            updateStrategy.forceFields(forceFields);
+        });
     }
 
     @Override
