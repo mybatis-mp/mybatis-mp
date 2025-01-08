@@ -85,10 +85,14 @@ public class SaveOrUpdateMethodUtil {
                     .forceFields(saveOrUpdateStrategy.getForceFields());
             return SaveMethodUtil.save(basicMapper, tableInfo, entity, saveStrategy);
         } else {
-            tableInfo.getIdFieldInfos().stream().forEach(item -> {
-                TableInfoUtil.setValue(item, entity, TableInfoUtil.getEntityFieldValue(item, obj));
-            });
             UpdateStrategy<T> updateStrategy = new UpdateStrategy<>();
+            if (tableInfo.getIdFieldInfos().isEmpty()) {
+                updateStrategy.on(query.$where());
+            } else {
+                tableInfo.getIdFieldInfos().stream().forEach(item -> {
+                    TableInfoUtil.setValue(item, entity, TableInfoUtil.getEntityFieldValue(item, obj));
+                });
+            }
             updateStrategy
                     .allFieldUpdate(saveOrUpdateStrategy.isAllField())
                     .forceFields(saveOrUpdateStrategy.getForceFields());

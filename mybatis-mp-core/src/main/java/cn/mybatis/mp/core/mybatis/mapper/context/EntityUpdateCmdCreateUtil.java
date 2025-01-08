@@ -20,6 +20,7 @@ import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import cn.mybatis.mp.core.sql.executor.Update;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
+import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.DefaultValueUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
@@ -57,6 +58,7 @@ public class EntityUpdateCmdCreateUtil {
         Set<String> forceFields = LambdaUtil.getFieldNames(updateStrategy.getForceFields());
         for (TableFieldInfo tableFieldInfo : tableInfo.getTableFieldInfos()) {
             Object value = tableFieldInfo.getValue(entity);
+            boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(tableFieldInfo.getField().getName());
             if (tableFieldInfo.isTableId()) {
                 if (Objects.nonNull(value)) {
                     if (update.$where().hasContent()) {
@@ -68,8 +70,20 @@ public class EntityUpdateCmdCreateUtil {
                 }
                 continue;
             } else if (tableFieldInfo.isTenantId()) {
-                //租户ID不修改
-                continue;
+                if (isForceUpdate) {
+                    if (Objects.isNull(value)) {
+                        value = TenantUtil.getTenantId();
+                        if (Objects.isNull(value)) {
+                            //虽然强制 但是租户ID没值 不修改
+                            continue;
+                        }
+                        //租户ID 回填
+                        TenantUtil.setTenantId(tableFieldInfo, entity, value);
+                    }
+                } else {
+                    //租户ID不修改
+                    continue;
+                }
             } else if (tableFieldInfo.isVersion()) {
                 if (Objects.isNull(value)) {
                     //乐观锁字段无值 不增加乐观锁条件
@@ -91,7 +105,7 @@ public class EntityUpdateCmdCreateUtil {
                 value = DefaultValueUtil.getAndSetUpdateDefaultValue(entity, tableFieldInfo);
             }
 
-            boolean isForceUpdate = Objects.nonNull(forceFields) && forceFields.contains(tableFieldInfo.getField().getName());
+
             if (!isForceUpdate && !tableFieldInfo.getTableFieldAnnotation().update()) {
                 continue;
             }

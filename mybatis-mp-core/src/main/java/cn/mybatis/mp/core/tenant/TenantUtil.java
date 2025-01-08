@@ -17,6 +17,7 @@ package cn.mybatis.mp.core.tenant;
 import cn.mybatis.mp.core.db.reflect.*;
 import cn.mybatis.mp.core.sql.executor.MpDatasetField;
 import cn.mybatis.mp.core.sql.executor.MpTable;
+import cn.mybatis.mp.core.util.TypeConvertUtil;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 
@@ -61,6 +62,40 @@ public final class TenantUtil {
     public static Serializable setTenantId(Object entity) {
         TableInfo tableInfo = Tables.get(entity.getClass());
         return setTenantId(tableInfo, entity);
+    }
+
+    /**
+     * 设置租户ID
+     *
+     * @param entity
+     */
+    public static void setTenantId(TableFieldInfo tableFieldInfo, Object entity, Object tenantId) {
+        if (Objects.isNull(tenantId)) {
+            return;
+        }
+        try {
+            tenantId = TypeConvertUtil.convert(tenantId, tableFieldInfo.getFieldInfo().getTypeClass());
+            tableFieldInfo.getWriteFieldInvoker().invoke(entity, new Object[]{tenantId});
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 设置租户ID
+     *
+     * @param entity
+     */
+    public static void setTenantId(ModelFieldInfo modelFieldInfo, Model entity, Object tenantId) {
+        if (Objects.isNull(tenantId)) {
+            return;
+        }
+        try {
+            tenantId = TypeConvertUtil.convert(tenantId, modelFieldInfo.getFieldInfo().getTypeClass());
+            modelFieldInfo.getWriteFieldInvoker().invoke(entity, new Object[]{tenantId});
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
