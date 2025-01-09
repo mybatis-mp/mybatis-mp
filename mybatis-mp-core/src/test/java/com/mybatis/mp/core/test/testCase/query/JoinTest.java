@@ -22,6 +22,7 @@ import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
 import com.mybatis.mp.core.test.testCase.TestDataSource;
+import com.mybatis.mp.core.test.vo.SysUserJoinSelfVo;
 import db.sql.api.DbType;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.impl.cmd.dbFun.FunctionInterface;
@@ -176,6 +177,18 @@ public class JoinTest extends BaseTest {
                     .returnType(Integer.class)
                     .get();
             assertEquals(Integer.valueOf(2), count, "joinSelf");
+
+
+            SysUserJoinSelfVo sysUserJoinSelfVo = QueryChain.of(sysUserMapper)
+                    .from(SysUser.class)
+                    .innerJoin(SysUser::getRole_id, SysRole::getId)
+                    .innerJoin(SysUser.class, 1, SysRole.class, 2, on -> on.eq(SysRole::getId, 2, 2))
+                    .returnType(SysUserJoinSelfVo.class)
+                    .limit(1)
+                    .get();
+            System.out.println(sysUserJoinSelfVo);
+            assertEquals(sysUserJoinSelfVo.getName(), count, "测试");
+            assertEquals(sysUserJoinSelfVo.getName2(), count, "运维");
         }
     }
 
