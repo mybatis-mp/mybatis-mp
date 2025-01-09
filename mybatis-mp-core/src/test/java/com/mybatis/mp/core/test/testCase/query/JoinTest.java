@@ -181,7 +181,7 @@ public class JoinTest extends BaseTest {
 
             SysUserJoinSelfVo sysUserJoinSelfVo = QueryChain.of(sysUserMapper)
                     .from(SysUser.class)
-                    .innerJoin(SysUser::getRole_id, SysRole::getId)
+                    .innerJoin(SysUser::getRole_id, SysRole::getId, on -> on.eq(SysRole::getId, 1))
                     .innerJoin(SysUser.class, 1, SysRole.class, 2, on -> on.eq(SysRole::getId, 2, 2))
                     .returnType(SysUserJoinSelfVo.class)
                     .limit(1)

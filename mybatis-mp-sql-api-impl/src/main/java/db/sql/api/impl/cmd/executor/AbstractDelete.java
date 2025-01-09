@@ -19,7 +19,6 @@ import db.sql.api.Getter;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.basic.IDataset;
-import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.executor.IDelete;
 import db.sql.api.cmd.struct.Joins;
 import db.sql.api.impl.cmd.CmdFactory;
@@ -31,7 +30,6 @@ import db.sql.api.impl.cmd.struct.delete.DeleteTable;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -147,7 +145,7 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
     }
 
     @Override
-    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> Join $join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<On> onConsumer) {
+    public Join $join(JoinMode mode, IDataset<?, ?> mainTable, IDataset<?, ?> secondTable, Consumer<On> onConsumer) {
         Join join = new Join(mode, mainTable, secondTable, (joinDataset -> new On(this.conditionFactory, joinDataset)));
         if (Objects.isNull(joins)) {
             joins = new Joins();
@@ -162,20 +160,13 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
     }
 
     @Override
-    public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<On> consumer) {
+    public SELF join(JoinMode mode, Class<?> mainTable, int mainTableStorey, Class<?> secondTable, int secondTableStorey, Consumer<On> consumer) {
         return this.join(mode, this.$.table(mainTable, mainTableStorey), this.$.table(secondTable, secondTableStorey), consumer);
     }
 
     @Override
-    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF join(JoinMode mode, Class mainTable, int mainTableStorey, DATASET secondTable, Consumer<On> consumer) {
+    public SELF join(JoinMode mode, Class<?> mainTable, int mainTableStorey, IDataset<?, ?> secondTable, Consumer<On> consumer) {
         return this.join(mode, this.$.table(mainTable, mainTableStorey), secondTable, consumer);
-    }
-
-    @Override
-    public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, BiConsumer<Table, On> consumer) {
-        return this.join(mode, mainTable, mainTableStorey, secondTable, secondTableStorey, (on) -> {
-            consumer.accept((Table) on.getJoin().getSecondTable(), on);
-        });
     }
 
     @Override
@@ -200,7 +191,7 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
     }
 
     @Override
-    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> SELF join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<On> consumer) {
+    public SELF join(JoinMode mode, IDataset<?, ?> mainTable, IDataset<?, ?> secondTable, Consumer<On> consumer) {
         $join(mode, mainTable, secondTable, consumer);
         return (SELF) this;
     }

@@ -54,7 +54,7 @@ public interface IQuery<SELF extends IQuery
         extends IWithMethod<SELF>,
         ISelectMethod<SELF, TABLE, TABLE_FIELD, COLUMN>,
         IFromMethod<SELF, TABLE, TABLE_FIELD>,
-        IJoinMethod<SELF, TABLE, JOIN, ON>,
+        IJoinMethod<SELF, JOIN, ON>,
         IWhereMethod<SELF, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         IGroupByMethod<SELF, TABLE, TABLE_FIELD, COLUMN>,
         IHavingMethod<SELF, TABLE, TABLE_FIELD, HAVING>,
@@ -70,7 +70,7 @@ public interface IQuery<SELF extends IQuery
 
     SELECT $select();
 
-    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> FROM $from(IDataset<DATASET, DATASET_FIELD> table);
+    FROM $from(IDataset<?, ?> table);
 
     WHERE $where();
 
@@ -117,14 +117,14 @@ public interface IQuery<SELF extends IQuery
         return (SELF) this;
     }
 
-    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD> table) {
+    default SELF from(IDataset<?, ?> table) {
         $from(table);
         return (SELF) this;
     }
 
     @Override
-    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD>... tables) {
-        for (IDataset<DATASET, DATASET_FIELD> table : tables) {
+    default SELF from(IDataset<?, ?>... tables) {
+        for (IDataset<?, ?> table : tables) {
             $from(table);
         }
         return (SELF) this;

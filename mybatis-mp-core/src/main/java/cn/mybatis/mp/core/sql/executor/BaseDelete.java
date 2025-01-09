@@ -19,7 +19,6 @@ import cn.mybatis.mp.core.mybatis.executor.statement.Timeoutable;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import db.sql.api.Cmd;
 import db.sql.api.cmd.basic.IDataset;
-import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.impl.cmd.executor.AbstractDelete;
 import db.sql.api.impl.cmd.struct.Where;
@@ -65,7 +64,7 @@ public abstract class BaseDelete<T extends BaseDelete<T>> extends AbstractDelete
 
     @Override
     @SafeVarargs
-    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> T delete(IDataset<DATASET, DATASET_FIELD>... tables) {
+    public final T delete(IDataset<?, ?>... tables) {
         return super.delete(tables);
     }
 
@@ -77,7 +76,7 @@ public abstract class BaseDelete<T extends BaseDelete<T>> extends AbstractDelete
 
     @Override
     @SafeVarargs
-    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> T from(IDataset<DATASET, DATASET_FIELD>... tables) {
+    public final T from(IDataset<?, ?>... tables) {
         return super.from(tables);
     }
 
