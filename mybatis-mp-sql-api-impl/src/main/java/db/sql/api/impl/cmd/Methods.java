@@ -36,6 +36,42 @@ import java.util.stream.Collectors;
 public final class Methods {
 
     /**
+     * 创建普通sql模板
+     *
+     * @param template 模板
+     * @param params   参数
+     * @return
+     */
+    @SafeVarargs
+    public static CmdTemplate tpl(String template, Object... params) {
+        return CmdTemplate.create(template, params);
+    }
+
+    /**
+     * 创建函数sql模板
+     *
+     * @param template 模板
+     * @param params   参数
+     * @return
+     */
+    @SafeVarargs
+    public static FunTemplate fTpl(String template, Object... params) {
+        return FunTemplate.create(template, params);
+    }
+
+    /**
+     * 创建条件sql模板
+     *
+     * @param template 模板
+     * @param params   参数
+     * @return
+     */
+    @SafeVarargs
+    public static ConditionTemplate cTpl(String template, Object... params) {
+        return ConditionTemplate.create(template, params);
+    }
+
+    /**
      * 参数包装并转成CMD对象
      *
      * @param column 列
