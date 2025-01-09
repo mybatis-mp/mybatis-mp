@@ -28,6 +28,8 @@ public class SysUserJoinSelfVo {
 
     private String password;
 
+    private Integer role_id;
+
     @ResultEntityField(target = SysRole.class, property = SysRole.Fields.name)
     private String name;
 

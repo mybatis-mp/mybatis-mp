@@ -179,16 +179,40 @@ public class JoinTest extends BaseTest {
             assertEquals(Integer.valueOf(2), count, "joinSelf");
 
 
-            SysUserJoinSelfVo sysUserJoinSelfVo = QueryChain.of(sysUserMapper)
+            List<SysUserJoinSelfVo> list = QueryChain.of(sysUserMapper)
                     .from(SysUser.class)
-                    .innerJoin(SysUser::getRole_id, SysRole::getId, on -> on.eq(SysRole::getId, 1))
-                    .innerJoin(SysUser.class, 1, SysRole.class, 2, on -> on.eq(SysRole::getId, 2, 2))
+                    .leftJoin(SysUser::getRole_id, SysRole::getId, on -> on.eq(SysRole::getId, 2))
+                    .leftJoin(SysUser.class, 1, SysRole.class, 2, on -> on.eq(SysRole::getId, 2, 2))
                     .returnType(SysUserJoinSelfVo.class)
-                    .limit(1)
-                    .get();
-            System.out.println(sysUserJoinSelfVo);
-            assertEquals(sysUserJoinSelfVo.getName(), "测试");
-            assertEquals(sysUserJoinSelfVo.getName2(), "运维");
+                    .list();
+            System.out.println(list);
+
+            assertEquals(list.get(0).getName(), null);
+            assertEquals(list.get(0).getName2(), "运维");
+
+            assertEquals(list.get(1).getName(), "运维");
+            assertEquals(list.get(1).getName2(), "运维");
+
+            assertEquals(list.get(2).getName(), "运维");
+            assertEquals(list.get(2).getName2(), "运维");
+
+
+            list = QueryChain.of(sysUserMapper)
+                    .from(SysUser.class)
+                    .leftJoin(SysUser::getRole_id, SysRole::getId)
+                    .leftJoin(SysUser.class, 1, SysRole.class, 2, on -> on.eq(SysRole::getId, 2, 2))
+                    .returnType(SysUserJoinSelfVo.class)
+                    .list();
+            System.out.println(list);
+
+            assertEquals(list.get(0).getName(), null);
+            assertEquals(list.get(0).getName2(), "运维");
+
+            assertEquals(list.get(1).getName(), "测试");
+            assertEquals(list.get(1).getName2(), "运维");
+
+            assertEquals(list.get(2).getName(), "测试");
+            assertEquals(list.get(2).getName2(), "运维");
         }
     }
 
