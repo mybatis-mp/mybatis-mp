@@ -157,9 +157,6 @@ public class ResultInfo {
                         throw new NotTableClassException(entity);
                     }
                 } else {
-                    if (resultEntity.storey() != resultEntityField.storey()) {
-                        throw new RuntimeException(" class:" + clazz.getName() + ", the field:" + field.getName() + " config @ResultEntityField(storey) error");
-                    }
                     entity = resultEntity.value();
                     storey = resultEntity.storey();
                     tableInfo = resultEntityTableInfo;
