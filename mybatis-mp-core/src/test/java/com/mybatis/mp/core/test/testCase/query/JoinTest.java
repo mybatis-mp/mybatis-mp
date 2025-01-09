@@ -181,19 +181,19 @@ public class JoinTest extends BaseTest {
 
             List<SysUserJoinSelfVo> list = QueryChain.of(sysUserMapper)
                     .from(SysUser.class)
-                    .leftJoin(SysUser::getRole_id, SysRole::getId, on -> on.eq(SysRole::getId, 2))
+                    .leftJoin(SysUser::getRole_id, SysRole::getId, on -> on.or().eq(SysRole::getId, 1))
                     .leftJoin(SysUser.class, 1, SysRole.class, 2, on -> on.eq(SysRole::getId, 2, 2))
                     .returnType(SysUserJoinSelfVo.class)
                     .list();
             System.out.println(list);
 
-            assertEquals(list.get(0).getName(), null);
+            assertEquals(list.get(0).getName(), "测试");
             assertEquals(list.get(0).getName2(), "运维");
 
-            assertEquals(list.get(1).getName(), "运维");
+            assertEquals(list.get(1).getName(), "测试");
             assertEquals(list.get(1).getName2(), "运维");
 
-            assertEquals(list.get(2).getName(), "运维");
+            assertEquals(list.get(2).getName(), "测试");
             assertEquals(list.get(2).getName2(), "运维");
 
 
