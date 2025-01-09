@@ -187,8 +187,8 @@ public class JoinTest extends BaseTest {
                     .limit(1)
                     .get();
             System.out.println(sysUserJoinSelfVo);
-            assertEquals(sysUserJoinSelfVo.getName(), count, "测试");
-            assertEquals(sysUserJoinSelfVo.getName2(), count, "运维");
+            assertEquals(sysUserJoinSelfVo.getName(), "测试");
+            assertEquals(sysUserJoinSelfVo.getName2(), "运维");
         }
     }
 
