@@ -101,7 +101,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     public AbstractQuery(CMD_FACTORY $) {
         this.$ = $;
-        this.conditionFactory = new ConditionFactory($);
+        this.conditionFactory = $.createConditionFactory();
     }
 
     public AbstractQuery(Where where) {

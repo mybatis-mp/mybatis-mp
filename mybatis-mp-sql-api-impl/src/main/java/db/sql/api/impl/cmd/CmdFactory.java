@@ -53,10 +53,13 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
                 (tableNums == 1 ? "" : tableNums);
     }
 
+    public ConditionFactory createConditionFactory() {
+        return new ConditionFactory(this);
+    }
+
     public Table cacheTable(Class<?> entity, int storey) {
         return this.tableCache.get(storey + entity.getName());
     }
-
 
     @Override
     public Table table(Class<?> entity, int storey) {

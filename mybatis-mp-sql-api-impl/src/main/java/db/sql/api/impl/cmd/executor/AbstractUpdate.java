@@ -67,7 +67,7 @@ public abstract class AbstractUpdate<SELF extends AbstractUpdate<SELF, CMD_FACTO
 
     public AbstractUpdate(CMD_FACTORY $) {
         this.$ = $;
-        this.conditionFactory = new ConditionFactory($);
+        this.conditionFactory = $.createConditionFactory();
     }
 
     public AbstractUpdate(Where where) {

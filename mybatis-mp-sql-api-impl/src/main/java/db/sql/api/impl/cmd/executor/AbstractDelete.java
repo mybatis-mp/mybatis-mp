@@ -53,7 +53,7 @@ public abstract class AbstractDelete<SELF extends AbstractDelete<SELF, CMD_FACTO
 
     public AbstractDelete(CMD_FACTORY $) {
         this.$ = $;
-        this.conditionFactory = new ConditionFactory($);
+        this.conditionFactory = $.createConditionFactory();
     }
 
     public AbstractDelete(Where where) {

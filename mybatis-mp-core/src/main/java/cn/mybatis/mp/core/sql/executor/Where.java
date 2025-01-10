@@ -18,7 +18,6 @@ import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import db.sql.api.DbType;
 import db.sql.api.SQLMode;
 import db.sql.api.SqlBuilderContext;
-import db.sql.api.impl.cmd.ConditionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,7 @@ public final class Where extends db.sql.api.impl.cmd.struct.Where {
     private List<Object> scriptParams;
 
     public Where() {
-        super(new ConditionFactory(new MybatisCmdFactory()));
+        super(new MybatisCmdFactory().createConditionFactory());
     }
 
     public static Where create() {

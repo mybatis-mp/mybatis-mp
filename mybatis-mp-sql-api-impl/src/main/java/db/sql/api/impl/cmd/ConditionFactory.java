@@ -20,6 +20,7 @@ import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.cmd.executor.method.condition.IConditionMethods;
+import db.sql.api.impl.cmd.struct.ConditionChain;
 import db.sql.api.impl.exception.ConditionArrayValueEmptyException;
 import db.sql.api.impl.exception.ConditionValueNullException;
 import db.sql.api.impl.tookit.SqlConst;
@@ -37,6 +38,10 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
 
     public ConditionFactory(CmdFactory cmdFactory) {
         this.cmdFactory = cmdFactory;
+    }
+
+    public ConditionChain newConditionChain(ConditionChain parent) {
+        return new ConditionChain(this, parent);
     }
 
     public CmdFactory getCmdFactory() {

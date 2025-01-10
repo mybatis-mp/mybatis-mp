@@ -18,11 +18,13 @@ import cn.mybatis.mp.core.db.reflect.*;
 import cn.mybatis.mp.core.sql.executor.MpDatasetField;
 import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.core.sql.executor.MpTableField;
+import cn.mybatis.mp.core.sql.executor.MybatisConditionFactory;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.impl.cmd.CmdFactory;
+import db.sql.api.impl.cmd.ConditionFactory;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.tookit.LambdaUtil;
@@ -55,6 +57,11 @@ public class MybatisCmdFactory extends CmdFactory {
 
     public void cacheTableInfo(TableInfo tableInfo) {
         tableInfoCache.put(tableInfo.getType(), tableInfo);
+    }
+
+    @Override
+    public ConditionFactory createConditionFactory() {
+        return new MybatisConditionFactory(this);
     }
 
     @Override
