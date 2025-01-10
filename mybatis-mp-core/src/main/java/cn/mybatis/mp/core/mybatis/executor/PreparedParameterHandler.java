@@ -22,6 +22,7 @@ import cn.mybatis.mp.core.mybatis.typeHandler.MybatisTypeHandlerUtil;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -45,60 +46,79 @@ public class PreparedParameterHandler implements ParameterHandler {
         return parameterContext;
     }
 
+
+    private int setParameters(PreparedStatement ps, int index, Object value, TypeHandler typeHandler, JdbcType jdbcType) throws SQLException {
+        if (Objects.isNull(value)) {
+            ps.setNull(++index, Types.NULL);
+            return index;
+        }
+
+        if (jdbcType == JdbcType.UNDEFINED) {
+            jdbcType = null;
+        }
+
+        if (value instanceof Supplier) {
+            return setParameters(ps, index, ((Supplier<?>) value).get(), typeHandler, jdbcType);
+        }
+
+        if (value instanceof MybatisLikeQueryParameter) {
+            MybatisLikeQueryParameter parameter = (MybatisLikeQueryParameter) value;
+            Object realValue = parameter.getValue();
+            if (realValue == null) {
+                return setParameters(ps, index, null, null, null);
+            }
+
+            if (typeHandler == null || parameter.getTypeHandler() != typeHandler.getClass()) {
+                typeHandler = MybatisTypeHandlerUtil.getTypeHandler(this.configuration, realValue.getClass(), parameter.getTypeHandler());
+            }
+
+            if (typeHandler instanceof LikeQuerySupport) {
+                LikeQuerySupport querySupport = (LikeQuerySupport) typeHandler;
+                querySupport.setLikeParameter(parameter.getLikeMode(), parameter.isNotLike(), ps, ++index, parameter.getValue(), jdbcType);
+                return index;
+            }
+            return setParameters(ps, index, parameter.getValue(), typeHandler, parameter.getJdbcType());
+        }
+
+        if (value instanceof MybatisParameter) {
+            MybatisParameter parameter = (MybatisParameter) value;
+            Object realValue = parameter.getValue();
+            if (realValue == null) {
+                return setParameters(ps, index, null, null, null);
+            }
+            if (parameter.getTypeHandler() == null) {
+                return setParameters(ps, index, parameter.getValue(), null, parameter.getJdbcType());
+            }
+            if (parameter.getTypeHandler() == null || parameter.getTypeHandler() == UnknownTypeHandler.class) {
+                return setParameters(ps, index, parameter.getValue(), null, parameter.getJdbcType());
+            }
+            if (typeHandler == null || parameter.getTypeHandler() != typeHandler.getClass()) {
+                typeHandler = MybatisTypeHandlerUtil.getTypeHandler(this.configuration, realValue.getClass(), parameter.getTypeHandler());
+            }
+            return setParameters(ps, index, parameter.getValue(), typeHandler, parameter.getJdbcType());
+        }
+
+        if (typeHandler == null) {
+            typeHandler = this.configuration.getTypeHandlerRegistry().getTypeHandler(value.getClass());
+        }
+
+        if (typeHandler == null) {
+            ps.setObject(++index, value);
+            return index;
+        }
+
+        typeHandler.setParameter(ps, ++index, value, jdbcType);
+        return index;
+    }
+
     @Override
     public void setParameters(PreparedStatement ps) throws SQLException {
         Object[] params = parameterContext.getParameters();
         int length = params.length;
+        int index = 0;
         for (int i = 0; i < length; i++) {
             Object value = params[i];
-            if (Objects.isNull(value)) {
-                ps.setNull(i + 1, Types.NULL);
-                continue;
-            }
-            if (value instanceof MybatisLikeQueryParameter) {
-                MybatisLikeQueryParameter parameter = (MybatisLikeQueryParameter) value;
-                Object realValue = parameter.getValue();
-                if (value instanceof Supplier) {
-                    realValue = ((Supplier<?>) value).get();
-                }
-                if (Objects.isNull(realValue)) {
-                    ps.setNull(i + 1, Types.NULL);
-                    continue;
-                }
-                LikeQuerySupport typeHandler = (LikeQuerySupport) MybatisTypeHandlerUtil.getTypeHandler(this.configuration, realValue.getClass(), parameter.getTypeHandler());
-                JdbcType jdbcType = parameter.getJdbcType();
-                if (jdbcType == JdbcType.UNDEFINED && realValue.getClass().isEnum()) {
-                    jdbcType = null;
-                }
-                typeHandler.setLikeParameter(parameter.getLikeMode(), parameter.isNotLike(), ps, i + 1, realValue, jdbcType);
-            } else if (value instanceof MybatisParameter) {
-                MybatisParameter parameter = (MybatisParameter) value;
-                Object realValue = parameter.getValue();
-                if (value instanceof Supplier) {
-                    realValue = ((Supplier<?>) value).get();
-                }
-                if (Objects.isNull(realValue)) {
-                    ps.setNull(i + 1, Types.NULL);
-                    continue;
-                }
-                TypeHandler typeHandler = MybatisTypeHandlerUtil.getTypeHandler(this.configuration, realValue.getClass(), parameter.getTypeHandler());
-                JdbcType jdbcType = parameter.getJdbcType();
-                if (jdbcType == JdbcType.UNDEFINED && realValue.getClass().isEnum()) {
-                    jdbcType = null;
-                }
-                typeHandler.setParameter(ps, i + 1, realValue, jdbcType);
-            } else {
-                TypeHandler typeHandler = configuration.getTypeHandlerRegistry().getTypeHandler(value.getClass());
-                if (typeHandler != null) {
-                    JdbcType jdbcType = JdbcType.UNDEFINED;
-                    if (value.getClass().isEnum()) {
-                        jdbcType = null;
-                    }
-                    typeHandler.setParameter(ps, i + 1, value, jdbcType);
-                } else {
-                    ps.setObject(i + 1, value);
-                }
-            }
+            index = setParameters(ps, index, value, null, null);
         }
     }
 }

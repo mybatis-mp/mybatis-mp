@@ -183,6 +183,7 @@ public class JoinTest extends BaseTest {
                     .from(SysUser.class)
                     .leftJoin(SysUser::getRole_id, SysRole::getId, on -> on.or().eq(SysRole::getId, 1))
                     .leftJoin(SysUser.class, 1, SysRole.class, 2, on -> on.eq(SysRole::getId, 2, 2))
+                    .orderBy(SysUser::getId)
                     .returnType(SysUserJoinSelfVo.class)
                     .list();
             System.out.println(list);
@@ -201,6 +202,7 @@ public class JoinTest extends BaseTest {
                     .from(SysUser.class)
                     .leftJoin(SysUser::getRole_id, SysRole::getId)
                     .leftJoin(SysUser.class, 1, SysRole.class, 2, on -> on.eq(SysRole::getId, 2, 2))
+                    .orderBy(SysUser::getId)
                     .returnType(SysUserJoinSelfVo.class)
                     .list();
             System.out.println(list);

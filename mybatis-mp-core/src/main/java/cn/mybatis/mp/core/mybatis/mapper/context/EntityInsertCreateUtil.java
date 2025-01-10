@@ -22,6 +22,8 @@ import cn.mybatis.mp.core.incrementer.IdentifierGeneratorFactory;
 import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.mybatis.mp.core.sql.executor.BaseInsert;
 import cn.mybatis.mp.core.sql.executor.Insert;
+import cn.mybatis.mp.core.sql.executor.MpTable;
+import cn.mybatis.mp.core.sql.executor.MpTableField;
 import cn.mybatis.mp.core.tenant.TenantUtil;
 import cn.mybatis.mp.core.util.DefaultValueUtil;
 import cn.mybatis.mp.core.util.StringPool;
@@ -33,7 +35,6 @@ import cn.mybatis.mp.db.annotations.TableId;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.NULL;
-import db.sql.api.impl.cmd.basic.Table;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class EntityInsertCreateUtil {
         insert = insert == null ? new Insert() : insert;
 
         insert.$().cacheTableInfo(tableInfo);
-        Table table = insert.$().table(tableInfo.getType());
+        MpTable table = (MpTable) insert.$().table(tableInfo.getType());
         insert.insert(table);
 
         //设置租户ID
@@ -112,7 +113,7 @@ public class EntityInsertCreateUtil {
             }
 
             if (isNeedInsert) {
-                insert.fields(insert.$().field(table, tableFieldInfo.getColumnName(), tableFieldInfo.isTableId()));
+                insert.fields(new MpTableField(table, tableFieldInfo));
                 if (Objects.isNull(value)) {
                     values.add(NULL.NULL);
                 } else {

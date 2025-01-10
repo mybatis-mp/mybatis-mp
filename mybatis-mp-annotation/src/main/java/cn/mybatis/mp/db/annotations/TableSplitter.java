@@ -12,21 +12,23 @@
  *
  */
 
-package db.sql.api.impl.cmd.condition;
+package cn.mybatis.mp.db.annotations;
 
+public interface TableSplitter {
+    /**
+     * 支持值的类型
+     *
+     * @param type
+     * @return
+     */
+    boolean support(Class<?> type);
 
-import db.sql.api.Cmd;
-import db.sql.api.impl.cmd.basic.Condition;
-
-public abstract class BaseCondition<COLUMN extends Cmd, V> implements Condition<COLUMN, V> {
-
-    private final char[] operator;
-
-    public BaseCondition(char[] operator) {
-        this.operator = operator;
-    }
-
-    public char[] getOperator() {
-        return operator;
-    }
+    /**
+     * 分隔
+     *
+     * @param sourceTableName 原表名
+     * @param splitValue      分隔key的值
+     * @return 分隔后的表面
+     */
+    String split(String sourceTableName, Object splitValue);
 }

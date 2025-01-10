@@ -12,21 +12,10 @@
  *
  */
 
-package db.sql.api.impl.cmd.condition;
+package com.mybatis.mp.core.test.mapper;
 
+import cn.mybatis.mp.core.mybatis.mapper.MybatisMapper;
+import com.mybatis.mp.core.test.DO.SplitTableTest;
 
-import db.sql.api.Cmd;
-import db.sql.api.impl.cmd.basic.Condition;
-
-public abstract class BaseCondition<COLUMN extends Cmd, V> implements Condition<COLUMN, V> {
-
-    private final char[] operator;
-
-    public BaseCondition(char[] operator) {
-        this.operator = operator;
-    }
-
-    public char[] getOperator() {
-        return operator;
-    }
+public interface SplitTableTestMapper extends MybatisMapper<SplitTableTest> {
 }

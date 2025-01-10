@@ -22,7 +22,7 @@ import db.sql.api.impl.cmd.dbFun.If;
 
 import java.io.Serializable;
 
-public interface Condition<Field, Value> extends ICondition, Cmd {
+public interface Condition<Field extends Cmd, Value> extends ICondition, Cmd {
     char[] getOperator();
 
     Field getField();

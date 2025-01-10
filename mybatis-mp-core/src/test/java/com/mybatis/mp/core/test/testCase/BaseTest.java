@@ -119,6 +119,7 @@ public class BaseTest {
         configuration.addMapper(MultiPkMapper.class);
         configuration.addMapper(DbRunner.class);
         configuration.addMapper(SysUserIDMapper.class);
+        configuration.addMapper(SplitTableTestMapper.class);
 
 
         String mapperLocations = "classpath:/mappers/**.xml";

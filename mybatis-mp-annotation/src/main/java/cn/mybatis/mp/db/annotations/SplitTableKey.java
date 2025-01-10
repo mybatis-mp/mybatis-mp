@@ -12,21 +12,17 @@
  *
  */
 
-package db.sql.api.impl.cmd.condition;
+package cn.mybatis.mp.db.annotations;
 
+import java.lang.annotation.*;
 
-import db.sql.api.Cmd;
-import db.sql.api.impl.cmd.basic.Condition;
+/**
+ * 分表列字段注解
+ */
 
-public abstract class BaseCondition<COLUMN extends Cmd, V> implements Condition<COLUMN, V> {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface SplitTableKey {
 
-    private final char[] operator;
-
-    public BaseCondition(char[] operator) {
-        this.operator = operator;
-    }
-
-    public char[] getOperator() {
-        return operator;
-    }
 }

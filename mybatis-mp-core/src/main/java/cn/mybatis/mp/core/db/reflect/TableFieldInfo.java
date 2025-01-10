@@ -72,6 +72,8 @@ public class TableFieldInfo {
 
     private final TypeHandler<?> typeHandler;
 
+    private final boolean isTableSplitKey;
+
     public TableFieldInfo(Class clazz, Table tableAnnotation, Field field) {
         this.field = field;
         this.fieldInfo = new FieldInfo(clazz, field);
@@ -89,6 +91,7 @@ public class TableFieldInfo {
         }
         this.writeFieldInvoker = new SetFieldInvoker(field);
         typeHandler = MybatisTypeHandlerUtil.createTypeHandler(this.fieldInfo, this.tableFieldAnnotation.typeHandler());
+        this.isTableSplitKey = field.isAnnotationPresent(SplitTableKey.class);
     }
 
     public Object getValue(Object object) {
@@ -149,5 +152,9 @@ public class TableFieldInfo {
 
     public FieldInfo getFieldInfo() {
         return fieldInfo;
+    }
+
+    public boolean isTableSplitKey() {
+        return isTableSplitKey;
     }
 }

@@ -12,6 +12,39 @@
  *
  */
 
+drop table if exists split_table_1;
+
+CREATE TABLE IF NOT EXISTS split_table_1
+(
+    id INTEGER PRIMARY KEY auto_increment,
+    split_id INTEGER not null,
+    name varchar(10)
+);
+
+drop table if exists split_table_2;
+
+CREATE TABLE IF NOT EXISTS split_table_2
+(
+    id INTEGER PRIMARY KEY auto_increment,
+    split_id INTEGER not null,
+    name varchar(10)
+);
+
+drop table if exists split_table_3;
+
+CREATE TABLE IF NOT EXISTS split_table_3
+(
+    id INTEGER PRIMARY KEY auto_increment,
+    split_id INTEGER not null,
+    name varchar(10)
+);
+
+insert into split_table_1(split_id) values(1);
+insert into split_table_2(split_id) values(2);
+insert into split_table_2(split_id) values(3);
+insert into split_table_3(split_id) values(4);
+
+
 drop table if exists t_sys_user;
 
 CREATE TABLE IF NOT EXISTS t_sys_user

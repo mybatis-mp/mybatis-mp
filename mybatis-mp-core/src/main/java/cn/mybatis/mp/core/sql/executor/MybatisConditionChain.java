@@ -14,8 +14,10 @@
 
 package cn.mybatis.mp.core.sql.executor;
 
+import cn.mybatis.mp.core.sql.TableSplitUtil;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.impl.cmd.ConditionFactory;
+import db.sql.api.impl.cmd.basic.Condition;
 import db.sql.api.impl.cmd.basic.Connector;
 import db.sql.api.impl.cmd.struct.ConditionChain;
 
@@ -32,5 +34,29 @@ public class MybatisConditionChain extends ConditionChain {
     @Override
     protected void appendCondition(Connector connector, ICondition condition) {
         super.appendCondition(connector, condition);
+        this.handleTableSplit(condition);
+    }
+
+    private void handleTableSplit(ICondition condition) {
+        if (!(condition instanceof Condition)) {
+            return;
+        }
+        Condition c = (Condition) condition;
+        if (!(c.getField() instanceof MpTableField)) {
+            return;
+        }
+        MpTableField tableField = (MpTableField) c.getField();
+        if (!tableField.getTableFieldInfo().isTableSplitKey()) {
+            return;
+        }
+        MpTable table = (MpTable) tableField.getTable();
+        if (!table.getTableInfo().isSplitTable()) {
+            return;
+        }
+        if (!table.getTableInfo().getTableName().equals(table.getName())) {
+            //这里已经修改过了
+            return;
+        }
+        TableSplitUtil.splitHandle(table, c.getValue());
     }
 }
