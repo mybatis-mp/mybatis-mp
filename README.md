@@ -91,7 +91,7 @@ https://gitee.com/mybatis-mp/mybatis-mp-spring-boot-demo
         <dependency>
             <groupId>cn.mybatis-mp</groupId>
             <artifactId>mybatis-mp-spring-boot-parent</artifactId>
-            <version>1.7.9-RC9</version>
+            <version>1.7.9-RC10</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -116,7 +116,7 @@ https://gitee.com/mybatis-mp/mybatis-mp-spring-boot-demo
         <dependency>
             <groupId>cn.mybatis-mp</groupId>
             <artifactId>mybatis-mp-spring-boot-parent</artifactId>
-            <version>1.7.9-RC9-spring-boot3</version>
+            <version>1.7.9-RC10-spring-boot3</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
