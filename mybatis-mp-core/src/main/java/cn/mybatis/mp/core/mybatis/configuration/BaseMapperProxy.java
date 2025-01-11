@@ -51,7 +51,7 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
 
     public final static String CURRENT_DB_TYPE_METHOD_NAME = "getCurrentDbType";
 
-    public final static String WITH_SQLSESSION_METHOD_NAME = "withSqlSession";
+    public final static String WITH_SQL_SESSION_METHOD_NAME = "withSqlSession";
 
     protected final SqlSession sqlSession;
 
@@ -125,24 +125,41 @@ public class BaseMapperProxy<T> extends MapperProxy<T> {
                 return paging(method, args);
             } else if (method.getName().equals(CURRENT_DB_TYPE_METHOD_NAME)) {
                 return this.getDbType();
-            } else if (method.getName().equals(WITH_SQLSESSION_METHOD_NAME)) {
+            } else if (method.getName().equals(WITH_SQL_SESSION_METHOD_NAME)) {
                 this.wrapperParams(method, args);
                 if (args.length == 1) {
                     Function<SqlSession, ?> function = (Function<SqlSession, ?>) args[0];
                     return function.apply(this.sqlSession);
                 }
 
-                String statement = (String) args[0];
-                if (statement.startsWith(".")) {
-                    statement = MybatisMpConfig.getSingleMapperClass().getName() + statement;
+                String statement;
+                if (args.length == 4) {
+                    statement = MybatisMpConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
+                } else {
+                    if (args[0] instanceof String) {
+                        statement = (String) args[0];
+                        if (statement.startsWith(".")) {
+                            statement = MybatisMpConfig.getSingleMapperClass().getName() + statement;
+                        }
+                    } else {
+                        statement = MybatisMpConfig.getSingleMapperClass().getName() + "." + ((Class) args[0]).getSimpleName() + ":" + args[1];
+                    }
                 }
 
                 if (args.length == 2) {
                     BiFunction<String, SqlSession, ?> function = (BiFunction<String, SqlSession, ?>) args[1];
                     return function.apply(statement, this.sqlSession);
                 } else if (args.length == 3) {
-                    ThreeFunction<String, Object, SqlSession, ?> function = (ThreeFunction<String, Object, SqlSession, ?>) args[2];
-                    return function.apply(statement, args[1], this.sqlSession);
+                    if (args[0] instanceof String) {
+                        ThreeFunction<String, Object, SqlSession, ?> function = (ThreeFunction<String, Object, SqlSession, ?>) args[2];
+                        return function.apply(statement, args[1], this.sqlSession);
+                    } else {
+                        BiFunction<String, SqlSession, ?> function = (BiFunction<String, SqlSession, ?>) args[2];
+                        return function.apply(statement, this.sqlSession);
+                    }
+                } else if (args.length == 4) {
+                    ThreeFunction<String, Object, SqlSession, ?> function = (ThreeFunction<String, Object, SqlSession, ?>) args[3];
+                    return function.apply(statement, args[2], this.sqlSession);
                 } else {
                     throw new RuntimeException("NOT SUPPORTED");
                 }
