@@ -219,8 +219,9 @@ public final class MybatisMpConfig {
 
     /**
      * 获取默认值
+     *
      * @param clazz 字段所在的class
-     * @param type 默认值的类型
+     * @param type  默认值的类型
      * @param key   默认值的key，key必须以{}包裹，例如:{NOW}
      * @param <T>   类型clazz的泛型
      * @return 返回指定类型clazz key的默认值

@@ -39,6 +39,7 @@ public interface SaveOrUpdateModelBasicMapper extends BaseBasicMapper {
         saveOrUpdateStrategy.accept(strategy);
         return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), model, strategy);
     }
+
     /**
      * 实体类Model新增或修改
      * 先查是否存在，再进行新增或修改

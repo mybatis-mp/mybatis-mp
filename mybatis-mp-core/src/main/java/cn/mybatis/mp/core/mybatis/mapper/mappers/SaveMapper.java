@@ -132,7 +132,7 @@ public interface SaveMapper<T> extends BaseMapper<T> {
      * 使用数据库原生方式批量插入
      * 一次最好在100条内
      *
-     * @param list     需要插入数据
+     * @param list              需要插入数据
      * @param saveBatchStrategy 插入策略
      * @return 影响条数
      */

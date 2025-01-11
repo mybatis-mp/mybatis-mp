@@ -284,6 +284,7 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     int update(Collection<T> list, UpdateStrategy<T> updateStrategy);
+
     /**
      * 实体类修改
      *
@@ -356,6 +357,7 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     <M extends Model<T>> int updateModel(Collection<M> list, Consumer<UpdateStrategy<M>> updateStrategy);
+
     /**
      * 实体类Model修改
      *
@@ -390,6 +392,7 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     int saveOrUpdate(T entity, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy);
+
     /**
      * 实体类保存或修改
      *

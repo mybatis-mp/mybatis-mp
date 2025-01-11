@@ -73,8 +73,8 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
     /**
      * 动态条件修改
      *
-     * @param entity   实体类
-     * @param where where
+     * @param entity 实体类
+     * @param where  where
      * @return 影响条数
      */
     default int update(T entity, Consumer<Where> where) {
@@ -88,7 +88,7 @@ public interface UpdateMapper<T> extends BaseMapper<T> {
      *
      * @param entity        实体类对象
      * @param allFieldForce 是否所有字段都修改，如果是null值，则变成NULL
-     * @param where      where
+     * @param where         where
      * @return 影响条数
      */
     default int update(T entity, boolean allFieldForce, Consumer<Where> where) {

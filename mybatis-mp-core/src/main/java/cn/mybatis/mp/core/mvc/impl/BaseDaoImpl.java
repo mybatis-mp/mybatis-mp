@@ -845,8 +845,8 @@ public abstract class BaseDaoImpl<M extends BaseMapper, T, ID> implements Dao<T,
     /**
      * 动态条件修改
      *
-     * @param entity   实体类
-     * @param where where
+     * @param entity 实体类
+     * @param where  where
      * @return 影响条数
      */
     protected int update(T entity, Consumer<Where> where) {

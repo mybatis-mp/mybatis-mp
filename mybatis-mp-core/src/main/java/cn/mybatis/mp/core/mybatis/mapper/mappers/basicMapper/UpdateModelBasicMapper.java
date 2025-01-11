@@ -125,7 +125,7 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
     /**
      * 动态条件修改
      *
-     * @param model    实体类
+     * @param model 实体类
      * @param where where
      * @return 影响条数
      */
@@ -140,7 +140,7 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
      *
      * @param model         实体类Model对象
      * @param allFieldForce 所有字段都强制保存
-     * @param where      where
+     * @param where         where
      * @return 影响条数
      */
     default <T, M extends Model<T>> int update(M model, boolean allFieldForce, Consumer<Where> where) {

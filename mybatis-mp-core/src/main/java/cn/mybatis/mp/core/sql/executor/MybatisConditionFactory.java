@@ -26,6 +26,6 @@ public class MybatisConditionFactory extends ConditionFactory {
 
     @Override
     public ConditionChain newConditionChain(ConditionChain parent) {
-        return new MybatisConditionChain(this,parent);
+        return new MybatisConditionChain(this, parent);
     }
 }

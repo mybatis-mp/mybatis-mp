@@ -50,9 +50,9 @@ public interface Function<T> extends Cmd, Alias<T> {
     /**
      * 函数的sql
      *
-     * @param module 所属模块
-     * @param parent 引用对象 - 父节点
-     * @param context sql 上下文
+     * @param module     所属模块
+     * @param parent     引用对象 - 父节点
+     * @param context    sql 上下文
      * @param sqlBuilder sql 拼接对象
      * @return
      */

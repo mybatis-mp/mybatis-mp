@@ -88,7 +88,7 @@ public interface UpdateModelMapper<T> extends BaseMapper<T> {
      *
      * @param model         实体类对象
      * @param allFieldForce 所有字段都强制保存
-     * @param where      where
+     * @param where         where
      * @return 影响条数
      */
     default <M extends Model<T>> int update(M model, boolean allFieldForce, Consumer<Where> where) {
