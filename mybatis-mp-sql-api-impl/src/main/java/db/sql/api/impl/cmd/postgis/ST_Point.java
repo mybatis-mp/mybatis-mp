@@ -51,14 +51,21 @@ public class ST_Point implements Cmd {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder = sqlBuilder.append("ST_SetSRID(ST_MakePoint(");
+        if (srid != 0) {
+            sqlBuilder = sqlBuilder.append("ST_SetSRID(");
+        }
+
+        sqlBuilder = sqlBuilder.append("ST_MakePoint(");
         sqlBuilder = this.x.sql(module, parent, context, sqlBuilder);
         sqlBuilder = sqlBuilder.append(SqlConst.DELIMITER);
         sqlBuilder = this.y.sql(module, parent, context, sqlBuilder);
         sqlBuilder = sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         sqlBuilder = sqlBuilder.append(SqlConst.DELIMITER);
-        sqlBuilder = sqlBuilder.append(srid);
-        sqlBuilder = sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+
+        if (srid != 0) {
+            sqlBuilder = sqlBuilder.append(srid);
+            sqlBuilder = sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+        }
         return sqlBuilder;
     }
 
