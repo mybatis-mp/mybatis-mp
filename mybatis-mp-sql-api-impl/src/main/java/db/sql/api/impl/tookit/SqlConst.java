@@ -193,6 +193,12 @@ public final class SqlConst {
 
     public static final char[] JSON_QUOTE = " JSON_QUOTE".toCharArray();
 
+    public static final char[] ST_DWithin = " ST_DWithin".toCharArray();
+
+    public static final char[] ST_DISTANCE = " ST_Distance".toCharArray();
+
+    public static final char[] ST_CONTAINS = " ST_Contains".toCharArray();
+
     public static String FORCE_INDEX(DbType dbType, String indexName) {
         switch (dbType) {
             case SQL_SERVER: {

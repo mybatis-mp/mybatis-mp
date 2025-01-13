@@ -12,41 +12,31 @@
  *
  */
 
-package db.sql.api.impl.cmd.dbFun.mysql;
+package db.sql.api.impl.cmd.postgis;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.basic.ICondition;
-import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.dbFun.BasicFunction;
 import db.sql.api.impl.tookit.SqlConst;
-import db.sql.api.tookit.CmdUtils;
 
-public class FindInSet extends BasicFunction<FindInSet> implements ICondition {
+public class ST_Contains extends BasicFunction<ST_Contains> implements ICondition {
 
-    private final Cmd match;
+    private final Cmd g2;
 
-    public FindInSet(Cmd key, String match) {
-        this(key, Methods.cmd(match));
-    }
-
-    public FindInSet(Cmd key, Cmd match) {
-        super(SqlConst.FIND_IN_SET, key);
-        this.match = match;
+    public ST_Contains(Cmd g1, Cmd g2) {
+        super(SqlConst.ST_CONTAINS, g1);
+        this.g2 = g2;
     }
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
-        this.match.sql(module, this, context, sqlBuilder);
-        sqlBuilder.append(SqlConst.DELIMITER);
-        this.key.sql(module, this, context, sqlBuilder);
-        sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+        sqlBuilder = sqlBuilder.append(operator);
+        sqlBuilder = sqlBuilder.append(SqlConst.BRACKET_LEFT);
+        sqlBuilder = key.sql(module, this, context, sqlBuilder);
+        sqlBuilder = sqlBuilder.append(SqlConst.DELIMITER);
+        sqlBuilder = g2.sql(module, this, context, sqlBuilder);
+        sqlBuilder = sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
-    }
-
-    @Override
-    public boolean contain(Cmd cmd) {
-        return CmdUtils.contain(cmd, this.key, this.match);
     }
 }

@@ -16,12 +16,13 @@ package db.sql.api.impl.cmd.dbFun.mysql;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.impl.cmd.dbFun.BasicFunction;
 import db.sql.api.impl.tookit.SqlConst;
 
 import java.io.Serializable;
 
-public class JsonContains extends BasicFunction<JsonContains> {
+public class JsonContains extends BasicFunction<JsonContains> implements ICondition {
 
     private final Serializable containValue;
 

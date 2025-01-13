@@ -22,6 +22,10 @@ import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.condition.*;
 import db.sql.api.impl.cmd.dbFun.*;
 import db.sql.api.impl.cmd.dbFun.mysql.*;
+import db.sql.api.impl.cmd.postgis.ST_Contains;
+import db.sql.api.impl.cmd.postgis.ST_DWithin;
+import db.sql.api.impl.cmd.postgis.ST_Distance;
+import db.sql.api.impl.cmd.postgis.ST_Point;
 import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 
@@ -34,6 +38,18 @@ import java.util.stream.Collectors;
  * 数据库方法集合
  */
 public final class Methods {
+
+    /**
+     * 如果两个对象之间的距离在指定范围之内，则返回True
+     *
+     * @param column   列
+     * @param point    另外一个对象
+     * @param distance 距离
+     * @return
+     */
+    public static ST_DWithin ST_DWithin(Cmd column, Cmd point, double distance) {
+        return ST_DWithin(column, point, distance, null);
+    }
 
     /**
      * 创建普通sql模板
@@ -1667,6 +1683,112 @@ public final class Methods {
      */
     public static GroupConcat groupConcat(Cmd column) {
         return groupConcat(column, ",");
+    }
+
+    /**
+     * 如果两个对象之间的距离在指定范围之内，则返回True
+     *
+     * @param column      列
+     * @param point       另外一个对象
+     * @param distance    距离
+     * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
+     * @return
+     */
+    public static ST_DWithin ST_DWithin(Cmd column, Cmd point, double distance, Boolean useSpheroid) {
+        return new ST_DWithin(column, point, distance, useSpheroid);
+    }
+
+    /**
+     * 如果两个对象之间的距离在指定范围之内，则返回True
+     *
+     * @param column   列
+     * @param point    另外一个坐标
+     * @param distance 距离
+     * @return
+     */
+    public static ST_DWithin ST_DWithin(Cmd column, ST_Point point, double distance) {
+        return ST_DWithin(column, point, distance, null);
+    }
+
+    /**
+     * 如果两个对象之间的距离在指定范围之内，则返回True
+     *
+     * @param column      列
+     * @param point       另外一个坐标
+     * @param distance    距离
+     * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
+     * @return
+     */
+    public static ST_DWithin ST_DWithin(Cmd column, ST_Point point, double distance, Boolean useSpheroid) {
+        return ST_DWithin(column, (Cmd) point, distance, useSpheroid);
+    }
+
+    /**
+     * 计算2个对象的距离
+     *
+     * @param column 列
+     * @param point  另外一个参考对象
+     * @return
+     */
+    public static ST_Distance ST_Distance(Cmd column, Cmd point) {
+        return ST_Distance(column, point, null);
+    }
+
+    /**
+     * 计算2个对象的距离
+     *
+     * @param column      列
+     * @param point       另外一个参考对象
+     * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
+     * @return
+     */
+    public static ST_Distance ST_Distance(Cmd column, Cmd point, Boolean useSpheroid) {
+        return new ST_Distance(column, point, useSpheroid);
+    }
+
+    /**
+     * 计算2个坐标的距离
+     *
+     * @param column 列
+     * @param point  另外一个坐标
+     * @return
+     */
+    public static ST_Distance ST_Distance(Cmd column, ST_Point point) {
+        return ST_Distance(column, point, null);
+    }
+
+    /**
+     * 计算2个坐标的距离
+     *
+     * @param column      列
+     * @param point       另外一个坐标
+     * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
+     * @return
+     */
+    public static ST_Distance ST_Distance(Cmd column, ST_Point point, Boolean useSpheroid) {
+        return ST_Distance(column, (Cmd) point, useSpheroid);
+    }
+
+    /**
+     * 判断是否包含 geo
+     *
+     * @param column 列
+     * @param geo    另外一个geo对象
+     * @return
+     */
+    public static ST_Contains ST_Contains(Cmd column, Cmd geo) {
+        return new ST_Contains(column, geo);
+    }
+
+    /**
+     * 判断是否包含 point
+     *
+     * @param column 列
+     * @param point  另外一个坐标
+     * @return
+     */
+    public static ST_Contains ST_Contains(Cmd column, ST_Point point) {
+        return ST_Contains(column, (Cmd) point);
     }
 
     /**

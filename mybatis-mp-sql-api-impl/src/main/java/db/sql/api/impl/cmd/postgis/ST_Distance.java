@@ -12,41 +12,41 @@
  *
  */
 
-package db.sql.api.impl.cmd.dbFun.mysql;
+package db.sql.api.impl.cmd.postgis;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
-import db.sql.api.cmd.basic.ICondition;
-import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.dbFun.BasicFunction;
 import db.sql.api.impl.tookit.SqlConst;
-import db.sql.api.tookit.CmdUtils;
 
-public class FindInSet extends BasicFunction<FindInSet> implements ICondition {
+public class ST_Distance extends BasicFunction<ST_Distance> {
 
-    private final Cmd match;
+    private final Boolean useSpheroid;
 
-    public FindInSet(Cmd key, String match) {
-        this(key, Methods.cmd(match));
+    private final Cmd g2;
+
+    public ST_Distance(Cmd g1, Cmd g2, Boolean useSpheroid) {
+        super(SqlConst.ST_DISTANCE, g1);
+        this.g2 = g2;
+        this.useSpheroid = useSpheroid;
     }
 
-    public FindInSet(Cmd key, Cmd match) {
-        super(SqlConst.FIND_IN_SET, key);
-        this.match = match;
+    public ST_Distance(Cmd g1, Cmd g2) {
+        this(g1, g2, null);
     }
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
-        this.match.sql(module, this, context, sqlBuilder);
-        sqlBuilder.append(SqlConst.DELIMITER);
-        this.key.sql(module, this, context, sqlBuilder);
-        sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+        sqlBuilder = sqlBuilder.append(operator);
+        sqlBuilder = sqlBuilder.append(SqlConst.BRACKET_LEFT);
+        sqlBuilder = key.sql(module, this, context, sqlBuilder);
+        sqlBuilder = sqlBuilder.append(SqlConst.DELIMITER);
+        sqlBuilder = g2.sql(module, this, context, sqlBuilder);
+        if (useSpheroid != null) {
+            sqlBuilder = sqlBuilder.append(SqlConst.DELIMITER);
+            sqlBuilder = sqlBuilder.append(useSpheroid);
+        }
+        sqlBuilder = sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
-    }
-
-    @Override
-    public boolean contain(Cmd cmd) {
-        return CmdUtils.contain(cmd, this.key, this.match);
     }
 }
