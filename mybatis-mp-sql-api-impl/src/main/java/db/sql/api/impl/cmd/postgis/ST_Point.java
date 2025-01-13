@@ -18,37 +18,35 @@ import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.basic.BasicValue;
 import db.sql.api.impl.tookit.SqlConst;
-import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Data
 public class ST_Point implements Cmd {
 
     private BasicValue x;
 
     private BasicValue y;
 
-    private BasicValue srid;
+    private int srid;
 
     public ST_Point(double x, double y, int srid) {
         this.x = new BasicValue(x);
         this.y = new BasicValue(y);
-        this.srid = new BasicValue(srid);
+        this.srid = srid;
     }
 
     public ST_Point(double x, double y) {
-        this(x, y, 0);
+        this(x, y, 4326);
     }
 
     public ST_Point(BigDecimal x, BigDecimal y, int srid) {
         this.x = new BasicValue(x);
         this.y = new BasicValue(y);
-        this.srid = new BasicValue(srid);
+        this.srid = srid;
     }
 
     public ST_Point(BigDecimal x, BigDecimal y) {
-        this(x, y, 0);
+        this(x, y, 4326);
     }
 
     @Override
@@ -59,7 +57,7 @@ public class ST_Point implements Cmd {
         sqlBuilder = this.y.sql(module, parent, context, sqlBuilder);
         sqlBuilder = sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         sqlBuilder = sqlBuilder.append(SqlConst.DELIMITER);
-        sqlBuilder = this.srid.sql(module, parent, context, sqlBuilder);
+        sqlBuilder = sqlBuilder.append(srid);
         sqlBuilder = sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
     }
