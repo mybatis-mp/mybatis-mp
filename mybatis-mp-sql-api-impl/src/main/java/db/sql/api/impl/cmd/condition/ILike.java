@@ -35,24 +35,25 @@ public class ILike extends Like {
         this(mode, key, Methods.cmd(value));
     }
 
-    boolean support(DbType dbType) {
+    boolean notSupport(DbType dbType) {
         switch (dbType) {
             case PGSQL:
             case OPEN_GAUSS:
-            case SQLITE:
+            case H2:
             case KING_BASE:
-                return true;
-            default:
                 return false;
+            default:
+                return true;
         }
     }
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (!this.support(context.getDbType())) {
-            this.operator = this instanceof NotILike ? SqlConst.LIKE : SqlConst.NOT_LIKE;
+        if (this.notSupport(context.getDbType())) {
+            this.operator = this instanceof NotILike ? SqlConst.NOT_LIKE : SqlConst.LIKE;
         }
-        if (context.getDbType() == DbType.ORACLE) {
+
+        if (context.getDbType() != DbType.MYSQL && context.getDbType() != DbType.MARIA_DB && context.getDbType() != DbType.SQL_SERVER) {
             this.field = Methods.upper(this.field);
             this.value = Methods.upper(this.value);
         }

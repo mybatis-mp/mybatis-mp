@@ -406,9 +406,9 @@ public class ConditionTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUser = QueryChain.of(sysUserMapper)
-                    .select(SysUser::getId, SysUser::getPassword, SysUser::getRole_id)
+                    .select(SysUser::getId, SysUser::getPassword, SysUser::getRole_id, SysUser::getUserName)
                     .from(SysUser.class)
-                    .notILike(LikeMode.RIGHT, SysUser::getUserName, "test2")
+                    .notILike(LikeMode.RIGHT, SysUser::getUserName, "Test2")
                     .like(SysUser::getUserName, "test")
                     .get();
 
