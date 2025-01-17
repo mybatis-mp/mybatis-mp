@@ -1551,6 +1551,64 @@ public final class Methods {
     }
 
     /**
+     * like 判断
+     *
+     * @param column 列
+     * @param value  值
+     * @return Like
+     */
+    public static ILike iLike(Cmd column, Object value) {
+        return iLike(LikeMode.DEFAULT, column, value);
+    }
+
+    /**
+     * like 判断
+     *
+     * @param column 列
+     * @param value  值
+     * @return Like
+     */
+    public static ILike iLike(LikeMode mode, Cmd column, Object value) {
+        Objects.requireNonNull(column);
+        Object wrapValue = likeParamWrap(column, value, mode, false);
+        if (wrapValue instanceof Object[]) {
+            Object[] values = (Object[]) wrapValue;
+            mode = (LikeMode) values[0];
+            value = values[1];
+        }
+        return new ILike(mode, column, value);
+    }
+
+    /**
+     * notLike 判断
+     *
+     * @param column 列
+     * @param value  值
+     * @return NotLike
+     */
+    public static NotILike notILike(Cmd column, Object value) {
+        return notILike(LikeMode.DEFAULT, column, value);
+    }
+
+    /**
+     * not like 判断
+     *
+     * @param column 列
+     * @param value  值
+     * @return NotLike
+     */
+    public static NotILike notILike(LikeMode mode, Cmd column, Object value) {
+        Objects.requireNonNull(column);
+        Object wrapValue = likeParamWrap(column, value, mode, true);
+        if (wrapValue instanceof Object[]) {
+            Object[] values = (Object[]) wrapValue;
+            mode = (LikeMode) values[0];
+            value = values[1];
+        }
+        return new NotILike(mode, column, value);
+    }
+
+    /**
      * mysql fromUnixTime 函数
      *
      * @param column 列

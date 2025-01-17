@@ -323,6 +323,55 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         return Methods.notLike(mode, createTableField(column, storey), value);
     }
 
+
+    @Override
+    public ICondition iLike(LikeMode mode, Cmd column, String value) {
+        if (!isKeyValid(column)) {
+            return null;
+        }
+        value = (String) checkAndGetValidValue(value);
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        return Methods.iLike(mode, column, value);
+    }
+
+    @Override
+    public <T> ICondition iLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+        if (!when) {
+            return null;
+        }
+        value = (String) checkAndGetValidValue(value);
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        return Methods.iLike(mode, createTableField(column, storey), value);
+    }
+
+    @Override
+    public ICondition notILike(LikeMode mode, Cmd column, String value) {
+        if (!isKeyValid(column)) {
+            return null;
+        }
+        value = (String) checkAndGetValidValue(value);
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        return Methods.notILike(mode, column, value);
+    }
+
+    @Override
+    public <T> ICondition notILike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+        if (!when) {
+            return null;
+        }
+        value = (String) checkAndGetValidValue(value);
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        return Methods.notILike(mode, createTableField(column, storey), value);
+    }
+
     @Override
     public ICondition between(Cmd column, Object value, Object value2) {
         if (!isKeyValid(column)) {

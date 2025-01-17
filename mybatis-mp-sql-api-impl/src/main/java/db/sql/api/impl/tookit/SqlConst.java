@@ -87,6 +87,8 @@ public final class SqlConst {
     public static final char[] NOT_BETWEEN = " NOT BETWEEN ".toCharArray();
     public static final char[] LIKE = " LIKE ".toCharArray();
     public static final char[] NOT_LIKE = " NOT LIKE ".toCharArray();
+    public static final char[] I_LIKE = " ILIKE ".toCharArray();
+    public static final char[] NOT_I_LIKE = " NOT ILIKE ".toCharArray();
     public static final char[] BRACKET_LEFT = "(".toCharArray();
     public static final char[] BRACKET_RIGHT = ")".toCharArray();
     public static final char[] CONCAT = " CONCAT".toCharArray();

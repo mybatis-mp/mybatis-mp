@@ -31,20 +31,12 @@ public class Like extends BasicCondition {
         this.mode = mode;
     }
 
-    public Like(Cmd key, Cmd value) {
-        this(LikeMode.DEFAULT, key, value);
-    }
-
-    public Like(Cmd key, Object value) {
-        this(key, Methods.cmd(value));
-    }
-
     public Like(LikeMode mode, Cmd key, Cmd value) {
         this(SqlConst.LIKE, mode, key, value);
     }
 
     public Like(LikeMode mode, Cmd key, Object value) {
-        this(SqlConst.LIKE, mode, key, Methods.cmd(value));
+        this(mode, key, Methods.cmd(value));
     }
 
     public LikeMode getMode() {

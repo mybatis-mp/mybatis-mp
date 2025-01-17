@@ -21,9 +21,9 @@ import db.sql.api.tookit.CmdUtils;
 
 public abstract class BasicCondition extends BaseCondition<Cmd, Cmd> {
 
-    protected final Cmd field;
+    protected Cmd field;
 
-    protected final Cmd value;
+    protected Cmd value;
 
     public BasicCondition(char[] operator, Cmd field, Cmd value) {
         super(operator);

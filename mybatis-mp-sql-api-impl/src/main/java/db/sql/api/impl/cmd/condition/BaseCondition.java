@@ -20,7 +20,7 @@ import db.sql.api.impl.cmd.basic.Condition;
 
 public abstract class BaseCondition<COLUMN extends Cmd, V> implements Condition<COLUMN, V> {
 
-    private final char[] operator;
+    protected char[] operator;
 
     public BaseCondition(char[] operator) {
         this.operator = operator;

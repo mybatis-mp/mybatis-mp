@@ -306,6 +306,24 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
+    public ConditionChain iLike(LikeMode mode, Cmd column, String value) {
+        ICondition condition = conditionFactory.iLike(mode, column, value);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
+    public ConditionChain notILike(LikeMode mode, Cmd column, String value) {
+        ICondition condition = conditionFactory.notILike(mode, column, value);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
     public <T> ConditionChain between(boolean when, Getter<T> column, int storey, Object value, Object value2) {
         ICondition condition = conditionFactory.between(when, column, storey, value, value2);
         if (condition != null) {
@@ -378,6 +396,34 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     }
 
     @Override
+    public <T> ConditionChain iLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+        ICondition condition = conditionFactory.iLike(when, mode, column, storey, value);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
+    public <T> ConditionChain notLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+        ICondition condition = conditionFactory.notLike(when, mode, column, storey, value);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
+    public <T> ConditionChain notILike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+        ICondition condition = conditionFactory.notILike(when, mode, column, storey, value);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+
+    @Override
     public <T> ConditionChain lt(boolean when, Getter<T> column, int storey, Object value) {
         ICondition condition = conditionFactory.lt(when, column, storey, value);
         if (condition != null) {
@@ -434,15 +480,6 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     @Override
     public <T> ConditionChain notBetween(boolean when, Getter<T> column, int storey, Object value, Object value2) {
         ICondition condition = conditionFactory.notBetween(when, column, storey, value, value2);
-        if (condition != null) {
-            this.appendCondition(this.connector, condition);
-        }
-        return this;
-    }
-
-    @Override
-    public <T> ConditionChain notLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
-        ICondition condition = conditionFactory.notLike(when, mode, column, storey, value);
         if (condition != null) {
             this.appendCondition(this.connector, condition);
         }

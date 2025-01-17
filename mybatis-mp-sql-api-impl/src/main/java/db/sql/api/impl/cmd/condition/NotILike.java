@@ -19,13 +19,13 @@ import db.sql.api.cmd.LikeMode;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.tookit.SqlConst;
 
-public class NotLike extends Like {
+public class NotILike extends ILike {
 
-    public NotLike(LikeMode mode, Cmd key, Cmd value) {
-        super(SqlConst.NOT_LIKE, mode, key, value);
+    public NotILike(LikeMode mode, Cmd key, Cmd value) {
+        super(SqlConst.NOT_I_LIKE, mode, key, value);
     }
 
-    public NotLike(LikeMode mode, Cmd key, Object value) {
+    public NotILike(LikeMode mode, Cmd key, Object value) {
         this(mode, key, Methods.cmd(value));
     }
 }
