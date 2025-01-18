@@ -119,7 +119,7 @@ public class EntityInsertCreateUtil {
                 } else {
                     TableField tableField = tableFieldInfo.getTableFieldAnnotation();
                     MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                    values.add(Methods.value(mybatisParameter));
+                    values.add(Methods.cmd(mybatisParameter));
                 }
             }
         }

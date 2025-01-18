@@ -116,7 +116,7 @@ public class ModelInsertCreateUtil {
                 } else {
                     TableField tableField = modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation();
                     MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                    values.add(Methods.value(mybatisParameter));
+                    values.add(Methods.cmd(mybatisParameter));
                 }
             }
         }

@@ -177,7 +177,7 @@ public class ModelBatchInsertCreateUtil {
                     values.add(NULL.NULL);
                 } else {
                     MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                    values.add(Methods.value(mybatisParameter));
+                    values.add(Methods.cmd(mybatisParameter));
                 }
             }
             insert.values(values);

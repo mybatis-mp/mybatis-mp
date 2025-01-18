@@ -121,7 +121,7 @@ public class ModelUpdateCmdCreateUtil {
             if (Objects.nonNull(value)) {
                 TableField tableField = modelFieldInfo.getTableFieldInfo().getTableFieldAnnotation();
                 MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.value(mybatisParameter));
+                update.set($.field(table, modelFieldInfo.getTableFieldInfo().getColumnName()), Methods.cmd(mybatisParameter));
             }
         }
 

@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd;
 
 import db.sql.api.Cmd;
+import db.sql.api.cmd.CmdConvert;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.IParamWrap;
 import db.sql.api.cmd.executor.IQuery;
@@ -155,6 +156,8 @@ public final class Methods {
         Objects.requireNonNull(value);
         if (value instanceof Cmd) {
             return (Cmd) value;
+        } else if (value instanceof CmdConvert) {
+            return ((CmdConvert) value).convert();
         }
         return new BasicValue(value);
     }
@@ -167,6 +170,9 @@ public final class Methods {
      */
     public static BasicValue value(Serializable value) {
         Objects.requireNonNull(value);
+        if (value instanceof CmdConvert) {
+            throw new RuntimeException("please use Methods.cmd instead");
+        }
         return new BasicValue(value);
     }
 

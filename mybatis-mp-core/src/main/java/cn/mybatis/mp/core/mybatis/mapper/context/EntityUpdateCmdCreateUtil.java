@@ -120,7 +120,7 @@ public class EntityUpdateCmdCreateUtil {
             if (Objects.nonNull(value)) {
                 TableField tableField = tableFieldInfo.getTableFieldAnnotation();
                 MybatisParameter mybatisParameter = new MybatisParameter(value, tableField.typeHandler(), tableField.jdbcType());
-                update.set($.field(table, tableFieldInfo.getColumnName()), Methods.value(mybatisParameter));
+                update.set($.field(table, tableFieldInfo.getColumnName()), Methods.cmd(mybatisParameter));
             }
         }
 
