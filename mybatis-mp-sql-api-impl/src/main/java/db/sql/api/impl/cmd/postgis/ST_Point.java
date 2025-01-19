@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.postgis;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.basic.BasicValue;
 import db.sql.api.impl.tookit.SqlConst;
@@ -52,10 +53,19 @@ public class ST_Point implements Cmd {
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (srid != 0) {
-            sqlBuilder = sqlBuilder.append("ST_SetSRID(");
+            if (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB) {
+                sqlBuilder.append("ST_SRID(");
+            } else {
+                sqlBuilder = sqlBuilder.append("ST_SetSRID(");
+            }
         }
 
-        sqlBuilder = sqlBuilder.append("ST_MakePoint(");
+        if (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB) {
+            sqlBuilder = sqlBuilder.append("Point(");
+        } else {
+            sqlBuilder = sqlBuilder.append("ST_MakePoint(");
+        }
+
         sqlBuilder = this.x.sql(module, parent, context, sqlBuilder);
         sqlBuilder = sqlBuilder.append(SqlConst.DELIMITER);
         sqlBuilder = this.y.sql(module, parent, context, sqlBuilder);
