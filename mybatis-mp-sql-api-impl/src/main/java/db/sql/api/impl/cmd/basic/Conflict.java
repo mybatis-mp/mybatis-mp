@@ -33,9 +33,9 @@ public class Conflict<T> implements IConflict<T>, Cmd {
 
     private String[] conflictKeys;
 
-    private ConflictAction<T> conflictAction;
+    private final ConflictAction<T> conflictAction;
 
-    private boolean hasChecked = false;
+    private final boolean hasChecked = false;
 
     public Conflict(CmdFactory cmdFactory) {
         this.cmdFactory = cmdFactory;
@@ -44,7 +44,9 @@ public class Conflict<T> implements IConflict<T>, Cmd {
 
     @Override
     public IConflict<T> conflictKeys(String[] conflictKeys) {
-        this.conflictKeys = conflictKeys;
+        if (this.conflictKeys == null) {
+            this.conflictKeys = conflictKeys;
+        }
         return this;
     }
 
@@ -56,8 +58,6 @@ public class Conflict<T> implements IConflict<T>, Cmd {
                 array[i] = this.cmdFactory.columnName(conflictKeys[i]);
             }
             this.conflictKeys = array;
-        } else {
-            this.conflictKeys = null;
         }
         return this;
     }
