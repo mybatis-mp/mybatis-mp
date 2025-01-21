@@ -30,6 +30,8 @@ public class SaveStrategy<T> {
 
     private Getter<T>[] conflictKeys;
 
+    private String[] conflictColumns;
+
     private Consumer<IConflictAction<T>> conflictAction;
 
     /**
@@ -62,6 +64,17 @@ public class SaveStrategy<T> {
      */
     public SaveStrategy<T> conflictKeys(Getter<T>... conflictKeys) {
         this.conflictKeys = conflictKeys;
+        return this;
+    }
+
+    /**
+     * 设置 争议/冲突字段
+     *
+     * @param conflictKeys 争议/冲突字段 - 重复数据的KEY
+     * @return SELF
+     */
+    public SaveStrategy conflictKeys(String... conflictKeys) {
+        this.conflictColumns = conflictKeys;
         return this;
     }
 

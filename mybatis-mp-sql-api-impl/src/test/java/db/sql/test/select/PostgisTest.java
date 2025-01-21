@@ -23,19 +23,19 @@ public class PostgisTest extends BaseTest {
 
     @Test
     public void testST_DWithin() {
-        check("ST_DWithin测试", "select id where ST_DWithin(name,ST_SetSRID(ST_MakePoint(0.0,0.0),4326),11.0)", new Query()
+        check("ST_DWithin测试", "select id where ST_DWithin(name,st_srid(point(0.0,0.0),4326),11.0)", new Query()
                 .select(userTable().$("id")).where(where -> where.and((q) -> userTable().$("name").ST_DWithin(new ST_Point(0, 0), 11))));
     }
 
     @Test
     public void testST_Distance() {
-        check("ST_Distance测试", "select id, ST_Distance(name,ST_SetSRID(ST_MakePoint(0.0,0.0),4326))", new Query()
+        check("ST_Distance测试", "select id, ST_Distance(name,st_srid(point(0.0,0.0),4326))", new Query()
                 .select(userTable().$("id"), userTable().$("name").ST_Distance(new ST_Point(0, 0))));
     }
 
     @Test
     public void testST_Contains() {
-        check("ST_Distance测试", "select id, ST_Contains(name,ST_SetSRID(ST_MakePoint(0.0,0.0),4326))", new Query()
+        check("ST_Distance测试", "select id, ST_Contains(name,st_srid(point(0.0,0.0),4326))", new Query()
                 .select(userTable().$("id"), userTable().$("name").ST_Contains(new ST_Point(0, 0))));
     }
 }

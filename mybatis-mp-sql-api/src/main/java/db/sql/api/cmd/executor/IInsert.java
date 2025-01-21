@@ -79,6 +79,8 @@ public interface IInsert<SELF extends IInsert,
 
     <T> SELF conflictKeys(Getter<T>... conflictKeys);
 
+    SELF conflictKeys(String... conflictKeys);
+
     <T> SELF onConflict(Consumer<IConflictAction<T>> action);
 
     SELF fromSelect(IQuery query);

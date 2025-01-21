@@ -34,6 +34,8 @@ public class SaveBatchStrategy<T> {
 
     private Getter<T>[] conflictKeys;
 
+    private String[] conflictColumns;
+
     private Consumer<IConflictAction<T>> conflictAction;
 
     /**
@@ -55,6 +57,17 @@ public class SaveBatchStrategy<T> {
      */
     public SaveBatchStrategy<T> conflictKeys(Getter<T>... conflictKeys) {
         this.conflictKeys = conflictKeys;
+        return this;
+    }
+
+    /**
+     * 设置 争议/冲突字段
+     *
+     * @param conflictKeys 争议/冲突字段 - 重复数据的KEY
+     * @return SELF
+     */
+    public SaveBatchStrategy<T> conflictKeys(String... conflictKeys) {
+        this.conflictColumns = conflictKeys;
         return this;
     }
 

@@ -124,6 +124,7 @@ public class ModelInsertCreateUtil {
 
         if (saveStrategy.getConflictAction() != null) {
             insert.conflictKeys(saveStrategy.getConflictKeys());
+            insert.conflictKeys(saveStrategy.getConflictColumns());
             insert.onConflict(saveStrategy.getConflictAction());
         }
         return insert;

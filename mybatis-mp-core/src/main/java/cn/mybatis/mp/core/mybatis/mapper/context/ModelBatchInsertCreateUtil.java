@@ -191,6 +191,7 @@ public class ModelBatchInsertCreateUtil {
         }
         if (saveBatchStrategy.getConflictAction() != null) {
             insert.conflictKeys(saveBatchStrategy.getConflictKeys());
+            insert.conflictKeys(saveBatchStrategy.getConflictColumns());
             insert.onConflict(saveBatchStrategy.getConflictAction());
         }
         return insert;

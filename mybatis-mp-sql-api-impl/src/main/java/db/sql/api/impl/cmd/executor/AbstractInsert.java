@@ -204,6 +204,12 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     }
 
     @Override
+    public SELF conflictKeys(String... conflictKeys) {
+        this.$conflict().conflictKeys(conflictKeys);
+        return (SELF) this;
+    }
+
+    @Override
     public <T> SELF onConflict(Consumer<IConflictAction<T>> action) {
         this.$conflict().onConflict(action);
         return (SELF) this;
