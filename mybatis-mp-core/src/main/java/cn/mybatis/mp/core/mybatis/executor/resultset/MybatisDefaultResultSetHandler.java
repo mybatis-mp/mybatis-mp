@@ -264,7 +264,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
 
         for (FetchInfo fetchInfo : fetchInfos) {
-            String fetchKey = fetchInfo.getField().getDeclaringClass().getName() + "." + fetchInfo.getField().getName();
+            String fetchKey = fetchInfo.getFieldInfo().getClazz().getName() + "." + fetchInfo.getField().getName();
             Boolean fetchEnable = Objects.isNull(fetchEnables) || !fetchEnables.containsKey(fetchKey) || fetchEnables.get(fetchKey);
             fetchEnable = fetchEnable == null ? true : fetchEnable;
             if (!fetchEnable) {
@@ -341,7 +341,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             }
         });
 
-        String fetchKey = fetchInfo.getField().getDeclaringClass().getName() + "." + fetchInfo.getField().getName();
+        String fetchKey = fetchInfo.getFieldInfo().getClazz().getName() + "." + fetchInfo.getField().getName();
         boolean hasFetchFilter = !Objects.isNull(fetchFilters) && fetchFilters.containsKey(fetchKey);
         query.setFetchEnables(fetchEnables);
         query.setFetchFilters(fetchFilters);
