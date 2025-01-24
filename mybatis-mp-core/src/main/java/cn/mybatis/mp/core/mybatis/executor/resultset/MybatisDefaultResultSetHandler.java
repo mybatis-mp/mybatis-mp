@@ -60,6 +60,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
     //Fetch 信息
     private Map<Class, List<FetchInfo>> fetchInfosMap;
     private Map<String, Consumer<Where>> fetchFilters;
+    private Map<String, Boolean> fetchEnables;
     private Consumer onRowEvent;
     private Class<?> returnType;
     private Map<Class, List<PutEnumValueInfo>> putEnumValueInfoMap;
@@ -83,6 +84,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
                 if (boundSql.getParameterObject() instanceof SQLCmdQueryContext) {
                     BaseQuery<?, ?> baseQuery = ((SQLCmdQueryContext) boundSql.getParameterObject()).getExecution();
                     this.fetchFilters = baseQuery.getFetchFilters();
+                    this.fetchEnables = baseQuery.getFetchEnables();
                     this.putEnumValueInfoMap = resultInfo.getPutEnumValueInfoMap();
                     this.putValueInfoMap = resultInfo.getPutValueInfoMap();
                     this.createdEventInfos = resultInfo.getCreatedEventInfos();
@@ -262,6 +264,20 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
         }
 
         for (FetchInfo fetchInfo : fetchInfos) {
+            String fetchKey = fetchInfo.getField().getDeclaringClass().getName() + "." + fetchInfo.getField().getName();
+            Boolean fetchEnable = Objects.isNull(fetchEnables) || !fetchEnables.containsKey(fetchKey) || fetchEnables.get(fetchKey);
+            fetchEnable = fetchEnable == null ? true : fetchEnable;
+            if (!fetchEnable) {
+                if (fetchInfo.getFieldInfo().getTypeClass().isAssignableFrom(Collections.class)) {
+                    try {
+                        fetchInfo.getWriteFieldInvoker().invoke(rowValue, new Object[]{new ArrayList()});
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                return rowValue;
+            }
+
             Object onValue;
             try {
                 if (Objects.nonNull(fetchInfo.getValueTypeHandler())) {
@@ -327,6 +343,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
         String fetchKey = fetchInfo.getField().getDeclaringClass().getName() + "." + fetchInfo.getField().getName();
         boolean hasFetchFilter = !Objects.isNull(fetchFilters) && fetchFilters.containsKey(fetchKey);
+        query.setFetchEnables(fetchEnables);
         query.setFetchFilters(fetchFilters);
         if (hasFetchFilter) {
             fetchFilters.get(fetchKey).accept(query.$where());

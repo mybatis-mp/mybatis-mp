@@ -84,6 +84,8 @@ public interface IQuery<SELF extends IQuery
 
     FORUPDATE $forUpdate();
 
+    <T> SELF fetchEnable(Getter<T> getter, Boolean enable);
+
     <T> SELF fetchFilter(Getter<T> getter, Consumer<WHERE> where);
 
     @Override
@@ -221,5 +223,6 @@ public interface IQuery<SELF extends IQuery
 
     Map<String, Consumer<WHERE>> getFetchFilters();
 
+    Map<String, Boolean> getFetchEnables();
 
 }
