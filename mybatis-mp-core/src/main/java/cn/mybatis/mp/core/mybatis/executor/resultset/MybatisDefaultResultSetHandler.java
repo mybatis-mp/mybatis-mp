@@ -354,6 +354,8 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
     public void fillFetchData(FetchInfo fetchInfo, List<FetchObject> values, List<Object> fetchData) {
         if (Objects.isNull(fetchData) || fetchData.isEmpty()) {
+            //需要Fetch数据是空的 则直接设置null
+            values.stream().forEach(i -> setValue(i.getValue(), null, fetchInfo));
             return;
         }
 
@@ -474,6 +476,7 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
             fetchInfo.setValue(rowValue, matchValues);
         } else {
             if (Objects.isNull(matchValues) || matchValues.isEmpty()) {
+                fetchInfo.setValue(rowValue, null);
                 return;
             } else if (matchValues.size() > 1 && !fetchInfo.getFetch().multiValueErrorIgnore()) {
                 throw new TooManyResultsException("fetch action found more than 1 record");

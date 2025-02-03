@@ -110,4 +110,9 @@ public @interface Fetch {
      * @return
      */
     boolean forceUseIn() default false;
+
+    /**
+     * 当值为null时，填充的值
+     */
+    String nullFillValue() default "";
 }
