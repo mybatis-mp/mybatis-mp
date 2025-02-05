@@ -45,12 +45,12 @@ public class DateAdd extends BasicFunction<DateAdd> {
             sqlBuilder.append(SqlConst.DELIMITER);
             sqlBuilder.append(n);
             sqlBuilder.append(SqlConst.DELIMITER);
-            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
-        } else if (context.getDbType() == DbType.PGSQL) {
+        } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
-            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append("+'");
             sqlBuilder.append(n);
             sqlBuilder.append(SqlConst.BLANK);
@@ -64,12 +64,12 @@ public class DateAdd extends BasicFunction<DateAdd> {
             sqlBuilder.append(SqlConst.DELIMITER);
             sqlBuilder.append(n);
             sqlBuilder.append(SqlConst.DELIMITER);
-            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
         } else if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.KING_BASE) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
-            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append('+');
             sqlBuilder.append(SqlConst.INTERVAL).append(SqlConst.SINGLE_QUOT).append(this.n).append(SqlConst.SINGLE_QUOT);
             sqlBuilder.append(timeUnit.name(), 0, timeUnit.name().length() - 1);
@@ -77,16 +77,29 @@ public class DateAdd extends BasicFunction<DateAdd> {
             return sqlBuilder;
         } else if (context.getDbType() == DbType.DB2) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT);
-            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append('+');
             sqlBuilder.append(this.n).append(SqlConst.BLANK);
             sqlBuilder.append(timeUnit.name());
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
+        } else if (context.getDbType() == DbType.SQLITE) {
+            sqlBuilder.append("DATETIME");
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.DELIMITER);
+            sqlBuilder.append(SqlConst.SINGLE_QUOT);
+
+
+            sqlBuilder.append(this.n).append(SqlConst.BLANK);
+            sqlBuilder.append(timeUnit.name());
+            sqlBuilder.append(SqlConst.SINGLE_QUOT);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+            return sqlBuilder;
         }
 
         sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
-        this.key.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER).append(SqlConst.INTERVAL).append(this.n);
         sqlBuilder.append(SqlConst.BLANK);
         sqlBuilder.append(timeUnit.name(), 0, timeUnit.name().length() - 1);

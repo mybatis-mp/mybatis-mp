@@ -19,12 +19,11 @@ import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
 import cn.mybatis.mp.core.util.FieldUtil;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TableInfoUtil;
-import cn.mybatis.mp.db.annotations.ForeignKey;
-import cn.mybatis.mp.db.annotations.LogicDelete;
-import cn.mybatis.mp.db.annotations.Table;
+import cn.mybatis.mp.db.annotations.*;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TableInfo {
 
@@ -57,9 +56,15 @@ public class TableInfo {
 
     private final List<TableFieldInfo> idFieldInfos;
 
+    private final String[] idColumnNames;
+
     private final boolean hasMultiId;
 
     private final TableFieldInfo idFieldInfo;
+
+    private final boolean isSplitTable;
+
+    private final TableSplitter tableSplitter;
 
     /**
      * 乐观锁字段
@@ -96,6 +101,17 @@ public class TableInfo {
 
         Table table = entity.getAnnotation(Table.class);
         this.schema = table.schema();
+        SplitTable splitTable = entity.getAnnotation(SplitTable.class);
+        this.isSplitTable = splitTable != null;
+        if (this.isSplitTable) {
+            try {
+                this.tableSplitter = splitTable.value().newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            this.tableSplitter = null;
+        }
         this.tableName = TableInfoUtil.getTableName(entity);
         if (schema == null || StringPool.EMPTY.equals(schema)) {
             this.schemaAndTableName = tableName;
@@ -164,6 +180,7 @@ public class TableInfo {
         this.fieldSize = this.tableFieldInfos.size();
         this.hasMultiId = hasMutilId;
         this.idFieldInfos = Collections.unmodifiableList(idFieldInfos);
+        this.idColumnNames = idFieldInfos.stream().filter(item -> item.isTableId()).map(item -> item.getColumnName()).collect(Collectors.toList()).toArray(new String[0]);
         this.idFieldInfo = idFieldInfo;
         this.versionFieldInfo = versionFieldInfo;
         this.tenantIdFieldInfo = tenantIdFieldInfo;
@@ -180,6 +197,15 @@ public class TableInfo {
         }
 
         this.hasIgnoreField = tableFieldInfos.stream().anyMatch(item -> !item.getTableFieldAnnotation().select());
+
+        if (this.isSplitTable) {
+            long splitTableSize = tableFieldInfos.stream().filter(i -> i.isTableSplitKey()).count();
+            if (splitTableSize == 0) {
+                throw new RuntimeException("Entity " + entity.getName() + " has no @TableSplitKey");
+            } else if (splitTableSize != 1) {
+                throw new RuntimeException("Entity " + entity.getName() + " has multi @TableSplitKey");
+            }
+        }
     }
 
     /**
@@ -279,5 +305,17 @@ public class TableInfo {
 
     public TableFieldInfo getIdFieldInfo() {
         return idFieldInfo;
+    }
+
+    public String[] getIdColumnNames() {
+        return idColumnNames;
+    }
+
+    public boolean isSplitTable() {
+        return isSplitTable;
+    }
+
+    public TableSplitter getTableSplitter() {
+        return tableSplitter;
     }
 }

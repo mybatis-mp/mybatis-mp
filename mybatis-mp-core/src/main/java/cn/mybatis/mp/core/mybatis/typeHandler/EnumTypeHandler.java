@@ -14,6 +14,7 @@
 
 package cn.mybatis.mp.core.mybatis.typeHandler;
 
+import cn.mybatis.mp.core.util.TypeConvertUtil;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
@@ -62,7 +63,8 @@ public class EnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
     private E readValue(ResultSet rs, String columnName) throws SQLException {
         Object value;
         if (enumSupport) {
-            value = rs.getObject(columnName, this.enumSupportType);
+            value = rs.getObject(columnName);
+            value = TypeConvertUtil.convert(value, this.enumSupportType);
         } else {
             value = rs.getString(columnName);
         }
@@ -72,7 +74,8 @@ public class EnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
     private E readValue(ResultSet rs, int columnIndex) throws SQLException {
         Object value;
         if (enumSupport) {
-            value = rs.getObject(columnIndex, this.enumSupportType);
+            value = rs.getObject(columnIndex);
+            value = TypeConvertUtil.convert(value, this.enumSupportType);
         } else {
             value = rs.getString(columnIndex);
         }

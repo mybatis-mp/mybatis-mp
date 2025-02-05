@@ -22,4 +22,9 @@
           and id &lt;= #{id2}
         order by id asc
     </select>
+
+    <select id="SysRole:count" resultType="Integer">
+        select count(*)
+        from sys_role
+    </select>
 </mapper>

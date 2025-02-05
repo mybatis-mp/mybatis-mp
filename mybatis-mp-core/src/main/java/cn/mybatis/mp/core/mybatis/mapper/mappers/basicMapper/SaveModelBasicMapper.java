@@ -14,14 +14,31 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveModelMethodUtil;
+import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 
 import java.util.Collection;
-import java.util.Objects;
+import java.util.function.Consumer;
 
 public interface SaveModelBasicMapper extends BaseBasicMapper {
+
+    /**
+     * 实体类新增
+     *
+     * @param model        实体类Model实例
+     * @param saveStrategy 保存策略
+     * @return 影响条数
+     */
+    default <T, M extends Model<T>> int save(M model, Consumer<SaveStrategy<M>> saveStrategy) {
+        SaveStrategy<M> strategy = new SaveStrategy<M>();
+        saveStrategy.accept(strategy);
+        return SaveModelMethodUtil.save(getBasicMapper(), model, strategy);
+    }
+
     /**
      * 实体类新增
      *
@@ -40,7 +57,9 @@ public interface SaveModelBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int save(M model, boolean allFieldForce) {
-        return SaveModelMethodUtil.save(getBasicMapper(), model, allFieldForce, null);
+        return this.save(model, saveStrategy -> {
+            saveStrategy.allFieldSave(allFieldForce);
+        });
     }
 
     /**
@@ -51,9 +70,23 @@ public interface SaveModelBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int save(M model, Getter<M>... forceFields) {
-        return SaveModelMethodUtil.save(getBasicMapper(), model, false, forceFields);
+        return this.save(model, saveStrategy -> {
+            saveStrategy.forceFields(forceFields);
+        });
     }
 
+    /**
+     * 多个保存，非批量行为
+     *
+     * @param list
+     * @param saveStrategy 保存策略
+     * @return 影响条数
+     */
+    default <T, M extends Model<T>> int saveModel(Collection<M> list, Consumer<SaveStrategy<M>> saveStrategy) {
+        SaveStrategy<M> strategy = new SaveStrategy<>();
+        saveStrategy.accept(strategy);
+        return SaveModelMethodUtil.saveList(getBasicMapper(), list, strategy);
+    }
 
     /**
      * 多个保存，非批量行为
@@ -73,10 +106,9 @@ public interface SaveModelBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int saveModel(Collection<M> list, boolean allFieldForce) {
-        if (Objects.isNull(list) || list.isEmpty()) {
-            return 0;
-        }
-        return SaveModelMethodUtil.save(getBasicMapper(), list, allFieldForce, null);
+        return this.saveModel(list, saveStrategy -> {
+            saveStrategy.allFieldSave(allFieldForce);
+        });
     }
 
     /**
@@ -87,7 +119,23 @@ public interface SaveModelBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int saveModel(Collection<M> list, Getter<M>... forceFields) {
-        return SaveModelMethodUtil.save(getBasicMapper(), list, false, forceFields);
+        return this.saveModel(list, saveStrategy -> {
+            saveStrategy.forceFields(forceFields);
+        });
+    }
+
+    /**
+     * 使用数据库原生方式批量插入
+     * 一次最好在100条内
+     *
+     * @param list     需要插入数据
+     * @param strategy 插入策略
+     * @return 影响条数
+     */
+    default <T, M extends Model<T>> int saveModelBatch(Collection<M> list, Consumer<SaveBatchStrategy<M>> strategy) {
+        SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy<>();
+        strategy.accept(saveBatchStrategy);
+        return SaveModelMethodUtil.saveBatch(getBasicMapper(), new Insert(), list, saveBatchStrategy);
     }
 
     /**
@@ -98,9 +146,6 @@ public interface SaveModelBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int saveModelBatch(Collection<M> list) {
-        if (Objects.isNull(list) || list.isEmpty()) {
-            return 0;
-        }
         return SaveModelMethodUtil.saveBatch(getBasicMapper(), list);
     }
 
@@ -116,9 +161,8 @@ public interface SaveModelBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int saveModelBatch(Collection<M> list, Getter<M>... forceFields) {
-        if (Objects.isNull(list) || list.isEmpty()) {
-            return 0;
-        }
-        return SaveModelMethodUtil.saveBatch(getBasicMapper(), list, forceFields);
+        return this.saveModelBatch(list, saveStrategy -> {
+            saveStrategy.forceFields(forceFields);
+        });
     }
 }

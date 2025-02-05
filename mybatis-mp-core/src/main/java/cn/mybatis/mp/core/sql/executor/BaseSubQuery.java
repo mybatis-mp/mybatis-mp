@@ -143,7 +143,7 @@ public abstract class BaseSubQuery<Q extends BaseSubQuery<Q>> extends AbstractSu
 
     @Override
     @SafeVarargs
-    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> Q from(IDataset<DATASET, DATASET_FIELD>... tables) {
+    public final Q from(IDataset<?, ?>... tables) {
         return super.from(tables);
     }
 

@@ -151,15 +151,15 @@ public class ResultInfo {
                 ResultEntityField resultEntityField = field.getAnnotation(ResultEntityField.class);
                 if (resultEntityField.target() != Void.class) {
                     entity = resultEntityField.target();
-                    if (resultEntity.storey() != resultEntityField.storey()) {
-                        throw new RuntimeException(" class:" + clazz.getName() + ", the field:" + field.getName() + " config @ResultEntityField(storey) error");
-                    }
                     storey = resultEntityField.storey();
                     tableInfo = Tables.get(entity);
                     if (Objects.isNull(tableInfo)) {
                         throw new NotTableClassException(entity);
                     }
                 } else {
+                    if (resultEntity.storey() != resultEntityField.storey()) {
+                        throw new RuntimeException(" class: no config ?, the field:" + field.getName() + " config @ResultEntityField(storey) error");
+                    }
                     entity = resultEntity.value();
                     storey = resultEntity.storey();
                     tableInfo = resultEntityTableInfo;

@@ -22,9 +22,12 @@ import cn.mybatis.mp.core.sql.executor.BaseQuery;
 import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.util.*;
 import cn.mybatis.mp.db.annotations.ResultEntity;
+import db.sql.api.Cmd;
 import db.sql.api.impl.cmd.basic.Column;
 import db.sql.api.impl.cmd.basic.OrderByDirection;
+import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.struct.Where;
+import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.OptimizeOptions;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.exceptions.TooManyResultsException;
@@ -377,6 +380,20 @@ public class MybatisDefaultResultSetHandler extends DefaultResultSetHandler {
 
         if (Objects.isNull(fetchInfo.getTargetSelectColumn()) || StringPool.EMPTY.equals(fetchInfo.getTargetSelectColumn())) {
             query.select(fetchInfo.getReturnType());
+            Select select = query.getSelect();
+            Set<String> selectColumns = new HashSet<>();
+            if (select != null && select.getSelectField() != null) {
+                List<Cmd> selectFields = select.getSelectField();
+                selectFields.stream().forEach(item -> {
+                    if (item instanceof TableField) {
+                        selectColumns.add(((TableField) item).getName());
+                    }
+                });
+            }
+
+            if (!selectColumns.contains(fetchInfo.getTargetMatchColumn())) {
+                query.select(new Column(fetchInfo.getTargetMatchColumn()));
+            }
         } else {
             if (!single && fetchInfo.isUseResultFetchKeyValue()) {
                 query.setReturnType(FetchKeyValue.class);

@@ -34,9 +34,9 @@ public class CaseWhen implements Cmd {
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(SqlConst.WHEN);
-        condition.sql(module, this, context, sqlBuilder);
+        sqlBuilder = condition.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.THEN);
-        then.sql(module, this, context, sqlBuilder);
+        sqlBuilder = then.sql(module, this, context, sqlBuilder);
         return sqlBuilder;
     }
 

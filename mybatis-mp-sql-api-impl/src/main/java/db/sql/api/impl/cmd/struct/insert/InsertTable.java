@@ -20,25 +20,17 @@ import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.struct.insert.IInsertTable;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.AbstractInsert;
-import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-import java.util.List;
+import java.util.regex.Matcher;
 
 public class InsertTable implements IInsertTable<Table> {
 
     protected final Table table;
 
-    private boolean insertIgnore = false;
-
     public InsertTable(Table table) {
         this.table = table;
-    }
-
-    public InsertTable(Table table, boolean insertIgnore) {
-        this.table = table;
-        this.insertIgnore = insertIgnore;
     }
 
     @Override
@@ -46,29 +38,32 @@ public class InsertTable implements IInsertTable<Table> {
         return table;
     }
 
-    public boolean isInsertIgnore() {
-        return insertIgnore;
-    }
-
-    public void setInsertIgnore(boolean insertIgnore) {
-        this.insertIgnore = insertIgnore;
-    }
-
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        AbstractInsert abstractInsert = (AbstractInsert) parent;
 
-        if (context.getDbType() == DbType.ORACLE && parent instanceof AbstractInsert) {
-            AbstractInsert abstractInsert = (AbstractInsert) parent;
-            List<List<Cmd>> insertValuesList = null;
-            if (Objects.nonNull(abstractInsert.getInsertValues())) {
-                insertValuesList = abstractInsert.getInsertValues().getValues();
+        boolean insertIgnore = (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.H2 || context.getDbType() == DbType.ORACLE)
+                && abstractInsert.getConflict() != null
+                && abstractInsert.getConflict().getConflictAction().isDoNothing();
+
+        if (insertIgnore) {
+            if (context.getDbType() == DbType.ORACLE) {
+                //可能需要增加ConflictKeys
+                abstractInsert.getConflict().addDefaultConflictKeys(abstractInsert, context.getDbType());
+
+                sqlBuilder.append(SqlConst.INSERT).append("--+ IGNORE_ROW_ON_DUPKEY_INDEX(")
+                        .append(table.getName(context.getDbType())).append(SqlConst.BRACKET_LEFT)
+                        .append(String.join(",", abstractInsert.getConflict().getConflictKeys()))
+                        .append(SqlConst.BRACKET_RIGHT).append(SqlConst.BRACKET_RIGHT)
+                        .append(System.lineSeparator().replaceAll(Matcher.quoteReplacement("\\"), Matcher.quoteReplacement("\\\\")))
+                        .append(SqlConst.INTO);
+            } else {
+                sqlBuilder.append(SqlConst.INSERT_IGNORE_INTO);
             }
-            if (Objects.nonNull(insertValuesList) && insertValuesList.size() > 1) {
-                sqlBuilder.append(" INSERT ALL ");
-                return sqlBuilder;
-            }
+        } else {
+            sqlBuilder.append(SqlConst.INSERT_INTO);
         }
-        sqlBuilder.append(insertIgnore && (context.getDbType() == DbType.MYSQL || context.getDbType() == DbType.MARIA_DB) ? SqlConst.INSERT_IGNORE_INTO : SqlConst.INSERT_INTO);
+
         sqlBuilder.append(this.table.getName());
         return sqlBuilder;
     }

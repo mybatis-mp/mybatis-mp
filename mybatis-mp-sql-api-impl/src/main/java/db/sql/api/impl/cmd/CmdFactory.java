@@ -25,7 +25,7 @@ import db.sql.api.impl.cmd.basic.AllField;
 import db.sql.api.impl.cmd.basic.DatasetField;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
-import db.sql.api.impl.tookit.LambdaUtil;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,10 +53,13 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
                 (tableNums == 1 ? "" : tableNums);
     }
 
+    public ConditionFactory createConditionFactory() {
+        return new ConditionFactory(this);
+    }
+
     public Table cacheTable(Class<?> entity, int storey) {
         return this.tableCache.get(storey + entity.getName());
     }
-
 
     @Override
     public Table table(Class<?> entity, int storey) {
@@ -112,8 +115,8 @@ public class CmdFactory implements ICmdFactory<Table, TableField> {
         return this.field(entity, storey, filedName);
     }
 
-    public TableField field(Table table, String columnName) {
-        return new TableField(table, columnName);
+    public TableField field(Table table, String columnName, boolean id) {
+        return new TableField(table, columnName, id);
     }
 
     @Override

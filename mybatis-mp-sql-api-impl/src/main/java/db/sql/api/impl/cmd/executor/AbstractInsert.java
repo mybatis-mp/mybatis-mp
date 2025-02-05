@@ -17,10 +17,12 @@ package db.sql.api.impl.cmd.executor;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.IConflictAction;
 import db.sql.api.cmd.executor.IInsert;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.impl.cmd.CmdFactory;
 import db.sql.api.impl.cmd.Methods;
+import db.sql.api.impl.cmd.basic.Conflict;
 import db.sql.api.impl.cmd.basic.NULL;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
@@ -55,6 +57,7 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     protected InsertFields insertFields;
     protected InsertValues insertValues;
     protected InsertSelect insertSelect;
+    protected Conflict conflict;
 
     public AbstractInsert(CMD_FACTORY $) {
         this.$ = $;
@@ -152,12 +155,6 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     }
 
     @Override
-    public SELF insertIgnore() {
-        this.insertTable.setInsertIgnore(true);
-        return (SELF) this;
-    }
-
-    @Override
     public <T> SELF fields(Getter<T>... fields) {
         TableField[] tableField = new TableField[fields.length];
         for (int i = 0; i < fields.length; i++) {
@@ -192,6 +189,26 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
         return (SELF) this;
     }
 
+    protected Conflict $conflict() {
+        if (this.conflict == null) {
+            this.conflict = new Conflict(this.$);
+            this.cmds().add(this.conflict);
+        }
+        return this.conflict;
+    }
+
+    @Override
+    public <T> SELF conflictKeys(Getter<T>... conflictKeys) {
+        this.$conflict().conflictKeys(conflictKeys);
+        return (SELF) this;
+    }
+
+    @Override
+    public <T> SELF onConflict(Consumer<IConflictAction<T>> action) {
+        this.$conflict().onConflict(action);
+        return (SELF) this;
+    }
+
     @Override
     public InsertTable getInsertTable() {
         return this.insertTable;
@@ -212,12 +229,18 @@ public abstract class AbstractInsert<SELF extends AbstractInsert<SELF, CMD_FACTO
     }
 
     @Override
+    public Conflict getConflict() {
+        return conflict;
+    }
+
+    @Override
     void initCmdSorts(Map<Class<? extends Cmd>, Integer> cmdSorts) {
         int i = 0;
         cmdSorts.put(InsertTable.class, i += 10);
         cmdSorts.put(InsertFields.class, i += 10);
         cmdSorts.put(InsertValues.class, i += 10);
         cmdSorts.put(InsertSelect.class, i += 10);
+        cmdSorts.put(Conflict.class, i += 10);
     }
 
 

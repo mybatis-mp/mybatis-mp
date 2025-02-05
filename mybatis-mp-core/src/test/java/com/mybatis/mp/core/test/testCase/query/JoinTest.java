@@ -21,6 +21,9 @@ import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.DO.SysUser;
 import com.mybatis.mp.core.test.mapper.SysUserMapper;
 import com.mybatis.mp.core.test.testCase.BaseTest;
+import com.mybatis.mp.core.test.testCase.TestDataSource;
+import com.mybatis.mp.core.test.vo.SysUserJoinSelfVo;
+import db.sql.api.DbType;
 import db.sql.api.cmd.JoinMode;
 import db.sql.api.impl.cmd.dbFun.FunctionInterface;
 import org.apache.ibatis.session.SqlSession;
@@ -39,10 +42,11 @@ public class JoinTest extends BaseTest {
     public void defaultAddOn() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
             Integer count = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId, c -> c.count())
                     .from(SysUser.class)
-                    .join(SysUser.class, SysRole.class)
+                    .join(SysUser::getRole_id, SysRole::getId)
                     .returnType(Integer.class)
                     .get();
 
@@ -132,6 +136,11 @@ public class JoinTest extends BaseTest {
 
     @Test
     public void rightJoin() {
+        if (TestDataSource.DB_TYPE == DbType.SQLITE) {
+            //SQLITE 不支持RIGHT JOIN
+            return;
+        }
+
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             Integer count = QueryChain.of(sysUserMapper)
@@ -168,6 +177,44 @@ public class JoinTest extends BaseTest {
                     .returnType(Integer.class)
                     .get();
             assertEquals(Integer.valueOf(2), count, "joinSelf");
+
+
+            List<SysUserJoinSelfVo> list = QueryChain.of(sysUserMapper)
+                    .from(SysUser.class)
+                    .leftJoin(SysUser::getRole_id, SysRole::getId, on -> on.or().eq(SysRole::getId, 1))
+                    .leftJoin(SysUser.class, 1, SysRole.class, 2, on -> on.eq(SysRole::getId, 2, 2))
+                    .orderBy(SysUser::getId)
+                    .returnType(SysUserJoinSelfVo.class)
+                    .list();
+            System.out.println(list);
+
+            assertEquals(list.get(0).getName(), "测试");
+            assertEquals(list.get(0).getName2(), "运维");
+
+            assertEquals(list.get(1).getName(), "测试");
+            assertEquals(list.get(1).getName2(), "运维");
+
+            assertEquals(list.get(2).getName(), "测试");
+            assertEquals(list.get(2).getName2(), "运维");
+
+
+            list = QueryChain.of(sysUserMapper)
+                    .from(SysUser.class)
+                    .leftJoin(SysUser::getRole_id, SysRole::getId)
+                    .leftJoin(SysUser.class, 1, SysRole.class, 2, on -> on.eq(SysRole::getId, 2, 2))
+                    .orderBy(SysUser::getId)
+                    .returnType(SysUserJoinSelfVo.class)
+                    .list();
+            System.out.println(list);
+
+            assertEquals(list.get(0).getName(), null);
+            assertEquals(list.get(0).getName2(), "运维");
+
+            assertEquals(list.get(1).getName(), "测试");
+            assertEquals(list.get(1).getName2(), "运维");
+
+            assertEquals(list.get(2).getName(), "测试");
+            assertEquals(list.get(2).getName2(), "运维");
         }
     }
 

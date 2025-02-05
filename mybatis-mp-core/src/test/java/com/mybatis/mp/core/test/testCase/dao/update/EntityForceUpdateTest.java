@@ -21,6 +21,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class EntityForceUpdateTest extends BaseDaoTest {
 
@@ -32,7 +33,7 @@ public class EntityForceUpdateTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).update(sysUserModel, true);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 0);
         }
     }
@@ -45,7 +46,7 @@ public class EntityForceUpdateTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).update(sysUserModel, SysUser::getUserName);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 0);
         }
     }
@@ -58,7 +59,7 @@ public class EntityForceUpdateTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).saveOrUpdate(sysUserModel, true);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 0);
         }
     }
@@ -71,7 +72,7 @@ public class EntityForceUpdateTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).saveOrUpdate(sysUserModel, SysUser::getUserName);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 0);
         }
     }

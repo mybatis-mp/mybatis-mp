@@ -14,75 +14,76 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.mappers.utils;
 
-import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
 import cn.mybatis.mp.core.db.reflect.TableInfo;
+import cn.mybatis.mp.core.db.reflect.Tables;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.EntityBatchInsertContext;
 import cn.mybatis.mp.core.mybatis.mapper.context.EntityInsertContext;
-import cn.mybatis.mp.core.util.TableInfoUtil;
-import cn.mybatis.mp.db.IdAutoType;
-import cn.mybatis.mp.db.annotations.TableId;
-import db.sql.api.DbType;
-import db.sql.api.Getter;
-import db.sql.api.impl.tookit.LambdaUtil;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
+import cn.mybatis.mp.core.sql.executor.BaseInsert;
+import cn.mybatis.mp.core.sql.executor.Insert;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 public final class SaveMethodUtil {
 
-    public static <T> int save(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Getter<T>[] forceFields) {
-        return basicMapper.$saveEntity(new EntityInsertContext(tableInfo, entity, allFieldForce, LambdaUtil.getFieldNames(forceFields)));
+    public static <T> int save(BasicMapper basicMapper, TableInfo tableInfo, T entity) {
+        return save(basicMapper, tableInfo, entity, new SaveStrategy<>());
     }
 
-    public static <T> int save(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, boolean allFieldForce, Getter<T>[] forceFields) {
+    public static <T> int save(BasicMapper basicMapper, TableInfo tableInfo, T entity, SaveStrategy<T> strategy) {
+        return basicMapper.$saveEntity(new EntityInsertContext(new Insert(), tableInfo, entity, strategy));
+    }
+
+    public static <T> int saveList(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, SaveStrategy strategy) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-
         int cnt = 0;
         for (T entity : list) {
-            cnt += save(basicMapper, tableInfo, entity, allFieldForce, forceFields);
+            cnt += save(basicMapper, tableInfo, entity, strategy);
         }
         return cnt;
+    }
+
+    public static <E> int saveBatch(BasicMapper basicMapper, Collection<E> list) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
+        }
+        TableInfo tableInfo = Tables.get(list.stream().findFirst().get().getClass());
+        SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy();
+        return saveBatch(basicMapper, tableInfo, list, saveBatchStrategy);
+    }
+
+    public static <E> int saveBatch(BasicMapper basicMapper, Collection<E> list, SaveBatchStrategy saveBatchStrategy) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
+        }
+        TableInfo tableInfo = Tables.get(list.stream().findFirst().get().getClass());
+        return saveBatch(basicMapper, tableInfo, list, saveBatchStrategy);
     }
 
     public static <E> int saveBatch(BasicMapper basicMapper, TableInfo tableInfo, Collection<E> list) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        Set<String> saveFieldSet = new HashSet<>();
-        DbType dbType = basicMapper.getCurrentDbType();
-        for (TableFieldInfo tableFieldInfo : tableInfo.getTableFieldInfos()) {
-            if (!tableFieldInfo.getTableFieldAnnotation().insert()) {
-                continue;
-            }
-            if (tableFieldInfo.isTableId()) {
-                TableId tableId = TableInfoUtil.getTableIdAnnotation(tableFieldInfo.getField(), dbType);
-                Objects.requireNonNull(tableId.value());
-                if (tableId.value() == IdAutoType.AUTO) {
-                    Object id;
-                    try {
-                        id = tableFieldInfo.getReadFieldInvoker().invoke(list.stream().findFirst().get(), null);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                    if (Objects.isNull(id)) {
-                        continue;
-                    }
-                }
-            }
-            saveFieldSet.add(tableFieldInfo.getField().getName());
-        }
-        return basicMapper.$save(new EntityBatchInsertContext(tableInfo, list, saveFieldSet));
+        SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy();
+        return saveBatch(basicMapper, tableInfo, list, saveBatchStrategy);
     }
 
-    public static <E> int saveBatch(BasicMapper basicMapper, TableInfo tableInfo, Collection<E> list, Getter<E>... forceFields) {
-        if (Objects.isNull(forceFields) || forceFields.length < 1) {
-            throw new RuntimeException("forceFields can't be null or empty");
+    public static <T> int saveBatch(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, SaveBatchStrategy<T> saveBatchStrategy) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
         }
-        return basicMapper.$save(new EntityBatchInsertContext(tableInfo, list, LambdaUtil.getFieldNames(forceFields)));
+        return saveBatch(basicMapper, new Insert(), tableInfo, list, saveBatchStrategy);
+    }
+
+    public static <E> int saveBatch(BasicMapper basicMapper, BaseInsert<?> insert, TableInfo tableInfo, Collection<E> list, SaveBatchStrategy<E> saveBatchStrategy) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
+        }
+        return basicMapper.$save(new EntityBatchInsertContext(insert, tableInfo, list, saveBatchStrategy));
     }
 }

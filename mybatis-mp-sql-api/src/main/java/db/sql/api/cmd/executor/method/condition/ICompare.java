@@ -41,6 +41,10 @@ public interface ICompare<RV, COLUMN, V> extends
         ILikeGetterPredicateCompare<RV>,
         INotLikeGetterCompare<RV>,
         INotLikeGetterPredicateCompare<RV>,
+        IILikeGetterCompare<RV>,
+        IILikeGetterPredicateCompare<RV>,
+        INotILikeGetterCompare<RV>,
+        INotILikeGetterPredicateCompare<RV>,
         IBetweenGetterCompare<RV, V>,
         IBetweenGetterPredicateCompare<RV, V>,
         INotBetweenGetterCompare<RV, V>,
@@ -77,6 +81,18 @@ public interface ICompare<RV, COLUMN, V> extends
     }
 
     RV notLike(LikeMode mode, COLUMN column, String value);
+
+    default RV iLike(COLUMN column, String value) {
+        return this.iLike(LikeMode.DEFAULT, column, value);
+    }
+
+    RV iLike(LikeMode mode, COLUMN column, String value);
+
+    default RV notILike(COLUMN column, String value) {
+        return this.notILike(LikeMode.DEFAULT, column, value);
+    }
+
+    RV notILike(LikeMode mode, COLUMN column, String value);
 
     RV between(COLUMN column, V value, V value2);
 

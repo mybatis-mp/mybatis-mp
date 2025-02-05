@@ -68,9 +68,10 @@ public class EntityNotForceUpdateTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUserModel = sysUserMapper.getById(1);
+            sysUserModel.setId(null);
             sysUserModel.setUserName(null);
             sysUserMapper.saveOrUpdate(sysUserModel, false);
-            SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
+            SysUser sysUser = sysUserMapper.getById(1);
             assertEquals(sysUser.getUserName(), "admin");
             assertEquals(sysUser.getRole_id(), 0);
         }
@@ -81,9 +82,10 @@ public class EntityNotForceUpdateTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUserModel = sysUserMapper.getById(1);
+            sysUserModel.setId(null);
             sysUserModel.setUserName(null);
             sysUserMapper.saveOrUpdate(sysUserModel);
-            SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
+            SysUser sysUser = sysUserMapper.getById(1);
             assertEquals(sysUser.getUserName(), "admin");
             assertEquals(sysUser.getRole_id(), 0);
         }
@@ -94,8 +96,26 @@ public class EntityNotForceUpdateTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUser sysUserModel = sysUserMapper.getById(1);
+            sysUserModel.setId(null);
             sysUserModel.setUserName(null);
             sysUserMapper.saveOrUpdate(sysUserModel, SysUser::getId);
+            SysUser sysUser = sysUserMapper.getById(1);
+            assertEquals(sysUser.getUserName(), "admin");
+            assertEquals(sysUser.getRole_id(), 0);
+        }
+    }
+
+
+    @Test
+    public void noForceInsertTest7() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUserModel = sysUserMapper.getById(1);
+            sysUserModel.setId(null);
+            sysUserModel.setUserName(null);
+            sysUserMapper.saveOrUpdate(sysUserModel, strategy -> {
+                strategy.on(where -> where.eq(SysUser::getId, 1));
+            });
             SysUser sysUser = sysUserMapper.getById(sysUserModel.getId());
             assertEquals(sysUser.getUserName(), "admin");
             assertEquals(sysUser.getRole_id(), 0);

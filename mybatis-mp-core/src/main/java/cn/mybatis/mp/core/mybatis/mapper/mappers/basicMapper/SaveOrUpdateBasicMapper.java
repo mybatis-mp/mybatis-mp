@@ -16,12 +16,28 @@ package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 
 
 import cn.mybatis.mp.core.db.reflect.Tables;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveOrUpdateMethodUtil;
 import db.sql.api.Getter;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 public interface SaveOrUpdateBasicMapper extends BaseBasicMapper {
+
+    /**
+     * 实体类新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param entity
+     * @param saveOrUpdateStrategy 策略
+     * @return 影响条数
+     */
+    default <T> int saveOrUpdate(T entity, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
+        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.accept(strategy);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(entity.getClass()), entity, strategy);
+    }
 
     /**
      * 实体类新增或修改
@@ -31,7 +47,7 @@ public interface SaveOrUpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int saveOrUpdate(T entity) {
-        return saveOrUpdate(entity, false);
+        return this.saveOrUpdate(entity, false);
     }
 
     /**
@@ -43,7 +59,9 @@ public interface SaveOrUpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int saveOrUpdate(T entity, boolean allFieldForce) {
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(entity.getClass()), entity, allFieldForce);
+        return this.saveOrUpdate(entity, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.allField(allFieldForce);
+        });
     }
 
     /**
@@ -55,7 +73,27 @@ public interface SaveOrUpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int saveOrUpdate(T entity, Getter<T>... forceFields) {
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(entity.getClass()), entity, false, forceFields);
+        return this.saveOrUpdate(entity, (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.forceFields(forceFields);
+        });
+    }
+
+    /**
+     * 实体类新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param list                 实体类对象List
+     * @param saveOrUpdateStrategy 策略
+     * @return 影响条数
+     */
+    default <T> int saveOrUpdate(Collection<T> list, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy) {
+        if (list == null || list.isEmpty()) {
+            return 0;
+        }
+        T first = list.stream().findFirst().get();
+        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.accept(strategy);
+        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(first.getClass()), list, strategy);
     }
 
     /**
@@ -66,7 +104,7 @@ public interface SaveOrUpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int saveOrUpdate(Collection<T> list) {
-        return saveOrUpdate(list, false);
+        return this.saveOrUpdate(list, false);
     }
 
     /**
@@ -78,11 +116,9 @@ public interface SaveOrUpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int saveOrUpdate(Collection<T> list, boolean allFieldForce) {
-        if (list == null || list.isEmpty()) {
-            return 0;
-        }
-        T first = list.stream().findFirst().get();
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(first.getClass()), list, allFieldForce, (Getter<T>[]) null);
+        return this.saveOrUpdate(list, (Consumer<SaveOrUpdateStrategy<T>>) (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.allField(allFieldForce);
+        });
     }
 
     /**
@@ -94,10 +130,8 @@ public interface SaveOrUpdateBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int saveOrUpdate(Collection<T> list, Getter<T>... forceFields) {
-        if (list == null || list.isEmpty()) {
-            return 0;
-        }
-        T first = list.stream().findFirst().get();
-        return SaveOrUpdateMethodUtil.saveOrUpdate(getBasicMapper(), Tables.get(first.getClass()), list, false, forceFields);
+        return this.saveOrUpdate(list, (Consumer<SaveOrUpdateStrategy<T>>) (saveOrUpdateStrategy) -> {
+            saveOrUpdateStrategy.forceFields(forceFields);
+        });
     }
 }

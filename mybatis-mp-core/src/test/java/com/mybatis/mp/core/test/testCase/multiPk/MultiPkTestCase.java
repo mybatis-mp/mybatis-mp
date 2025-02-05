@@ -16,7 +16,10 @@ package com.mybatis.mp.core.test.testCase.multiPk;
 
 import com.mybatis.mp.core.test.DO.MultiPk;
 import com.mybatis.mp.core.test.mapper.MultiPkMapper;
+import com.mybatis.mp.core.test.model.MultiPkModel;
 import com.mybatis.mp.core.test.testCase.BaseTest;
+import com.mybatis.mp.core.test.testCase.TestDataSource;
+import db.sql.api.DbType;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
@@ -45,6 +48,228 @@ public class MultiPkTestCase extends BaseTest {
             entity.setName("12");
             mapper.saveBatch(Collections.singletonList(entity));
         }
+    }
+
+    @Test
+    public void saveConflictTest() {
+        if (!isSupportConflict()) {
+            return;
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
+
+            MultiPk entity = new MultiPk();
+            entity.setId1(1);
+            entity.setId2(2);
+            entity.setName("12");
+
+            mapper.save(entity);
+            mapper.save(entity, strategy ->
+                    strategy.onConflict(action -> action.doNothing())
+            );
+            mapper.save(Collections.singletonList(entity), strategy ->
+                    strategy.onConflict(action -> action.doNothing())
+            );
+        }
+
+        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            return;
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
+
+            MultiPk entity = new MultiPk();
+            entity.setId1(1);
+            entity.setId2(2);
+            entity.setName("12");
+
+
+            mapper.save(entity);
+            entity.setName("xxxx");
+            mapper.save(entity, strategy -> {
+                //strategy.conflictKeys(MultiPk::getId1, MultiPk::getId2);
+                strategy.onConflict(action -> action.doUpdate(update -> update.overwrite(MultiPk::getName)));
+            });
+            mapper.save(Collections.singletonList(entity), strategy -> {
+                //strategy.conflictKeys(MultiPk::getId1, MultiPk::getId2);
+                strategy.onConflict(action -> action.doUpdate(update -> update.overwrite(MultiPk::getName)));
+            });
+            entity = mapper.get(where -> where.eq(MultiPk::getId1, 1).eq(MultiPk::getId2, 2));
+            assertEquals("xxxx", entity.getName());
+            System.out.println(entity);
+        }
+
+
+    }
+
+    @Test
+    public void saveConflictTest2() {
+        if (!isSupportConflict()) {
+            return;
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
+
+            MultiPkModel entity = new MultiPkModel();
+            entity.setId1(1);
+            entity.setId2x(2);
+            entity.setName("12");
+            mapper.save(entity);
+            mapper.save(entity, strategy ->
+                    strategy.onConflict(action -> action.doNothing())
+            );
+            mapper.saveModel(Collections.singletonList(entity), strategy ->
+                    strategy.onConflict(action -> action.doNothing())
+            );
+        }
+
+        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            return;
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
+
+            MultiPkModel entity = new MultiPkModel();
+            entity.setId1(1);
+            entity.setId2x(2);
+            entity.setName("12");
+            mapper.saveModel(Collections.singletonList(entity));
+            entity.setName("xxxx");
+            mapper.save(entity, strategy -> {
+                strategy.conflictKeys(MultiPkModel::getId1, MultiPkModel::getId2x)
+                        .onConflict(action -> action.doUpdate(update -> update.overwrite(MultiPkModel::getName)));
+            });
+            mapper.saveModel(Collections.singletonList(entity), strategy -> {
+                strategy.conflictKeys(MultiPkModel::getId1, MultiPkModel::getId2x)
+                        .onConflict(action -> action.doUpdate(update -> update.overwrite(MultiPkModel::getName)));
+            });
+            MultiPk entity2 = mapper.get(where -> where.eq(MultiPk::getId1, 1).eq(MultiPk::getId2, 2));
+            assertEquals("xxxx", entity2.getName());
+            System.out.println(entity2);
+        }
+
+
+    }
+
+    @Test
+    public void saveBatchConflictTest() {
+        if (!isSupportConflict()) {
+            return;
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
+
+            MultiPk entity = new MultiPk();
+            entity.setId1(1);
+            entity.setId2(2);
+            entity.setName("12");
+
+            MultiPk entity2 = new MultiPk();
+            entity2.setId1(2);
+            entity2.setId2(2);
+            entity2.setName("12");
+            mapper.saveBatch(Arrays.asList(entity, entity2));
+            mapper.saveBatch(Collections.singletonList(entity), strategy ->
+                    strategy.onConflict(action -> action.doNothing())
+            );
+        }
+
+        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            return;
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
+
+            MultiPk entity = new MultiPk();
+            entity.setId1(1);
+            entity.setId2(2);
+            entity.setName("12");
+
+            MultiPk entity2 = new MultiPk();
+            entity2.setId1(2);
+            entity2.setId2(2);
+            entity2.setName("12");
+
+            mapper.saveBatch(Arrays.asList(entity, entity2));
+            entity.setName("xxxx");
+            mapper.saveBatch(Collections.singletonList(entity), strategy -> {
+                //strategy.conflictKeys(MultiPk::getId1, MultiPk::getId2);
+                strategy.onConflict(action -> action.doUpdate(update -> update.overwriteAll()));
+            });
+            entity = mapper.get(where -> where.eq(MultiPk::getId1, 1).eq(MultiPk::getId2, 2));
+            assertEquals("xxxx", entity.getName());
+            System.out.println(entity);
+        }
+
+
+    }
+
+    private boolean isSupportConflict() {
+        if (TestDataSource.DB_TYPE != DbType.H2 && TestDataSource.DB_TYPE != DbType.MYSQL && TestDataSource.DB_TYPE != DbType.MARIA_DB
+                && TestDataSource.DB_TYPE != DbType.PGSQL
+                && TestDataSource.DB_TYPE != DbType.KING_BASE
+                && TestDataSource.DB_TYPE != DbType.OPEN_GAUSS
+                && TestDataSource.DB_TYPE != DbType.SQLITE
+                && TestDataSource.DB_TYPE != DbType.ORACLE
+        ) {
+            return false;
+        }
+        return true;
+    }
+
+    @Test
+    public void saveBatchConflictTest2() {
+        if (!isSupportConflict()) {
+            return;
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
+
+            MultiPkModel entity = new MultiPkModel();
+            entity.setId1(1);
+            entity.setId2x(2);
+            entity.setName("12");
+
+            MultiPkModel entity2 = new MultiPkModel();
+            entity2.setId1(2);
+            entity2.setId2x(2);
+            entity2.setName("12");
+            mapper.saveModelBatch(Arrays.asList(entity, entity2));
+            mapper.saveModelBatch(Arrays.asList(entity, entity2), strategy ->
+                    strategy.onConflict(action -> action.doNothing())
+            );
+        }
+
+        if (TestDataSource.DB_TYPE == DbType.ORACLE) {
+            return;
+        }
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            MultiPkMapper mapper = session.getMapper(MultiPkMapper.class);
+
+            MultiPkModel entity = new MultiPkModel();
+            entity.setId1(1);
+            entity.setId2x(2);
+            entity.setName("12");
+            mapper.saveModelBatch(Collections.singletonList(entity));
+            entity.setName("xxxx");
+            mapper.saveModelBatch(Collections.singletonList(entity), strategy -> {
+                strategy.conflictKeys(MultiPkModel::getId1, MultiPkModel::getId2x)
+                        .onConflict(action -> action.doUpdate(update -> update.overwrite(MultiPkModel::getName)));
+            });
+            MultiPk entity2 = mapper.get(where -> where.eq(MultiPk::getId1, 1).eq(MultiPk::getId2, 2));
+            assertEquals("xxxx", entity2.getName());
+            System.out.println(entity2);
+        }
+
+
     }
 
     @Test

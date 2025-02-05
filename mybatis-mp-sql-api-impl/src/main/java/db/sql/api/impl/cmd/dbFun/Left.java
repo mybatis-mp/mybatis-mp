@@ -30,14 +30,14 @@ public class Left extends BasicFunction<Left> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.ORACLE) {
+        if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(" SUBSTR");
         } else {
             sqlBuilder.append(operator);
         }
         sqlBuilder.append(SqlConst.BRACKET_LEFT);
-        this.key.sql(module, this, context, sqlBuilder);
-        if (context.getDbType() == DbType.ORACLE) {
+        sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
+        if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(SqlConst.DELIMITER).append(1);
         }
         sqlBuilder.append(SqlConst.DELIMITER).append(this.length);

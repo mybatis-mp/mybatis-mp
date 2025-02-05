@@ -19,7 +19,6 @@ import cn.mybatis.mp.core.mybatis.executor.statement.Timeoutable;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
 import db.sql.api.Cmd;
 import db.sql.api.cmd.basic.IDataset;
-import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.executor.AbstractUpdate;
@@ -33,7 +32,11 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
     protected Integer timeout;
 
     public BaseUpdate() {
-        super(new MybatisCmdFactory());
+        this(new MybatisCmdFactory());
+    }
+
+    public BaseUpdate(MybatisCmdFactory mybatisCmdFactory) {
+        super(mybatisCmdFactory);
     }
 
     public BaseUpdate(Where where) {
@@ -79,7 +82,7 @@ public abstract class BaseUpdate<T extends BaseUpdate<T>> extends AbstractUpdate
 
     @Override
     @SafeVarargs
-    public final <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> T from(IDataset<DATASET, DATASET_FIELD>... tables) {
+    public final T from(IDataset<?, ?>... tables) {
         return super.from(tables);
     }
 

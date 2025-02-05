@@ -14,13 +14,17 @@
 
 package com.mybatis.mp.core.test.testCase;
 
+import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.mybatis.configuration.MybatisConfiguration;
 import cn.mybatis.mp.core.mybatis.configuration.MybatisDatabaseIdProvider;
 import cn.mybatis.mp.core.mybatis.mapper.DbRunner;
 import com.mybatis.mp.core.test.db2.typeHandler.LocalDateTimeTypeHandler;
 import com.mybatis.mp.core.test.mapper.*;
+import com.mybatis.mp.core.test.typeHandler.SQLiteLocalDateTimeHandler;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
+import db.sql.api.impl.paging.OracleRowNumPagingProcessor;
+import db.sql.api.impl.paging.SQLServerRowNumberOverPagingProcessor;
 import db.sql.api.impl.tookit.SQLPrinter;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.apache.ibatis.mapping.Environment;
@@ -68,6 +72,8 @@ public class BaseTest {
 
     @BeforeEach
     public void init() {
+        MybatisMpConfig.setPagingProcessor(DbType.ORACLE, new OracleRowNumPagingProcessor());
+        MybatisMpConfig.setPagingProcessor(DbType.SQL_SERVER, new SQLServerRowNumberOverPagingProcessor());
         dataSource = TestDataSource.getDataSource();
 
         // 1 创建 事务管理工厂
@@ -82,6 +88,10 @@ public class BaseTest {
         if (TestDataSource.DB_TYPE == DbType.DB2) {
             //因为DB2的 jdbc 兼容不好
             configuration.getTypeHandlerRegistry().register(LocalDateTime.class, LocalDateTimeTypeHandler.class);
+        }
+
+        if (TestDataSource.DB_TYPE == DbType.SQLITE) {
+            configuration.getTypeHandlerRegistry().register(LocalDateTime.class, SQLiteLocalDateTimeHandler.class);
         }
 
         configuration.setLogImpl(StdOutImpl.class);
@@ -109,6 +119,8 @@ public class BaseTest {
         configuration.addMapper(MultiPkMapper.class);
         configuration.addMapper(DbRunner.class);
         configuration.addMapper(SysUserIDMapper.class);
+        configuration.addMapper(SplitTableTestMapper.class);
+
 
         String mapperLocations = "classpath:/mappers/**.xml";
 
@@ -118,7 +130,7 @@ public class BaseTest {
 
 
         //设置多数据库 DatabaseIdProvider xml 多数据库 判断时开启
-        factory.setDatabaseIdProvider(new MybatisDatabaseIdProvider());
+        factory.setDatabaseIdProvider(new MybatisDatabaseIdProvider(true));
 
         factory.setDataSource(dataSource);
         // 5 创建 mybatis sqlSessionFactory

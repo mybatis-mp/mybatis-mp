@@ -16,12 +16,13 @@ package db.sql.api.impl.cmd.dbFun.mysql;
 
 import db.sql.api.Cmd;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.dbFun.BasicFunction;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.tookit.CmdUtils;
 
-public class FindInSet extends BasicFunction<FindInSet> {
+public class FindInSet extends BasicFunction<FindInSet> implements ICondition {
 
     private final Cmd match;
 

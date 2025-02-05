@@ -38,7 +38,11 @@ public enum DbType {
 
     KING_BASE(new KeywordWrap("\"", "\"", true), new HashSet<>()),
 
-    CLICK_HOUSE(new KeywordWrap("\"", "\"", true), new HashSet<>());
+    CLICK_HOUSE(new KeywordWrap("\"", "\"", true), new HashSet<>()),
+
+    SQLITE(new KeywordWrap("\"", "\""), new HashSet<>()),
+
+    OPEN_GAUSS(new KeywordWrap("\"", "\""), new HashSet<>());
 
     private final KeywordWrap keywordWrap;
     private final Set<String> keywords;

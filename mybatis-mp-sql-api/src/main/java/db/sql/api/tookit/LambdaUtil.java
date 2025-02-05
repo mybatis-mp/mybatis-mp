@@ -11,7 +11,7 @@
  *  See the License for the specific language governing permissions and limitations under the License.
  *
  */
-package db.sql.api.impl.tookit;
+package db.sql.api.tookit;
 
 
 import db.sql.api.Getter;
@@ -49,14 +49,14 @@ public final class LambdaUtil {
         return getFieldInfo(getter).getName();
     }
 
-    private static LambdaFieldInfo getLambdaFieldInfo(SerializedLambda serializedLambda, ClassLoader classLoader) {
+    private static <T> LambdaFieldInfo<T> getLambdaFieldInfo(SerializedLambda serializedLambda, ClassLoader classLoader) {
         Class type = getClass(serializedLambda, classLoader);
         String methodName = serializedLambda.getImplMethodName();
         String fieldName = PropertyNamer.methodToProperty(methodName);
         return new LambdaFieldInfo(type, fieldName);
     }
 
-    public static <T, R> LambdaFieldInfo getFieldInfo(GetterFun<T, R> getter) {
+    public static <T, R> LambdaFieldInfo<T> getFieldInfo(GetterFun<T, R> getter) {
         return LAMBDA_GETTER_FIELD_MAP.computeIfAbsent(getter, (key) -> getLambdaFieldInfo(getSerializedLambda(getter), getter.getClass().getClassLoader()));
     }
 
@@ -90,23 +90,17 @@ public final class LambdaUtil {
         return type.substring(2, type.indexOf(";"));
     }
 
-    public static void main(String[] args) {
-        System.out.println(getName(LambdaFieldInfo::getName));
-        System.out.println(getName(LambdaFieldInfo::getName));
-        System.out.println(LAMBDA_GETTER_FIELD_MAP.size());
-    }
+    public static class LambdaFieldInfo<T> {
 
-    public static class LambdaFieldInfo {
-
-        private final Class type;
+        private final Class<T> type;
         private final String name;
 
-        public LambdaFieldInfo(Class type, String name) {
+        public LambdaFieldInfo(Class<T> type, String name) {
             this.type = type;
             this.name = name;
         }
 
-        public Class getType() {
+        public Class<T> getType() {
             return type;
         }
 

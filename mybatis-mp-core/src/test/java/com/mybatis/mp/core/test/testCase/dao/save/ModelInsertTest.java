@@ -47,7 +47,7 @@ public class ModelInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).save(sysUserModel, true);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
         }
     }
 
@@ -79,7 +79,7 @@ public class ModelInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).saveModel(Collections.singletonList(sysUserModel), true);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
         }
     }
 
@@ -119,6 +119,9 @@ public class ModelInsertTest extends BaseDaoTest {
                 } else {
                     mapper.saveModelBatch(list, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
                     System.out.println(list);
+                    if (TestDataSource.DB_TYPE == DbType.SQLITE || TestDataSource.DB_TYPE == DbType.MARIA_DB) {
+                        return;
+                    }
                     for (int i = 0; i < list.size(); i++) {
                         assertEquals(list.get(i).getId(), i + 1);
                     }

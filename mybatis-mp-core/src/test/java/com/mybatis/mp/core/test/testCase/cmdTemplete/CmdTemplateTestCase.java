@@ -14,6 +14,7 @@
 
 package com.mybatis.mp.core.test.testCase.cmdTemplete;
 
+import cn.mybatis.mp.core.sql.executor.SubQuery;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import com.mybatis.mp.core.test.DO.SysRole;
 import com.mybatis.mp.core.test.DO.SysUser;
@@ -77,6 +78,7 @@ public class CmdTemplateTestCase extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             SysUserRoleAutoSelectVo vo = QueryChain.of(sysUserMapper)
                     .select(SysUserRoleAutoSelectVo.class)
+                    .select(SubQuery.create("aa").select(SysUser::getUserName).from(SysUser.class).eq(SysUser::getId, 1))
                     .select(SysRole::getId, c -> CmdTemplate.create(" RANK() OVER( ORDER BY {0}) ", c).as("RANK2"))
                     .select(SysRole::getId, c -> CmdTemplate.create(" RANK() OVER( ORDER BY {0}) as RANK3", c))
                     .from(SysUser.class)

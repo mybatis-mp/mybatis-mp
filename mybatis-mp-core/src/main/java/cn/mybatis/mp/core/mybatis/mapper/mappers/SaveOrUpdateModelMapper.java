@@ -15,14 +15,29 @@
 package cn.mybatis.mp.core.mybatis.mapper.mappers;
 
 
-import cn.mybatis.mp.core.db.reflect.Models;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveOrUpdateModelMethodUtil;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 public interface SaveOrUpdateModelMapper<T> extends BaseMapper<T> {
+
+    /**
+     * 实体类Model新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param model
+     * @param saveOrUpdateStrategy 策略
+     * @return 影响条数
+     */
+    default <M extends Model<T>> int saveOrUpdate(M model, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy) {
+        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.accept(strategy);
+        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), model, strategy);
+    }
 
     /**
      * 实体类Model新增或修改
@@ -46,7 +61,9 @@ public interface SaveOrUpdateModelMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default <M extends Model<T>> int saveOrUpdate(M model, boolean allFieldForce) {
-        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), Models.get(model.getClass()), model, allFieldForce, null);
+        return this.saveOrUpdate(model, saveOrUpdateStrategy -> {
+            saveOrUpdateStrategy.allField(allFieldForce);
+        });
     }
 
     /**
@@ -59,7 +76,22 @@ public interface SaveOrUpdateModelMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default <M extends Model<T>> int saveOrUpdate(M model, Getter<M>... forceFields) {
-        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), Models.get(model.getClass()), model, false, forceFields);
+        return this.saveOrUpdate(model, saveOrUpdateStrategy -> {
+            saveOrUpdateStrategy.forceFields(forceFields);
+        });
+    }
+
+    /**
+     * 实体类Model新增或修改
+     * 先查是否存在，再进行新增或修改
+     *
+     * @param list 实体类Model 对象List
+     * @return 影响条数
+     */
+    default <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy) {
+        SaveOrUpdateStrategy strategy = new SaveOrUpdateStrategy();
+        saveOrUpdateStrategy.accept(strategy);
+        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), list, strategy);
     }
 
     /**
@@ -82,7 +114,9 @@ public interface SaveOrUpdateModelMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, boolean allFieldForce) {
-        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), list, allFieldForce, null);
+        return this.saveOrUpdateModel(list, saveOrUpdateStrategy -> {
+            saveOrUpdateStrategy.allField(allFieldForce);
+        });
     }
 
     /**
@@ -94,6 +128,8 @@ public interface SaveOrUpdateModelMapper<T> extends BaseMapper<T> {
      * @return 影响条数
      */
     default <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, Getter<M>... forceFields) {
-        return SaveOrUpdateModelMethodUtil.saveOrUpdate(getBasicMapper(), list, false, forceFields);
+        return this.saveOrUpdateModel(list, saveOrUpdateStrategy -> {
+            saveOrUpdateStrategy.forceFields(forceFields);
+        });
     }
 }

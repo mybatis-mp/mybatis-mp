@@ -52,6 +52,19 @@ public final class LogicDeleteUtil {
     }
 
     /**
+     * 在指定逻辑开关下执行
+     *
+     * @param state    开关状态
+     * @param runnable 运行函数
+     * @return 函数执行后的返回值
+     */
+    public static void execute(boolean state, Runnable runnable) {
+        try (LogicDeleteSwitch ignore = LogicDeleteSwitch.with(state)) {
+            runnable.run();
+        }
+    }
+
+    /**
      * 是否需要逻辑删除
      *
      * @param tableInfo 实体类tableInfo
@@ -72,7 +85,7 @@ public final class LogicDeleteUtil {
         Object value;
         LogicDelete logicDelete = logicDeleteFieldInfo.getLogicDeleteAnnotation();
         Class type = logicDeleteFieldInfo.getFieldInfo().getTypeClass();
-        value = MybatisMpConfig.getDefaultValue(type, logicDelete.afterValue());
+        value = MybatisMpConfig.getDefaultValue(logicDeleteFieldInfo.getFieldInfo().getClazz(), type, logicDelete.afterValue());
         if (value == null) {
             throw new RuntimeException("Unable to obtain deleted value，please use MybatisMpConfig.setDefaultValue(\"" + logicDelete.afterValue() + "\") to resolve it");
         }

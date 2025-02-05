@@ -29,7 +29,7 @@ public class MpTableField extends TableField {
     private final TableFieldInfo tableFieldInfo;
 
     public MpTableField(MpTable table, TableFieldInfo tableFieldInfo) {
-        super(table, tableFieldInfo.getColumnName());
+        super(table, tableFieldInfo.getColumnName(), tableFieldInfo.isTableId());
         this.tableFieldInfo = tableFieldInfo;
     }
 

@@ -23,9 +23,13 @@ import db.sql.api.SQLMode;
 
 import java.util.Objects;
 
-public class SQLCmdInsertContext<T extends BaseInsert> extends BaseSQLCmdContext<T> {
+public class SQLCmdInsertContext<T extends BaseInsert, DATA> extends BaseSQLCmdContext<T> {
 
     protected Class<?> entityType;
+
+    protected boolean useBatchExecutor = false;
+
+    private DATA insertData;
 
     public SQLCmdInsertContext() {
 
@@ -35,8 +39,16 @@ public class SQLCmdInsertContext<T extends BaseInsert> extends BaseSQLCmdContext
         super(t);
     }
 
+    public SQLCmdInsertContext(DATA insertData) {
+        this.insertData = insertData;
+    }
+
     public Class<?> getEntityType() {
         return entityType;
+    }
+
+    public DATA getInsertData() {
+        return insertData;
     }
 
     @Override
@@ -47,5 +59,9 @@ public class SQLCmdInsertContext<T extends BaseInsert> extends BaseSQLCmdContext
         sqlBuilderContext = new MybatisSqlBuilderContext(dbType, SQLMode.PREPARED);
         sql = MybatisMpConfig.getSQLBuilder().buildInsertSQL(getExecution(), sqlBuilderContext).toString();
         return sql;
+    }
+
+    public void setUseBatchExecutor(boolean useBatchExecutor) {
+        this.useBatchExecutor = useBatchExecutor;
     }
 }

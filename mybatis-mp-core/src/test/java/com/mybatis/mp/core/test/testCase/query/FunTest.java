@@ -313,6 +313,9 @@ public class FunTest extends BaseTest {
                         selector.when(DbType.KING_BASE, () -> {
                                     queryChain.returnType(String.class);
                                 })
+                                .when(DbType.SQLITE, () -> {
+                                    queryChain.returnType(String.class);
+                                })
                                 .otherwise(() -> {
                                     queryChain.returnType(LocalDate.class);
                                 });
@@ -331,6 +334,9 @@ public class FunTest extends BaseTest {
                     .eq(SysUser::getId, 1)
                     .dbAdapt((queryChain, selector) -> {
                         selector.when(DbType.KING_BASE, () -> {
+                                    queryChain.returnType(String.class);
+                                })
+                                .when(DbType.SQLITE, () -> {
                                     queryChain.returnType(String.class);
                                 })
                                 .otherwise(() -> {
@@ -450,7 +456,11 @@ public class FunTest extends BaseTest {
                     .eq(SysUser::getId, 1)
                     .returnType(Integer.class)
                     .get();
-            assertEquals(date, 4);
+            if (TestDataSource.DB_TYPE == DbType.SQLITE) {
+                assertEquals(date, 3);
+            } else {
+                assertEquals(date, 4);
+            }
         }
     }
 

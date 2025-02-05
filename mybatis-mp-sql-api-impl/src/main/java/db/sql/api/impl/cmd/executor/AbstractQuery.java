@@ -16,6 +16,7 @@ package db.sql.api.impl.cmd.executor;
 
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
+import db.sql.api.SqlBuilderContext;
 import db.sql.api.cmd.ColumnField;
 import db.sql.api.cmd.GetterField;
 import db.sql.api.cmd.IColumnField;
@@ -32,13 +33,15 @@ import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.struct.*;
 import db.sql.api.impl.cmd.struct.query.*;
-import db.sql.api.impl.tookit.LambdaUtil;
+import db.sql.api.impl.tookit.QuerySQLUtil;
 import db.sql.api.impl.tookit.SqlConst;
+import db.sql.api.tookit.CmdUtils;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -98,7 +101,7 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
     public AbstractQuery(CMD_FACTORY $) {
         this.$ = $;
-        this.conditionFactory = new ConditionFactory($);
+        this.conditionFactory = $.createConditionFactory();
     }
 
     public AbstractQuery(Where where) {
@@ -327,31 +330,27 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     }
 
     @Override
-    public Join $join(JoinMode mode, IDataset mainTable, IDataset secondTable) {
+    public Join $join(JoinMode mode, IDataset<?, ?> mainTable, IDataset<?, ?> secondTable, Consumer<On> onConsumer) {
         Join join = new Join(mode, mainTable, secondTable, (joinDataset -> new On(this.conditionFactory, joinDataset)));
         if (Objects.isNull(joins)) {
             joins = new Joins();
             this.append(joins);
         }
         joins.add(join);
+        if (Objects.nonNull(onConsumer)) {
+            onConsumer.accept(join.getOn());
+        }
         this.getSQLListeners().stream().forEach(item -> item.onJoin(this, mode, mainTable, secondTable, join.getOn()));
         return join;
     }
 
     @Override
-    public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, Consumer<On> consumer) {
+    public SELF join(JoinMode mode, Class<?> mainTable, int mainTableStorey, Class<?> secondTable, int secondTableStorey, Consumer<On> consumer) {
         return this.join(mode, $.table(mainTable, mainTableStorey), $.table(secondTable, secondTableStorey), consumer);
     }
 
     @Override
-    public SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, BiConsumer<Table, On> consumer) {
-        return this.join(mode, mainTable, mainTableStorey, secondTable, secondTableStorey, (on) -> {
-            consumer.accept((Table) on.getJoin().getSecondTable(), on);
-        });
-    }
-
-    @Override
-    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF join(JoinMode mode, Class mainTable, int mainTableStorey, DATASET secondTable, Consumer<On> consumer) {
+    public SELF join(JoinMode mode, Class<?> mainTable, int mainTableStorey, IDataset<?, ?> secondTable, Consumer<On> consumer) {
         return this.join(mode, $.table(mainTable, mainTableStorey), secondTable, consumer);
     }
 
@@ -378,11 +377,8 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
 
 
     @Override
-    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>, DATASET2 extends IDataset<DATASET2, DATASET_FIELD2>, DATASET_FIELD2 extends IDatasetField<DATASET_FIELD2>> SELF join(JoinMode mode, DATASET mainTable, DATASET2 secondTable, Consumer<On> consumer) {
-        Join join = $join(mode, mainTable, secondTable);
-        if (consumer != null) {
-            consumer.accept(join.getOn());
-        }
+    public SELF join(JoinMode mode, IDataset<?, ?> mainTable, IDataset<?, ?> secondTable, Consumer<On> consumer) {
+        $join(mode, mainTable, secondTable, consumer);
         return (SELF) this;
     }
 
@@ -797,6 +793,23 @@ public abstract class AbstractQuery<SELF extends AbstractQuery<SELF, CMD_FACTORY
     @Override
     public ForUpdate getForUpdate() {
         return forUpdate;
+    }
+
+    @Override
+    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        this.selectorExecute(context.getDbType());
+        if (this.limit == null) {
+            List<Cmd> cmdList = cmds();
+            if (cmdList == null || cmdList.isEmpty()) {
+                return sqlBuilder;
+            }
+            List<Cmd> sortedCmds = this.sortedCmds();
+            if (sortedCmds == null || sortedCmds.isEmpty()) {
+                return sqlBuilder;
+            }
+            return CmdUtils.join(this, this, context, sqlBuilder, sortedCmds);
+        }
+        return QuerySQLUtil.buildQuerySQL(context, module, parent, this, sqlBuilder, this.sortedCmds());
     }
 }
 

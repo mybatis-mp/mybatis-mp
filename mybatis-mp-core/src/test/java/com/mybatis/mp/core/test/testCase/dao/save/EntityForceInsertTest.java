@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class EntityForceInsertTest extends BaseDaoTest {
 
@@ -40,7 +41,7 @@ public class EntityForceInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).save(sysUserModel, true);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 1);
         }
     }
@@ -57,7 +58,7 @@ public class EntityForceInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).save(sysUserModel, SysUser::getUserName);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 1);
         }
     }
@@ -74,7 +75,7 @@ public class EntityForceInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).saveOrUpdate(sysUserModel, true);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 1);
         }
     }
@@ -91,7 +92,7 @@ public class EntityForceInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).saveOrUpdate(sysUserModel, SysUser::getUserName);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 1);
         }
     }

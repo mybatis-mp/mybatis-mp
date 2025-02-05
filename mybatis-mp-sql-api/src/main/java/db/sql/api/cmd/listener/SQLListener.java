@@ -51,6 +51,15 @@ public interface SQLListener {
     }
 
     /**
+     * TRUNCATE TABLE 时的事件
+     *
+     * @param dataset
+     */
+    default void onTruncate(IDataset<?, ?> dataset) {
+
+    }
+
+    /**
      * query调用from时的事件
      *
      * @param source

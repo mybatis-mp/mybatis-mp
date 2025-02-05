@@ -35,11 +35,11 @@ public class Replace extends BasicFunction<Replace> {
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(operator).append(SqlConst.BRACKET_LEFT);
-        this.key.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
-        this.target.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.target.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
-        this.replacement.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.replacement.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
     }

@@ -126,6 +126,16 @@ public class XmlPagingTestCase extends BaseTest {
             assertNotNull(list.get(0).getCreateTime());
             System.out.println(list);
 
+            list = sysRoleMapper.getBasicMapper().withSqlSession(SysRoleMapper.class.getName() + ".xmlPaging", (statement, sqlSession) -> {
+                return sqlSession.selectList(statement, new HashMap() {{
+                    put("id", 1);
+                    put("id2", 2);
+                }});
+            });
+            assertEquals(2, list.size());
+            assertNotNull(list.get(0).getCreateTime());
+            System.out.println(list);
+
             list = sysRoleMapper.getBasicMapper().withSqlSession(".SysRole:basicXmlPaging", new HashMap() {{
                 put("id", 1);
                 put("id2", 2);
@@ -147,6 +157,21 @@ public class XmlPagingTestCase extends BaseTest {
             assertNotNull(list.get(0).getCreateTime());
             System.out.println(list);
 
+            list = sysRoleMapper.getBasicMapper().withSqlSession(SysRole.class, "basicXmlPaging2", new HashMap() {{
+                put("id", 1);
+                put("id2", 2);
+            }}, (statement, params, sqlSession) -> {
+                return sqlSession.selectList(statement, params);
+            });
+            assertEquals(2, list.size());
+            assertNotNull(list.get(0).getCreateTime());
+            System.out.println(list);
+
+
+            Integer count = sysRoleMapper.getBasicMapper().withSqlSession(SysRole.class, "count", (statement, sqlSession) -> {
+                return sqlSession.selectOne(statement);
+            });
+            assertEquals(2, count);
         }
     }
 }

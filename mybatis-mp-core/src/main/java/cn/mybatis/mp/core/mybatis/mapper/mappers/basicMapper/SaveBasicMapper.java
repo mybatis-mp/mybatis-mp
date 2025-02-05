@@ -16,13 +16,29 @@ package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 
 
 import cn.mybatis.mp.core.db.reflect.Tables;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.SaveMethodUtil;
 import db.sql.api.Getter;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public interface SaveBasicMapper extends BaseBasicMapper {
+
+    /**
+     * 实体类新增
+     *
+     * @param entity   实体类实例
+     * @param consumer 保存策略
+     * @return 影响条数
+     */
+    default <T> int save(T entity, Consumer<SaveStrategy<T>> consumer) {
+        SaveStrategy strategy = new SaveStrategy();
+        consumer.accept(strategy);
+        return SaveMethodUtil.save(getBasicMapper(), Tables.get(entity.getClass()), entity, strategy);
+    }
 
     /**
      * 实体类新增
@@ -42,7 +58,9 @@ public interface SaveBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int save(T entity, boolean allFieldForce) {
-        return SaveMethodUtil.save(getBasicMapper(), Tables.get(entity.getClass()), entity, allFieldForce, null);
+        return this.save(entity, saveStrategy -> {
+            saveStrategy.allFieldSave(allFieldForce);
+        });
     }
 
     /**
@@ -53,9 +71,27 @@ public interface SaveBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int save(T entity, Getter<T>... forceFields) {
-        return SaveMethodUtil.save(getBasicMapper(), Tables.get(entity.getClass()), entity, false, forceFields);
+        return this.save(entity, saveStrategy -> {
+            saveStrategy.forceFields(forceFields);
+        });
     }
 
+    /**
+     * 多个保存，非批量行为
+     *
+     * @param list
+     * @param consumer 保存策略
+     * @return 影响条数
+     */
+    default <T> int save(Collection<T> list, Consumer<SaveStrategy<T>> consumer) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
+        }
+        T first = list.stream().findFirst().get();
+        SaveStrategy strategy = new SaveStrategy();
+        consumer.accept(strategy);
+        return SaveMethodUtil.saveList(getBasicMapper(), Tables.get(first.getClass()), list, strategy);
+    }
 
     /**
      * 多个保存，非批量行为
@@ -75,11 +111,9 @@ public interface SaveBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int save(Collection<T> list, boolean allFieldForce) {
-        if (list == null || list.isEmpty()) {
-            return 0;
-        }
-        T first = list.stream().findFirst().get();
-        return SaveMethodUtil.save(getBasicMapper(), Tables.get(first.getClass()), list, allFieldForce, (Getter<T>[]) null);
+        return this.save(list, (Consumer<SaveStrategy<T>>) saveStrategy -> {
+            saveStrategy.allFieldSave(allFieldForce);
+        });
     }
 
     /**
@@ -90,11 +124,26 @@ public interface SaveBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int save(Collection<T> list, Getter<T>... forceFields) {
+        return this.save(list, (Consumer<SaveStrategy<T>>) saveStrategy -> {
+            saveStrategy.forceFields(forceFields);
+        });
+    }
+
+    /**
+     * 使用数据库原生方式批量插入
+     * 一次最好在100条内
+     *
+     * @param list              需要插入数据
+     * @param saveBatchStrategy 插入策略
+     * @return 影响条数
+     */
+    default <T> int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> saveBatchStrategy) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        T first = list.stream().findFirst().get();
-        return SaveMethodUtil.save(getBasicMapper(), Tables.get(first.getClass()), list, false, forceFields);
+        SaveBatchStrategy strategy = new SaveBatchStrategy();
+        saveBatchStrategy.accept(strategy);
+        return SaveMethodUtil.saveBatch(getBasicMapper(), list, strategy);
     }
 
     /**
@@ -105,11 +154,7 @@ public interface SaveBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int saveBatch(Collection<T> list) {
-        if (list == null || list.isEmpty()) {
-            return 0;
-        }
-        T first = list.stream().findFirst().get();
-        return SaveMethodUtil.saveBatch(getBasicMapper(), Tables.get(first.getClass()), list);
+        return SaveMethodUtil.saveBatch(getBasicMapper(), list);
     }
 
     /**
@@ -124,10 +169,8 @@ public interface SaveBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T> int saveBatch(Collection<T> list, Getter<T>... forceFields) {
-        if (list == null || list.isEmpty()) {
-            return 0;
-        }
-        T first = list.stream().findFirst().get();
-        return SaveMethodUtil.saveBatch(getBasicMapper(), Tables.get(first.getClass()), list, forceFields);
+        return this.saveBatch(list, saveBatchStrategy -> {
+            saveBatchStrategy.forceFields(forceFields);
+        });
     }
 }

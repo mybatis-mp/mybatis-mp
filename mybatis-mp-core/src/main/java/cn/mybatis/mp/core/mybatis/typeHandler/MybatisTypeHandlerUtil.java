@@ -56,8 +56,6 @@ public final class MybatisTypeHandlerUtil {
         } catch (ReflectiveOperationException e) {
             exception = e;
         }
-
-
         throw new RuntimeException(exception);
     }
 

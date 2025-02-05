@@ -40,6 +40,9 @@ public final class IdUtil {
     }
 
     public static boolean isIdExists(Object obj, ModelFieldInfo idFieldInfo) {
+        if (idFieldInfo == null) {
+            return false;
+        }
         Object sourceId;
         try {
             sourceId = idFieldInfo.getReadFieldInvoker().invoke(obj, null);

@@ -98,19 +98,11 @@ public interface IExecutor<T extends IExecutor,
     @Override
     default StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         this.selectorExecute(context.getDbType());
-        return this.sql(context, sqlBuilder);
-    }
-
-    default StringBuilder sql(SqlBuilderContext context, StringBuilder sqlBuilder) {
-        this.selectorExecute(context.getDbType());
         List<Cmd> cmdList = cmds();
         if (cmdList == null || cmdList.isEmpty()) {
             return sqlBuilder;
         }
-        return this.sql(this.sortedCmds(), context, sqlBuilder);
-    }
-
-    default StringBuilder sql(List<Cmd> sortedCmds, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        List<Cmd> sortedCmds = this.sortedCmds();
         if (sortedCmds == null || sortedCmds.isEmpty()) {
             return sqlBuilder;
         }

@@ -14,9 +14,11 @@
 
 package cn.mybatis.mp.core.mybatis.executor;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdInsertContext;
 import cn.mybatis.mp.core.mybatis.mapper.context.SQLCmdQueryContext;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cursor.Cursor;
+import org.apache.ibatis.executor.BatchExecutor;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
@@ -38,8 +40,16 @@ public class MybatisExecutor implements Executor {
         delegate.setExecutorWrapper(this);
     }
 
+    public boolean isBatchExecutor() {
+        return this.delegate instanceof BatchExecutor;
+    }
+
     @Override
     public int update(MappedStatement ms, Object parameter) throws SQLException {
+        if (parameter instanceof SQLCmdInsertContext) {
+            SQLCmdInsertContext sqlCmdInsertContext = (SQLCmdInsertContext) parameter;
+            sqlCmdInsertContext.setUseBatchExecutor(isBatchExecutor());
+        }
         return this.delegate.update(ms, parameter);
     }
 

@@ -14,39 +14,33 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.mappers.utils;
 
-import cn.mybatis.mp.core.db.reflect.ModelFieldInfo;
 import cn.mybatis.mp.core.db.reflect.ModelInfo;
 import cn.mybatis.mp.core.db.reflect.Models;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
 import cn.mybatis.mp.core.mybatis.mapper.context.ModelBatchInsertContext;
 import cn.mybatis.mp.core.mybatis.mapper.context.ModelInsertContext;
-import cn.mybatis.mp.core.util.TableInfoUtil;
-import cn.mybatis.mp.db.IdAutoType;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
+import cn.mybatis.mp.core.sql.executor.BaseInsert;
+import cn.mybatis.mp.core.sql.executor.Insert;
 import cn.mybatis.mp.db.Model;
-import cn.mybatis.mp.db.annotations.TableId;
-import db.sql.api.DbType;
-import db.sql.api.Getter;
-import db.sql.api.impl.tookit.LambdaUtil;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 public final class SaveModelMethodUtil {
 
-    public static <M extends Model> int save(BasicMapper basicMapper, M model, boolean allFieldForce, Getter<M>[] forceFields) {
-        return basicMapper.$saveModel(new ModelInsertContext(model, allFieldForce, LambdaUtil.getFieldNames(forceFields)));
+    public static <M extends Model> int save(BasicMapper basicMapper, M model, SaveStrategy<M> saveStrategy) {
+        return basicMapper.$saveModel(new ModelInsertContext(new Insert(), model, saveStrategy));
     }
 
-    public static <M extends Model> int save(BasicMapper basicMapper, Collection<M> list, boolean allFieldForce, Getter<M>[] forceFields) {
+    public static <M extends Model> int saveList(BasicMapper basicMapper, Collection<M> list, SaveStrategy<M> saveStrategy) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-
         int cnt = 0;
         for (M model : list) {
-            cnt += save(basicMapper, model, allFieldForce, forceFields);
+            cnt += save(basicMapper, model, saveStrategy);
         }
         return cnt;
     }
@@ -55,37 +49,23 @@ public final class SaveModelMethodUtil {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
-        Set<String> saveFieldSet = new HashSet<>();
-        DbType dbType = basicMapper.getCurrentDbType();
-        M first = list.stream().findFirst().get();
-        ModelInfo modelInfo = Models.get(first.getClass());
-        for (ModelFieldInfo modelFieldInfo : modelInfo.getModelFieldInfos()) {
-            if (modelFieldInfo.getTableFieldInfo().isTableId()) {
-                TableId tableId = TableInfoUtil.getTableIdAnnotation(modelFieldInfo.getTableFieldInfo().getField(), dbType);
-                Objects.requireNonNull(tableId.value());
-                if (tableId.value() == IdAutoType.AUTO) {
-                    Object id;
-                    try {
-                        id = modelFieldInfo.getReadFieldInvoker().invoke(first, null);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                    if (Objects.isNull(id)) {
-                        continue;
-                    }
-                }
-            }
-            saveFieldSet.add(modelFieldInfo.getField().getName());
-        }
-        return basicMapper.$save(new ModelBatchInsertContext(modelInfo, list, saveFieldSet));
+        SaveBatchStrategy saveBatchStrategy = new SaveBatchStrategy();
+        return saveBatch(basicMapper, new Insert(), list, saveBatchStrategy);
     }
 
-    public static <M extends Model> int saveBatch(BasicMapper basicMapper, Collection<M> list, Getter<M>... forceFields) {
-        if (Objects.isNull(forceFields) || forceFields.length < 1) {
-            throw new RuntimeException("forceFields can't be null or empty");
+    public static <M extends Model> int saveBatch(BasicMapper basicMapper, Collection<M> list, SaveBatchStrategy saveBatchStrategy) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
+        }
+        return saveBatch(basicMapper, new Insert(), list, saveBatchStrategy);
+    }
+
+    public static <M extends Model> int saveBatch(BasicMapper basicMapper, BaseInsert<?> insert, Collection<M> list, SaveBatchStrategy<M> saveBatchStrategy) {
+        if (Objects.isNull(list) || list.isEmpty()) {
+            return 0;
         }
         M first = list.stream().findFirst().get();
         ModelInfo modelInfo = Models.get(first.getClass());
-        return basicMapper.$save(new ModelBatchInsertContext(modelInfo, list, LambdaUtil.getFieldNames(forceFields)));
+        return basicMapper.$save(new ModelBatchInsertContext<>(insert, modelInfo, list, saveBatchStrategy));
     }
 }

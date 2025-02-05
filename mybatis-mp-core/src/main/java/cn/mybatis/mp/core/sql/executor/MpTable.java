@@ -18,20 +18,20 @@ import cn.mybatis.mp.core.db.reflect.TableInfo;
 import cn.mybatis.mp.core.util.TableInfoUtil;
 import db.sql.api.Getter;
 import db.sql.api.impl.cmd.basic.TableField;
-import db.sql.api.impl.tookit.LambdaUtil;
+import db.sql.api.tookit.LambdaUtil;
 
 public class MpTable extends db.sql.api.impl.cmd.basic.Table {
 
     protected final TableInfo tableInfo;
 
     public MpTable(TableInfo tableInfo) {
-        super(tableInfo.getSchemaAndTableName());
+        super(tableInfo.getSchemaAndTableName(), tableInfo.getIdColumnNames(), null);
         this.tableInfo = tableInfo;
     }
 
     public MpTable(TableInfo tableInfo, String alias) {
-        this(tableInfo);
-        this.alias = alias;
+        super(tableInfo.getSchemaAndTableName(), tableInfo.getIdColumnNames(), alias);
+        this.tableInfo = tableInfo;
     }
 
     @Override

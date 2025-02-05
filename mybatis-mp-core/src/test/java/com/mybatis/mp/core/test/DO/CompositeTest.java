@@ -19,6 +19,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.FieldNameConstants;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@FieldNameConstants
 public class CompositeTest extends BaseEntity {
 
     @Version

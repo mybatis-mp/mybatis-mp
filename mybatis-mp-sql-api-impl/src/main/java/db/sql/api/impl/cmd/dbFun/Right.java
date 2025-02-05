@@ -30,18 +30,18 @@ public class Right extends BasicFunction<Right> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.ORACLE) {
+        if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(" SUBSTR");
         } else {
             sqlBuilder.append(operator);
         }
 
         sqlBuilder.append(SqlConst.BRACKET_LEFT);
-        this.key.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
 
-        if (context.getDbType() == DbType.ORACLE) {
+        if (context.getDbType() == DbType.ORACLE || context.getDbType() == DbType.SQLITE) {
             sqlBuilder.append(SqlConst.DELIMITER).append("LENGTH(");
-            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(") - " + (length - 1));
         }
 

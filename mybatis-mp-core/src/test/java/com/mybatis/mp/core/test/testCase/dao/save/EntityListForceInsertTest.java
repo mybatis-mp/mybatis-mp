@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class EntityListForceInsertTest extends BaseDaoTest {
 
@@ -41,7 +42,7 @@ public class EntityListForceInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).save(Collections.singletonList(sysUserModel), true);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 1);
         }
     }
@@ -58,7 +59,7 @@ public class EntityListForceInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).save(Collections.singletonList(sysUserModel), SysUser::getUserName);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 1);
         }
     }
@@ -75,7 +76,7 @@ public class EntityListForceInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).saveOrUpdate(Collections.singletonList(sysUserModel), true);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 1);
         }
     }
@@ -92,7 +93,7 @@ public class EntityListForceInsertTest extends BaseDaoTest {
             sysUserModel.setUserName(null);
             getDao(sysUserMapper).saveOrUpdate(Collections.singletonList(sysUserModel), SysUser::getUserName);
             SysUser sysUser = getDao(sysUserMapper).getById(sysUserModel.getId());
-            assertEquals(sysUser.getUserName(), null);
+            assertNull(sysUser.getUserName());
             assertEquals(sysUser.getRole_id(), 1);
         }
     }

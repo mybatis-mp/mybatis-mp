@@ -27,6 +27,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -271,6 +272,25 @@ public class ConditionTest extends BaseTest {
     }
 
     @Test
+    public void iLike() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, SysUser::getPassword, SysUser::getRole_id)
+                    .from(SysUser.class)
+                    .iLike(SysUser::getUserName, "test1")
+                    .get();
+
+
+            SysUser eqSysUser = new SysUser();
+            eqSysUser.setId(2);
+            eqSysUser.setPassword("123456");
+            eqSysUser.setRole_id(1);
+            assertEquals(eqSysUser, sysUser, "iLike");
+        }
+    }
+
+    @Test
     public void rightLike() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
@@ -278,6 +298,22 @@ public class ConditionTest extends BaseTest {
                     .select(SysUser::getId, c -> c.count())
                     .from(SysUser.class)
                     .like(LikeMode.RIGHT, SysUser::getUserName, "test")
+                    .returnType(Integer.class)
+                    .count();
+
+
+            assertEquals(Integer.valueOf(2), count, "rightLike");
+        }
+    }
+
+    @Test
+    public void rightILike() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            Integer count = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, c -> c.count())
+                    .from(SysUser.class)
+                    .iLike(LikeMode.RIGHT, SysUser::getUserName, "test")
                     .returnType(Integer.class)
                     .count();
 
@@ -326,6 +362,26 @@ public class ConditionTest extends BaseTest {
     }
 
     @Test
+    public void notILike() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, SysUser::getPassword, SysUser::getRole_id)
+                    .from(SysUser.class)
+                    .notILike(SysUser::getUserName, "test1")
+                    .like(SysUser::getUserName, "test")
+                    .get();
+
+
+            SysUser eqSysUser = new SysUser();
+            eqSysUser.setId(3);
+            eqSysUser.setPassword(null);
+            eqSysUser.setRole_id(1);
+            assertEquals(eqSysUser, sysUser, "notLike");
+        }
+    }
+
+    @Test
     public void notRightLike() {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
@@ -333,6 +389,26 @@ public class ConditionTest extends BaseTest {
                     .select(SysUser::getId, SysUser::getPassword, SysUser::getRole_id)
                     .from(SysUser.class)
                     .notLike(LikeMode.RIGHT, SysUser::getUserName, "test2")
+                    .like(SysUser::getUserName, "test")
+                    .get();
+
+
+            SysUser eqSysUser = new SysUser();
+            eqSysUser.setId(2);
+            eqSysUser.setPassword("123456");
+            eqSysUser.setRole_id(1);
+            assertEquals(eqSysUser, sysUser, "notRightLike");
+        }
+    }
+
+    @Test
+    public void notIRightLike() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            SysUser sysUser = QueryChain.of(sysUserMapper)
+                    .select(SysUser::getId, SysUser::getPassword, SysUser::getRole_id, SysUser::getUserName)
+                    .from(SysUser.class)
+                    .notILike(LikeMode.RIGHT, SysUser::getUserName, "Test2")
                     .like(SysUser::getUserName, "test")
                     .get();
 
@@ -371,6 +447,7 @@ public class ConditionTest extends BaseTest {
             List<Integer> list = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId)
                     .from(SysUser.class)
+                    .between(SysUser::getId, null, null, java.util.Objects::nonNull)
                     .between(SysUser::getId, 1, 2)
                     .between(SysUser::getId, null, Objects::nonNull)
                     .between(SysUser::getId, () -> 1, () -> 2)
@@ -432,11 +509,13 @@ public class ConditionTest extends BaseTest {
                     .in(true, SysUser::getId, 1, 2)
                     .in(SysUser::getId, Arrays.asList(1, 2))
                     .in(true, SysUser::getId, Arrays.asList(1, 2))
+                    .in(true, SysUser::getId, new HashSet<>(Arrays.asList(1, 2)))
 
                     .notIn(SysUser::getId, 5)
                     .notIn(true, SysUser::getId, 5, 6)
                     .notIn(SysUser::getId, Arrays.asList(5, 6))
                     .notIn(true, SysUser::getId, Arrays.asList(5, 6))
+                    .notIn(true, SysUser::getId, new HashSet<>(Arrays.asList(5, 6)))
                     .returnType(Integer.class)
                     .list();
 

@@ -17,12 +17,17 @@ package cn.mybatis.mp.core.sql.executor;
 import cn.mybatis.mp.core.MybatisMpConfig;
 import cn.mybatis.mp.core.mybatis.executor.statement.Timeoutable;
 import cn.mybatis.mp.core.sql.MybatisCmdFactory;
+import cn.mybatis.mp.core.sql.TableSplitUtil;
+import db.sql.api.Cmd;
 import db.sql.api.Getter;
+import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.IConflictAction;
 import db.sql.api.cmd.listener.SQLListener;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.AbstractInsert;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert<T, MybatisCmdFactory> implements Timeoutable<T> {
 
@@ -54,6 +59,11 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
         return MybatisMpConfig.getSQLListeners();
     }
 
+    @Override
+    public <T1> T onConflict(Consumer<IConflictAction<T1>> action) {
+        return super.onConflict(action);
+    }
+
     /**************以下为去除警告************/
 
     @Override
@@ -63,4 +73,52 @@ public abstract class BaseInsert<T extends BaseInsert<T>> extends AbstractInsert
     }
 
     /**************以上为去除警告************/
+
+    private void splitTableHandle(MpTable table) {
+        if (!table.getTableInfo().isSplitTable()) {
+            return;
+        }
+        if (!table.getTableInfo().getTableName().equals(table.getName())) {
+            //这里已经修改过了
+            return;
+        }
+
+        List<TableField> insertFields = getInsertFields().getFields();
+        int splitTableKeyIndex = -1;
+        for (int i = 0; i < insertFields.size(); i++) {
+            TableField item = insertFields.get(i);
+            MpTableField tableField = (MpTableField) item;
+            if (tableField.getTableFieldInfo().isTableSplitKey()) {
+                splitTableKeyIndex = i;
+            }
+        }
+
+        if (splitTableKeyIndex == -1) {
+            throw new RuntimeException("Not found the split field in insert fields");
+        }
+
+        if (getInsertValues() == null) {
+            List<Cmd> selectValues = getInsertSelect().getSelectQuery().getSelect().getSelectField();
+            TableSplitUtil.splitHandle(table, selectValues.get(splitTableKeyIndex));
+        } else {
+            List<List<Cmd>> insertValuesList = getInsertValues().getValues();
+            for (List<Cmd> cmdList : insertValuesList) {
+                TableSplitUtil.splitHandle(table, cmdList.get(splitTableKeyIndex));
+                if (!table.getTableInfo().getTableName().equals(table.getName())) {
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
+    public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        this.selectorExecute(context.getDbType());
+        if (getInsertTable().getTable() instanceof MpTable) {
+            MpTable table = (MpTable) getInsertTable().getTable();
+            this.splitTableHandle(table);
+        }
+
+        return super.sql(module, parent, context, sqlBuilder);
+    }
 }

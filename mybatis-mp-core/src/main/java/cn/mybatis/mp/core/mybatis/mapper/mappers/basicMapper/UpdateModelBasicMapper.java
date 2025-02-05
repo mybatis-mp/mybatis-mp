@@ -14,6 +14,8 @@
 
 package cn.mybatis.mp.core.mybatis.mapper.mappers.basicMapper;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.UpdateMethodUtil;
 import cn.mybatis.mp.core.mybatis.mapper.mappers.utils.UpdateModelMethodUtil;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
@@ -23,6 +25,16 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 public interface UpdateModelBasicMapper extends BaseBasicMapper {
+
+    /**
+     * 实体类修改
+     *
+     * @param model 实体类Model对象
+     * @return 影响条数
+     */
+    default <T, M extends Model<T>> int update(M model, UpdateStrategy<M> updateStrategy) {
+        return UpdateModelMethodUtil.update(getBasicMapper(), model, updateStrategy);
+    }
 
     /**
      * 实体类修改
@@ -42,7 +54,9 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int update(M model, boolean allFieldForce) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, allFieldForce, (Getter<M>[]) null);
+        UpdateStrategy updateStrategy = UpdateMethodUtil.createUpdateStrategy();
+        updateStrategy.allFieldUpdate(allFieldForce);
+        return this.update(model, updateStrategy);
     }
 
     /**
@@ -53,7 +67,22 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
      * @return 返回影响条数
      */
     default <T, M extends Model<T>> int update(M model, Getter<M>... forceFields) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, false, forceFields);
+        UpdateStrategy updateStrategy = UpdateMethodUtil.createUpdateStrategy();
+        updateStrategy.forceFields(forceFields);
+        return this.update(model, updateStrategy);
+    }
+
+
+    /**
+     * 多个修改，非批量行为
+     *
+     * @param list 实体类对象List
+     * @return 影响条数
+     */
+    default <T, M extends Model<T>> int updateModel(Collection<M> list, Consumer<UpdateStrategy<M>> updateStrategy) {
+        UpdateStrategy strategy = UpdateMethodUtil.createUpdateStrategy();
+        updateStrategy.accept(strategy);
+        return UpdateModelMethodUtil.updateList(getBasicMapper(), list, strategy);
     }
 
     /**
@@ -74,7 +103,9 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int updateModel(Collection<M> list, boolean allFieldForce) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), list, allFieldForce, null);
+        return this.updateModel(list, updateStrategy -> {
+            updateStrategy.allFieldUpdate(allFieldForce);
+        });
     }
 
     /**
@@ -85,19 +116,23 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int updateModel(Collection<M> list, Getter<M>... forceFields) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), list, false, forceFields);
+        return this.updateModel(list, updateStrategy -> {
+            updateStrategy.forceFields(forceFields);
+        });
     }
 
 
     /**
      * 动态条件修改
      *
-     * @param model    实体类
-     * @param consumer where
+     * @param model 实体类
+     * @param where where
      * @return 影响条数
      */
-    default <T, M extends Model<T>> int update(M model, Consumer<Where> consumer) {
-        return this.update(model, false, consumer);
+    default <T, M extends Model<T>> int update(M model, Consumer<Where> where) {
+        UpdateStrategy updateStrategy = UpdateMethodUtil.createUpdateStrategy();
+        updateStrategy.on(where);
+        return this.update(model, updateStrategy);
     }
 
     /**
@@ -105,24 +140,16 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
      *
      * @param model         实体类Model对象
      * @param allFieldForce 所有字段都强制保存
-     * @param consumer      where
+     * @param where         where
      * @return 影响条数
      */
-    default <T, M extends Model<T>> int update(M model, boolean allFieldForce, Consumer<Where> consumer) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, allFieldForce, null, consumer);
+    default <T, M extends Model<T>> int update(M model, boolean allFieldForce, Consumer<Where> where) {
+        UpdateStrategy updateStrategy = UpdateMethodUtil.createUpdateStrategy();
+        updateStrategy.allFieldUpdate(allFieldForce);
+        updateStrategy.on(where);
+        return this.update(model, updateStrategy);
     }
 
-    /**
-     * 动态where 修改
-     *
-     * @param model       实体类Model对象
-     * @param consumer    where
-     * @param forceFields 强制更新指定，解决需要修改为null的需求
-     * @return 影响条数
-     */
-    default <T, M extends Model<T>> int update(M model, Consumer<Where> consumer, Getter<M>... forceFields) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, false, forceFields, consumer);
-    }
 
     /**
      * 指定where 修改
@@ -132,30 +159,23 @@ public interface UpdateModelBasicMapper extends BaseBasicMapper {
      * @return 影响条数
      */
     default <T, M extends Model<T>> int update(M model, Where where) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, false, (Getter<M>[]) null, where);
+        UpdateStrategy updateStrategy = UpdateMethodUtil.createUpdateStrategy();
+        updateStrategy.on(where);
+        return this.update(model, updateStrategy);
     }
 
     /**
-     * 指定where 修改
+     * 指定where条件修改
      *
-     * @param model         实体类Model对象
+     * @param model         实体类对象
+     * @param allFieldForce 所有字段都强制保存
      * @param where         where
-     * @param allFieldForce 是否所有字段都修改，如果是null值，则变成NULL
      * @return 影响条数
      */
     default <T, M extends Model<T>> int update(M model, boolean allFieldForce, Where where) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, allFieldForce, (Getter<M>[]) null, where);
-    }
-
-    /**
-     * 指定where 修改
-     *
-     * @param model       实体类Model对象
-     * @param where       where
-     * @param forceFields 强制更新指定，解决需要修改为null的需求
-     * @return 影响条数
-     */
-    default <T, M extends Model<T>> int update(M model, Where where, Getter<M>... forceFields) {
-        return UpdateModelMethodUtil.update(getBasicMapper(), model, false, forceFields, where);
+        UpdateStrategy updateStrategy = UpdateMethodUtil.createUpdateStrategy();
+        updateStrategy.allFieldUpdate(allFieldForce);
+        updateStrategy.on(where);
+        return this.update(model, updateStrategy);
     }
 }

@@ -25,9 +25,9 @@ import java.util.List;
 @ResultEntity(Void.class)
 public class FetchSysRoleVo3 {
 
-    @Fetch(column = "id", target = SysUser.class, targetProperty = "role_id", targetSelectProperty = "userName", orderBy = "id asc")
+    @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, targetSelectProperty = "userName", orderBy = "id asc")
     private List<String> sysRoleNames;
 
-    @Fetch(column = "id", target = SysUser.class, targetProperty = "role_id", orderBy = "[{id} asc,{userName} desc]")
+    @Fetch(column = "id", target = SysUser.class, targetProperty = SysUser.Fields.role_id, orderBy = "[{id} asc,{userName} desc]")
     private List<FetchSysUserForRoleVo> sysRole;
 }

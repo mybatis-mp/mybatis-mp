@@ -26,6 +26,14 @@ public final class SqlConst {
 
     public static final char[] BLANK = S_BLANK.toCharArray();
 
+    public static final char[] LIMIT = " LIMIT ".toCharArray();
+
+    public static final char[] OFFSET = " OFFSET ".toCharArray();
+
+    public static final char[] ROWS_FETCH_NEXT = " ROWS FETCH NEXT ".toCharArray();
+
+    public static final char[] ROWS_ONLY = " ROWS ONLY".toCharArray();
+
     public static final char[] DISTINCT = " DISTINCT ".toCharArray();
 
     public static final char[] NULL = " NULL ".toCharArray();
@@ -50,6 +58,7 @@ public final class SqlConst {
     public static final char[] DELETE = "DELETE ".toCharArray();
     public static final char[] UPDATE = "UPDATE ".toCharArray();
     public static final char[] ALTER_TABLE = "ALTER TABLE ".toCharArray();
+    public static final char[] INSERT = "INSERT ".toCharArray();
     public static final char[] INSERT_INTO = "INSERT INTO ".toCharArray();
     public static final char[] INSERT_IGNORE_INTO = "INSERT IGNORE INTO ".toCharArray();
     public static final char[] INTO = " INTO ".toCharArray();
@@ -78,6 +87,8 @@ public final class SqlConst {
     public static final char[] NOT_BETWEEN = " NOT BETWEEN ".toCharArray();
     public static final char[] LIKE = " LIKE ".toCharArray();
     public static final char[] NOT_LIKE = " NOT LIKE ".toCharArray();
+    public static final char[] I_LIKE = " ILIKE ".toCharArray();
+    public static final char[] NOT_I_LIKE = " NOT ILIKE ".toCharArray();
     public static final char[] BRACKET_LEFT = "(".toCharArray();
     public static final char[] BRACKET_RIGHT = ")".toCharArray();
     public static final char[] CONCAT = " CONCAT".toCharArray();
@@ -170,6 +181,8 @@ public final class SqlConst {
 
     public static final char[] SELF_FROM_DUAL = "SELECT * FROM DUAL".toCharArray();
 
+    public static final char[] FROM_DUAL = " FROM DUAL".toCharArray();
+
     public static final char[] RECURSIVE = " RECURSIVE ".toCharArray();
 
     public static final char[] GROUP_CONCAT = " GROUP_CONCAT".toCharArray();
@@ -181,6 +194,12 @@ public final class SqlConst {
     public static final char[] JSON_CONTAINS = " JSON_CONTAINS".toCharArray();
 
     public static final char[] JSON_QUOTE = " JSON_QUOTE".toCharArray();
+
+    public static final char[] ST_DWithin = " ST_DWithin".toCharArray();
+
+    public static final char[] ST_DISTANCE = " ST_Distance".toCharArray();
+
+    public static final char[] ST_CONTAINS = " ST_Contains".toCharArray();
 
     public static String FORCE_INDEX(DbType dbType, String indexName) {
         switch (dbType) {
@@ -207,6 +226,7 @@ public final class SqlConst {
 
     public static char[] SINGLE_QUOT(DbType dbType) {
         switch (dbType) {
+            case OPEN_GAUSS:
             case PGSQL: {
                 return DOUBLE_QUOT;
             }
@@ -228,8 +248,12 @@ public final class SqlConst {
             case ORACLE: {
                 return " TO_CHAR(CURRENT_DATE,'YYYY-MM-DD')";
             }
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " CURRENT_DATE";
+            }
+            case SQLITE: {
+                return " DATE('NOW')";
             }
         }
         return " CURRENT_DATE()";
@@ -249,8 +273,12 @@ public final class SqlConst {
             case ORACLE: {
                 return " TO_CHAR(CURRENT_DATE,'HH24:MI:SS')";
             }
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " LOCALTIME";
+            }
+            case SQLITE: {
+                return " TIME('NOW')";
             }
         }
         return " CURRENT_TIME()";
@@ -270,8 +298,12 @@ public final class SqlConst {
             case ORACLE: {
                 return " CURRENT_DATE";
             }
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " LOCALTIMESTAMP";
+            }
+            case SQLITE: {
+                return "DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME')";
             }
         }
         return " CURRENT_TIMESTAMP()";
@@ -281,6 +313,7 @@ public final class SqlConst {
         switch (dbType) {
             case KING_BASE:
             case H2:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
@@ -288,6 +321,10 @@ public final class SqlConst {
             }
             case SQL_SERVER: {
                 return " FORMAT";
+            }
+
+            case SQLITE: {
+                return " STRFTIME";
             }
 
             case DM:
@@ -302,8 +339,12 @@ public final class SqlConst {
     public static String YEAR(DbType dbType) {
         switch (dbType) {
             case ORACLE:
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " EXTRACT (YEAR FROM ";
+            }
+            case SQLITE: {
+                return "STRFTIME";
             }
         }
         return " YEAR";
@@ -312,8 +353,12 @@ public final class SqlConst {
     public static String MONTH(DbType dbType) {
         switch (dbType) {
             case ORACLE:
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " EXTRACT (MONTH FROM ";
+            }
+            case SQLITE: {
+                return "STRFTIME";
             }
         }
         return " MONTH";
@@ -323,8 +368,12 @@ public final class SqlConst {
         switch (dbType) {
             case KING_BASE:
             case ORACLE:
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " EXTRACT (DAY FROM ";
+            }
+            case SQLITE: {
+                return "STRFTIME";
             }
         }
         return " DAY";
@@ -337,8 +386,12 @@ public final class SqlConst {
             }
             case KING_BASE:
             case ORACLE:
+            case OPEN_GAUSS:
             case PGSQL: {
                 return " EXTRACT(HOUR FROM ";
+            }
+            case SQLITE: {
+                return "STRFTIME";
             }
         }
         return " HOUR";
@@ -350,9 +403,13 @@ public final class SqlConst {
                 return " DATEPART(WEEKDAY,";
             }
             case KING_BASE:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE: {
                 return " TO_CHAR";
+            }
+            case SQLITE: {
+                return "STRFTIME";
             }
         }
         return " DAYOFWEEK";
@@ -363,6 +420,7 @@ public final class SqlConst {
             case SQL_SERVER: {
                 return " DATEPART(WEEKDAY,";
             }
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE: {
                 return " TO_TIMESTAMP";
@@ -376,6 +434,7 @@ public final class SqlConst {
             case SQL_SERVER: {
                 return " LEN";
             }
+            case SQLITE:
             case ORACLE: {
                 return " LENGTH";
             }

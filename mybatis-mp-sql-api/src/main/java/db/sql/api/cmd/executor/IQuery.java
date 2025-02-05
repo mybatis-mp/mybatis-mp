@@ -18,7 +18,6 @@ package db.sql.api.cmd.executor;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.cmd.ICmdFactory;
-import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.*;
 import db.sql.api.cmd.executor.method.*;
 import db.sql.api.cmd.struct.*;
@@ -27,7 +26,6 @@ import db.sql.api.cmd.struct.query.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public interface IQuery<SELF extends IQuery
@@ -56,7 +54,7 @@ public interface IQuery<SELF extends IQuery
         extends IWithMethod<SELF>,
         ISelectMethod<SELF, TABLE, TABLE_FIELD, COLUMN>,
         IFromMethod<SELF, TABLE, TABLE_FIELD>,
-        IJoinMethod<SELF, ON>,
+        IJoinMethod<SELF, JOIN, ON>,
         IWhereMethod<SELF, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         IGroupByMethod<SELF, TABLE, TABLE_FIELD, COLUMN>,
         IHavingMethod<SELF, TABLE, TABLE_FIELD, HAVING>,
@@ -72,9 +70,7 @@ public interface IQuery<SELF extends IQuery
 
     SELECT $select();
 
-    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> FROM $from(IDataset<DATASET, DATASET_FIELD> table);
-
-    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> JOIN $join(JoinMode mode, DATASET mainTable, DATASET secondTable);
+    FROM $from(IDataset<?, ?> table);
 
     WHERE $where();
 
@@ -121,40 +117,18 @@ public interface IQuery<SELF extends IQuery
         return (SELF) this;
     }
 
-    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD> table) {
+    default SELF from(IDataset<?, ?> table) {
         $from(table);
         return (SELF) this;
     }
 
     @Override
-    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD>... tables) {
-        for (IDataset<DATASET, DATASET_FIELD> table : tables) {
+    default SELF from(IDataset<?, ?>... tables) {
+        for (IDataset<?, ?> table : tables) {
             $from(table);
         }
         return (SELF) this;
     }
-
-    default SELF join(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
-        return this.join(JoinMode.INNER, mainTable, secondTable, consumer);
-    }
-
-    default SELF innerJoin(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
-        return this.join(JoinMode.INNER, mainTable, secondTable, consumer);
-    }
-
-    default SELF leftJoin(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
-        return this.join(JoinMode.LEFT, mainTable, secondTable, consumer);
-    }
-
-    default SELF rightJoin(Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
-        return this.join(JoinMode.RIGHT, mainTable, secondTable, consumer);
-    }
-
-    default SELF join(JoinMode mode, Class mainTable, Class secondTable, BiConsumer<TABLE, ON> consumer) {
-        return this.join(mode, mainTable, 1, secondTable, 1, consumer);
-    }
-
-    SELF join(JoinMode mode, Class mainTable, int mainTableStorey, Class secondTable, int secondTableStorey, BiConsumer<TABLE, ON> consumer);
 
     default SELF where(Consumer<WHERE> whereConsumer) {
         whereConsumer.accept($where());

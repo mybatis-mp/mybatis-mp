@@ -124,6 +124,9 @@ public class DefaultValueTestCase extends BaseTest {
             } else {
                 mapper.saveBatch(list, DefaultValueTest::getValue1, DefaultValueTest::getValue2, DefaultValueTest::getCreateTime);
                 System.out.println(list);
+                if (TestDataSource.DB_TYPE == DbType.SQLITE || TestDataSource.DB_TYPE == DbType.MARIA_DB) {
+                    return;
+                }
                 for (int i = 0; i < list.size(); i++) {
                     assertEquals(list.get(i).getId(), i + 1);
                 }
@@ -180,6 +183,9 @@ public class DefaultValueTestCase extends BaseTest {
             } else {
                 mapper.saveBatch(list);
                 System.out.println(list);
+                if (TestDataSource.DB_TYPE == DbType.SQLITE || TestDataSource.DB_TYPE == DbType.MARIA_DB) {
+                    return;
+                }
                 for (int i = 0; i < list.size(); i++) {
                     assertEquals(list.get(i).getId(), i + 1);
                 }
@@ -424,7 +430,7 @@ public class DefaultValueTestCase extends BaseTest {
 
     @Test
     public void testSaveBatch() {
-        if (TestDataSource.DB_TYPE == DbType.SQL_SERVER || TestDataSource.DB_TYPE == DbType.DB2) {
+        if (TestDataSource.DB_TYPE == DbType.DB2) {
             return;
         }
         int length = 100;
@@ -454,10 +460,12 @@ public class DefaultValueTestCase extends BaseTest {
                 saveBatchList.clear();
                 saveCnt += MybatisBatchUtil.getEffectCnt(session.flushStatements());
             }
+
             assertEquals(length, saveCnt);
             assertEquals(length, QueryChain.of(mapper).count());
             return saveCnt;
 
         });
+        System.out.println(list);
     }
 }

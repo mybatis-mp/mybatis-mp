@@ -95,12 +95,14 @@ public interface DatePattern extends Cmd {
         switch (dbType) {
             case KING_BASE:
             case H2:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
                 return "YYYY";
             }
 
+            case SQLITE:
             case DM:
             case MARIA_DB:
             case MYSQL: {
@@ -121,12 +123,14 @@ public interface DatePattern extends Cmd {
             case KING_BASE:
             case H2:
             case SQL_SERVER:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
                 return "MM";
             }
 
+            case SQLITE:
             case DM:
             case MARIA_DB:
             case MYSQL: {
@@ -143,12 +147,14 @@ public interface DatePattern extends Cmd {
         switch (dbType) {
             case KING_BASE:
             case H2:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
                 return "DD";
             }
 
+            case SQLITE:
             case DM:
             case MARIA_DB:
             case MYSQL: {
@@ -168,12 +174,14 @@ public interface DatePattern extends Cmd {
         switch (dbType) {
             case KING_BASE:
             case H2:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
                 return "HH24";
             }
 
+            case SQLITE:
             case DM:
             case MARIA_DB:
             case MYSQL: {
@@ -193,10 +201,15 @@ public interface DatePattern extends Cmd {
         switch (dbType) {
             case KING_BASE:
             case H2:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
                 return "MI";
+            }
+
+            case SQLITE: {
+                return "%M";
             }
 
             case DM:
@@ -218,10 +231,15 @@ public interface DatePattern extends Cmd {
         switch (dbType) {
             case KING_BASE:
             case H2:
+            case OPEN_GAUSS:
             case PGSQL:
             case ORACLE:
             case DB2: {
                 return "SS";
+            }
+
+            case SQLITE: {
+                return "%S";
             }
 
             case DM:
@@ -244,7 +262,7 @@ public interface DatePattern extends Cmd {
     @Override
     default StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         Cmd pattern = Methods.cmd(pattern(context.getDbType()));
-        pattern.sql(module, parent, context, sqlBuilder);
+        sqlBuilder = pattern.sql(module, parent, context, sqlBuilder);
         return sqlBuilder;
     }
 

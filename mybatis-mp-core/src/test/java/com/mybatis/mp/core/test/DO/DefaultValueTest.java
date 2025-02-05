@@ -20,11 +20,13 @@ import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;
 import db.sql.api.DbType;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
 @Table
 @Data
+@FieldNameConstants
 public class DefaultValueTest {
 
     @TableId

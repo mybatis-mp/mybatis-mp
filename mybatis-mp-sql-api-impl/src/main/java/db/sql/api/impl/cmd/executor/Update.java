@@ -22,6 +22,10 @@ public class Update extends AbstractUpdate<Update, CmdFactory> {
         super(new CmdFactory());
     }
 
+    public Update(CmdFactory cmdFactory) {
+        super(cmdFactory);
+    }
+
     public Update(Where where) {
         super(where);
     }

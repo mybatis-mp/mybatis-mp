@@ -14,11 +14,16 @@
 
 package cn.mybatis.mp.core.mvc;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveBatchStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Dao 接口
@@ -88,6 +93,15 @@ public interface Dao<T, ID> {
     /**
      * 实体类保存
      *
+     * @param entity       实体类对象
+     * @param saveStrategy 保存策略
+     * @return 影响条数
+     */
+    int save(T entity, Consumer<SaveStrategy<T>> saveStrategy);
+
+    /**
+     * 实体类保存
+     *
      * @param list 实体类对象List
      * @return 影响条数
      */
@@ -110,6 +124,24 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     int save(Collection<T> list, Getter<T>... forceFields);
+
+    /**
+     * 实体类保存
+     *
+     * @param list         实体类对象List
+     * @param saveStrategy 保存策略
+     * @return 影响条数
+     */
+    int save(Collection<T> list, Consumer<SaveStrategy<T>> saveStrategy);
+
+    /**
+     * 实体类Model保存
+     *
+     * @param model        实体类Model对象
+     * @param saveStrategy 保存策略
+     * @return 影响条数
+     */
+    <M extends Model<T>> int save(M model, Consumer<SaveStrategy<M>> saveStrategy);
 
     /**
      * 实体类Model保存
@@ -154,6 +186,7 @@ public interface Dao<T, ID> {
      */
     <M extends Model<T>> int saveModel(Collection<M> list, boolean allFieldForce);
 
+
     /**
      * 实体类Model保存
      *
@@ -162,6 +195,60 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     <M extends Model<T>> int saveModel(Collection<M> list, Getter<M>... forceFields);
+
+
+    /**
+     * 实体类Model保存
+     *
+     * @param list         实体类Model对象List
+     * @param saveStrategy 保存策略
+     * @return 影响条数
+     */
+    <M extends Model<T>> int saveModel(Collection<M> list, Consumer<SaveStrategy<M>> saveStrategy);
+
+
+    /**
+     * 原生批量插入 实体类Model保存
+     *
+     * @param list 实体类Model对象List
+     * @return 影响条数
+     */
+    <M extends Model<T>> int saveModelBatch(Collection<M> list);
+
+    /**
+     * 原生批量插入 实体类Model保存
+     *
+     * @param list              实体类Model对象List
+     * @param saveBatchStrategy 保存策略
+     * @return 影响条数
+     */
+    <M extends Model<T>> int saveModelBatch(Collection<M> list, Consumer<SaveBatchStrategy<M>> saveBatchStrategy);
+
+    /**
+     * 原生批量插入
+     *
+     * @param list 实体类对象List
+     * @return 影响条数
+     */
+    int saveBatch(Collection<T> list);
+
+    /**
+     * 原生批量插入
+     *
+     * @param list              实体类对象List
+     * @param saveBatchStrategy 策略
+     * @return 影响条数
+     */
+    int saveBatch(Collection<T> list, Consumer<SaveBatchStrategy<T>> saveBatchStrategy);
+
+    /**
+     * 实体类修改
+     *
+     * @param entity         实体类对象
+     * @param updateStrategy 策略
+     * @return
+     */
+    int update(T entity, UpdateStrategy<T> updateStrategy);
 
     /**
      * 实体类修改
@@ -188,6 +275,15 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     int update(T entity, Getter<T>... forceFields);
+
+    /**
+     * 实体类保存
+     *
+     * @param list           实体类对象List
+     * @param updateStrategy 策略
+     * @return 影响条数
+     */
+    int update(Collection<T> list, UpdateStrategy<T> updateStrategy);
 
     /**
      * 实体类修改
@@ -225,6 +321,16 @@ public interface Dao<T, ID> {
     <M extends Model<T>> int update(M model);
 
     /**
+     * 修改策略
+     *
+     * @param model
+     * @param updateStrategy
+     * @param <M>
+     * @return
+     */
+    <M extends Model<T>> int update(M model, UpdateStrategy<M> updateStrategy);
+
+    /**
      * 实体类Model修改
      *
      * @param model       实体类Model对象
@@ -241,6 +347,16 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     <M extends Model<T>> int update(M model, boolean allFieldForce);
+
+
+    /**
+     * 实体类Model修改
+     *
+     * @param list           实体类Model对象List
+     * @param updateStrategy 策略
+     * @return 影响条数
+     */
+    <M extends Model<T>> int updateModel(Collection<M> list, Consumer<UpdateStrategy<M>> updateStrategy);
 
     /**
      * 实体类Model修改
@@ -271,6 +387,15 @@ public interface Dao<T, ID> {
     /**
      * 实体类保存或修改
      *
+     * @param entity               实体类对象
+     * @param saveOrUpdateStrategy 策略
+     * @return 影响条数
+     */
+    int saveOrUpdate(T entity, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy);
+
+    /**
+     * 实体类保存或修改
+     *
      * @param entity 实体类对象
      * @return 影响条数
      */
@@ -293,6 +418,15 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     int saveOrUpdate(T entity, Getter<T>... forceFields);
+
+    /**
+     * 实体类保存或修改
+     *
+     * @param list                 实体类对象List
+     * @param saveOrUpdateStrategy
+     * @return
+     */
+    int saveOrUpdate(Collection<T> list, Consumer<SaveOrUpdateStrategy<T>> saveOrUpdateStrategy);
 
     /**
      * 实体类保存或修改
@@ -320,6 +454,16 @@ public interface Dao<T, ID> {
      */
     int saveOrUpdate(Collection<T> list, Getter<T>... forceFields);
 
+
+    /**
+     * 实体类Model保存或修改
+     *
+     * @param model                实体类Model对象
+     * @param saveOrUpdateStrategy 策略
+     * @return 影响条数
+     */
+    <M extends Model<T>> int saveOrUpdate(M model, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy);
+
     /**
      * 实体类Model保存或修改
      *
@@ -345,6 +489,16 @@ public interface Dao<T, ID> {
      * @return 影响条数
      */
     <M extends Model<T>> int saveOrUpdate(M model, Getter<M>... forceFields);
+
+
+    /**
+     * 实体类Model保存或修改
+     *
+     * @param list                 实体类Model对象List
+     * @param saveOrUpdateStrategy 策略
+     * @return 影响条数
+     */
+    <M extends Model<T>> int saveOrUpdateModel(Collection<M> list, Consumer<SaveOrUpdateStrategy<M>> saveOrUpdateStrategy);
 
     /**
      * 实体类Model保存或修改

@@ -14,11 +14,16 @@
 
 package db.sql.api;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SqlBuilderContext {
 
     private final DbType dbType;
 
     private final SQLMode sqlMode;
+
+    private final Map<String, Object> extMap = new HashMap<>();
 
     public SqlBuilderContext(DbType dbType, SQLMode sqlMode) {
         this.dbType = dbType;
@@ -41,5 +46,12 @@ public class SqlBuilderContext {
      */
     public String addParam(Object value) {
         return "?";
+    }
+
+    /**
+     * @return
+     */
+    public Map<String, Object> getExtMap() {
+        return extMap;
     }
 }

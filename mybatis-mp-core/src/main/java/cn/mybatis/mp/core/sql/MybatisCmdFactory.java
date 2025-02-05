@@ -14,20 +14,20 @@
 
 package cn.mybatis.mp.core.sql;
 
-import cn.mybatis.mp.core.db.reflect.TableFieldInfo;
-import cn.mybatis.mp.core.db.reflect.TableInfo;
-import cn.mybatis.mp.core.db.reflect.Tables;
+import cn.mybatis.mp.core.db.reflect.*;
 import cn.mybatis.mp.core.sql.executor.MpDatasetField;
 import cn.mybatis.mp.core.sql.executor.MpTable;
 import cn.mybatis.mp.core.sql.executor.MpTableField;
-import cn.mybatis.mp.core.util.TableInfoUtil;
+import cn.mybatis.mp.core.sql.executor.MybatisConditionFactory;
+import cn.mybatis.mp.db.Model;
 import db.sql.api.Getter;
 import db.sql.api.cmd.basic.IDataset;
 import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.impl.cmd.CmdFactory;
+import db.sql.api.impl.cmd.ConditionFactory;
 import db.sql.api.impl.cmd.basic.Table;
 import db.sql.api.impl.cmd.basic.TableField;
-import db.sql.api.impl.tookit.LambdaUtil;
+import db.sql.api.tookit.LambdaUtil;
 import org.apache.ibatis.util.MapUtil;
 
 import java.util.HashMap;
@@ -60,19 +60,41 @@ public class MybatisCmdFactory extends CmdFactory {
     }
 
     @Override
+    public ConditionFactory createConditionFactory() {
+        return new MybatisConditionFactory(this);
+    }
+
+    @Override
     public MpTable table(Class entity, int storey) {
-        return (MpTable) MapUtil.computeIfAbsent(this.tableCache, storey + entity.getName(), key -> new MpTable(getTableInfo(entity), tableAs(storey, ++tableNums)));
+        return (MpTable) MapUtil.computeIfAbsent(this.tableCache, storey + entity.getName(), key -> {
+            TableInfo tableInfo = getTableInfo(entity);
+            return new MpTable(tableInfo, tableAs(storey, ++tableNums));
+        });
     }
 
     @Override
     public <T> TableField field(Getter<T> column, int storey) {
         LambdaUtil.LambdaFieldInfo fieldInfo = LambdaUtil.getFieldInfo(column);
+        if (Model.class.isAssignableFrom(fieldInfo.getType())) {
+            ModelInfo modelInfo = Models.get(fieldInfo.getType());
+            this.cacheTableInfo(modelInfo.getTableInfo());
+            return this.field(modelInfo.getEntityType(), modelInfo.getFieldInfo(fieldInfo.getName()).getTableFieldInfo().getField().getName(), storey);
+        }
         return this.field(fieldInfo.getType(), fieldInfo.getName(), storey);
     }
 
     @Override
     public <T> String columnName(Getter<T> column) {
-        return TableInfoUtil.getColumnName(column);
+        LambdaUtil.LambdaFieldInfo fieldInfo = LambdaUtil.getFieldInfo(column);
+        if (Model.class.isAssignableFrom(fieldInfo.getType())) {
+            ModelInfo modelInfo = Models.get(fieldInfo.getType());
+            this.cacheTableInfo(modelInfo.getTableInfo());
+            return modelInfo.getFieldInfo(fieldInfo.getName()).getTableFieldInfo().getColumnName();
+        } else {
+            TableInfo tableInfo = this.getTableInfo(fieldInfo.getType());
+            this.cacheTableInfo(tableInfo);
+            return tableInfo.getFieldInfo(fieldInfo.getName()).getColumnName();
+        }
     }
 
     @Override
@@ -87,15 +109,9 @@ public class MybatisCmdFactory extends CmdFactory {
 
     @Override
     public <T> TableField[] fields(int storey, Getter<T>... columns) {
-        if (columns.length < 2) {
-            return new TableField[]{this.field(columns[0], 1)};
-        }
-        LambdaUtil.LambdaFieldInfo lambdaFieldInfo = LambdaUtil.getFieldInfo(columns[0]);
-        TableInfo tableInfo = getTableInfo(lambdaFieldInfo.getType());
-        Table table = this.table(lambdaFieldInfo.getType(), storey);
         TableField[] tableFields = new TableField[columns.length];
         for (int i = 0; i < columns.length; i++) {
-            tableFields[i] = table.$(tableInfo.getFieldInfo(LambdaUtil.getName(columns[i])).getColumnName());
+            tableFields[i] = this.field(columns[i], storey);
         }
         return tableFields;
     }
@@ -109,8 +125,17 @@ public class MybatisCmdFactory extends CmdFactory {
         if (dataset instanceof MpTable) {
             return (DATASET_FIELD) new MpTableField((MpTable) dataset, tableFieldInfo);
         } else if (dataset instanceof Table) {
-            return (DATASET_FIELD) new TableField((Table) dataset, tableFieldInfo.getColumnName());
+            return (DATASET_FIELD) new TableField((Table) dataset, tableFieldInfo.getColumnName(), tableFieldInfo.isTableId());
         }
         return (DATASET_FIELD) new MpDatasetField(dataset, tableFieldInfo.getColumnName(), tableFieldInfo.getFieldInfo(), tableFieldInfo.getTypeHandler(), tableFieldInfo.getTableFieldAnnotation().jdbcType());
+    }
+
+    @Override
+    public <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> DATASET_FIELD field(IDataset<DATASET, DATASET_FIELD> dataset, String columnName) {
+        if (dataset instanceof MpTable) {
+            MpTable mpTable = (MpTable) dataset;
+            return (DATASET_FIELD) mpTable.$(columnName);
+        }
+        return super.field(dataset, columnName);
     }
 }

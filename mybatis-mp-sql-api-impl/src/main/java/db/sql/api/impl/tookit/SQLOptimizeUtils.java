@@ -215,10 +215,10 @@ public final class SQLOptimizeUtils {
      */
     public static StringBuilder getOptimizedSql(IQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
         if (!optimizeOptions.isOptimizeJoin()) {
-            return query.sql(context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(query.cmds())));
+            return query.sql(null, null, context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(query.cmds())));
         }
         if (query.getJoins() == null) {
-            return query.sql(context, new StringBuilder(getStringBuilderCapacity(query.cmds())));
+            return query.sql(null, null, context, new StringBuilder(getStringBuilderCapacity(query.cmds())));
         }
         Map<Class, Cmd> classCmdMap = new HashMap<>();
         List<Cmd> cmdList = query.cmds();
@@ -227,7 +227,7 @@ public final class SQLOptimizeUtils {
         }
         optimizedCmdList(context.getDbType(), classCmdMap, false, false, true, classCmdMap.containsKey(Unions.class));
         cmdList = (List<Cmd>) classCmdMap.values().stream().sorted(query.comparator()).collect(Collectors.toList());
-        return CmdUtils.join(context, new StringBuilder(getStringBuilderCapacity(cmdList)), cmdList);
+        return QuerySQLUtil.buildQuerySQL(context, null, null, query, new StringBuilder(), cmdList);
     }
 
 
@@ -307,7 +307,7 @@ public final class SQLOptimizeUtils {
      */
     public static StringBuilder getOptimizedCountSql(IQuery query, SqlBuilderContext context, OptimizeOptions optimizeOptions) {
         if (optimizeOptions.isAllDisable()) {
-            return query.sql(context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(query.cmds())));
+            return query.sql(null, null, context, new StringBuilder(SQLOptimizeUtils.getStringBuilderCapacity(query.cmds())));
         }
         return getOptimizedCountSql(query, context, optimizeOptions.isOptimizeOrderBy(), optimizeOptions.isOptimizeJoin());
     }

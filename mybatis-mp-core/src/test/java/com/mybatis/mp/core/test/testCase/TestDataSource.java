@@ -71,6 +71,14 @@ public class TestDataSource {
                 return createKingbaseDataSource();
             }
 
+            case SQLITE: {
+                return createSqliteDataSource();
+            }
+
+            case OPEN_GAUSS: {
+                return createOpenGaussDataSource();
+            }
+
             case CLICK_HOUSE: {
                 return createClickhouseDataSource();
             }
@@ -80,7 +88,7 @@ public class TestDataSource {
 
     private static DataSource createH2DataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setJdbcUrl("jdbc:h2:mem:" + DB_NAME + ";DB_CLOSE_ON_EXIT=FALSE");
+        ds.setJdbcUrl("jdbc:h2:mem:" + DB_NAME + ";DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL");
         ds.setUsername("sa");
         ds.setPassword("");
         ds.setDriverClassName("org.h2.Driver");
@@ -110,10 +118,20 @@ public class TestDataSource {
 
     private static DataSource createPostgresDataSource() {
         HikariDataSource ds = new HikariDataSource();
-        ds.setJdbcUrl("jdbc:postgresql://localhost:5432/postgres?stringtype=unspecified");
+        ds.setJdbcUrl("jdbc:postgresql://localhost:5432/postgres");
         ds.setUsername("postgres");
         ds.setPassword("123456");
         ds.setDriverClassName("org.postgresql.Driver");
+        ds.setAutoCommit(false);
+        return ds;
+    }
+
+    private static DataSource createOpenGaussDataSource() {
+        HikariDataSource ds = new HikariDataSource();
+        ds.setJdbcUrl("jdbc:opengauss://localhost:5437/postgres");
+        ds.setUsername("gaussdb");
+        ds.setPassword("Enmo@123");
+        ds.setDriverClassName("org.opengauss.Driver");
         ds.setAutoCommit(false);
         return ds;
     }
@@ -177,6 +195,14 @@ public class TestDataSource {
         ds.setDriverClassName("com.ibm.db2.jcc.DB2Driver");
         ds.setAutoCommit(false);
         ds.setMaximumPoolSize(1);
+        return ds;
+    }
+
+    private static DataSource createSqliteDataSource() {
+        HikariDataSource ds = new HikariDataSource();
+        ds.setJdbcUrl("jdbc:sqlite:target/" + DB_NAME + ".db?date_string_format=yyyy-MM-hh HH:mm:ss");
+        ds.setDriverClassName("org.sqlite.JDBC");
+        ds.setAutoCommit(false);
         return ds;
     }
 

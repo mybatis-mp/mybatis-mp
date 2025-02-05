@@ -15,9 +15,7 @@
 package db.sql.api.cmd.executor;
 
 import db.sql.api.Cmd;
-import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.basic.IDataset;
-import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
 import db.sql.api.cmd.executor.method.IDeleteMethod;
@@ -45,7 +43,7 @@ public interface IDelete<SELF extends IDelete,
 
         extends IDeleteMethod<SELF>,
         IFromMethod<SELF, TABLE, TABLE_FIELD>,
-        IJoinMethod<SELF, ON>,
+        IJoinMethod<SELF, JOIN, ON>,
         IWhereMethod<SELF, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         IExecutor<SELF, TABLE, TABLE_FIELD> {
 
@@ -53,19 +51,17 @@ public interface IDelete<SELF extends IDelete,
 
     FROM $from(IDataset table);
 
-    JOIN $join(JoinMode mode, IDataset mainTable, IDataset secondTable);
-
     WHERE $where();
 
     @Override
-    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF delete(IDataset<DATASET, DATASET_FIELD>... tables) {
+    default SELF delete(IDataset<?, ?>... tables) {
         $delete(tables);
         return (SELF) this;
     }
 
     @Override
-    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD>... tables) {
-        for (IDataset<DATASET, DATASET_FIELD> table : tables) {
+    default SELF from(IDataset<?, ?>... tables) {
+        for (IDataset<?, ?> table : tables) {
             $from(table);
         }
         return (SELF) this;

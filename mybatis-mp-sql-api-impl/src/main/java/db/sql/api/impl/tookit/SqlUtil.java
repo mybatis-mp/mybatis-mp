@@ -15,6 +15,7 @@
 package db.sql.api.impl.tookit;
 
 import db.sql.api.Getter;
+import db.sql.api.tookit.LambdaUtil;
 
 import java.lang.reflect.Field;
 

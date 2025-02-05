@@ -76,7 +76,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain and(ICondition condition) {
         this.and();
         if (Objects.nonNull(condition)) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -85,7 +85,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain or(ICondition condition) {
         this.or();
         if (Objects.nonNull(condition)) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -97,14 +97,17 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
 
     @Override
     public ConditionChain newInstance() {
-        return new ConditionChain(conditionFactory, this);
+        return this.conditionFactory.newConditionChain(this);
     }
 
-    private List<ConditionBlock> conditionBlocks() {
+    protected void appendCondition(Connector connector, ICondition condition) {
+        if (condition == null) {
+            return;
+        }
         if (conditionBlocks == null) {
             conditionBlocks = new ArrayList<>(4);
         }
-        return this.conditionBlocks;
+        this.conditionBlocks.add(new ConditionBlock(connector, condition));
     }
 
     public List<ConditionBlock> getConditionBlocks() {
@@ -162,7 +165,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain empty(boolean when, Getter<T> column, int storey) {
         ICondition condition = conditionFactory.empty(when, column, storey);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -171,7 +174,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain empty(Cmd column) {
         ICondition condition = conditionFactory.empty(column);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -180,7 +183,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain notEmpty(boolean when, Getter<T> column, int storey) {
         ICondition condition = conditionFactory.notEmpty(when, column, storey);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -189,7 +192,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain notEmpty(Cmd column) {
         ICondition condition = conditionFactory.notEmpty(column);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -198,7 +201,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain eq(Cmd column, Object value) {
         ICondition condition = conditionFactory.eq(column, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -207,7 +210,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain ne(Cmd column, Object value) {
         ICondition condition = conditionFactory.ne(column, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -216,7 +219,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain gt(Cmd column, Object value) {
         ICondition condition = conditionFactory.gt(column, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -225,7 +228,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain gte(Cmd column, Object value) {
         ICondition condition = conditionFactory.gte(column, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -234,7 +237,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain lt(Cmd column, Object value) {
         ICondition condition = conditionFactory.lt(column, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -243,7 +246,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain lte(Cmd column, Object value) {
         ICondition condition = conditionFactory.lte(column, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -252,7 +255,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain between(Cmd column, Object value, Object value2) {
         ICondition condition = conditionFactory.between(column, value, value2);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -261,7 +264,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain notBetween(Cmd column, Object value, Object value2) {
         ICondition condition = conditionFactory.notBetween(column, value, value2);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -270,7 +273,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain isNull(Cmd column) {
         ICondition condition = conditionFactory.isNull(column);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -279,7 +282,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain isNotNull(Cmd column) {
         ICondition condition = conditionFactory.isNotNull(column);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -288,7 +291,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain like(LikeMode mode, Cmd column, String value) {
         ICondition condition = conditionFactory.like(mode, column, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -297,7 +300,25 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain notLike(LikeMode mode, Cmd column, String value) {
         ICondition condition = conditionFactory.notLike(mode, column, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
+    public ConditionChain iLike(LikeMode mode, Cmd column, String value) {
+        ICondition condition = conditionFactory.iLike(mode, column, value);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
+    public ConditionChain notILike(LikeMode mode, Cmd column, String value) {
+        ICondition condition = conditionFactory.notILike(mode, column, value);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -306,7 +327,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain between(boolean when, Getter<T> column, int storey, Object value, Object value2) {
         ICondition condition = conditionFactory.between(when, column, storey, value, value2);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -315,7 +336,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain eq(boolean when, Getter<T> column, int storey, Object value) {
         ICondition condition = conditionFactory.eq(when, column, storey, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -324,7 +345,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T, T2> ConditionChain eq(boolean when, Getter<T> column, int columnStorey, Getter<T2> value, int valueStorey) {
         ICondition condition = conditionFactory.eq(when, column, columnStorey, value, valueStorey);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -333,7 +354,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain gt(boolean when, Getter<T> column, int storey, Object value) {
         ICondition condition = conditionFactory.gt(when, column, storey, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -342,7 +363,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T, T2> ConditionChain gt(boolean when, Getter<T> column, int columnStorey, Getter<T2> value, int valueStorey) {
         ICondition condition = conditionFactory.gt(when, column, columnStorey, value, valueStorey);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -351,7 +372,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain gte(boolean when, Getter<T> column, int storey, Object value) {
         ICondition condition = conditionFactory.gte(when, column, storey, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -360,7 +381,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T, T2> ConditionChain gte(boolean when, Getter<T> column, int columnStorey, Getter<T2> value, int valueStorey) {
         ICondition condition = conditionFactory.gte(when, column, columnStorey, value, valueStorey);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -369,70 +390,16 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain like(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
         ICondition condition = conditionFactory.like(when, mode, column, storey, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
 
     @Override
-    public <T> ConditionChain lt(boolean when, Getter<T> column, int storey, Object value) {
-        ICondition condition = conditionFactory.lt(when, column, storey, value);
+    public <T> ConditionChain iLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+        ICondition condition = conditionFactory.iLike(when, mode, column, storey, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
-        }
-        return this;
-    }
-
-    @Override
-    public <T, T2> ConditionChain lt(boolean when, Getter<T> column, int columnStorey, Getter<T2> value, int valueStorey) {
-        ICondition condition = conditionFactory.lt(when, column, columnStorey, value, valueStorey);
-        if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
-        }
-        return this;
-    }
-
-    @Override
-    public <T> ConditionChain lte(boolean when, Getter<T> column, int storey, Object value) {
-        ICondition condition = conditionFactory.lte(when, column, storey, value);
-        if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
-        }
-        return this;
-    }
-
-    @Override
-    public <T, T2> ConditionChain lte(boolean when, Getter<T> column, int columnStorey, Getter<T2> value, int valueStorey) {
-        ICondition condition = conditionFactory.lte(when, column, columnStorey, value, valueStorey);
-        if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
-        }
-        return this;
-    }
-
-    @Override
-    public <T> ConditionChain ne(boolean when, Getter<T> column, int storey, Object value) {
-        ICondition condition = conditionFactory.ne(when, column, storey, value);
-        if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
-        }
-        return this;
-    }
-
-    @Override
-    public <T, T2> ConditionChain ne(boolean when, Getter<T> column, int columnStorey, Getter<T2> value, int valueStorey) {
-        ICondition condition = conditionFactory.ne(when, column, columnStorey, value, valueStorey);
-        if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
-        }
-        return this;
-    }
-
-    @Override
-    public <T> ConditionChain notBetween(boolean when, Getter<T> column, int storey, Object value, Object value2) {
-        ICondition condition = conditionFactory.notBetween(when, column, storey, value, value2);
-        if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -441,7 +408,80 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain notLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
         ICondition condition = conditionFactory.notLike(when, mode, column, storey, value);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
+    public <T> ConditionChain notILike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+        ICondition condition = conditionFactory.notILike(when, mode, column, storey, value);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+
+    @Override
+    public <T> ConditionChain lt(boolean when, Getter<T> column, int storey, Object value) {
+        ICondition condition = conditionFactory.lt(when, column, storey, value);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
+    public <T, T2> ConditionChain lt(boolean when, Getter<T> column, int columnStorey, Getter<T2> value, int valueStorey) {
+        ICondition condition = conditionFactory.lt(when, column, columnStorey, value, valueStorey);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
+    public <T> ConditionChain lte(boolean when, Getter<T> column, int storey, Object value) {
+        ICondition condition = conditionFactory.lte(when, column, storey, value);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
+    public <T, T2> ConditionChain lte(boolean when, Getter<T> column, int columnStorey, Getter<T2> value, int valueStorey) {
+        ICondition condition = conditionFactory.lte(when, column, columnStorey, value, valueStorey);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
+    public <T> ConditionChain ne(boolean when, Getter<T> column, int storey, Object value) {
+        ICondition condition = conditionFactory.ne(when, column, storey, value);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
+    public <T, T2> ConditionChain ne(boolean when, Getter<T> column, int columnStorey, Getter<T2> value, int valueStorey) {
+        ICondition condition = conditionFactory.ne(when, column, columnStorey, value, valueStorey);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
+        }
+        return this;
+    }
+
+    @Override
+    public <T> ConditionChain notBetween(boolean when, Getter<T> column, int storey, Object value, Object value2) {
+        ICondition condition = conditionFactory.notBetween(when, column, storey, value, value2);
+        if (condition != null) {
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -450,7 +490,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain isNotNull(boolean when, Getter<T> column, int storey) {
         ICondition condition = conditionFactory.isNotNull(when, column, storey);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -459,7 +499,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain isNull(boolean when, Getter<T> column, int storey) {
         ICondition condition = conditionFactory.isNull(when, column, storey);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -468,7 +508,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain in(Cmd cmd, IQuery query) {
         ICondition condition = conditionFactory.in(cmd, query);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -477,7 +517,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain in(Cmd cmd, Serializable... values) {
         ICondition condition = conditionFactory.in(cmd, values);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -486,7 +526,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain in(Cmd cmd, Collection<? extends Serializable> values) {
         ICondition condition = conditionFactory.in(cmd, values);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -495,7 +535,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain in(boolean when, Getter<T> column, int storey, IQuery query) {
         ICondition condition = conditionFactory.in(when, column, storey, query);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -504,7 +544,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain in(boolean when, Getter<T> column, int storey, Serializable[] values) {
         ICondition condition = conditionFactory.in(when, column, storey, values);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -513,7 +553,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain in(boolean when, Getter<T> column, int storey, Collection<? extends Serializable> values) {
         ICondition condition = conditionFactory.in(when, column, storey, values);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -522,7 +562,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain exists(boolean when, IQuery query) {
         ICondition condition = conditionFactory.exists(when, query);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -531,7 +571,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain notExists(boolean when, IQuery query) {
         ICondition condition = conditionFactory.notExists(when, query);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -540,7 +580,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain notIn(Cmd cmd, IQuery query) {
         ICondition condition = conditionFactory.notIn(cmd, query);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -549,7 +589,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain notIn(Cmd cmd, Serializable... values) {
         ICondition condition = conditionFactory.notIn(cmd, values);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -558,7 +598,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public ConditionChain notIn(Cmd cmd, Collection<? extends Serializable> values) {
         ICondition condition = conditionFactory.notIn(cmd, values);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -567,7 +607,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain notIn(boolean when, Getter<T> column, int storey, IQuery query) {
         ICondition condition = conditionFactory.notIn(when, column, storey, query);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -576,7 +616,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain notIn(boolean when, Getter<T> column, int storey, Serializable[] values) {
         ICondition condition = conditionFactory.notIn(when, column, storey, values);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }
@@ -585,7 +625,7 @@ public class ConditionChain implements IConditionChain<ConditionChain, TableFiel
     public <T> ConditionChain notIn(boolean when, Getter<T> column, int storey, Collection<? extends Serializable> values) {
         ICondition condition = conditionFactory.notIn(when, column, storey, values);
         if (condition != null) {
-            conditionBlocks().add(new ConditionBlock(this.connector, condition));
+            this.appendCondition(this.connector, condition);
         }
         return this;
     }

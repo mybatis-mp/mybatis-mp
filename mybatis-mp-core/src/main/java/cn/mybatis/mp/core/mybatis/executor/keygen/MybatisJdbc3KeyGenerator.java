@@ -27,6 +27,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
 
@@ -45,8 +47,8 @@ public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
                 return;
             }
             final Configuration configuration = ms.getConfiguration();
+            SQLCmdInsertContext insertContext = (SQLCmdInsertContext) parameter;
             if (setIdMethod.getInsertSize() > 1) {
-                SQLCmdInsertContext insertContext = (SQLCmdInsertContext) parameter;
                 if (insertContext.getDbType() == DbType.SQL_SERVER && insertContext.sql(insertContext.getDbType()).contains("OUTPUT INSERTED")) {
                     try (ResultSet rs = stmt.getResultSet()) {
                         if (rs != null) {
@@ -76,17 +78,35 @@ public class MybatisJdbc3KeyGenerator extends Jdbc3KeyGenerator {
 
     private void assignSQLServerKeys(Configuration configuration, ResultSet rs, SetIdMethod setIdMethod) throws SQLException {
         int insertSize = setIdMethod.getInsertSize();
+        List<Object> genIds = new ArrayList<>(insertSize);
         for (int i = 0; i < insertSize; i++) {
-            rs.next();
-            setIdMethod.setId(setIdMethod.getIdTypeHandler(configuration).getResult(rs, setIdMethod.getIdColumnName()), i);
+            if (!rs.next()) {
+                return;
+            }
+            genIds.add(setIdMethod.getIdTypeHandler(configuration).getResult(rs, setIdMethod.getIdColumnName()));
+        }
+
+        if (genIds.size() == insertSize) {
+            for (int i = 0; i < insertSize; i++) {
+                setIdMethod.setId(genIds.get(i), i);
+            }
         }
     }
 
     private void assignKeys(Configuration configuration, ResultSet rs, SetIdMethod setIdMethod) throws SQLException {
         int insertSize = setIdMethod.getInsertSize();
+        List<Object> genIds = new ArrayList<>(insertSize);
         for (int i = 0; i < insertSize; i++) {
-            rs.next();
-            setIdMethod.setId(setIdMethod.getIdTypeHandler(configuration).getResult(rs, 1), i);
+            if (!rs.next()) {
+                return;
+            }
+            genIds.add(setIdMethod.getIdTypeHandler(configuration).getResult(rs, 1));
+        }
+
+        if (genIds.size() == insertSize) {
+            for (int i = 0; i < insertSize; i++) {
+                setIdMethod.setId(genIds.get(i), i);
+            }
         }
     }
 }

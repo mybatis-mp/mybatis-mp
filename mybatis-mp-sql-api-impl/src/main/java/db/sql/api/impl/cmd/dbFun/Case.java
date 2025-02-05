@@ -84,7 +84,7 @@ public class Case extends BasicFunction<Case> {
                     continue;
                 }
             }
-            item.sql(module, this, context, sqlBuilder);
+            sqlBuilder = item.sql(module, this, context, sqlBuilder);
         }
         sqlBuilder.append(SqlConst.END);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);

@@ -12,22 +12,20 @@
  *
  */
 
-package cn.mybatis.mp.core.mybatis.mapper.context;
+package com.mybatis.mp.core.test.model;
 
-
-import cn.mybatis.mp.core.sql.executor.Update;
 import cn.mybatis.mp.db.Model;
-import db.sql.api.impl.cmd.struct.Where;
+import cn.mybatis.mp.db.annotations.ModelEntityField;
+import com.mybatis.mp.core.test.DO.MultiPk;
+import lombok.Data;
 
-import java.util.Set;
+@Data
+public class MultiPkModel implements Model<MultiPk> {
 
-public class ModelUpdateWithWhereContext<T extends Model> extends SQLCmdUpdateContext {
+    private Integer id1;
 
-    public ModelUpdateWithWhereContext(T t, Where where, boolean allFieldForce, Set<String> forceFields) {
-        super(createCmd(t, where, allFieldForce, forceFields));
-    }
+    @ModelEntityField(MultiPk.Fields.id2)
+    private Integer id2x;
 
-    private static Update createCmd(Model t, Where where, boolean allFieldForce, Set<String> forceFields) {
-        return ModelUpdateCmdCreateUtil.create(t, where, forceFields, allFieldForce);
-    }
+    private String name;
 }

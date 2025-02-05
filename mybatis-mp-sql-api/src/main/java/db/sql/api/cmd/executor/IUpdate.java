@@ -16,10 +16,8 @@ package db.sql.api.cmd.executor;
 
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
-import db.sql.api.cmd.JoinMode;
 import db.sql.api.cmd.UpdateStrategy;
 import db.sql.api.cmd.basic.IDataset;
-import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
 import db.sql.api.cmd.executor.method.IFromMethod;
@@ -50,16 +48,14 @@ public interface IUpdate<SELF extends IUpdate,
 
         extends IUpdateMethod<SELF, TABLE, TABLE_FIELD, V>,
         IFromMethod<SELF, TABLE, TABLE_FIELD>,
-        IJoinMethod<SELF, ON>,
+        IJoinMethod<SELF, JOIN, ON>,
         IWhereMethod<SELF, TABLE_FIELD, COLUMN, V, CONDITION_CHAIN>,
         IExecutor<SELF, TABLE, TABLE_FIELD> {
 
 
     UPDATE_TABLE $update(TABLE... tables);
 
-    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> FROM $from(IDataset<DATASET, DATASET_FIELD> table);
-
-    JOIN $join(JoinMode mode, IDataset mainTable, IDataset secondTable);
+    FROM $from(IDataset<?, ?> table);
 
     WHERE $where();
 
@@ -88,8 +84,8 @@ public interface IUpdate<SELF extends IUpdate,
     SELF set(TABLE_FIELD filed, V value, UpdateStrategy updateStrategy);
 
     @Override
-    default <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD>... tables) {
-        for (IDataset<DATASET, DATASET_FIELD> table : tables) {
+    default SELF from(IDataset<?, ?>... tables) {
+        for (IDataset<?, ?> table : tables) {
             $from(table);
         }
         return (SELF) this;

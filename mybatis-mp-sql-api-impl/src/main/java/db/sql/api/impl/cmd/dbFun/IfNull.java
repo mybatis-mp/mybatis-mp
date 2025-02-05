@@ -42,15 +42,15 @@ public class IfNull extends BasicFunction<IfNull> {
             sqlBuilder.append(" ISNULL");
         } else if (context.getDbType() == DbType.ORACLE) {
             sqlBuilder.append(" NVL");
-        } else if (context.getDbType() == DbType.PGSQL) {
+        } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS) {
             sqlBuilder.append(" COALESCE");
         } else {
             sqlBuilder.append(operator);
         }
         sqlBuilder.append(SqlConst.BRACKET_LEFT);
-        this.key.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
-        this.value.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.value.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
     }

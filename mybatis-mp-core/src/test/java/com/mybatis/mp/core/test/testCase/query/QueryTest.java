@@ -35,10 +35,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
@@ -64,6 +61,18 @@ public class QueryTest extends BaseTest {
         try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
             List<SysUser> list = sysUserMapper.listByIds(Arrays.asList(1, 2));
+            list.stream().forEach(System.out::println);
+            assertEquals(list.size(), 2);
+            assertEquals(list.get(0).getId(), 1);
+            assertEquals(list.get(1).getId(), 2);
+        }
+    }
+
+    @Test
+    public void listByIds3() {
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+            List<SysUser> list = sysUserMapper.listByIds(new HashSet<>(Arrays.asList(1, 2)));
             list.stream().forEach(System.out::println);
             assertEquals(list.size(), 2);
             assertEquals(list.get(0).getId(), 1);
@@ -111,11 +120,11 @@ public class QueryTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
             SysUser sysUser = sysUserMapper.dbAdapt(selector -> {
-                selector.when(DbType.H2, () -> {
+                selector.when(DbType.H2, (dbType) -> {
                     return sysUserMapper.getById(1);
-                }).when(DbType.MYSQL, () -> {
+                }).when(DbType.MYSQL, (dbType) -> {
                     return sysUserMapper.getById(2);
-                }).otherwise(() -> {
+                }).otherwise((dbType) -> {
                     return sysUserMapper.getById(3);
                 });
             });
@@ -254,7 +263,7 @@ public class QueryTest extends BaseTest {
             try (Cursor<SysUser> sysUserCursor = QueryChain.of(sysUserMapper)
                     .select(SysUser::getId, SysUser::getUserName, SysUser::getRole_id)
                     .from(SysUser.class)
-                    .join(SysUser.class, SysRole.class)
+                    .join(SysUser::getRole_id, SysRole::getId)
                     .eq(SysUser::getId, 2)
                     .cursor()) {
                 assertInstanceOf(Cursor.class, sysUserCursor);

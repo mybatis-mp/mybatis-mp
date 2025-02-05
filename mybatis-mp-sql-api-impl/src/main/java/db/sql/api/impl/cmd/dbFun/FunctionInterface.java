@@ -20,6 +20,10 @@ import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.DatePattern;
 import db.sql.api.impl.cmd.condition.*;
 import db.sql.api.impl.cmd.dbFun.mysql.MysqlFunctions;
+import db.sql.api.impl.cmd.postgis.ST_Contains;
+import db.sql.api.impl.cmd.postgis.ST_DWithin;
+import db.sql.api.impl.cmd.postgis.ST_Distance;
+import db.sql.api.impl.cmd.postgis.ST_Point;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -963,9 +967,137 @@ public interface FunctionInterface extends Cmd {
      * 可以稍微替代 mysql field 函数
      *
      * @param values 指定值
-     * @return sort
+     * @return Case
      */
     default Case sort(Serializable... values) {
         return Methods.sort(this, values);
+    }
+
+    /**
+     * 分组后对列拼接
+     *
+     * @param split 分隔符
+     * @return GroupConcat
+     */
+    default GroupConcat groupConcat(String split) {
+        return Methods.groupConcat(this, split);
+    }
+
+    /**
+     * 分组后对列拼接
+     * 默认是逗号拼接
+     *
+     * @return GroupConcat
+     */
+    default GroupConcat groupConcat() {
+        return Methods.groupConcat(this);
+    }
+
+    /**
+     * 如果两个对象之间的距离在指定范围之内，则返回True
+     *
+     * @param point    另外一个对象
+     * @param distance 距离
+     * @return
+     */
+    default ST_DWithin ST_DWithin(Cmd point, double distance) {
+        return ST_DWithin(point, distance, null);
+    }
+
+    /**
+     * 如果两个对象之间的距离在指定范围之内，则返回True
+     *
+     * @param point       另外一个对象
+     * @param distance    距离
+     * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
+     * @return
+     */
+    default ST_DWithin ST_DWithin(Cmd point, double distance, Boolean useSpheroid) {
+        return Methods.ST_DWithin(this, point, distance, useSpheroid);
+    }
+
+    /**
+     * 如果两个对象之间的距离在指定范围之内，则返回True
+     *
+     * @param point    另外一个坐标
+     * @param distance 距离
+     * @return
+     */
+    default ST_DWithin ST_DWithin(ST_Point point, double distance) {
+        return ST_DWithin(point, distance, null);
+    }
+
+    /**
+     * 如果两个对象之间的距离在指定范围之内，则返回True
+     *
+     * @param point       另外一个坐标
+     * @param distance    距离
+     * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
+     * @return
+     */
+    default ST_DWithin ST_DWithin(ST_Point point, double distance, Boolean useSpheroid) {
+        return ST_DWithin((Cmd) point, distance, useSpheroid);
+    }
+
+    /**
+     * 计算2个坐标的距离
+     *
+     * @param point 另外一个对象
+     * @return
+     */
+    default ST_Distance ST_Distance(Cmd point) {
+        return ST_Distance(point, null);
+    }
+
+    /**
+     * 计算2个坐标的距离
+     *
+     * @param point       另外一个对象
+     * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
+     * @return
+     */
+    default ST_Distance ST_Distance(Cmd point, Boolean useSpheroid) {
+        return Methods.ST_Distance(this, point, useSpheroid);
+    }
+
+    /**
+     * 计算2个坐标的距离
+     *
+     * @param point 另外一个坐标
+     * @return
+     */
+    default ST_Distance ST_Distance(ST_Point point) {
+        return ST_Distance(point, null);
+    }
+
+    /**
+     * 计算2个坐标的距离
+     *
+     * @param point       另外一个坐标
+     * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
+     * @return
+     */
+    default ST_Distance ST_Distance(ST_Point point, Boolean useSpheroid) {
+        return ST_Distance((Cmd) point, useSpheroid);
+    }
+
+    /**
+     * 判断是否包含 geo
+     *
+     * @param geo 另外一个geo对象
+     * @return
+     */
+    default ST_Contains ST_Contains(Cmd geo) {
+        return new ST_Contains(this, geo);
+    }
+
+    /**
+     * 判断是否包含 point
+     *
+     * @param point 另外一个坐标
+     * @return
+     */
+    default ST_Contains ST_Contains(ST_Point point) {
+        return ST_Contains((Cmd) point);
     }
 }

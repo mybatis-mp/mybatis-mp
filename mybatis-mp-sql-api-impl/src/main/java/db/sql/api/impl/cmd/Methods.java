@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd;
 
 import db.sql.api.Cmd;
+import db.sql.api.cmd.CmdConvert;
 import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.IParamWrap;
 import db.sql.api.cmd.executor.IQuery;
@@ -22,6 +23,10 @@ import db.sql.api.impl.cmd.basic.*;
 import db.sql.api.impl.cmd.condition.*;
 import db.sql.api.impl.cmd.dbFun.*;
 import db.sql.api.impl.cmd.dbFun.mysql.*;
+import db.sql.api.impl.cmd.postgis.ST_Contains;
+import db.sql.api.impl.cmd.postgis.ST_DWithin;
+import db.sql.api.impl.cmd.postgis.ST_Distance;
+import db.sql.api.impl.cmd.postgis.ST_Point;
 import db.sql.api.impl.tookit.Objects;
 import db.sql.api.impl.tookit.SqlConst;
 
@@ -34,6 +39,54 @@ import java.util.stream.Collectors;
  * 数据库方法集合
  */
 public final class Methods {
+
+    /**
+     * 如果两个对象之间的距离在指定范围之内，则返回True
+     *
+     * @param column   列
+     * @param point    另外一个对象
+     * @param distance 距离
+     * @return
+     */
+    public static ST_DWithin ST_DWithin(Cmd column, Cmd point, double distance) {
+        return ST_DWithin(column, point, distance, null);
+    }
+
+    /**
+     * 创建普通sql模板
+     *
+     * @param template 模板
+     * @param params   参数
+     * @return
+     */
+    @SafeVarargs
+    public static CmdTemplate tpl(String template, Object... params) {
+        return CmdTemplate.create(template, params);
+    }
+
+    /**
+     * 创建函数sql模板
+     *
+     * @param template 模板
+     * @param params   参数
+     * @return
+     */
+    @SafeVarargs
+    public static FunTemplate fTpl(String template, Object... params) {
+        return FunTemplate.create(template, params);
+    }
+
+    /**
+     * 创建条件sql模板
+     *
+     * @param template 模板
+     * @param params   参数
+     * @return
+     */
+    @SafeVarargs
+    public static ConditionTemplate cTpl(String template, Object... params) {
+        return ConditionTemplate.create(template, params);
+    }
 
     /**
      * 参数包装并转成CMD对象
@@ -103,6 +156,8 @@ public final class Methods {
         Objects.requireNonNull(value);
         if (value instanceof Cmd) {
             return (Cmd) value;
+        } else if (value instanceof CmdConvert) {
+            return ((CmdConvert) value).convert();
         }
         return new BasicValue(value);
     }
@@ -115,6 +170,9 @@ public final class Methods {
      */
     public static BasicValue value(Serializable value) {
         Objects.requireNonNull(value);
+        if (value instanceof CmdConvert) {
+            throw new RuntimeException("please use Methods.cmd instead");
+        }
         return new BasicValue(value);
     }
 
@@ -1499,6 +1557,64 @@ public final class Methods {
     }
 
     /**
+     * like 判断
+     *
+     * @param column 列
+     * @param value  值
+     * @return Like
+     */
+    public static ILike iLike(Cmd column, Object value) {
+        return iLike(LikeMode.DEFAULT, column, value);
+    }
+
+    /**
+     * like 判断
+     *
+     * @param column 列
+     * @param value  值
+     * @return Like
+     */
+    public static ILike iLike(LikeMode mode, Cmd column, Object value) {
+        Objects.requireNonNull(column);
+        Object wrapValue = likeParamWrap(column, value, mode, false);
+        if (wrapValue instanceof Object[]) {
+            Object[] values = (Object[]) wrapValue;
+            mode = (LikeMode) values[0];
+            value = values[1];
+        }
+        return new ILike(mode, column, value);
+    }
+
+    /**
+     * notLike 判断
+     *
+     * @param column 列
+     * @param value  值
+     * @return NotLike
+     */
+    public static NotILike notILike(Cmd column, Object value) {
+        return notILike(LikeMode.DEFAULT, column, value);
+    }
+
+    /**
+     * not like 判断
+     *
+     * @param column 列
+     * @param value  值
+     * @return NotLike
+     */
+    public static NotILike notILike(LikeMode mode, Cmd column, Object value) {
+        Objects.requireNonNull(column);
+        Object wrapValue = likeParamWrap(column, value, mode, true);
+        if (wrapValue instanceof Object[]) {
+            Object[] values = (Object[]) wrapValue;
+            mode = (LikeMode) values[0];
+            value = values[1];
+        }
+        return new NotILike(mode, column, value);
+    }
+
+    /**
      * mysql fromUnixTime 函数
      *
      * @param column 列
@@ -1609,6 +1725,134 @@ public final class Methods {
         }
         cs.else_(column);
         return cs;
+    }
+
+    /**
+     * 分组后对列拼接 函数
+     *
+     * @param column 列
+     * @param split  分隔符
+     * @return GroupConcat
+     */
+    public static GroupConcat groupConcat(Cmd column, String split) {
+        return new GroupConcat(column, split);
+    }
+
+    /**
+     * 分组后对列拼接 函数
+     * 默认是逗号拼接
+     *
+     * @param column 列
+     * @return GroupConcat
+     */
+    public static GroupConcat groupConcat(Cmd column) {
+        return groupConcat(column, ",");
+    }
+
+    /**
+     * 如果两个对象之间的距离在指定范围之内，则返回True
+     *
+     * @param column      列
+     * @param point       另外一个对象
+     * @param distance    距离
+     * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
+     * @return
+     */
+    public static ST_DWithin ST_DWithin(Cmd column, Cmd point, double distance, Boolean useSpheroid) {
+        return new ST_DWithin(column, point, distance, useSpheroid);
+    }
+
+    /**
+     * 如果两个对象之间的距离在指定范围之内，则返回True
+     *
+     * @param column   列
+     * @param point    另外一个坐标
+     * @param distance 距离
+     * @return
+     */
+    public static ST_DWithin ST_DWithin(Cmd column, ST_Point point, double distance) {
+        return ST_DWithin(column, point, distance, null);
+    }
+
+    /**
+     * 如果两个对象之间的距离在指定范围之内，则返回True
+     *
+     * @param column      列
+     * @param point       另外一个坐标
+     * @param distance    距离
+     * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
+     * @return
+     */
+    public static ST_DWithin ST_DWithin(Cmd column, ST_Point point, double distance, Boolean useSpheroid) {
+        return ST_DWithin(column, (Cmd) point, distance, useSpheroid);
+    }
+
+    /**
+     * 计算2个对象的距离
+     *
+     * @param column 列
+     * @param point  另外一个参考对象
+     * @return
+     */
+    public static ST_Distance ST_Distance(Cmd column, Cmd point) {
+        return ST_Distance(column, point, null);
+    }
+
+    /**
+     * 计算2个对象的距离
+     *
+     * @param column      列
+     * @param point       另外一个参考对象
+     * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
+     * @return
+     */
+    public static ST_Distance ST_Distance(Cmd column, Cmd point, Boolean useSpheroid) {
+        return new ST_Distance(column, point, useSpheroid);
+    }
+
+    /**
+     * 计算2个坐标的距离
+     *
+     * @param column 列
+     * @param point  另外一个坐标
+     * @return
+     */
+    public static ST_Distance ST_Distance(Cmd column, ST_Point point) {
+        return ST_Distance(column, point, null);
+    }
+
+    /**
+     * 计算2个坐标的距离
+     *
+     * @param column      列
+     * @param point       另外一个坐标
+     * @param useSpheroid 是否使用椭球参考系。使用椭球参考系会使得结果更精确但稍慢。
+     * @return
+     */
+    public static ST_Distance ST_Distance(Cmd column, ST_Point point, Boolean useSpheroid) {
+        return ST_Distance(column, (Cmd) point, useSpheroid);
+    }
+
+    /**
+     * 判断是否包含 geo
+     *
+     * @param column 列
+     * @param geo    另外一个geo对象
+     * @return
+     */
+    public static ST_Contains ST_Contains(Cmd column, Cmd geo) {
+        return new ST_Contains(column, geo);
+    }
+
+    /**
+     * 判断是否包含 point
+     *
+     * @param column 列
+     * @param point  另外一个坐标
+     * @return
+     */
+    public static ST_Contains ST_Contains(Cmd column, ST_Point point) {
+        return ST_Contains(column, (Cmd) point);
     }
 
     /**

@@ -77,7 +77,7 @@ public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapp
     /**
      * 获取SqlSession 执行底层的 方法
      *
-     * @param statement mybatis的statement ID，假如是 .开头，会自动帮你拼上cn.mybatis.mp.core.mybatis.mapper.BasicMapper
+     * @param statement mybatis的XML的 ID，假如是 .开头，会自动帮你拼上: 单Mapper.class +"."+ statement
      * @param function  提供SqlSession，返回
      * @return R
      */
@@ -86,12 +86,34 @@ public interface BasicMapper extends BaseMapper, GetBasicMapper, ExistsBasicMapp
     /**
      * 获取SqlSession 执行底层的 方法
      *
-     * @param statement mybatis的statement ID，假如是 .开头，会自动帮你拼上cn.mybatis.mp.core.mybatis.mapper.BasicMapper
+     * @param statement mybatis的statement ID，假如是 .开头，会自动帮你拼上: 单Mapper.class +"."+ statement
      * @param params    参数 可POJO 可Map 可其他
      * @param function  提供statement,params,SqlSession，返回你需要返回的信息；这里params 可能会被框架修改例如 where 对象
      * @return R
      */
     <R, PARAMS> R withSqlSession(String statement, PARAMS params, ThreeFunction<String, PARAMS, SqlSession, R> function);
+
+
+    /**
+     * 获取SqlSession 执行底层的 方法
+     *
+     * @param entity    实体类 class - 作用域
+     * @param statement mybatis的XML的 ID，自动帮助你匹配到 xml里的 归为 单Mapper.class +"."entity+":"+ statement
+     * @param function  提供statement,params,SqlSession，返回你需要返回的信息；这里params 可能会被框架修改例如 where 对象
+     * @return R
+     */
+    <R> R withSqlSession(Class entity, String statement, BiFunction<String, SqlSession, R> function);
+
+    /**
+     * 获取SqlSession 执行底层的 方法
+     *
+     * @param entity    实体类 class - 作用域
+     * @param statement mybatis的XML的 ID，自动帮助你匹配到 xml里的 归为 单Mapper.class +"."entity+":"+ statement
+     * @param params    参数 可POJO 可Map 可其他
+     * @param function  提供statement,params,SqlSession，返回你需要返回的信息；这里params 可能会被框架修改例如 where 对象
+     * @return R
+     */
+    <R, PARAMS> R withSqlSession(Class entity, String statement, PARAMS params, ThreeFunction<String, PARAMS, SqlSession, R> function);
 
     @Override
     default <T> T get(BaseQuery<? extends BaseQuery, T> query) {

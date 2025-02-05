@@ -23,21 +23,27 @@ import java.util.Properties;
 
 public class MybatisDatabaseIdProvider extends VendorDatabaseIdProvider {
 
-    private boolean defaultConfig = true;
+    private final boolean useDbTypeAutoProvider;
 
     public MybatisDatabaseIdProvider() {
-        super.setProperties(this.createDefaultProperties());
+        this(true);
+    }
+
+    public MybatisDatabaseIdProvider(boolean useDbTypeAutoProvider) {
+        this.useDbTypeAutoProvider = useDbTypeAutoProvider;
+        if (!useDbTypeAutoProvider) {
+            super.setProperties(this.createDefaultProperties());
+        }
     }
 
     @Override
     public void setProperties(Properties p) {
         super.setProperties(p);
-        this.defaultConfig = false;
     }
 
     @Override
     public String getDatabaseId(DataSource dataSource) {
-        if (defaultConfig) {
+        if (useDbTypeAutoProvider) {
             return DbTypeUtil.getDbType(dataSource).name();
         }
         return super.getDatabaseId(dataSource);
@@ -52,8 +58,11 @@ public class MybatisDatabaseIdProvider extends VendorDatabaseIdProvider {
         properties.put("SQL Server", DbType.SQL_SERVER.name());
         properties.put("PostgreSQL", DbType.PGSQL.name());
         properties.put("DM DBMS", DbType.DM.name());
-        properties.put("KingbaseES", DbType.KING_BASE.name());
-
+        properties.put("Kingbase", DbType.KING_BASE.name());
+        properties.put("SQLite", DbType.SQLITE.name());
+        properties.put("DB2", DbType.DB2.name());
+        properties.put("gauss", DbType.OPEN_GAUSS.name());
+        properties.put("click", DbType.CLICK_HOUSE.name());
         return properties;
     }
 }

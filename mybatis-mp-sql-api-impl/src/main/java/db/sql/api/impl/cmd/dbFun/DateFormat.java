@@ -15,6 +15,7 @@
 package db.sql.api.impl.cmd.dbFun;
 
 import db.sql.api.Cmd;
+import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
 import db.sql.api.impl.cmd.Methods;
 import db.sql.api.impl.cmd.basic.DatePattern;
@@ -36,12 +37,21 @@ public class DateFormat extends BasicFunction<DateFormat> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
+        if (context.getDbType() == DbType.SQLITE) {
+            sqlBuilder.append(SqlConst.DATE_FORMAT(context.getDbType()));
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
+            sqlBuilder = pattern.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.DELIMITER);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+            return sqlBuilder;
+        }
         sqlBuilder.append(SqlConst.DATE_FORMAT(context.getDbType()));
         sqlBuilder.append(SqlConst.BRACKET_LEFT);
 
-        this.key.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
-        pattern.sql(module, this, context, sqlBuilder);
+        sqlBuilder = pattern.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
     }

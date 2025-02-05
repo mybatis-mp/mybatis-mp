@@ -14,6 +14,7 @@
 
 package com.mybatis.mp.core.test.testCase.update;
 
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.core.sql.executor.SubQuery;
 import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import cn.mybatis.mp.core.sql.executor.chain.UpdateChain;
@@ -26,7 +27,6 @@ import com.mybatis.mp.core.test.testCase.TestDataSource;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.impl.cmd.basic.TableField;
-import db.sql.api.impl.cmd.struct.Where;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
@@ -37,7 +37,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -235,7 +234,7 @@ public class UpdateTest extends BaseTest {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        } else if (TestDataSource.DB_TYPE == DbType.PGSQL) {
+        } else if (TestDataSource.DB_TYPE == DbType.PGSQL || TestDataSource.DB_TYPE == DbType.OPEN_GAUSS) {
             int updateCnt = -1;
             // pg 只支持 修改单个表数据
 
@@ -464,8 +463,13 @@ public class UpdateTest extends BaseTest {
             SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
 
             SysUser updateSysUser = new SysUser();
+            updateSysUser.setId(null);
             updateSysUser.setUserName("adminxx");
-            int cnt = sysUserMapper.update(updateSysUser, (Consumer<Where>) where -> where.eq(SysUser::getId, 1), SysUser::getPassword);
+
+            UpdateStrategy<SysUser> updateStrategy = new UpdateStrategy<>();
+            updateStrategy.on(where -> where.eq(SysUser::getId, 1)).forceFields(SysUser::getPassword);
+
+            int cnt = sysUserMapper.update(updateSysUser, updateStrategy);
             assertEquals(cnt, 1);
 
 
@@ -486,7 +490,7 @@ public class UpdateTest extends BaseTest {
     @Test
     public void mutiTableUpdateTest() {
 
-        if (TestDataSource.DB_TYPE == DbType.H2) {
+        if (TestDataSource.DB_TYPE == DbType.H2 || TestDataSource.DB_TYPE == DbType.SQLITE) {
             //H2 不支持
             return;
         } else if (TestDataSource.DB_TYPE == DbType.ORACLE) {
@@ -505,7 +509,7 @@ public class UpdateTest extends BaseTest {
                         //.from(SysUser.class)
                         .eq(SysUser::getId, 2);
 
-                if (TestDataSource.DB_TYPE == DbType.PGSQL || TestDataSource.DB_TYPE == DbType.KING_BASE) {
+                if (TestDataSource.DB_TYPE == DbType.PGSQL || TestDataSource.DB_TYPE == DbType.OPEN_GAUSS || TestDataSource.DB_TYPE == DbType.KING_BASE) {
                     updateChain.from(SysRole.class)
                             .eq(SysUser::getId, SysRole::getId);
                 } else if (TestDataSource.DB_TYPE == DbType.SQL_SERVER) {

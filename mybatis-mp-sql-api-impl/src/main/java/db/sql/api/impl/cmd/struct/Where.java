@@ -47,14 +47,14 @@ public class Where implements IWhere<Where, TableField, Cmd, Object, ConditionCh
     @Override
     public ConditionChain conditionChain() {
         if (this.conditionChain == null) {
-            this.conditionChain = new ConditionChain(conditionFactory);
+            this.conditionChain = conditionFactory.newConditionChain(null);
         }
         return conditionChain;
     }
 
     public ConditionChain extConditionChain() {
         if (this.extConditionChain == null) {
-            this.extConditionChain = new ConditionChain(conditionFactory);
+            this.extConditionChain = conditionFactory.newConditionChain(null);
         }
         return extConditionChain;
     }

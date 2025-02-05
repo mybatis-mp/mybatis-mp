@@ -34,21 +34,21 @@ public class Instr extends BasicFunction<Instr> {
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         if (context.getDbType() == DbType.SQL_SERVER) {
             sqlBuilder.append(" CHARINDEX").append(SqlConst.BRACKET_LEFT);
-            this.str.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.str.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.DELIMITER);
-            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
         }
-        if (context.getDbType() == DbType.PGSQL) {
+        if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS) {
             sqlBuilder.append("strpos");
         } else {
             sqlBuilder.append(operator);
         }
         sqlBuilder.append(SqlConst.BRACKET_LEFT);
-        this.key.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER);
-        this.str.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.str.sql(module, this, context, sqlBuilder);
 
         sqlBuilder.append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;

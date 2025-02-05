@@ -18,6 +18,7 @@ package db.sql.api.impl.cmd.struct.update;
 import db.sql.api.Cmd;
 import db.sql.api.DbType;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.executor.IInsert;
 import db.sql.api.cmd.struct.update.IUpdateSet;
 import db.sql.api.impl.cmd.basic.TableField;
 import db.sql.api.impl.cmd.executor.AbstractUpdate;
@@ -49,23 +50,23 @@ public class UpdateSet implements IUpdateSet<TableField, Cmd> {
 
     @Override
     public StringBuilder sql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.PGSQL) {
+        if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE || context.getDbType() == DbType.OPEN_GAUSS || module instanceof IInsert) {
             //PG update set 列 不支持别名 直接拼接列名
             sqlBuilder.append(this.field.getName(context.getDbType()));
         } else if (context.getDbType() == DbType.SQL_SERVER) {
             //SQL_SERVER 别名支持的话 需要 带有from ；否则 只能是表面
             AbstractUpdate abstractUpdate = (AbstractUpdate) module;
             if (Objects.nonNull(abstractUpdate.getFrom())) {
-                this.field.sql(module, this, context, sqlBuilder);
+                sqlBuilder = this.field.sql(module, this, context, sqlBuilder);
             } else {
                 sqlBuilder.append(this.field.getName(context.getDbType()));
             }
         } else {
-            this.field.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.field.sql(module, this, context, sqlBuilder);
         }
 
         sqlBuilder.append(SqlConst.EQ);
-        this.value.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.value.sql(module, this, context, sqlBuilder);
         return sqlBuilder;
     }
 

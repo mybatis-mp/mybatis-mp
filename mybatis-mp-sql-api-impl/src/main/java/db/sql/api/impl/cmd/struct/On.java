@@ -36,7 +36,7 @@ public class On implements IOn<On, Join, Table, TableField, Cmd, Object, Conditi
     public On(ConditionFactory conditionFactory, Join join) {
         this.conditionFactory = conditionFactory;
         this.join = join;
-        conditionChain = new ConditionChain(conditionFactory);
+        conditionChain = conditionFactory.newConditionChain(null);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class On implements IOn<On, Join, Table, TableField, Cmd, Object, Conditi
 
     public ConditionChain extConditionChain() {
         if (this.extConditionChain == null) {
-            this.extConditionChain = new ConditionChain(conditionFactory);
+            this.extConditionChain = conditionFactory.newConditionChain(null);
         }
         return extConditionChain;
     }

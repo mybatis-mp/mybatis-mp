@@ -19,21 +19,24 @@ import cn.mybatis.mp.db.annotations.Table;
 import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
 @Data
 @Table("t_sys_user")
+@FieldNameConstants
 public class SysUser extends SysUserBase {
 
     @TableId
     @TableField("id")
     private Integer id;
-
     private String password;
-
     @ForeignKey(SysRole.class)
     private Integer role_id;
-
     private LocalDateTime create_time;
+
+    public static final class Fields extends SysUserBase.Fields {
+
+    }
 }

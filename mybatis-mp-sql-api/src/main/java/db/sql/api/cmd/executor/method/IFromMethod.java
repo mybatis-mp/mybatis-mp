@@ -15,7 +15,6 @@
 package db.sql.api.cmd.executor.method;
 
 import db.sql.api.cmd.basic.IDataset;
-import db.sql.api.cmd.basic.IDatasetField;
 import db.sql.api.cmd.basic.ITable;
 import db.sql.api.cmd.basic.ITableField;
 
@@ -23,7 +22,7 @@ import java.util.function.Consumer;
 
 public interface IFromMethod<SELF extends IFromMethod, TABLE extends ITable<TABLE, TABLE_FIELD>, TABLE_FIELD extends ITableField<TABLE_FIELD, TABLE>> {
 
-    <DATASET extends IDataset<DATASET, DATASET_FIELD>, DATASET_FIELD extends IDatasetField<DATASET_FIELD>> SELF from(IDataset<DATASET, DATASET_FIELD>... tables);
+    SELF from(IDataset<?, ?>... tables);
 
     default SELF from(Class... entities) {
         return this.from(1, entities);

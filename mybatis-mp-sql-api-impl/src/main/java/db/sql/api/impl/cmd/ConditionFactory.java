@@ -20,6 +20,7 @@ import db.sql.api.cmd.LikeMode;
 import db.sql.api.cmd.basic.ICondition;
 import db.sql.api.cmd.executor.IQuery;
 import db.sql.api.cmd.executor.method.condition.IConditionMethods;
+import db.sql.api.impl.cmd.struct.ConditionChain;
 import db.sql.api.impl.exception.ConditionArrayValueEmptyException;
 import db.sql.api.impl.exception.ConditionValueNullException;
 import db.sql.api.impl.tookit.SqlConst;
@@ -37,6 +38,10 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
 
     public ConditionFactory(CmdFactory cmdFactory) {
         this.cmdFactory = cmdFactory;
+    }
+
+    public ConditionChain newConditionChain(ConditionChain parent) {
+        return new ConditionChain(this, parent);
     }
 
     public CmdFactory getCmdFactory() {
@@ -318,6 +323,55 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
         return Methods.notLike(mode, createTableField(column, storey), value);
     }
 
+
+    @Override
+    public ICondition iLike(LikeMode mode, Cmd column, String value) {
+        if (!isKeyValid(column)) {
+            return null;
+        }
+        value = (String) checkAndGetValidValue(value);
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        return Methods.iLike(mode, column, value);
+    }
+
+    @Override
+    public <T> ICondition iLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+        if (!when) {
+            return null;
+        }
+        value = (String) checkAndGetValidValue(value);
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        return Methods.iLike(mode, createTableField(column, storey), value);
+    }
+
+    @Override
+    public ICondition notILike(LikeMode mode, Cmd column, String value) {
+        if (!isKeyValid(column)) {
+            return null;
+        }
+        value = (String) checkAndGetValidValue(value);
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        return Methods.notILike(mode, column, value);
+    }
+
+    @Override
+    public <T> ICondition notILike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+        if (!when) {
+            return null;
+        }
+        value = (String) checkAndGetValidValue(value);
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        return Methods.notILike(mode, createTableField(column, storey), value);
+    }
+
     @Override
     public ICondition between(Cmd column, Object value, Object value2) {
         if (!isKeyValid(column)) {
@@ -336,8 +390,11 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
 
     @Override
     public <T> ICondition between(boolean when, Getter<T> column, int storey, Object value, Object value2) {
-        value = (Serializable) checkAndGetValidValue(value);
-        value2 = (Serializable) checkAndGetValidValue(value2);
+        if (!when) {
+            return null;
+        }
+        value = checkAndGetValidValue(value);
+        value2 = checkAndGetValidValue(value2);
         if (Objects.isNull(value) || Objects.isNull(value2)) {
             if (Objects.isNull(value) && Objects.isNull(value2)) {
                 return null;
@@ -369,8 +426,8 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
             return null;
         }
 
-        value = (Serializable) checkAndGetValidValue(value);
-        value2 = (Serializable) checkAndGetValidValue(value2);
+        value = checkAndGetValidValue(value);
+        value2 = checkAndGetValidValue(value2);
         if (Objects.isNull(value) || Objects.isNull(value2)) {
             if (Objects.isNull(value) && Objects.isNull(value2)) {
                 return null;
@@ -578,7 +635,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
 
     @Override
     public ICondition in(Cmd column, Collection<? extends Serializable> values) {
-        values = (List<Serializable>) checkAndGetValidValue(values);
+        values = (Collection<Serializable>) checkAndGetValidValue(values);
         if (Objects.isNull(values)) {
             return null;
         }
@@ -656,7 +713,7 @@ public class ConditionFactory implements IConditionMethods<ICondition, Cmd, Obje
 
     @Override
     public ICondition notIn(Cmd column, Collection<? extends Serializable> values) {
-        values = (List<Serializable>) checkAndGetValidValue(values);
+        values = (Collection<Serializable>) checkAndGetValidValue(values);
         if (Objects.isNull(values)) {
             return null;
         }

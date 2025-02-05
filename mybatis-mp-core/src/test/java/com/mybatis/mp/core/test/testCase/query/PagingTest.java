@@ -15,6 +15,8 @@
 package com.mybatis.mp.core.test.testCase.query;
 
 import cn.mybatis.mp.core.mybatis.mapper.context.Pager;
+import cn.mybatis.mp.core.sql.executor.SubQuery;
+import cn.mybatis.mp.core.sql.executor.chain.QueryChain;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
 import com.mybatis.mp.core.test.DO.MultiPk;
 import com.mybatis.mp.core.test.DO.SysUser;
@@ -80,6 +82,56 @@ public class PagingTest extends BaseTest {
             assertEquals(pager.getResults().size(), 1);
             assertEquals(pager.getResults().get(0).getId1(), 1);
             assertEquals(pager.getResults().get(0).getId2(), 2);
+        }
+    }
+
+
+    @Test
+    public void pagingSubQueryTest() {
+
+        try (SqlSession session = this.sqlSessionFactory.openSession(false)) {
+            SysUserMapper sysUserMapper = session.getMapper(SysUserMapper.class);
+
+            SubQuery subQuery = SubQuery.create();
+
+            subQuery.select(SysUser.class)
+                    .from(SysUser.class)
+                    .in(SysUser::getId, 1, 2, 3, 4)
+                    .orderByDesc(SysUser::getId)
+                    .limit(10);
+
+
+            Pager<SysUser> pager = QueryChain.of(sysUserMapper)
+                    .optimizeOptions(optimizeOptions -> optimizeOptions.disableAll())
+                    .selectAll()
+                    .from(subQuery)
+                    .orderByDesc(subQuery.$outerField(SysUser::getId))
+                    .paging(Pager.of(2, 2));
+
+            System.out.println(pager);
+
+            assertEquals(pager.getTotal(), 3);
+            assertEquals(pager.getTotalPage(), 2);
+
+            assertEquals(pager.getResults().size(), 1);
+            assertEquals(pager.getResults().get(0).getId(), 1);
+
+
+            pager = QueryChain.of(sysUserMapper)
+                    //.optimizeOptions(optimizeOptions -> optimizeOptions.disableAll())
+                    .selectAll()
+                    .from(subQuery)
+                    .orderByDesc(subQuery.$outerField(SysUser::getId))
+                    .paging(Pager.of(1, 2));
+
+            System.out.println(pager);
+
+            assertEquals(pager.getTotal(), 3);
+            assertEquals(pager.getTotalPage(), 2);
+
+            assertEquals(pager.getResults().size(), 2);
+            assertEquals(pager.getResults().get(0).getId(), 3);
+            assertEquals(pager.getResults().get(1).getId(), 2);
         }
     }
 }

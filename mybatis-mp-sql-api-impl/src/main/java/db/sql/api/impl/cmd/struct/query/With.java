@@ -36,7 +36,7 @@ public class With implements IWith<With> {
         Cmd recursive = this.withQuery.getRecursive();
 
         if (Objects.nonNull(recursive) && (context.getDbType() == DbType.H2 || context.getDbType() ==
-                DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.KING_BASE)) {
+                DbType.MYSQL || context.getDbType() == DbType.MARIA_DB || context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS || context.getDbType() == DbType.KING_BASE)) {
             sqlBuilder.append(SqlConst.RECURSIVE);
         }
 
@@ -46,7 +46,7 @@ public class With implements IWith<With> {
         }
 
         sqlBuilder.append(SqlConst.AS).append(SqlConst.BRACKET_LEFT);
-        this.withQuery.sql(module, this, context, sqlBuilder).append(SqlConst.BRACKET_RIGHT);
+        sqlBuilder = this.withQuery.sql(module, this, context, sqlBuilder).append(SqlConst.BRACKET_RIGHT);
         return sqlBuilder;
     }
 

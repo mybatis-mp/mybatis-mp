@@ -17,15 +17,12 @@ package db.sql.api.impl.cmd.dbFun;
 import db.sql.api.Cmd;
 import db.sql.api.Getter;
 import db.sql.api.SqlBuilderContext;
+import db.sql.api.cmd.basic.Alias;
 import db.sql.api.impl.cmd.struct.query.Select;
 import db.sql.api.impl.tookit.SqlConst;
 import db.sql.api.impl.tookit.SqlUtil;
 
-public interface Function<T> extends Cmd {
-
-    String getAlias();
-
-    T as(String alias);
+public interface Function<T> extends Cmd, Alias<T> {
 
     default <T2> T as(Getter<T2> aliasGetter) {
         return this.as(SqlUtil.getAsName(aliasGetter));
@@ -53,10 +50,10 @@ public interface Function<T> extends Cmd {
     /**
      * 函数的sql
      *
-     * @param module
-     * @param parent
-     * @param context
-     * @param sqlBuilder
+     * @param module     所属模块
+     * @param parent     引用对象 - 父节点
+     * @param context    sql 上下文
+     * @param sqlBuilder sql 拼接对象
      * @return
      */
     StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder);

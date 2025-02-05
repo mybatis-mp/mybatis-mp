@@ -18,11 +18,13 @@ import cn.mybatis.mp.db.IdAutoType;
 import cn.mybatis.mp.db.annotations.Table;
 import cn.mybatis.mp.db.annotations.TableId;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
 @Data
 @Table
+@FieldNameConstants
 public class SysRole {
 
     @TableId(IdAutoType.AUTO)

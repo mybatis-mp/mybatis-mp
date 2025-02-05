@@ -21,11 +21,13 @@ import cn.mybatis.mp.db.annotations.TableField;
 import cn.mybatis.mp.db.annotations.TableId;
 import cn.mybatis.mp.db.annotations.Version;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
 @Data
 @Table
+@FieldNameConstants
 public class VersionTest {
 
     @TableId(value = IdAutoType.GENERATOR, generatorName = IdentifierGeneratorType.UUID)

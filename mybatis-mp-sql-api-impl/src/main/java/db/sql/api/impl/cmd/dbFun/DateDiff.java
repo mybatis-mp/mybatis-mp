@@ -32,18 +32,30 @@ public class DateDiff extends BasicFunction<DateDiff> {
 
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
-        if (context.getDbType() == DbType.H2 || context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.DM) {
+        if (context.getDbType() == DbType.SQLITE) {
+            sqlBuilder.append(SqlConst.CEIL).append(SqlConst.BRACKET_LEFT).append(SqlConst.ABS).append(SqlConst.BRACKET_LEFT);
+            sqlBuilder.append("JULIANDAY");
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT);
+            sqlBuilder.append(SqlConst.SUBTRACT);
+            sqlBuilder.append("JULIANDAY");
+            sqlBuilder.append(SqlConst.BRACKET_LEFT);
+            sqlBuilder = this.another.sql(module, this, context, sqlBuilder);
+            sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BRACKET_RIGHT).append(SqlConst.BRACKET_RIGHT);
+            return sqlBuilder;
+        } else if (context.getDbType() == DbType.H2 || context.getDbType() == DbType.SQL_SERVER || context.getDbType() == DbType.DM) {
             sqlBuilder.append("ABS(").append(operator).append(SqlConst.BRACKET_LEFT);
             sqlBuilder.append("DAY,");
-            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.DELIMITER);
-            this.another.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.another.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT).append(SqlConst.BRACKET_RIGHT);
             return sqlBuilder;
-        } else if (context.getDbType() == DbType.PGSQL) {
+        } else if (context.getDbType() == DbType.PGSQL || context.getDbType() == DbType.OPEN_GAUSS) {
             sqlBuilder.append(SqlConst.BRACKET_LEFT).append("DATE_PART").append(SqlConst.BRACKET_LEFT);
             sqlBuilder.append("'DAY',");
-            this.key.sql(module, this, context, sqlBuilder);
+            sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
             sqlBuilder.append(SqlConst.BRACKET_RIGHT);
             sqlBuilder.append('-');
             sqlBuilder.append("DATE_PART").append(SqlConst.BRACKET_LEFT);

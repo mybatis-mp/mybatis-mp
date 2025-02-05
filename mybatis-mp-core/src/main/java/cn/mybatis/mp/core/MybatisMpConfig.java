@@ -24,7 +24,10 @@ import cn.mybatis.mp.core.sql.listener.LogicDeleteSQLListener;
 import cn.mybatis.mp.core.sql.listener.TenantSQLListener;
 import cn.mybatis.mp.core.util.StringPool;
 import cn.mybatis.mp.core.util.TypeConvertUtil;
+import db.sql.api.DbType;
 import db.sql.api.cmd.listener.SQLListener;
+import db.sql.api.impl.paging.IPagingProcessor;
+import db.sql.api.impl.paging.PagingProcessorFactory;
 
 import java.lang.reflect.Array;
 import java.time.LocalDate;
@@ -32,7 +35,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * 全局配置
@@ -48,13 +51,14 @@ public final class MybatisMpConfig {
     private static final String DEFAULT_VALUE_MANAGER = "defaultValueManager";
     private static final String SINGLE_MAPPER_CLASS = "singleMapperClass";
     private static final List<SQLListener> SQL_LISTENER = new ArrayList<>();
+    private static volatile DbType DEFAULT_DB_TYPE;
 
     static {
         SQL_LISTENER.add(new ForeignKeySQLListener());
         SQL_LISTENER.add(new TenantSQLListener());
         SQL_LISTENER.add(new LogicDeleteSQLListener());
-        Map<String, Function<Class<?>, Object>> defaultValueMap = new ConcurrentHashMap<>();
-        defaultValueMap.put("{BLANK}", (type) -> {
+        Map<String, BiFunction<Class<?>, Class<?>, Object>> defaultValueMap = new ConcurrentHashMap<>();
+        defaultValueMap.put("{BLANK}", (source, type) -> {
             if (type == String.class) {
                 return StringPool.EMPTY;
             } else if (type.isArray()) {
@@ -69,7 +73,7 @@ public final class MybatisMpConfig {
             throw new RuntimeException("Inconsistent types：" + type);
         });
 
-        defaultValueMap.put("{NOW}", (type) -> {
+        defaultValueMap.put("{NOW}", (source, type) -> {
             if (type == LocalDateTime.class) {
                 return LocalDateTime.now();
             } else if (type == LocalDate.class) {
@@ -90,6 +94,24 @@ public final class MybatisMpConfig {
 
     private MybatisMpConfig() {
 
+    }
+
+    /**
+     * 获取默认DbType
+     *
+     * @return
+     */
+    public static DbType getDefaultDbType() {
+        return MybatisMpConfig.DEFAULT_DB_TYPE;
+    }
+
+    /**
+     * 设置默认DbType
+     *
+     * @param defaultDbType
+     */
+    public static void setDefaultDbType(DbType defaultDbType) {
+        MybatisMpConfig.DEFAULT_DB_TYPE = defaultDbType;
     }
 
     /**
@@ -184,9 +206,9 @@ public final class MybatisMpConfig {
         return key.startsWith("{") && key.endsWith("}");
     }
 
-    public static void setDefaultValue(String key, Function<Class<?>, Object> f) {
+    public static void setDefaultValue(String key, BiFunction<Class<?>, Class<?>, Object> f) {
         checkDefaultValueKey(key);
-        ((Map<String, Function<Class<?>, Object>>) CACHE.get(DEFAULT_VALUE_MANAGER)).computeIfAbsent(key, mapKey -> f);
+        ((Map<String, BiFunction<Class<?>, Class<?>, Object>>) CACHE.get(DEFAULT_VALUE_MANAGER)).computeIfAbsent(key, mapKey -> f);
     }
 
     private static void checkDefaultValueKey(String key) {
@@ -198,21 +220,22 @@ public final class MybatisMpConfig {
     /**
      * 获取默认值
      *
-     * @param clazz 默认值的类型
+     * @param clazz 字段所在的class
+     * @param type  默认值的类型
      * @param key   默认值的key，key必须以{}包裹，例如:{NOW}
      * @param <T>   类型clazz的泛型
      * @return 返回指定类型clazz key的默认值
      */
-    public static <T> T getDefaultValue(Class<T> clazz, String key) {
+    public static <T> T getDefaultValue(Class<?> clazz, Class<T> type, String key) {
         if (!isDefaultValueKeyFormat(key)) {
-            return TypeConvertUtil.convert(key, clazz);
+            return TypeConvertUtil.convert(key, type);
         }
-        Map<String, Function<Class<?>, T>> map = (Map<String, Function<Class<?>, T>>) CACHE.get(DEFAULT_VALUE_MANAGER);
-        Function<Class<?>, T> f = map.get(key);
+        Map<String, BiFunction<Class<?>, Class<?>, T>> map = (Map<String, BiFunction<Class<?>, Class<?>, T>>) CACHE.get(DEFAULT_VALUE_MANAGER);
+        BiFunction<Class<?>, Class<?>, T> f = map.get(key);
         if (f == null) {
             throw new RuntimeException("default value key:  " + key + " not set");
         }
-        return f.apply(clazz);
+        return f.apply(clazz, type);
     }
 
     /**
@@ -263,5 +286,25 @@ public final class MybatisMpConfig {
      */
     public static List<SQLListener> getSQLListeners() {
         return Collections.unmodifiableList(SQL_LISTENER);
+    }
+
+    /**
+     * 设置分页处理器
+     *
+     * @param dbType          数据库类型
+     * @param pagingProcessor 分页处理器
+     */
+    public static void setPagingProcessor(DbType dbType, IPagingProcessor pagingProcessor) {
+        PagingProcessorFactory.setProcessor(dbType, pagingProcessor);
+    }
+
+    /**
+     * 获取分页处理器
+     *
+     * @param dbType 数据库类型
+     * @return 分页处理器
+     */
+    public static IPagingProcessor getPagingProcessor(DbType dbType) {
+        return PagingProcessorFactory.getProcessor(dbType);
     }
 }

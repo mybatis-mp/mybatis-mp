@@ -15,6 +15,7 @@
 package cn.mybatis.mp.core.mybatis.executor.statement;
 
 import cn.mybatis.mp.core.mybatis.mapper.context.BaseSQLCmdContext;
+import db.sql.api.DbType;
 import db.sql.api.impl.tookit.Objects;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
@@ -55,7 +56,7 @@ public class MybatisRoutingStatementHandler extends RoutingStatementHandler {
                 if (Objects.nonNull(fetchable.getFetchSize())) {
                     statement.setFetchSize(fetchable.getFetchSize());
                 }
-                if (Objects.nonNull(fetchable.getFetchDirection())) {
+                if (Objects.nonNull(fetchable.getFetchDirection()) && sqlCmdContext.getDbType() != DbType.SQLITE) {
                     statement.setFetchDirection(fetchable.getFetchDirection());
                 }
             }

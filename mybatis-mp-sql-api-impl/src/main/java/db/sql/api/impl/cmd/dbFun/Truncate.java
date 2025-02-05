@@ -31,7 +31,7 @@ public class Truncate extends BasicFunction<Truncate> {
     @Override
     public StringBuilder functionSql(Cmd module, Cmd parent, SqlBuilderContext context, StringBuilder sqlBuilder) {
         sqlBuilder.append(SqlConst.TRUNCATE(context.getDbType())).append(SqlConst.BRACKET_LEFT);
-        this.key.sql(module, this, context, sqlBuilder);
+        sqlBuilder = this.key.sql(module, this, context, sqlBuilder);
         sqlBuilder.append(SqlConst.DELIMITER).append(this.precision);
         if (context.getDbType() == DbType.SQL_SERVER) {
             sqlBuilder.append(",1");

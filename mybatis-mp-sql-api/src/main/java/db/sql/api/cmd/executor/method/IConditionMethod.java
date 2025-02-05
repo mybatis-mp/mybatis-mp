@@ -200,6 +200,18 @@ public interface IConditionMethod<SELF extends IConditionMethod,
     }
 
     @Override
+    default SELF iLike(LikeMode mode, COLUMN column, String value) {
+        conditionChain().iLike(mode, column, value);
+        return (SELF) this;
+    }
+
+    @Override
+    default SELF notILike(LikeMode mode, COLUMN column, String value) {
+        conditionChain().notILike(mode, column, value);
+        return (SELF) this;
+    }
+
+    @Override
     default SELF isNull(COLUMN column) {
         conditionChain().isNull(column);
         return (SELF) this;
@@ -317,6 +329,18 @@ public interface IConditionMethod<SELF extends IConditionMethod,
     @Override
     default <T> SELF notLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
         conditionChain().notLike(when, mode, column, storey, value);
+        return (SELF) this;
+    }
+
+    @Override
+    default <T> SELF iLike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+        conditionChain().iLike(when, mode, column, storey, value);
+        return (SELF) this;
+    }
+
+    @Override
+    default <T> SELF notILike(boolean when, LikeMode mode, Getter<T> column, int storey, String value) {
+        conditionChain().notILike(when, mode, column, storey, value);
         return (SELF) this;
     }
 

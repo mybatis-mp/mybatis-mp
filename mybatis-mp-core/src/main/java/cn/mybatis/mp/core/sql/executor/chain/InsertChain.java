@@ -194,13 +194,6 @@ public class InsertChain extends BaseInsert<InsertChain> {
         return super.sql(module, parent, context, sqlBuilder);
     }
 
-    @Override
-    public StringBuilder sql(SqlBuilderContext context, StringBuilder sqlBuilder) {
-        this.selectorExecute(context.getDbType());
-        this.buildSelectQuery();
-        return super.sql(context, sqlBuilder);
-    }
-
     private static class SelectGetterFun<T> {
 
         public final Getter<T> field;

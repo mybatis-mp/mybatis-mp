@@ -34,17 +34,17 @@ public class BaseRoleIdSysUserVo extends BaseRoleId<String> {
 
     private LocalDateTime create_time;
 
-    @Fetch(source = BaseIDSysUser.class, property = "id", target = BaseIDSysUser.class, targetProperty = "id")
+    @Fetch(source = BaseIDSysUser.class, property = BaseIDSysUser.Fields.id, target = BaseIDSysUser.class, targetProperty = BaseIDSysUser.Fields.id)
     private BaseIDSysUser baseIDSysUser;
 
     @NestedResultEntity(target = BaseIDSysUser.class)
     private BaseIDSysUser baseIDSysUser2;
 
 
-    @Fetch(source = BaseIDSysUser.class, property = "id", target = BaseIDSysUser.class, targetProperty = "id")
+    @Fetch(source = BaseIDSysUser.class, property = BaseIDSysUser.Fields.id, target = BaseIDSysUser.class, targetProperty = BaseIDSysUser.Fields.id)
     private List<BaseIDSysUser> baseIDSysUsers;
 
-    @Fetch(source = BaseIDSysUser.class, property = "id", target = BaseIDSysUser.class, targetProperty = "id")
+    @Fetch(source = BaseIDSysUser.class, property = BaseIDSysUser.Fields.id, target = BaseIDSysUser.class, targetProperty = BaseIDSysUser.Fields.id)
     private BaseRoleIdSysUserVo2 baseRoleIdSysUserVo;
 
     @NestedResultEntity(target = BaseIDSysUser.class)

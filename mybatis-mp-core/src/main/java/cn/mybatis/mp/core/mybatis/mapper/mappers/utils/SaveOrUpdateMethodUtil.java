@@ -15,54 +15,98 @@
 package cn.mybatis.mp.core.mybatis.mapper.mappers.utils;
 
 import cn.mybatis.mp.core.db.reflect.TableInfo;
+import cn.mybatis.mp.core.logicDelete.LogicDeleteUtil;
 import cn.mybatis.mp.core.mybatis.mapper.BasicMapper;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveOrUpdateStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.SaveStrategy;
+import cn.mybatis.mp.core.mybatis.mapper.context.strategy.UpdateStrategy;
 import cn.mybatis.mp.core.sql.executor.Query;
 import cn.mybatis.mp.core.sql.util.WhereUtil;
-import db.sql.api.Getter;
+import cn.mybatis.mp.core.util.TableInfoUtil;
 import db.sql.api.impl.cmd.basic.Table;
+import db.sql.api.impl.cmd.struct.Where;
 
 import java.util.Collection;
 import java.util.Objects;
 
 public class SaveOrUpdateMethodUtil {
 
-    public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, T entity, boolean allFieldForce, Getter<T>... forceFields) {
+    public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, T entity, SaveOrUpdateStrategy saveOrUpdateStrategy) {
         Class<?> entityType = entity.getClass();
-        if (tableInfo.getIdFieldInfos().isEmpty()) {
-            throw new RuntimeException(entityType.getName() + " has no id");
-        }
-        Object id;
-        try {
-            id = tableInfo.getIdFieldInfos().get(0).getReadFieldInvoker().invoke(entity, null);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+
+        boolean checkById = true;
+        if (saveOrUpdateStrategy.getOn() != null) {
+            checkById = false;
         }
 
-        if (Objects.isNull(id)) {
-            return SaveMethodUtil.save(basicMapper, tableInfo, entity, allFieldForce, forceFields);
+        Where checkWhere = WhereUtil.create(tableInfo);
+        if (checkById) {
+            if (tableInfo.getIdFieldInfos().isEmpty()) {
+                throw new RuntimeException(entityType.getName() + " has no id");
+            }
+            Object id;
+            try {
+                id = tableInfo.getIdFieldInfos().get(0).getReadFieldInvoker().invoke(entity, null);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            if (Objects.isNull(id)) {
+                SaveStrategy<T> saveStrategy = new SaveStrategy<>()
+                        .allFieldSave(saveOrUpdateStrategy.isAllField())
+                        .forceFields(saveOrUpdateStrategy.getForceFields());
+                return SaveMethodUtil.save(basicMapper, tableInfo, entity, saveStrategy);
+            }
+            //使用主键查询
+            WhereUtil.appendIdWhereWithEntity(checkWhere, tableInfo, entity);
+        } else {
+            saveOrUpdateStrategy.getOn().accept(checkWhere);
         }
 
-        Query<T> query = Query.create();
+        Query<T> query = new Query<>(checkWhere);
         query.$().cacheTableInfo(tableInfo);
         Table table = query.$(entityType);
-        query.select1().from(table);
 
-        WhereUtil.appendIdWhereWithEntity(query.$where(), tableInfo, entity);
-        boolean exists = basicMapper.exists(query);
-        if (exists) {
-            return UpdateMethodUtil.update(basicMapper, tableInfo, entity, allFieldForce, forceFields);
+        if (saveOrUpdateStrategy.isIgnoreLogicDeleteWhenCheck()) {
+            LogicDeleteUtil.execute(false, () -> {
+                query.from(table).returnType(entityType);
+            });
         } else {
-            return SaveMethodUtil.save(basicMapper, tableInfo, entity, allFieldForce, forceFields);
+            query.from(table).returnType(entityType);
+        }
+
+        for (String c : tableInfo.getIdColumnNames()) {
+            query.select(table.$(c));
+        }
+
+        T obj = basicMapper.get(query);
+        if (obj == null) {
+            SaveStrategy<T> saveStrategy = new SaveStrategy<>()
+                    .allFieldSave(saveOrUpdateStrategy.isAllField())
+                    .forceFields(saveOrUpdateStrategy.getForceFields());
+            return SaveMethodUtil.save(basicMapper, tableInfo, entity, saveStrategy);
+        } else {
+            UpdateStrategy<T> updateStrategy = new UpdateStrategy<>();
+            if (tableInfo.getIdFieldInfos().isEmpty()) {
+                updateStrategy.on(query.$where());
+            } else {
+                tableInfo.getIdFieldInfos().stream().forEach(item -> {
+                    TableInfoUtil.setValue(item, entity, TableInfoUtil.getEntityFieldValue(item, obj));
+                });
+            }
+            updateStrategy
+                    .allFieldUpdate(saveOrUpdateStrategy.isAllField())
+                    .forceFields(saveOrUpdateStrategy.getForceFields());
+            return UpdateMethodUtil.update(basicMapper, tableInfo, entity, updateStrategy);
         }
     }
 
-    public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, boolean allFieldForce, Getter<T>... forceFields) {
+    public static <T> int saveOrUpdate(BasicMapper basicMapper, TableInfo tableInfo, Collection<T> list, SaveOrUpdateStrategy saveOrUpdateStrategy) {
         if (Objects.isNull(list) || list.isEmpty()) {
             return 0;
         }
         int cnt = 0;
         for (T entity : list) {
-            cnt += saveOrUpdate(basicMapper, tableInfo, entity, allFieldForce, forceFields);
+            cnt += saveOrUpdate(basicMapper, tableInfo, entity, saveOrUpdateStrategy);
         }
         return cnt;
     }
