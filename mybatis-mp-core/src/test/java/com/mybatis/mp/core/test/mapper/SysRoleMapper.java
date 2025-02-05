@@ -33,6 +33,9 @@ public interface SysRoleMapper extends MybatisMapper<SysRole> {
     Pager<SysRole> xmlPaging2(Pager<SysRole> pager);
 
     @Paging
+    Pager<SysRole> xmlPaging3(Pager<SysRole> pager, @Param("id") Integer id);
+
+    @Paging
     Pager<SysRole> xmlDynamicPaging(Pager<SysRole> pager, @Param("id") Integer id, @Param("id2") Integer id2, @Param("id3") Integer id3);
 
     @Paging

@@ -45,7 +45,11 @@ public class PagingListSqlSource implements SqlSource {
             pager = (IPager<?>) parameterObject;
         } else {
             Map<String, Object> params = (Map<String, Object>) parameterObject;
-            pager = (IPager<?>) params.get("arg0");
+            if (params.containsKey("param1")) {
+                pager = (IPager<?>) params.get("param1");
+            } else {
+                pager = (IPager<?>) params.get("arg0");
+            }
         }
         return new PagingBoundSql(this.configuration, PagingUtil.getLimitedSQL(getDbType(), pager, sql), boundSql);
     }

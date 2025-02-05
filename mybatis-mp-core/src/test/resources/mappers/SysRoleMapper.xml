@@ -34,6 +34,13 @@
         order by id asc
     </select>
 
+    <select id="xmlPaging3" resultType="com.mybatis.mp.core.test.DO.SysRole">
+        select *
+        from sys_role u
+        where u.id = #{id}
+        order by u.id asc
+    </select>
+
     <select id="xmlDynamicPaging" resultType="com.mybatis.mp.core.test.DO.SysRole">
         select * from sys_role where id >=#{id} and id &lt;=#{id2}
         <if test="id3 != null">
